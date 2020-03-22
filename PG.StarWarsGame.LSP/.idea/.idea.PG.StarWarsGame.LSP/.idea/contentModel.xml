@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Kad Venku\.nuget\packages\microsoft.net.test.sdk\16.2.0\build\netcoreapp1.0" t="Include">
+      <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
+    </e>
+    <e p="C:\Users\Kad Venku\.nuget\packages\xunit.runner.visualstudio\2.4.0\build\netcoreapp1.0\xunit.runner.reporters.netcoreapp10.dll" t="Include" />
+    <e p="C:\Users\Kad Venku\.nuget\packages\xunit.runner.visualstudio\2.4.0\build\netcoreapp1.0\xunit.runner.utility.netcoreapp10.dll" t="Include" />
+    <e p="C:\Users\Kad Venku\.nuget\packages\xunit.runner.visualstudio\2.4.0\build\netcoreapp1.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll" t="Include" />
+    <e p="C:\Users\Kad Venku\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Kad Venku\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_PG.StarWarsGame.LSP.-1944853094.00" t="ExcludeRecursive" />
+    <e p="I:\dev\workspace\github\PG.DtAC\PG.Commons" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Exceptions" t="Include">
+        <e p="ValueAlreadySetException.cs" t="Include" />
+        <e p="XmlParseException.cs" t="Include" />
+      </e>
+      <e p="HtmlUtility.cs" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp2.1" t="Include">
+            <e p="PG.Commons.AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="netcoreapp3.1" t="Include">
+            <e p="PG.Commons.AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="netstandard2.0" t="Include">
+            <e p="PG.Commons.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="PG.Commons.csproj" t="IncludeRecursive" />
+      <e p="StringUtility.cs" t="Include" />
+      <e p="Xml" t="Include">
+        <e p="ValueType.cs" t="Include" />
+        <e p="XmlUtility.cs" t="Include" />
+      </e>
+    </e>
+    <e p="I:\dev\workspace\github\PG.DtAC\PG.Commons.Test" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp2.1" t="Include">
+            <e p="PG.Commons.Test.AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="netcoreapp3.1" t="Include">
+            <e p="PG.Commons.Test.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="PG.Commons.Test.csproj" t="IncludeRecursive" />
+      <e p="StringUtilityTest.cs" t="Include" />
+    </e>
+    <e p="I:\dev\workspace\github\PG.DtAC\PG.StarWarsGame" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Commons" t="Include">
+        <e p="DamageTypeUtility.cs" t="Include" />
+        <e p="GameMode.cs" t="Include" />
+      </e>
+      <e p="Data" t="Include">
+        <e p="Types" t="Include">
+          <e p="GameConstants" t="Include">
+            <e p="DamageType.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp2.1" t="Include">
+            <e p="PG.StarWarsGame.AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="netcoreapp3.1" t="Include">
+            <e p="PG.StarWarsGame.AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="netstandard2.0" t="Include">
+            <e p="PG.StarWarsGame.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="PG.StarWarsGame.csproj" t="IncludeRecursive" />
+      <e p="Xml" t="Include">
+        <e p="Tags" t="Include">
+          <e p="GameConstants.cs" t="Include" />
+        </e>
+      </e>
+    </e>
+    <e p="I:\dev\workspace\github\PG.DtAC\PG.StarWarsGame.Test" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Commons" t="Include">
+        <e p="DamageTypeUtilityTest.cs" t="Include" />
+      </e>
+      <e p="Data" t="Include">
+        <e p="Types" t="Include">
+          <e p="GameConstants" t="Include">
+            <e p="DamageTypeTest.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp2.1" t="Include">
+            <e p="PG.StarWarsGame.Test.AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="netcoreapp3.1" t="Include">
+            <e p="PG.StarWarsGame.Test.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="PG.StarWarsGame.Test.csproj" t="IncludeRecursive" />
+    </e>
+    <e p="I:\dev\workspace\github\PG.StarWarsGame.LSP" t="IncludeFlat">
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="PG.StarWarsGame.LSP" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="LSPServer.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="PG.StarWarsGame.LSP.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="PG.StarWarsGame.LSP.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="PG.StarWarsGame.LSP.sln" t="IncludeFlat" />
+      <e p="PG.StarWarsGame.LSP.Test" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="PG.StarWarsGame.LSP.Test.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="PG.StarWarsGame.LSP.Test.csproj" t="IncludeRecursive" />
+      </e>
+    </e>
+  </component>
+</project>

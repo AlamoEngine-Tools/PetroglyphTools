@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.LSP", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.csproj", "{4B5E2AF1-AEE2-4B2B-9267-0C7EC358A166}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Commons", "..\PG.DtAC\PG.Commons\PG.Commons.csproj", "{2EF51AAE-8835-4D70-8CC8-8B80A8469A3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Commons.Test", "..\PG.DtAC\PG.Commons.Test\PG.Commons.Test.csproj", "{8F0136AA-21A4-49A1-BF80-0FB31C00C8EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.LSP.Test", "PG.StarWarsGame.LSP.Test\PG.StarWarsGame.LSP.Test.csproj", "{F7615627-2091-45D6-A132-FCCBBC1C6D94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame", "..\PG.DtAC\PG.StarWarsGame\PG.StarWarsGame.csproj", "{B2C1AB90-C036-4163-8E09-4C9C56974F5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Test", "..\PG.DtAC\PG.StarWarsGame.Test\PG.StarWarsGame.Test.csproj", "{5F0E4705-2C45-477B-9626-231C52C46974}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4B5E2AF1-AEE2-4B2B-9267-0C7EC358A166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B5E2AF1-AEE2-4B2B-9267-0C7EC358A166}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B5E2AF1-AEE2-4B2B-9267-0C7EC358A166}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B5E2AF1-AEE2-4B2B-9267-0C7EC358A166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EF51AAE-8835-4D70-8CC8-8B80A8469A3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EF51AAE-8835-4D70-8CC8-8B80A8469A3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EF51AAE-8835-4D70-8CC8-8B80A8469A3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EF51AAE-8835-4D70-8CC8-8B80A8469A3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F0136AA-21A4-49A1-BF80-0FB31C00C8EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F0136AA-21A4-49A1-BF80-0FB31C00C8EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F0136AA-21A4-49A1-BF80-0FB31C00C8EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F0136AA-21A4-49A1-BF80-0FB31C00C8EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7615627-2091-45D6-A132-FCCBBC1C6D94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7615627-2091-45D6-A132-FCCBBC1C6D94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7615627-2091-45D6-A132-FCCBBC1C6D94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7615627-2091-45D6-A132-FCCBBC1C6D94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C1AB90-C036-4163-8E09-4C9C56974F5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C1AB90-C036-4163-8E09-4C9C56974F5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C1AB90-C036-4163-8E09-4C9C56974F5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C1AB90-C036-4163-8E09-4C9C56974F5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F0E4705-2C45-477B-9626-231C52C46974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F0E4705-2C45-477B-9626-231C52C46974}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F0E4705-2C45-477B-9626-231C52C46974}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F0E4705-2C45-477B-9626-231C52C46974}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

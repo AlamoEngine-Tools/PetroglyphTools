@@ -28,7 +28,8 @@ namespace PG.StarWarsGame.LSP.Server.Handlers.Engine
         public GameConstantsFileDocumentSyncHandler(ILanguageServer router, IBufferManager bufferManager)
         {
             m_router = router ?? throw new ArgumentNullException($"The argument {nameof(router)} may not be null.");
-            m_bufferManager = bufferManager ?? throw new ArgumentNullException($"The argument {nameof(bufferManager)} may not be null.");
+            m_bufferManager = bufferManager ??
+                              throw new ArgumentNullException($"The argument {nameof(bufferManager)} may not be null.");
         }
 
         //TODO: Update to TextDocumentSyncKind.Incremental
@@ -61,8 +62,9 @@ namespace PG.StarWarsGame.LSP.Server.Handlers.Engine
 
             string text = request.ContentChanges.FirstOrDefault()?.Text;
             m_bufferManager.UpdateBuffer(documentPath, new SimpleDocumentBuffer(text));
-            m_router.Window.LogInfo($"Updated buffer for document: {documentPath}\n{text}");
-
+            m_router.Window.LogInfo(
+                LocalizableTexts.ResourceManager.GetString("GameConstantsFileDocumentSyncHandler_Handle_LogInfo") +
+                ": " + documentPath + "\n" + text);
             return Unit.Task;
         }
 
@@ -77,32 +79,47 @@ namespace PG.StarWarsGame.LSP.Server.Handlers.Engine
 
         public void SetCapability(SynchronizationCapability capability)
         {
-            throw new NotImplementedException();
+            _capability = capability;
         }
 
         public Task<Unit> Handle(DidOpenTextDocumentParams request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (request?.TextDocument == null)
+            {
+                return Unit.Task;
+            }
+
+            if (null == request.TextDocument.Uri)
+            {
+                return Unit.Task;
+            }
+
+            m_bufferManager.UpdateBuffer(request.TextDocument.Uri.ToString(),
+                new SimpleDocumentBuffer(request.TextDocument.Text));
+            return Unit.Task;
         }
 
         TextDocumentRegistrationOptions IRegistration<TextDocumentRegistrationOptions>.GetRegistrationOptions()
         {
-            throw new NotImplementedException();
+            return new TextDocumentRegistrationOptions() {DocumentSelector = m_documentSelector,};
         }
 
         public Task<Unit> Handle(DidCloseTextDocumentParams request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Unit.Task;
         }
 
         public Task<Unit> Handle(DidSaveTextDocumentParams request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Unit.Task;
         }
 
         TextDocumentSaveRegistrationOptions IRegistration<TextDocumentSaveRegistrationOptions>.GetRegistrationOptions()
         {
-            throw new NotImplementedException();
+            return new TextDocumentSaveRegistrationOptions()
+            {
+                DocumentSelector = m_documentSelector, IncludeText = true
+            };
         }
 
         public TextDocumentAttributes GetTextDocumentAttributes(Uri uri)

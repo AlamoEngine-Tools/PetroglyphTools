@@ -29,6 +29,10 @@ namespace PG.StarWarsGame.LSP.Server.Buffering
 
         public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)
         {
+            if (null == destination)
+            {
+                destination = new char[0];
+            }
             m_text.CopyTo(sourceIndex, destination, destinationIndex, count);
         }
     }

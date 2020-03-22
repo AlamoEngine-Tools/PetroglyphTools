@@ -1,7 +1,7 @@
 using PG.Commons.Data.Holder;
 using PG.Commons.Xml;
 
-namespace PG.Commons.Services.Xml
+namespace PG.StarWarsGame.Services
 {
     public interface IXmlFileProcessService<T> where T : IXmlFileDefinition
     {

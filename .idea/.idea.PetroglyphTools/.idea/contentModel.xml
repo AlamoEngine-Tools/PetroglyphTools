@@ -16,7 +16,15 @@
       <e p="PG.Commons\PG.Commons" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Data" t="Include">
+          <e p="Files" t="Include">
+            <e p="FileType.cs" t="Include" />
+            <e p="IAlamoFileType.cs" t="Include" />
+            <e p="Impl" t="Include">
+              <e p="XmlAlamoFileType.cs" t="Include" />
+            </e>
+          </e>
           <e p="Holder" t="Include">
+            <e p="IFileHolder.cs" t="Include" />
             <e p="IXmlDocumentHolder.cs" t="Include" />
           </e>
         </e>
@@ -41,11 +49,6 @@
           </e>
         </e>
         <e p="PG.Commons.csproj" t="IncludeRecursive" />
-        <e p="Services" t="Include">
-          <e p="Xml" t="Include">
-            <e p="IXmlFileProcessService.cs" t="Include" />
-          </e>
-        </e>
         <e p="Util" t="Include">
           <e p="BooleanUtility.cs" t="Include" />
           <e p="HtmlUtility.cs" t="Include" />
@@ -741,6 +744,7 @@
                 </e>
               </e>
             </e>
+            <e p="XmlAlamoFileType.cs" t="Include" />
           </e>
         </e>
         <e p="LocalizableTexts.de.resx" t="Include" />
@@ -760,6 +764,10 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.csproj" t="IncludeRecursive" />
+        <e p="Services" t="Include">
+          <e p="IXmlFileBaseService.cs" t="Include" />
+          <e p="IXmlFileProcessService.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.StarWarsGame\PG.StarWarsGame.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -774,6 +782,14 @@
       </e>
       <e p="PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Files" t="Include">
+          <e p="ADatAlamoFileType.cs" t="Include" />
+          <e p="SortedDatAlamoFileType.cs" t="Include" />
+          <e p="UnsortedDatAlamoFileType.cs" t="Include" />
+        </e>
+        <e p="Holder" t="Include">
+          <e p="SortedDatFileHolder.cs" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.1" t="Include">
@@ -788,6 +804,10 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Files.DAT.csproj" t="IncludeRecursive" />
+        <e p="Services" t="Include">
+          <e p="IDatFileBaseService.cs" t="Include" />
+          <e p="IDatFileProcessService.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -918,6 +938,7 @@
               <e p="GameConstantsFileDocumentSyncHandler.cs" t="Include" />
             </e>
           </e>
+          <e p="LocalizableTexts.de.resx" t="Include" />
           <e p="LocalizableTexts.Designer.cs" t="Include" />
           <e p="LocalizableTexts.resx" t="Include" />
           <e p="LSPServer.cs" t="Include" />

@@ -1,0 +1,30 @@
+language: csharp
+mono: none
+dotnet: 2.1.502
+
+addons:
+  sonarcloud:
+    organization: $SONAR_ORGANIZATION
+
+solution: pg.dat/pg.dat.csproj
+
+install:
+  - dotnet tool install --global dotnet-sonarscanner
+  - dotnet restore PG.Commons/PG.Commons/PG.Commons.csproj
+  - dotnet restore PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj
+
+before_script:
+  - export PATH="$PATH:$HOME/.dotnet/tools"
+  - git fetch origin master
+
+script:
+  - dotnet sonarscanner begin /k:$SONAR_PROJECT /o:$SONAR_ORGANIZATION /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=$SONAR_TOKEN /d:sonar.language="cs" /d:sonar.exclusions="**/bin/**/*,**/obj/**/*" /d:sonar.coverage.exclusions="pg.dat.test/**,**/*Tests.cs,**/TestUtility.cs" /d:sonar.cs.opencover.reportsPaths="lcov.opencover.xml" || true
+  - dotnet build PG.Commons/PG.Commons/PG.Commons.csproj
+  - dotnet test PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../lcov
+  - dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN || true
+
+cache:
+  directories:
+    - '$HOME/.nuget/packages'
+    - '$HOME/.local/share/NuGet/Cache'
+    - '$HOME/.sonar/cache'

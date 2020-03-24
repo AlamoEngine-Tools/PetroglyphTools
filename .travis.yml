@@ -12,15 +12,43 @@ install:
   - dotnet tool install --global dotnet-sonarscanner
   - dotnet restore PG.Commons/PG.Commons/PG.Commons.csproj
   - dotnet restore PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj
+  - dotnet restore PG.Core/PG.Core/PG.Core.csproj
+  - dotnet restore PG.Core/PG.Core.Test/PG.Core.Test.csproj
+  - dotnet restore PG.StarWarsGame/PG.StarWarsGame/PG.StarWarsGame.csproj
+  - dotnet restore PG.StarWarsGame/PG.StarWarsGame.Test/PG.StarWarsGame.Test.csproj
+  - dotnet restore PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.csproj
+  - dotnet restore PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj
+  - dotnet restore PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj
+  - dotnet restore PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj
+  - dotnet restore PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.csproj
+  - dotnet restore PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj
+  - dotnet restore PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.csproj
+  - dotnet restore PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.Test/PG.StarWarsGame.Localisation.Test.csproj
+  - dotnet restore PG.StarWarsGame.LSP/PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.csproj
+  - dotnet restore PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.Test/PG.StarWarsGame.LSP.Test.csproj
 
 before_script:
   - export PATH="$PATH:$HOME/.dotnet/tools"
   - git fetch origin master
 
 script:
-  - dotnet sonarscanner begin /k:$SONAR_PROJECT /o:$SONAR_ORGANIZATION /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=$SONAR_TOKEN /d:sonar.language="cs" /d:sonar.exclusions="**/bin/**/*,**/obj/**/*" /d:sonar.coverage.exclusions="PG.Commons/PG.Commons.Test/PG.Commons.Test/**,**/*Test.cs,**/TestUtility.cs" /d:sonar.cs.opencover.reportsPaths="lcov.opencover.xml" || true
+  - dotnet sonarscanner begin /k:$SONAR_PROJECT /o:$SONAR_ORGANIZATION /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=$SONAR_TOKEN /d:sonar.language="cs" /d:sonar.exclusions="**/bin/**/*,**/obj/**/*" /d:sonar.coverage.exclusions="PG.Commons/PG.Commons.Test/**,PG.Commons/PG.Commons.Test/**,PG.Core/PG.Core.Test/**,PG.StarWarsGame/PG.StarWarsGame.Test/**,PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/**,PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/**,PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/**,PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.Test/**,PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.Test/**,**/*Test.cs,**/TestUtility.cs" /d:sonar.cs.opencover.reportsPaths="lcov.opencover.xml" || true
   - dotnet build PG.Commons/PG.Commons/PG.Commons.csproj
-  - dotnet test PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../lcov
+  - dotnet test PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
+  - dotnet build PG.Core/PG.Core/PG.Core.csproj
+  - dotnet test PG.Core/PG.Core.Test/PG.Core.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
+  - dotnet build PG.StarWarsGame/PG.StarWarsGame/PG.StarWarsGame.csproj
+  - dotnet test PG.StarWarsGame/PG.StarWarsGame.Test/PG.StarWarsGame.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
+  - dotnet build PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.csproj
+  - dotnet test PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
+  - dotnet build PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj
+  - dotnet test PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
+  - dotnet build PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.csproj
+  - dotnet test PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
+  - dotnet build PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.csproj
+  - dotnet test PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.Test/PG.StarWarsGame.Localisation.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
+  - dotnet build PG.StarWarsGame.LSP/PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.csproj
+  - dotnet test PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.Test/PG.StarWarsGame.LSP.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
   - dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN || true
 
 cache:

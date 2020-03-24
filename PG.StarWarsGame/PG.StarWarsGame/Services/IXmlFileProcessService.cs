@@ -3,10 +3,10 @@ using PG.Commons.Xml;
 
 namespace PG.StarWarsGame.Services
 {
-    public interface IXmlFileProcessService<T> where T : IXmlFileDefinition
+    public interface IXmlFileProcessService<TXmlFileDefinition, TContent> where TXmlFileDefinition : IXmlFileDefinition
     {
-        IXmlDocumentHolder Load(string filePath);
-        void Store(IXmlDocumentHolder xmlDocumentHolder);
-        void Store(IXmlDocumentHolder xmlDocumentHolder, string filePath);
+        IXmlDocumentHolder<TContent> Load(string filePath);
+        void Store(IXmlDocumentHolder<TContent> xmlDocumentHolder);
+        void Store(IXmlDocumentHolder<TContent> xmlDocumentHolder, string filePath);
     }
 }

@@ -1,7 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>{4358BDCA-3CBA-42B6-A794-82973F48714F}</ProjectGuid>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+  </ItemGroup>
 
 </Project>

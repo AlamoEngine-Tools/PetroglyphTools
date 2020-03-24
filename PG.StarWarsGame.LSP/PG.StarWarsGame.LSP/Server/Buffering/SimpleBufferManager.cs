@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using JetBrains.Annotations;
+using PG.Commons.Util;
 
 namespace PG.StarWarsGame.LSP.Server.Buffering
 {
@@ -15,6 +17,11 @@ namespace PG.StarWarsGame.LSP.Server.Buffering
 
         public IDocumentBuffer GetBuffer(string documentPath)
         {
+            if (StringUtility.IsNullEmptyOrWhiteSpace(documentPath))
+            {
+                return null;
+            }
+            Debug.Assert(documentPath != null, nameof(documentPath) + " != null");
             return m_buffers.TryGetValue(documentPath, out IDocumentBuffer buffer) ? buffer : null;
         }
     }

@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>{BE03C61C-CEC3-47A8-839B-A778E56607EA}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>

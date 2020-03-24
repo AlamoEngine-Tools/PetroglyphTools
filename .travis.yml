@@ -24,8 +24,6 @@ install:
   - dotnet restore PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj
   - dotnet restore PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.csproj
   - dotnet restore PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.Test/PG.StarWarsGame.Localisation.Test.csproj
-  - dotnet restore PG.StarWarsGame.LSP/PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.csproj
-  - dotnet restore PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.Test/PG.StarWarsGame.LSP.Test.csproj
 
 before_script:
   - export PATH="$PATH:$HOME/.dotnet/tools"
@@ -47,8 +45,6 @@ script:
   - dotnet test PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
   - dotnet build PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.csproj
   - dotnet test PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.Test/PG.StarWarsGame.Localisation.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
-  - dotnet build PG.StarWarsGame.LSP/PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.csproj
-  - dotnet test PG.StarWarsGame.LSP/PG.StarWarsGame.LSP.Test/PG.StarWarsGame.LSP.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../lcov
   - dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN || true
 
 cache:

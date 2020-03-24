@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.LSP.Server
 {
     internal static class LSPServer
     {
-        static async Task Main(string[] args)
+        internal static async Task Main(string[] args)
         {
             ILanguageServer server = await LanguageServer.From(options =>
                 options

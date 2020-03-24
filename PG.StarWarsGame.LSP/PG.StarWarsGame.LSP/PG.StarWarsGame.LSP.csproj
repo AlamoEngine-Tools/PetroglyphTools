@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <ProjectGuid>{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}</ProjectGuid>
     </PropertyGroup>
 
     <ItemGroup>

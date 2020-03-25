@@ -69,6 +69,10 @@
           </e>
         </e>
         <e p="PG.Commons.Test.csproj" t="IncludeRecursive" />
+        <e p="TestUtility.cs" t="Include" />
+        <e p="Util" t="Include">
+          <e p="BooleanUtilityTest.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.Core\PG.Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -757,13 +761,18 @@
       </e>
       <e p="PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Binary" t="Include">
+          <e p="DatFile.cs" t="Include" />
+        </e>
         <e p="Files" t="Include">
           <e p="ADatAlamoFileType.cs" t="Include" />
           <e p="SortedDatAlamoFileType.cs" t="Include" />
           <e p="UnsortedDatAlamoFileType.cs" t="Include" />
         </e>
         <e p="Holder" t="Include">
+          <e p="AdatFileHolder.cs" t="Include" />
           <e p="SortedDatFileHolder.cs" t="Include" />
+          <e p="UnsortedDatFileHolder.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

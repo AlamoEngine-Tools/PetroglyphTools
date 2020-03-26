@@ -72,6 +72,7 @@
         <e p="TestUtility.cs" t="Include" />
         <e p="Util" t="Include">
           <e p="BooleanUtilityTest.cs" t="Include" />
+          <e p="HtmlUtilityTest.cs" t="Include" />
         </e>
       </e>
       <e p="PG.Core\PG.Core" t="IncludeRecursive">

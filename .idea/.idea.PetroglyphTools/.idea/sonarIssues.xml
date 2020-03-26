@@ -13,6 +13,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons.Test/Util/HtmlUtilityTest.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Exceptions/PropertyNotFoundException.cs">
           <value>
             <set>
@@ -56,6 +61,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Util/BooleanUtility.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Util/HtmlUtility.cs">
           <value>
             <set />
           </value>

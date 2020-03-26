@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace PG.Commons.Util
 {
@@ -7,6 +8,12 @@ namespace PG.Commons.Util
         public static bool IsValidUri(string uri)
         {
             if (StringUtility.IsNullEmptyOrWhiteSpace(uri))
+            {
+                return false;
+            }
+            Debug.Assert(uri != null, nameof(uri) + " != null");
+            string s = uri.Trim();
+            if (!uri.Equals(s, StringComparison.InvariantCultureIgnoreCase))
             {
                 return false;
             }

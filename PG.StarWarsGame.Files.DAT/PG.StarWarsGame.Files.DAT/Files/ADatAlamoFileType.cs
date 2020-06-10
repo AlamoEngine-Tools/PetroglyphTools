@@ -1,4 +1,7 @@
+using System.Runtime.CompilerServices;
 using PG.Commons.Data.Files;
+
+[assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
 
 namespace PG.StarWarsGame.Files.DAT.Files
 {

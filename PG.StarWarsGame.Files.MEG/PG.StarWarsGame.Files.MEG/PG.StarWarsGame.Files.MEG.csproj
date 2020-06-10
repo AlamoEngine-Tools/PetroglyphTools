@@ -5,4 +5,9 @@
     <ProjectGuid>{999D1E81-59E0-4E1B-9819-5D0448BC5C30}</ProjectGuid>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.4" />
+    <PackageReference Include="System.IO.Abstractions" Version="11.0.7" />
+  </ItemGroup>
+
 </Project>

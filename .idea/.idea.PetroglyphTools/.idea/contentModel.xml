@@ -7,13 +7,22 @@
     <e p="C:\Users\Kad Venku\.nuget\packages\mstest.testadapter\2.0.0\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" t="Include" />
     <e p="C:\Users\Kad Venku\.nuget\packages\mstest.testadapter\2.0.0\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" t="Include" />
     <e p="C:\Users\Kad Venku\.nuget\packages\mstest.testadapter\2.0.0\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" t="Include" />
-    <e p="C:\Users\Kad Venku\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Kad Venku\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_PetroglyphTools.-1237476050.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Kad Venku\AppData\local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Kad Venku\AppData\local\JetBrains\Rider2020.1\resharper-host\local\Transient\ReSharperHost\v201\SolutionCaches\_PetroglyphTools.-1237476050.00" t="ExcludeRecursive" />
     <e p="I:\dev\workspace\github\PetroglyphTools" t="IncludeFlat">
       <e p="packages" t="ExcludeRecursive" />
       <e p="PetroglyphTools.sln" t="IncludeFlat" />
       <e p="PG.Commons\PG.Commons" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Binary" t="Include">
+          <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="IBinaryFileBuilder.cs" t="Include" />
+            </e>
+            <e p="IBinaryFile.cs" t="Include" />
+          </e>
+          <e p="ISizeable.cs" t="Include" />
+        </e>
         <e p="Data" t="Include">
           <e p="Files" t="Include">
             <e p="FileType.cs" t="Include" />
@@ -44,7 +53,9 @@
         <e p="PG.Commons.csproj" t="IncludeRecursive" />
         <e p="Util" t="Include">
           <e p="BooleanUtility.cs" t="Include" />
+          <e p="ChecksumUtility.cs" t="Include" />
           <e p="HtmlUtility.cs" t="Include" />
+          <e p="IOUtility.cs" t="Include" />
           <e p="StringUtility.cs" t="Include" />
         </e>
         <e p="Xml" t="Include">
@@ -73,6 +84,7 @@
         <e p="Util" t="Include">
           <e p="BooleanUtilityTest.cs" t="Include" />
           <e p="HtmlUtilityTest.cs" t="Include" />
+          <e p="StringUtilityTest.cs" t="Include" />
         </e>
       </e>
       <e p="PG.Core\PG.Core" t="IncludeRecursive">
@@ -763,7 +775,31 @@
       <e p="PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Binary" t="Include">
-          <e p="DatFile.cs" t="Include" />
+          <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="ADatFileBuilder.cs" t="Include" />
+              <e p="SortedDatFileBuilder.cs" t="Include" />
+              <e p="UnsortedDatFileBuilder.cs" t="Include" />
+            </e>
+            <e p="Type" t="Include">
+              <e p="Definition" t="Include">
+                <e p="DatFile.cs" t="Include" />
+                <e p="DatHeader.cs" t="Include" />
+                <e p="IndexTable.cs" t="Include" />
+                <e p="IndexTableRecord.cs" t="Include" />
+                <e p="KeyTable.cs" t="Include" />
+                <e p="KeyTableRecord.cs" t="Include" />
+                <e p="ValueTable.cs" t="Include" />
+                <e p="ValueTableRecord.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Commons" t="Include">
+          <e p="Exceptions" t="Include">
+            <e p="DatFileContentInvalidException.cs" t="Include" />
+            <e p="IndexTableInvalidException.cs" t="Include" />
+          </e>
         </e>
         <e p="Files" t="Include">
           <e p="ADatAlamoFileType.cs" t="Include" />
@@ -783,13 +819,18 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Files.DAT.csproj" t="IncludeRecursive" />
-        <e p="Services" t="Include">
-          <e p="IDatFileBaseService.cs" t="Include" />
-          <e p="IDatFileProcessService.cs" t="Include" />
-        </e>
+        <e p="Services" t="Include" />
       </e>
       <e p="PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Binary" t="Include">
+          <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="SortedDatFileBuilderTest.cs" t="Include" />
+              <e p="UnsortedDatfileBuilderTest.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.1" t="Include">

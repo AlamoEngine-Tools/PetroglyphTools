@@ -3,17 +3,17 @@
   <component name="issues">
     <option name="index">
       <map>
-        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons.Test/TestUtility.cs">
+        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Binary/File/Builder/IBinaryFileBuilder.cs">
           <value>
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons.Test/Util/BooleanUtilityTest.cs">
+        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Binary/ISizable.cs">
           <value>
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons.Test/Util/HtmlUtilityTest.cs">
+        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Data/Holder/IFileHolder.cs">
           <value>
             <set />
           </value>
@@ -60,12 +60,7 @@
             </set>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Util/BooleanUtility.cs">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Util/HtmlUtility.cs">
+        <entry key="$PROJECT_DIR$/PG.Commons/PG.Commons/Util/ChecksumUtility.cs">
           <value>
             <set />
           </value>
@@ -103,6 +98,101 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/DatHeader.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Builder/ADatFileBinaryFileBuilder.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Builder/ADatFileBuilder.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Builder/Attributes/DatFileAttribute.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Builder/SortedDatFileBuilder.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Builder/UnsortedDatFileBuilder.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Type/Definition/DatFile.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Type/Definition/DatHeader.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Type/Definition/IndexTable.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Type/Definition/IndexTableRecord.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Type/Definition/KeyTable.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Type/Definition/ValueTable.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/File/Type/Definition/ValueTableRecord.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/IndexTableRecord.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/KeyTableRecord.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/ValueTable.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Binary/ValueTableRecord.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Commons/Exceptions/DatFileContentInvalidException.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Commons/Exceptions/IndexTableInvalidException.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Holder/ADatFileHolder.cs">
           <value>
             <set />
@@ -123,6 +213,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Services/DatFileProcessService.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Services/IDatFileBaseService.cs">
           <value>
             <set />
@@ -130,7 +225,16 @@
         </entry>
         <entry key="$PROJECT_DIR$/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/Services/IDatFileProcessService.cs">
           <value>
-            <set />
+            <set>
+              <SonarIssue>
+                <option name="isNew" value="false" />
+                <option name="key" value="AXEMjTx-Za17eHcwNeAf" />
+                <option name="line" value="1" />
+                <option name="message" value="Remove this unnecessary 'using'." />
+                <option name="ruleKey" value="csharpsquid:S1128" />
+                <option name="severity" value="MINOR" />
+              </SonarIssue>
+            </set>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/PG.StarWarsGame/PG.StarWarsGame/Commons/Xml/Tags/Engine/FoC/DesiredLandFOWCellSizeXmlTagDefinition.cs">

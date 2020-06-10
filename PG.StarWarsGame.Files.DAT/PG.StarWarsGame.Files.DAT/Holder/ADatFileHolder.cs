@@ -1,9 +1,14 @@
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using PG.Commons.Data.Files;
 using PG.Commons.Data.Holder;
 
+[assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
+
 namespace PG.StarWarsGame.Files.DAT.Holder
 {
-    public abstract class ADatFileHolder<TContent, TAlamoFileType> : IFileHolder<TContent, TAlamoFileType> where TAlamoFileType : IAlamoFileType, new()
+    public abstract class ADatFileHolder<TContent, TAlamoFileType> : IFileHolder<TContent, TAlamoFileType>
+        where TAlamoFileType : IAlamoFileType, new()
     {
         protected ADatFileHolder(string filePath, string fileName)
         {
@@ -15,6 +20,8 @@ namespace PG.StarWarsGame.Files.DAT.Holder
         public string FileName { get; }
 
         public abstract TAlamoFileType FileType { get; }
+
+        [NotNull]
         public abstract TContent Content { get; set; }
     }
 }

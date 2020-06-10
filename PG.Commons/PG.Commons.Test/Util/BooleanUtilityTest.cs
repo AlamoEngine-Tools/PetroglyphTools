@@ -21,7 +21,7 @@ namespace PG.Commons.Test.Util
         [DataRow(" yes ", true)]
         [DataRow("\t\n\tfalse\t\n", false)]
         [DataRow("no\n", false)]
-        public void Parse_TestStringToBoolean(string s, bool expected)
+        public void Parse_StringToBoolean(string s, bool expected)
         {
             Assert.AreEqual(expected, BooleanUtility.Parse(s));
         }

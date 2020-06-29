@@ -73,29 +73,27 @@ namespace PG.Commons.Util
         [NotNull]
         public static List<string> SplitClean(string s, char separator)
         {
-            List<string> list = new List<string>();
-            if (IsNullEmptyOrWhiteSpace(s))
-            {
-                return list;
-            }
-
-            Debug.Assert(s != null, nameof(s) + " != null");
-            string[] split = s.Split(separator);
-            list.AddRange(from str in split where !IsNullEmptyOrWhiteSpace(str) select str.Trim());
-            return list;
+            return SplitStringInternal(s, separator);
         }
 
         [NotNull]
-        public static List<string> ParseSeparatedStringToList(string s, char separator)
+        public static List<string> ParseSeparatedStringToList(string s, char separator, bool shouldClean = true)
+        {
+            return SplitStringInternal(s, separator, shouldClean);
+        }
+        
+        [NotNull]
+        private static List<string> SplitStringInternal(string s, char separator, bool shouldClean = true)
         {
             List<string> list = new List<string>();
             if (IsNullEmptyOrWhiteSpace(s))
             {
                 return list;
             }
+
             Debug.Assert(s != null, nameof(s) + " != null");
             string[] split = s.Split(separator);
-            list.AddRange(from str in split where !IsNullEmptyOrWhiteSpace(str) select str.Trim());
+            list.AddRange(from str in split where !IsNullEmptyOrWhiteSpace(str) select shouldClean ? str.Trim() : str);
             return list;
         }
     }

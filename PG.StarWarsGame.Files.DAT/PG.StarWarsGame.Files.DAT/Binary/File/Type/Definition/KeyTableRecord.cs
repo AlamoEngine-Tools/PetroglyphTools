@@ -4,32 +4,19 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
+using PG.Commons.Util;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
 
 namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 {
-    public sealed class KeyTableRecord : IBinaryFile, ISizeable, IComparable<KeyTableRecord>
+    public sealed class KeyTableRecord : IBinaryFile, ISizeable, IComparable<KeyTableRecord>, IEquatable<KeyTableRecord>
     {
-        private string m_key;
         private static readonly Encoding ENCODING = Encoding.ASCII;
-
-
-        public string Key
-        {
-            get => m_key;
-            set
-            {
-                if (value != null)
-                {
-                    m_key = value.Replace("\0", string.Empty);
-                }
-            }
-        }
 
         public KeyTableRecord(string key)
         {
-            Key = key;
+            Key = key.Replace("\0", string.Empty);
         }
 
         public KeyTableRecord(byte[] bytes, long index, long stringLength)
@@ -39,22 +26,73 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
             Key = new string(chars);
         }
 
+
+        public string Key { get; }
+
         public byte[] ToBytes()
         {
             Debug.Assert(ENCODING != null, nameof(ENCODING) + " != null");
             return ENCODING.GetBytes(Key);
         }
 
-        public int Size => ToBytes() == null ? 0 : ToBytes().Length;
-
         public int CompareTo(KeyTableRecord other)
         {
-            if (other == null)
+            if (other == null) return 0;
+            if (ChecksumUtility.GetChecksum(Key) > ChecksumUtility.GetChecksum(other.Key))
             {
-                return 0;
+                return 1;
             }
-
-            return !(other is KeyTableRecord r) ? 0 : string.Compare(Key, r.Key, StringComparison.Ordinal);
+            if (ChecksumUtility.GetChecksum(Key) < ChecksumUtility.GetChecksum(other.Key))
+            {
+                return -1;
+            }
+            return 0;
         }
+
+        public bool Equals(KeyTableRecord other)
+        {
+            return CompareTo(other) == 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj is KeyTableRecord other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return (int) ChecksumUtility.GetChecksum(Key);
+        }
+
+        public static bool operator <(KeyTableRecord left, KeyTableRecord right)
+        {
+            return left.CompareTo(right) == -1;
+        }
+        
+        public static bool operator <=(KeyTableRecord left, KeyTableRecord right)
+        {
+            return left.CompareTo(right) == -1 || left.CompareTo(right) == 0;
+        }
+        
+        public static bool operator >(KeyTableRecord left, KeyTableRecord right)
+        {
+            return left.CompareTo(right) == 1;
+        }
+        public static bool operator >=(KeyTableRecord left, KeyTableRecord right)
+        {
+            return left.CompareTo(right) == 1 || left.CompareTo(right) == 0;
+        }
+
+        public static bool operator ==(KeyTableRecord left, KeyTableRecord right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(KeyTableRecord left, KeyTableRecord right)
+        {
+            return !Equals(left, right);
+        }
+
+        public int Size => ToBytes() == null ? 0 : ToBytes().Length;
     }
 }

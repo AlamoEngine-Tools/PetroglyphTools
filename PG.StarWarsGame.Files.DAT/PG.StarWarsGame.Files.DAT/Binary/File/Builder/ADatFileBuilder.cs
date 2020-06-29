@@ -44,11 +44,11 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             {
                 uint crc32 = BitConverter.ToUInt32(bytes, m_currentOffset);
                 m_currentOffset += sizeof(uint);
+                uint valueLenght = BitConverter.ToUInt32(bytes, m_currentOffset);
+                m_currentOffset += sizeof(uint);
                 uint keyLength = BitConverter.ToUInt32(bytes, m_currentOffset);
                 m_currentOffset += sizeof(uint);
-                uint valueLength = BitConverter.ToUInt32(bytes, m_currentOffset);
-                m_currentOffset += sizeof(uint);
-                IndexTableRecord indexTableRecord = new IndexTableRecord(crc32, valueLength, keyLength);
+                IndexTableRecord indexTableRecord = new IndexTableRecord(crc32, keyLength, valueLenght);
                 indexTable.Add(indexTableRecord);
             }
 

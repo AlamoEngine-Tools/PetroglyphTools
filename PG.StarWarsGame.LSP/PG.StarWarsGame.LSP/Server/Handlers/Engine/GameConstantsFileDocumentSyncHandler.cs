@@ -31,7 +31,6 @@ namespace PG.StarWarsGame.LSP.Server.Handlers.Engine
             m_bufferManager = bufferManager ??
                               throw new ArgumentNullException($"The argument {nameof(bufferManager)} may not be null.");
         }
-
         //TODO: Update to TextDocumentSyncKind.Incremental
         public TextDocumentSyncKind Change { get; } = TextDocumentSyncKind.Full;
 

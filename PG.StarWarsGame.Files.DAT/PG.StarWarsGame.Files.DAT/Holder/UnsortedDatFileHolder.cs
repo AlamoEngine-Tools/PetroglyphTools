@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using PG.Commons.Util;
+using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Files;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
@@ -13,7 +16,25 @@ namespace PG.StarWarsGame.Files.DAT.Holder
         {
         }
 
+        internal UnsortedDatFileHolder(string filePath, string fileName, DatFile file) : base(filePath, fileName)
+        {
+            Debug.Assert(file != null, nameof(file) + " != null");
+            Debug.Assert(file.Keys != null, "file.Keys != null");
+            for (int i = 0; i < file.Keys.Count; i++)
+            {
+                Debug.Assert(file.Keys[i] != null, $"file.Keys[{i}] != null");
+                if (!StringUtility.HasText(file.Keys[i].Key))
+                {
+                    continue;
+                }
+
+                Debug.Assert(file.Values != null, "file.Values != null");
+                Debug.Assert(file.Values[i] != null, $"file.Values[{i}] != null");
+                Content.Add(new Tuple<string, string>(file.Keys[i].Key, file.Values[i].Value ?? string.Empty));
+            }
+        }
+
         public override UnsortedDatAlamoFileType FileType { get; } = new UnsortedDatAlamoFileType();
-        public override List<Tuple<string, string>> Content { get; set; }
+        public override List<Tuple<string, string>> Content { get; set; } = new List<Tuple<string, string>>();
     }
 }

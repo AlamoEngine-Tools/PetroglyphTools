@@ -13,6 +13,11 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
         {
         }
 
+        public DatFile FromBytes(byte[] byteStream)
+        {
+            return FromBytesInternal(byteStream);
+        }
+
         public DatFile FromHolder(UnsortedDatFileHolder buildAttribute)
         {
             return FromHolderInternal(buildAttribute.Content);

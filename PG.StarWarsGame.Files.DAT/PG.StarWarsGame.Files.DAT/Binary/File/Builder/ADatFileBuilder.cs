@@ -20,11 +20,6 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             m_currentOffset = INDEX_TABLE_STARTING_OFFSET;
         }
 
-        public DatFile FromBytes(byte[] byteStream)
-        {
-            return FromBytesInternal(byteStream);
-        }
-
         [NotNull]
         protected DatFile FromBytesInternal([NotNull] byte[] bytes)
         {

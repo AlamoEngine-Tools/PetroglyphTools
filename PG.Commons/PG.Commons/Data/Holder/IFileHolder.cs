@@ -2,10 +2,15 @@ using PG.Commons.Data.Files;
 
 namespace PG.Commons.Data.Holder
 {
-    public interface IFileHolder<out T> where T : IAlamoFileType
+    public interface IFileHolder
     {
         string FilePath { get; }
         string FileName { get; }
-        T FileType { get; }
+    }
+
+    public interface IFileHolder<TContent, out TAlamoFileType>  : IFileHolder where TAlamoFileType : IAlamoFileType
+    {
+        TAlamoFileType FileType { get; }
+        TContent Content { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace PG.Commons.Exceptions
 {
+    [Serializable]
     public class XmlParseException : Exception
     {
         public XmlParseException()

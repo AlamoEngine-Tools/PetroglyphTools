@@ -70,6 +70,7 @@ namespace PG.Commons.Util
         /// <param name="s"></param>
         /// <param name="separator"></param>
         /// <returns></returns>
+        [NotNull]
         public static List<string> SplitClean(string s, char separator)
         {
             List<string> list = new List<string>();

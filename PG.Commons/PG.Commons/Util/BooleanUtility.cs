@@ -23,17 +23,17 @@ namespace PG.Commons.Util
         [NotNull] private static readonly string[] PETROGLYPH_FALSE_STRING_TYPES = {PETROGLYPH_NO, PETROGLYPH_FALSE};
 
         /// <summary>Parses the specified Petroglyph boolean found in Petroglyph games.</summary>
-        /// <param name="petroglyphBoolean">The string as read from the xml value.</param>
+        /// <param name="s">The string as read from the xml value.</param>
         /// <param name="defaultReturn">If the provided string value cannot be parsed, this default will be returned instead.</param>
         /// <returns></returns>
-        public static bool Parse(string petroglyphBoolean, bool defaultReturn = false)
+        public static bool Parse(string s, bool defaultReturn = false)
         {
-            if (!StringUtility.HasText(petroglyphBoolean))
+            if (!StringUtility.HasText(s))
             {
                 return defaultReturn;
             }
-            Debug.Assert(petroglyphBoolean != null, nameof(petroglyphBoolean) + " != null");
-            return PETROGLYPH_TRUE_STRING_TYPES.Contains(petroglyphBoolean.Trim(),
+            Debug.Assert(s != null, nameof(s) + " != null");
+            return PETROGLYPH_TRUE_STRING_TYPES.Contains(s.Trim(),
                 StringComparer.InvariantCultureIgnoreCase);
         }
 

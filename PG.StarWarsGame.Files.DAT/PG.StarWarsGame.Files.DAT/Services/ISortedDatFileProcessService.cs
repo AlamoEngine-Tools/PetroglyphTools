@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using PG.StarWarsGame.Files.DAT.Holder;
 
 namespace PG.StarWarsGame.Files.DAT.Services

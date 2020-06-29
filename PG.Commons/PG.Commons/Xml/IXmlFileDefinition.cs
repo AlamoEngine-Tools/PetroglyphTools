@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using PG.Commons.Xml.Tags;
 
 namespace PG.Commons.Xml

@@ -48,13 +48,14 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
             if (ReferenceEquals(this, other)) return true;
             return CompareTo(other) == 0;
         }
-
-        public int Size => ToBytes() == null ? 0 : ToBytes().Length;
-
+        
         public override bool Equals(object obj)
         {
             return ReferenceEquals(this, obj) || obj is ValueTableRecord other && Equals(other);
         }
+
+        public int Size => ToBytes() == null ? 0 : ToBytes().Length;
+
 
         public override int GetHashCode()
         {

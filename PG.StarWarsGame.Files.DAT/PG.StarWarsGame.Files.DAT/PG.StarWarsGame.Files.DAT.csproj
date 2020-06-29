@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.5" />
-    <PackageReference Include="System.IO.Abstractions" Version="11.0.7" />
+    <PackageReference Include="System.IO.Abstractions" Version="12.0.2" />
   </ItemGroup>
 
 </Project>

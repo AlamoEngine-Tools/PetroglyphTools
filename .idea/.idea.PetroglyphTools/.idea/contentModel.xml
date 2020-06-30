@@ -4,9 +4,9 @@
     <e p="C:\Users\gruen\.nuget\packages\microsoft.net.test.sdk\16.2.0\build\netcoreapp1.0" t="Include">
       <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
     </e>
-    <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.0.0\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" t="Include" />
-    <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.0.0\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" t="Include" />
-    <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.0.0\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" t="Include" />
     <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
     <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.1\resharper-host\local\Transient\ReSharperHost\v201\SolutionCaches\_PetroglyphTools.-1693569080.00" t="ExcludeRecursive" />
     <e p="E:\github\alamoengine-tools\PetroglyphTools" t="IncludeFlat">
@@ -847,6 +847,24 @@
       </e>
       <e p="PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Binary" t="Include">
+          <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="MegFileBuilder.cs" t="Include" />
+            </e>
+            <e p="Type" t="Include">
+              <e p="Definition" t="Include">
+                <e p="MegFile.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Files" t="Include">
+          <e p="MegAlamoFileType.cs" t="Include" />
+        </e>
+        <e p="Holder" t="Include">
+          <e p="MegFileHolder.cs" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.1" t="Include">
@@ -855,6 +873,10 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Files.MEG.csproj" t="IncludeRecursive" />
+        <e p="Services" t="Include">
+          <e p="IMegFileProcessService.cs" t="Include" />
+          <e p="MegFileProcessService.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />

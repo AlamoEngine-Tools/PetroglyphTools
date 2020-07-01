@@ -7,7 +7,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
     internal class MegFileProcessService : IMegFileProcessService
     {
         //TODO [gruenwaldlu, 2020-06-30-21:41:03+2]: Implement!
-        public void Unpack(MegFileHolder holder)
+        public void Unpack(MegFileHolder holder, string targetDirectory = null)
         {
             throw new System.NotImplementedException();
         }

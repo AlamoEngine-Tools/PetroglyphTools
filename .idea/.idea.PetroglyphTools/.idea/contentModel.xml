@@ -866,6 +866,11 @@
             </e>
           </e>
         </e>
+        <e p="Commons" t="Include">
+          <e p="Exceptions" t="Include">
+            <e p="MegFileCorruptedException.cs" t="Include" />
+          </e>
+        </e>
         <e p="Files" t="Include">
           <e p="MegAlamoFileType.cs" t="Include" />
         </e>
@@ -883,7 +888,6 @@
         <e p="PG.StarWarsGame.Files.MEG.csproj" t="IncludeRecursive" />
         <e p="Services" t="Include">
           <e p="IMegFileProcessService.cs" t="Include" />
-          <e p="MegFileProcessService.cs" t="Include" />
         </e>
       </e>
       <e p="PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test" t="IncludeRecursive">

@@ -41,5 +41,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
         }
 
         public int Size => ToBytes().Length;
+
+        internal string FileName => m_fileName;
     }
 }

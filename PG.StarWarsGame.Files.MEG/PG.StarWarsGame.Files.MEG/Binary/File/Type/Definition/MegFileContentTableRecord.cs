@@ -52,6 +52,8 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
             set => m_fileStartOffsetInBytes = value;
         }
 
+        internal uint FileSizeInBytes => m_fileSizeInBytes;
+
         #region Auto-Generated IComparable Implementation
 
         sealed class MegFileContentTableRecordComparer : IComparer

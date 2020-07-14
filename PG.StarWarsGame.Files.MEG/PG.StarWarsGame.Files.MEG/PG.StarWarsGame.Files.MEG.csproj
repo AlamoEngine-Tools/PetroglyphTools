@@ -15,4 +15,8 @@
     <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commons" />
+  </ItemGroup>
+
 </Project>

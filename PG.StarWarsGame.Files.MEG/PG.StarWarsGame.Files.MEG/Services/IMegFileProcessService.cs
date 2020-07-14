@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Holder;
 
 namespace PG.StarWarsGame.Files.MEG.Services
@@ -12,25 +13,43 @@ namespace PG.StarWarsGame.Files.MEG.Services
     public interface IMegFileProcessService
     {
         /// <summary>
-        /// Unpacks a previously loaded *.MEG file.
+        /// Packs a list of files as *.MEG archive.
         /// </summary>
-        /// <param name="holder">The previously loaded <see cref="MegFileHolder"/></param>
-        /// <param name="targetDirectory">The optional target directory. If not provided, null or empty,
-        /// the *.MEG file content will be unpacked into the same directory the *.MEG file resides in.</param>
-        void Unpack(MegFileHolder holder, string targetDirectory = null);
+        /// <param name="megArchiveName">The desired name of the archive.</param>
+        /// <param name="absoluteFilePaths">A list of files to be packed.</param>
+        /// <param name="targetDirectory">The target directory to which the *.MEG archive will be written.</param>
+        void PackFilesAsMegArchive(string megArchiveName, List<string> absoluteFilePaths, string targetDirectory);
+
         /// <summary>
-        /// Packs the files specified in a given <see cref="MegFileHolder"/> into a *.MEG file.
-        /// The<see cref="MegFileHolder.FilePath"/> will act as the working directory.
-        /// The <see cref="MegFileHolder.FileName"/> will be name of the produced output file.
-        /// All files contained in <see cref="MegFileHolder.Content"/> will be packed .
+        /// Unpacks a given *.MEG file into a given directory.
+        /// The file structure within the *.MEG file will be preserved relative to the target directory.
         /// </summary>
-        /// <param name="holder">The previously loaded/constructed <see cref="MegFileHolder"/></param>
-        void Pack(MegFileHolder holder);
+        /// <param name="filePath">Path to the *.MEG file to unpack.</param>
+        /// <param name="targetDirectory">Directory to unpack the files into.</param>
+        void UnpackMegFile(string filePath, string targetDirectory);
+
         /// <summary>
-        /// Loads the contained metadata of a *.MEG file into a <see cref="MegFileHolder"/>.
+        /// Same as <see cref="UnpackMegFile(string,string)"/>, but with a previously loaded
+        /// <see cref="MegFileHolder"/> instead of a file path to a meg file.  
         /// </summary>
-        /// <param name="filePath">Path tot the *.MEG file to load.</param>
-        /// <returns></returns>
+        /// <param name="holder">The previously loaded *.MEG file.</param>
+        /// <param name="targetDirectory">Directory to unpack the files into.</param>
+        void UnpackMegFile(MegFileHolder holder, string targetDirectory);
+        
+        /// <summary>
+        /// Unpacks a single file from a given *.MEG file, provided the file is stored in the archive.
+        /// </summary>
+        /// <param name="holder">The previously loaded *.MEG file.</param>
+        /// <param name="targetDirectory">Directory to unpack the files into.</param>
+        /// <param name="fileName">The name of the file to unpack.</param>
+        void UnpackMegFile(MegFileHolder holder, string targetDirectory, string fileName);
+        
+        /// <summary>
+        /// Loads a *.MEG file's metadata into a <see cref="MegFileHolder"/>. This holder can be used for targeted unpacking
+        /// of single files or checks for existence of a given file.. 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns>The specified *.MEG file's metadata.</returns>
         MegFileHolder Load(string filePath);
     }
 }

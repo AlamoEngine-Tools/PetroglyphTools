@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Server;
 using PG.StarWarsGame.LSP.Server.Buffering;
 using PG.StarWarsGame.LSP.Server.Handlers.Engine;
-using ILanguageServer = OmniSharp.Extensions.LanguageServer.Server.ILanguageServer;
 
 namespace PG.StarWarsGame.LSP.Server
 {

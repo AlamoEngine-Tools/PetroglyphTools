@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -113,8 +112,6 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder
             List<MegFileContentTableRecord> megFileContentList = new List<MegFileContentTableRecord>();
             for (int i = 0; i < megFileNameTable.MegFileNameTableRecords.Count; i++)
             {
-                string path = m_fileSystem.Path.GetFullPath(m_fileSystem.Path.Combine(holder.FilePath,
-                    megFileNameTable.MegFileNameTableRecords[i].FileName));
                 uint crc32 = ChecksumUtility.GetChecksum(megFileNameTable.MegFileNameTableRecords[i].FileName);
                 uint fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo.FromFileName(filePaths[i]).Length);
                 uint fileNameTableIndex = Convert.ToUInt32(i);

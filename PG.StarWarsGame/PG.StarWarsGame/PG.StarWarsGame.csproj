@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <NeutralLanguage>en-GB</NeutralLanguage>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <ProjectGuid>{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}</ProjectGuid>
   </PropertyGroup>
 

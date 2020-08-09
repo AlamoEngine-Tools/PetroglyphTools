@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.net.test.sdk\16.6.1\build\netcoreapp2.1" t="Include">
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.net.test.sdk\16.7.0\build\netcoreapp2.1" t="Include">
       <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
     </e>
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.6.1\build\netcoreapp2.1\x64\testhost.dll" t="Include" />
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.6.1\build\netcoreapp2.1\x64\testhost.exe" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.0\build\netcoreapp2.1\x64\testhost.dll" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.0\build\netcoreapp2.1\x64\testhost.exe" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" t="Include" />
@@ -47,7 +47,7 @@
         <e p="LocalizableTexts.resx" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.Commons.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -76,7 +76,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.Commons.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -95,7 +95,7 @@
         <e p="LocalizableTexts.resx" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.Core.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -106,7 +106,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.Core.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -752,7 +752,7 @@
         <e p="LocalizableTexts.resx" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -767,7 +767,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -815,7 +815,7 @@
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Files.DAT.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -840,7 +840,7 @@
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Files.DAT.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -880,7 +880,7 @@
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Files.MEG.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -892,9 +892,16 @@
       </e>
       <e p="PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Binary" t="Include">
+          <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="MegFileBuilderTest.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Files.MEG.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -905,7 +912,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Files.MTD.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -916,7 +923,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Files.MTD.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -927,7 +934,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Localisation.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -938,7 +945,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.Localisation.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -949,7 +956,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.LSP.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -977,7 +984,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="PG.StarWarsGame.LSP.Test.AssemblyInfo.cs" t="Include" />
             </e>
           </e>

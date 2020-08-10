@@ -102,37 +102,43 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder
 
         public MegFile FromHolder(MegFileHolder holder)
         {
-            List<string> filePaths =
-                holder.Content.Select(megFileDataEntry => megFileDataEntry.RelativeFilePath).ToList();
-            List<MegFileNameTableRecord> megFileNameTableRecords = holder.Content
-                .Select(megFileDataEntry => new MegFileNameTableRecord(megFileDataEntry.RelativeFilePath)).ToList();
-            MegFileNameTable megFileNameTable = new MegFileNameTable(megFileNameTableRecords);
-            uint currentOffset = (uint) new MegHeader(0, 0).Size;
-            currentOffset += (uint) megFileNameTable.Size;
-            List<MegFileContentTableRecord> megFileContentList = new List<MegFileContentTableRecord>();
-            for (int i = 0; i < megFileNameTable.MegFileNameTableRecords.Count; i++)
+            List<string> files = holder.Content.Select(megFileDataEntry => megFileDataEntry.RelativeFilePath).ToList();
+            List<MegFileNameTableRecord> megFileNameTableRecords =
+                files.Select(file => new MegFileNameTableRecord(file)).ToList();
+            megFileNameTableRecords.Sort();
+            // Workaround for Unix compatibility.
+            List<string> sortedFiles = (from megFileNameTableRecord in megFileNameTableRecords
+                from file in files
+                where megFileNameTableRecord.FileName.Equals(file, StringComparison.InvariantCultureIgnoreCase)
+                select file).ToList();
+            List<MegFileContentTableRecord> megFileContentTableRecords = new List<MegFileContentTableRecord>();
+            for (int i = 0; i < megFileNameTableRecords.Count; i++)
             {
-                uint crc32 = ChecksumUtility.GetChecksum(megFileNameTable.MegFileNameTableRecords[i].FileName);
-                uint fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo.FromFileName(filePaths[i]).Length);
+                uint crc32 = ChecksumUtility.GetChecksum(megFileNameTableRecords[i].FileName);
+                uint fileTableRecordIndex = Convert.ToUInt32(i);
+                uint fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo
+                    .FromFileName(
+                        m_fileSystem.Path.GetFullPath(m_fileSystem.Path.Combine(holder.FilePath, sortedFiles[i])))
+                    .Length);
                 uint fileNameTableIndex = Convert.ToUInt32(i);
-                MegFileContentTableRecord megFileContentTableRecord =
-                    new MegFileContentTableRecord(crc32, 0, fileSizeInBytes, 0, fileNameTableIndex);
-                megFileContentList.Add(megFileContentTableRecord);
-                currentOffset += (uint) megFileContentTableRecord.Size;
+                megFileContentTableRecords.Add(new MegFileContentTableRecord(crc32, fileTableRecordIndex,
+                    fileSizeInBytes, 0, fileNameTableIndex));
             }
 
-            megFileContentList.Sort();
-            for (int i = 0; i < megFileContentList.Count; i++)
+            MegHeader header = new MegHeader(Convert.ToUInt32(megFileContentTableRecords.Count),
+                Convert.ToUInt32(megFileContentTableRecords.Count));
+            MegFileNameTable megFileNameTable = new MegFileNameTable(megFileNameTableRecords);
+            uint currentOffset = Convert.ToUInt32(header.Size);
+            currentOffset += Convert.ToUInt32(megFileNameTable.Size);
+            MegFileContentTable t = new MegFileContentTable(megFileContentTableRecords);
+            currentOffset += Convert.ToUInt32(t.Size);
+            foreach (MegFileContentTableRecord megFileContentTableRecord in megFileContentTableRecords)
             {
-                megFileContentList[i].FileTableRecordIndex = Convert.ToUInt32(i);
-                megFileContentList[i].FileStartOffsetInBytes = currentOffset;
-                currentOffset += megFileContentList[i].FileSizeInBytes;
+                megFileContentTableRecord.FileStartOffsetInBytes = currentOffset;
+                currentOffset += Convert.ToUInt32(megFileContentTableRecord.FileSizeInBytes);
             }
-
-            MegFileContentTable megFileContentTable = new MegFileContentTable(megFileContentList);
-            return new MegFile(
-                new MegHeader((uint) megFileNameTable.MegFileNameTableRecords.Count,
-                    (uint) megFileNameTable.MegFileNameTableRecords.Count), megFileNameTable, megFileContentTable);
+            MegFileContentTable megFileContentTable = new MegFileContentTable(megFileContentTableRecords);
+            return new MegFile(header, megFileNameTable, megFileContentTable);
         }
     }
 }

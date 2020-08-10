@@ -12,7 +12,8 @@ namespace PG.StarWarsGame.Files.MEG.Holder
         /// .ctor
         /// </summary>
         /// <param name="relativeFilePath">The relative file path as defined in the *.MEG file.<br/>
-        /// Usually this file path is relative to the game or mod's DATA directory, e.g. Data/My/file.xml</param>
+        /// Usually this file path is relative to the game or mod's DATA directory, e.g. Data/My/file.xml
+        /// when the containing meg file resides in c:/My/Game/Data</param>
         /// <param name="offset">Optional offset from the start of the *.MEG file archive.
         /// If not set, this offset is -1. If a *.MEG file is read from disc using the standard implementation of the
         /// <see cref="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService"/> this is the byte offset from the

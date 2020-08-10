@@ -19,4 +19,9 @@
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="12.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
+    <ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
+  </ItemGroup>
+
 </Project>

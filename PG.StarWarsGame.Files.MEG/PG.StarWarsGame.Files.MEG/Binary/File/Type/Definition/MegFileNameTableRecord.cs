@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using JetBrains.Annotations;
@@ -8,7 +9,7 @@ using PG.Commons.Util;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
 {
-    internal class MegFileNameTableRecord : IBinaryFile, ISizeable
+    internal class MegFileNameTableRecord : IBinaryFile, ISizeable, IComparable
     {
         private readonly ushort m_fileNameLength;
         [NotNull] private readonly string m_fileName;
@@ -43,5 +44,54 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
         public int Size => ToBytes().Length;
 
         internal string FileName => m_fileName;
+        
+        #region Auto-Generated IComparable Implementation
+
+        sealed class MegFileNameTableRecordComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                if (x == null || y == null)
+                {
+                    return 0;
+                }
+
+                if (!(x is MegFileNameTableRecord a) || !(y is MegFileNameTableRecord b))
+                {
+                    return 0;
+                }
+
+                if (ChecksumUtility.GetChecksum(a.FileName) < ChecksumUtility.GetChecksum(b.FileName))
+                {
+                    return -1;
+                }
+
+                return 1;
+            }
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null)
+            {
+                return 0;
+            }
+
+            MegFileNameTableRecord b = obj as MegFileNameTableRecord;
+            if (b != null && ChecksumUtility.GetChecksum(this.FileName) > ChecksumUtility.GetChecksum(b.FileName))
+            {
+                return 1;
+            }
+
+            if (b != null && ChecksumUtility.GetChecksum(this.FileName) < ChecksumUtility.GetChecksum(b.FileName))
+            {
+                return -1;
+            }
+
+            return 0;
+        }
+
+        #endregion
+        
     }
 }

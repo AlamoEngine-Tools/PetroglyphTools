@@ -26,5 +26,9 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
         }
 
         public int Size => sizeof(uint) * 2;
+
+        internal uint NumFileNames => m_numFileNames;
+
+        internal uint NumFiles => m_numFiles;
     }
 }

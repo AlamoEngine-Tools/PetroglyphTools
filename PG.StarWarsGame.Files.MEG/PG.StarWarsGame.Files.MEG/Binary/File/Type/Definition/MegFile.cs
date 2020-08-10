@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using PG.Commons.Binary.File;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.MEG.Test")]
+
 namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
 {
     internal class MegFile : IBinaryFile
@@ -12,6 +13,12 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
         [NotNull] private readonly MegHeader m_header;
         [NotNull] private readonly MegFileNameTable m_fileNameTable;
         [NotNull] private readonly MegFileContentTable m_fileContentTable;
+
+        [NotNull] internal MegHeader Header => m_header;
+
+        [NotNull] internal MegFileNameTable FileNameTable => m_fileNameTable;
+
+        [NotNull] public MegFileContentTable FileContentTable => m_fileContentTable;
 
         public MegFile(MegHeader header, MegFileNameTable fileNameTable, MegFileContentTable fileContentTable)
         {

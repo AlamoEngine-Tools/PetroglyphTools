@@ -18,9 +18,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             return FromBytesInternal(byteStream);
         }
 
-        public DatFile FromHolder(SortedDatFileHolder buildAttribute)
+        public DatFile FromHolder(SortedDatFileHolder holder)
         {
-            return FromHolderInternal(buildAttribute.Content);
+            return FromHolderInternal(holder.Content);
         }
     }
 }

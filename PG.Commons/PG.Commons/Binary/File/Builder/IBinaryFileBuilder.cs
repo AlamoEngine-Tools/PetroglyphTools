@@ -8,6 +8,6 @@ namespace PG.Commons.Binary.File.Builder
         where TFileToBuild : IBinaryFile
     {
         [NotNull] TFileToBuild FromBytes([NotNull] byte[] byteStream);
-        [NotNull] TFileToBuild FromHolder([NotNull] TFileHolder buildAttribute);
+        [NotNull] TFileToBuild FromHolder([NotNull] TFileHolder holder);
     }
 }

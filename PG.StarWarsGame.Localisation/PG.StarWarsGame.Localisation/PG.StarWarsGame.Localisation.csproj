@@ -1,13 +1,57 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <ProjectGuid>{429CFC27-EEBC-4331-8EE8-43AE70E1DF3D}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.6" />
     <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Data\Dat\EaW\de\creditstext_german.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\de\creditstext_german.dat" />
+    <None Remove="Data\Dat\EaW\de\mastertextfile_german.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\de\mastertextfile_german.dat" />
+    <None Remove="Data\Dat\EaW\en\creditstext_english.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\en\creditstext_english.dat" />
+    <None Remove="Data\Dat\EaW\en\mastertextfile_english.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\en\mastertextfile_english.dat" />
+    <None Remove="Data\Dat\EaW\es\creditstext_spanish.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\es\creditstext_spanish.dat" />
+    <None Remove="Data\Dat\EaW\es\mastertextfile_spanish.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\es\mastertextfile_spanish.dat" />
+    <None Remove="Data\Dat\EaW\fr\creditstext_french.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\fr\creditstext_french.dat" />
+    <None Remove="Data\Dat\EaW\fr\mastertextfile_french.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\fr\mastertextfile_french.dat" />
+    <None Remove="Data\Dat\EaW\it\creditstext_italian.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\it\creditstext_italian.dat" />
+    <None Remove="Data\Dat\EaW\it\mastertextfile_italian.dat" />
+    <EmbeddedResource Include="Data\Dat\EaW\it\mastertextfile_italian.dat" />
+    <None Remove="Data\Dat\FoC\de\creditstext_german.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\de\creditstext_german.dat" />
+    <None Remove="Data\Dat\FoC\de\mastertextfile_german.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\de\mastertextfile_german.dat" />
+    <None Remove="Data\Dat\FoC\en\creditstext_english.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\en\creditstext_english.dat" />
+    <None Remove="Data\Dat\FoC\en\mastertextfile_english.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\en\mastertextfile_english.dat" />
+    <None Remove="Data\Dat\FoC\es\creditstext_spanish.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\es\creditstext_spanish.dat" />
+    <None Remove="Data\Dat\FoC\es\mastertextfile_spanish.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\es\mastertextfile_spanish.dat" />
+    <None Remove="Data\Dat\FoC\fr\creditstext_french.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\fr\creditstext_french.dat" />
+    <None Remove="Data\Dat\FoC\fr\mastertextfile_french.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\fr\mastertextfile_french.dat" />
+    <None Remove="Data\Dat\FoC\it\creditstext_italian.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\it\creditstext_italian.dat" />
+    <None Remove="Data\Dat\FoC\it\mastertextfile_italian.dat" />
+    <EmbeddedResource Include="Data\Dat\FoC\it\mastertextfile_italian.dat" />
   </ItemGroup>
 
 </Project>

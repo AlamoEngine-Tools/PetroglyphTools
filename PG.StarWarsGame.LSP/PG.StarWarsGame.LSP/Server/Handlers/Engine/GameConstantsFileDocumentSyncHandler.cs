@@ -4,12 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MediatR;
-using Microsoft.Language.Xml;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Window;
 using PG.StarWarsGame.LSP.Server.Buffering;
 
 namespace PG.StarWarsGame.LSP.Server.Handlers.Engine
@@ -121,7 +122,7 @@ namespace PG.StarWarsGame.LSP.Server.Handlers.Engine
             };
         }
 
-        public TextDocumentAttributes GetTextDocumentAttributes(Uri uri)
+        public TextDocumentAttributes GetTextDocumentAttributes(DocumentUri uri)
         {
             return new TextDocumentAttributes(uri, "xml");
             // TODO: Update to return new TextDocumentAttributes(uri, "eaw.gameconstantsfile.xml");

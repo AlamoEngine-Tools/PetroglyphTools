@@ -33,7 +33,6 @@ namespace PG.StarWarsGame.Files.DAT.Services
 
             string fileName = m_fileSystem.Path.GetFileName(path);
             string directoryPath = m_fileSystem.Path.GetDirectoryName(path);
-            Debug.Assert(m_fileSystem != null, "m_fileSystem != null");
             Debug.Assert(m_fileSystem.File != null, "m_fileSystem.File != null");
             DatFile file = new SortedDatFileBuilder().FromBytes(m_fileSystem.File.ReadAllBytes(filePath));
             return new SortedDatFileHolder(directoryPath, fileName, file);

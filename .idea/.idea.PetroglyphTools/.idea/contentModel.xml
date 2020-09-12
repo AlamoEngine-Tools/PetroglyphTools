@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.net.test.sdk\16.7.0\build\netcoreapp2.1" t="Include">
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.net.test.sdk\16.7.1\build\netcoreapp2.1" t="Include">
       <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
     </e>
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.0\build\netcoreapp2.1\x64\testhost.dll" t="Include" />
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.0\build\netcoreapp2.1\x64\testhost.exe" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.1\build\netcoreapp2.1\x64\testhost.dll" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.1\build\netcoreapp2.1\x64\testhost.exe" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" t="Include" />
-    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.1\resharper-host\local\Transient\ReSharperHost\v201\SolutionCaches\_PetroglyphTools.-1693569080.00" t="ExcludeRecursive" />
+    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.2\resharper-host\local\Transient\Rider\v202\SolutionCaches\_PetroglyphTools.-1693569080.00" t="ExcludeRecursive" />
     <e p="E:\github\alamoengine-tools\PetroglyphTools" t="IncludeFlat">
       <e p="packages" t="ExcludeRecursive" />
       <e p="PetroglyphTools.sln" t="IncludeFlat" />
@@ -888,6 +888,7 @@
         <e p="PG.StarWarsGame.Files.MEG.csproj" t="IncludeRecursive" />
         <e p="Services" t="Include">
           <e p="IMegFileProcessService.cs" t="Include" />
+          <e p="MegFileProcessService.cs" t="Include" />
         </e>
       </e>
       <e p="PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test" t="IncludeRecursive">
@@ -932,6 +933,67 @@
       </e>
       <e p="PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Data" t="Include">
+          <e p="Config" t="Include">
+            <e p="v1" t="Include">
+              <e p="eaw-translation.xsd" t="Include" />
+              <e p="LocalisationDataType.cs" t="Include" />
+              <e p="LocalisationType.cs" t="Include" />
+              <e p="TranslationType.cs" t="Include" />
+            </e>
+            <e p="v2" t="Include">
+              <e p="GameType.cs" t="Include" />
+              <e p="OverrideType.cs" t="Include" />
+              <e p="TranslationResourceType.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Dat" t="Include">
+            <e p="EaW" t="Include">
+              <e p="de" t="Include">
+                <e p="creditstext_german.dat" t="Include" />
+                <e p="mastertextfile_german.dat" t="Include" />
+              </e>
+              <e p="en" t="Include">
+                <e p="creditstext_english.dat" t="Include" />
+                <e p="mastertextfile_english.dat" t="Include" />
+              </e>
+              <e p="es" t="Include">
+                <e p="creditstext_spanish.dat" t="Include" />
+                <e p="mastertextfile_spanish.dat" t="Include" />
+              </e>
+              <e p="fr" t="Include">
+                <e p="creditstext_french.dat" t="Include" />
+                <e p="mastertextfile_french.dat" t="Include" />
+              </e>
+              <e p="it" t="Include">
+                <e p="creditstext_italian.dat" t="Include" />
+                <e p="mastertextfile_italian.dat" t="Include" />
+              </e>
+            </e>
+            <e p="FoC" t="Include">
+              <e p="de" t="Include">
+                <e p="creditstext_german.dat" t="Include" />
+                <e p="mastertextfile_german.dat" t="Include" />
+              </e>
+              <e p="en" t="Include">
+                <e p="creditstext_english.dat" t="Include" />
+                <e p="mastertextfile_english.dat" t="Include" />
+              </e>
+              <e p="es" t="Include">
+                <e p="creditstext_spanish.dat" t="Include" />
+                <e p="mastertextfile_spanish.dat" t="Include" />
+              </e>
+              <e p="fr" t="Include">
+                <e p="creditstext_french.dat" t="Include" />
+                <e p="mastertextfile_french.dat" t="Include" />
+              </e>
+              <e p="it" t="Include">
+                <e p="creditstext_italian.dat" t="Include" />
+                <e p="mastertextfile_italian.dat" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">

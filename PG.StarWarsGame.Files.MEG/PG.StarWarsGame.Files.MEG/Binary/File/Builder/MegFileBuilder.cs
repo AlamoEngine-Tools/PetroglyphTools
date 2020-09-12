@@ -107,6 +107,8 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder
                 files.Select(file => new MegFileNameTableRecord(file)).ToList();
             megFileNameTableRecords.Sort();
             // Workaround for Unix compatibility.
+            // File names are always stored as uppercase and without delimiter (\0), but Unix's file system is case sensitive,
+            // so we cache the proper file paths sorted by the "cleaned" version's CRC for quick access later.  
             List<string> sortedFiles = (from megFileNameTableRecord in megFileNameTableRecords
                 from file in files
                 where megFileNameTableRecord.FileName.Equals(file, StringComparison.InvariantCultureIgnoreCase)

@@ -12,6 +12,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
     internal class MegFileContentTable : IBinaryFile, ISizeable
     {
         [NotNull] private readonly List<MegFileContentTableRecord> m_megFileContentTableRecords;
+        internal List<MegFileContentTableRecord> MegFileContentTableRecords => m_megFileContentTableRecords;
 
         public MegFileContentTable(List<MegFileContentTableRecord> megFileContentTableRecords)
         {
@@ -31,5 +32,6 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
 
         public int Size => m_megFileContentTableRecords.Aggregate(0,
             (current, megFileContentTableRecord) => current + megFileContentTableRecord.Size);
+
     }
 }

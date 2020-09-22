@@ -1,4 +1,4 @@
-namespace PG.StarWarsGame.Localisation.Data.Config.v1
+namespace PG.StarWarsGame.Localisation.Data.Config.EaWTextEditorXml
 {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]

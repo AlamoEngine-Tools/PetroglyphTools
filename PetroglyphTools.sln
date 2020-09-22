@@ -32,9 +32,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.LSP.Test", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.Test\PG.StarWarsGame.LSP.Test.csproj", "{A1008BA0-FED6-4791-ADB8-29C247EBED66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Tools.Build", "PG.StarWarsGame.Tools.Build\PG.StarWarsGame.Tools.Build.csproj", "{FB263372-6466-4C30-86B2-9CED31F96708}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Tools.Build", "PG.StarWarsGame.Tools.Build\PG.StarWarsGame.Tools.Build\PG.StarWarsGame.Tools.Build.csproj", "{FB263372-6466-4C30-86B2-9CED31F96708}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Tools.Build.Test", "PG.StarWarsGame.Tools.Build.Test\PG.StarWarsGame.Tools.Build.Test.csproj", "{A42EB985-6A02-47C5-97A0-2C55D5A3C8DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Tools.Build.Test", "PG.StarWarsGame.Tools.Build\PG.StarWarsGame.Tools.Build.Test\PG.StarWarsGame.Tools.Build.Test.csproj", "{A42EB985-6A02-47C5-97A0-2C55D5A3C8DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

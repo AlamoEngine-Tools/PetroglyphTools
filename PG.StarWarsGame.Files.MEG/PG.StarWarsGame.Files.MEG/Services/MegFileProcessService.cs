@@ -13,15 +13,15 @@ using PG.StarWarsGame.Files.MEG.Holder;
 namespace PG.StarWarsGame.Files.MEG.Services
 {
     [Export(nameof(IMegFileProcessService))]
-    internal class MegFileProcessService : IMegFileProcessService
+    public class MegFileProcessService : IMegFileProcessService
     {
         private readonly ILogger m_logger;
         [NotNull] private readonly IFileSystem m_fileSystem;
 
-        public MegFileProcessService(IFileSystem fileSystem, ILogger logger = null)
+        public MegFileProcessService(IFileSystem fileSystem, ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
-            m_logger = logger;
+            m_logger = loggerFactory?.CreateLogger<MegFileProcessService>();
         }
 
         public void PackFilesAsMegArchive(string megArchiveName, string baseDirectoryPath,

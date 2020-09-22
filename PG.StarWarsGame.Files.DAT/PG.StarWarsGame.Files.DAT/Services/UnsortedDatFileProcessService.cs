@@ -11,15 +11,15 @@ using PG.StarWarsGame.Files.DAT.Holder;
 namespace PG.StarWarsGame.Files.DAT.Services
 {
     [Export(nameof(IUnsortedDatFileProcessService))]
-    internal class UnsortedDatFileProcessService : IUnsortedDatFileProcessService
+    public class UnsortedDatFileProcessService : IUnsortedDatFileProcessService
     {
         private readonly ILogger m_logger;
         [NotNull] private readonly IFileSystem m_fileSystem;
 
-        public UnsortedDatFileProcessService(IFileSystem fileSystem, ILogger logger = null)
+        public UnsortedDatFileProcessService(IFileSystem fileSystem, ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
-            m_logger = logger;
+            m_logger = loggerFactory?.CreateLogger<UnsortedDatFileProcessService>();
         }
 
         public UnsortedDatFileHolder LoadFromFile(string filePath)

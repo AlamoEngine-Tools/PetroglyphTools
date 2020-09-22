@@ -13,4 +13,8 @@
       <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="12.1.9" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+    </ItemGroup>
+
 </Project>

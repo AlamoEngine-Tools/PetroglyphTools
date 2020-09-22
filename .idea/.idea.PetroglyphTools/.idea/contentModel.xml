@@ -34,6 +34,12 @@
           <e p="ISizeable.cs" t="Include" />
         </e>
         <e p="Data" t="Include">
+          <e p="Config" t="Include">
+            <e p="Migration" t="Include">
+              <e p="IMigrationUnit.cs" t="Include" />
+              <e p="IMigrationUnit2.cs" t="Include" />
+            </e>
+          </e>
           <e p="Files" t="Include">
             <e p="FileType.cs" t="Include" />
             <e p="IAlamoFileType.cs" t="Include" />
@@ -46,7 +52,11 @@
             <e p="IXmlDocumentHolder.cs" t="Include" />
           </e>
         </e>
+        <e p="Environment" t="Include">
+          <e p="ExitCode.cs" t="Include" />
+        </e>
         <e p="Exceptions" t="Include">
+          <e p="InvalidVersionException.cs" t="Include" />
           <e p="PropertyNotFoundException.cs" t="Include" />
           <e p="ValueAlreadySetException.cs" t="Include" />
           <e p="XmlParseException.cs" t="Include" />
@@ -64,9 +74,11 @@
         <e p="Util" t="Include">
           <e p="BooleanUtility.cs" t="Include" />
           <e p="ChecksumUtility.cs" t="Include" />
+          <e p="EmbeddedResourceUtility.cs" t="Include" />
           <e p="HtmlUtility.cs" t="Include" />
           <e p="IOUtility.cs" t="Include" />
           <e p="StringUtility.cs" t="Include" />
+          <e p="XmlUtility.cs" t="Include" />
         </e>
         <e p="Xml" t="Include">
           <e p="IXmlFileDefinition.cs" t="Include" />
@@ -830,6 +842,8 @@
         </e>
         <e p="PG.StarWarsGame.Files.DAT.csproj" t="IncludeRecursive" />
         <e p="Services" t="Include">
+          <e p="DatFileUtilityService.cs" t="Include" />
+          <e p="IDatFileUtilityService.cs" t="Include" />
           <e p="ISortedDatFileProcessService.cs" t="Include" />
           <e p="IUnsortedDatFileProcessService.cs" t="Include" />
           <e p="SortedDatFileProcessService.cs" t="Include" />
@@ -941,18 +955,28 @@
       </e>
       <e p="PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Commons" t="Include">
+          <e p="Exceptions" t="Include">
+            <e p="LocalisationProjectNotLoadedException.cs" t="Include" />
+          </e>
+        </e>
         <e p="Data" t="Include">
           <e p="Config" t="Include">
-            <e p="v1" t="Include">
+            <e p="ConfigVersion.cs" t="Include" />
+            <e p="Csv" t="Include">
+              <e p="Localisation.cs" t="Include" />
+            </e>
+            <e p="EaWTextEditorXml" t="Include">
               <e p="eaw-translation.xsd" t="Include" />
               <e p="LocalisationDataType.cs" t="Include" />
               <e p="LocalisationType.cs" t="Include" />
               <e p="TranslationType.cs" t="Include" />
             </e>
-            <e p="v2" t="Include">
-              <e p="GameType.cs" t="Include" />
+            <e p="HierarchicalTextProject" t="Include">
               <e p="OverrideType.cs" t="Include" />
-              <e p="TranslationResourceType.cs" t="Include" />
+            </e>
+            <e p="Migration" t="Include">
+              <e p="LocalisationProjectMigrationUnit.cs" t="Include" />
             </e>
           </e>
           <e p="Dat" t="Include">
@@ -1001,6 +1025,13 @@
               </e>
             </e>
           </e>
+          <e p="Holder" t="Include">
+            <e p="ALocalisationElement.cs" t="Include" />
+            <e p="HierarchicalLocalisationElement.cs" t="Include" />
+            <e p="ILocalisationElement.cs" t="Include" />
+            <e p="LocalisationElement.cs" t="Include" />
+            <e p="LocalisationHolder.cs" t="Include" />
+          </e>
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -1010,6 +1041,11 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Localisation.csproj" t="IncludeRecursive" />
+        <e p="Services" t="Include">
+          <e p="ILocalisationProjectMigrationService.cs" t="Include" />
+          <e p="ILocalisationService.cs" t="Include" />
+          <e p="LocalisationService.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -1061,8 +1097,19 @@
         </e>
         <e p="PG.StarWarsGame.LSP.Test.csproj" t="IncludeRecursive" />
       </e>
-      <e p="PG.StarWarsGame.Tools.Build" t="IncludeRecursive">
+      <e p="PG.StarWarsGame.Tools.Build\PG.StarWarsGame.Tools.Build" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Cli" t="Include">
+          <e p="Options" t="Include">
+            <e p="BuildOptions.cs" t="Include" />
+            <e p="CookOptions.cs" t="Include" />
+            <e p="Defaults.cs" t="Include" />
+            <e p="IOptions.cs" t="Include" />
+            <e p="MigrationOptions.cs" t="Include" />
+            <e p="NewOptions.cs" t="Include" />
+            <e p="ReleaseOptions.cs" t="Include" />
+          </e>
+        </e>
         <e p="Host.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -1072,8 +1119,12 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Tools.Build.csproj" t="IncludeRecursive" />
+        <e p="Runner" t="Include">
+          <e p="ARunner.cs" t="Include" />
+          <e p="IRunner.cs" t="Include" />
+        </e>
       </e>
-      <e p="PG.StarWarsGame.Tools.Build.Test" t="IncludeRecursive">
+      <e p="PG.StarWarsGame.Tools.Build\PG.StarWarsGame.Tools.Build.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

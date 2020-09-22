@@ -11,17 +11,18 @@ using PG.StarWarsGame.Files.DAT.Holder;
 namespace PG.StarWarsGame.Files.DAT.Services
 {
     [Export(nameof(ISortedDatFileProcessService))]
-    internal class SortedDatFileProcessService : ISortedDatFileProcessService
+    public class SortedDatFileProcessService : ISortedDatFileProcessService
     {
         private readonly ILogger m_logger;
         [NotNull] private readonly IFileSystem m_fileSystem;
 
-        public SortedDatFileProcessService(IFileSystem fileSystem, ILogger logger = null)
+        public SortedDatFileProcessService(IFileSystem fileSystem, ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
-            m_logger = logger;
+            m_logger = loggerFactory.CreateLogger<SortedDatFileProcessService>();
         }
 
+        /// <inheritdoc/>
         public SortedDatFileHolder LoadFromFile(string filePath)
         {
             string path = m_fileSystem.Path.GetFullPath(filePath);
@@ -37,7 +38,7 @@ namespace PG.StarWarsGame.Files.DAT.Services
             DatFile file = new SortedDatFileBuilder().FromBytes(m_fileSystem.File.ReadAllBytes(filePath));
             return new SortedDatFileHolder(directoryPath, fileName, file);
         }
-
+        /// <inheritdoc/>
         public void SaveToFile(SortedDatFileHolder sortedDatFileHolder)
         {
             using (BinaryWriter writer = new BinaryWriter(m_fileSystem.File.Open(

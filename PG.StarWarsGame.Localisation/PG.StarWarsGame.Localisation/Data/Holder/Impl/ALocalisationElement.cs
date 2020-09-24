@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace PG.StarWarsGame.Localisation.Data.Holder
+namespace PG.StarWarsGame.Localisation.Data.Holder.Impl
 {
     internal abstract class ALocalisationElement : ILocalisationElement
     {
         private readonly Dictionary<CultureInfo, string> m_localisation;
         private const string MISSING = "[MISSING]";
 
-        internal ALocalisationElement(Dictionary<CultureInfo, string> localisation)
+        protected ALocalisationElement(Dictionary<CultureInfo, string> localisation)
         {
             m_localisation = localisation;
         }

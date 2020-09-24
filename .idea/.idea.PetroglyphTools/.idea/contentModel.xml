@@ -37,7 +37,6 @@
           <e p="Config" t="Include">
             <e p="Migration" t="Include">
               <e p="IMigrationUnit.cs" t="Include" />
-              <e p="IMigrationUnit2.cs" t="Include" />
             </e>
           </e>
           <e p="Files" t="Include">
@@ -1026,11 +1025,16 @@
             </e>
           </e>
           <e p="Holder" t="Include">
-            <e p="ALocalisationElement.cs" t="Include" />
-            <e p="HierarchicalLocalisationElement.cs" t="Include" />
             <e p="ILocalisationElement.cs" t="Include" />
-            <e p="LocalisationElement.cs" t="Include" />
-            <e p="LocalisationHolder.cs" t="Include" />
+            <e p="ILocalisationHolder.cs" t="Include" />
+            <e p="Impl" t="Include">
+              <e p="ALocalisationElement.cs" t="Include" />
+              <e p="ALocalisationHolder.cs" t="Include" />
+              <e p="HierarchicalLocalisationElement.cs" t="Include" />
+              <e p="HierarchicalLocalisationHolder.cs" t="Include" />
+              <e p="SimpleLocalisationElement.cs" t="Include" />
+              <e p="SimpleLocalisationHolder.cs" t="Include" />
+            </e>
           </e>
         </e>
         <e p="obj" t="ExcludeRecursive">

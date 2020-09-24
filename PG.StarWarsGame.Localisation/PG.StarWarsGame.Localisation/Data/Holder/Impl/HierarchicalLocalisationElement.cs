@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using PG.StarWarsGame.Localisation.Data.Config.HierarchicalTextProject;
 
-namespace PG.StarWarsGame.Localisation.Data.Holder
+namespace PG.StarWarsGame.Localisation.Data.Holder.Impl
 {
     internal class HierarchicalLocalisationElement : ALocalisationElement
     {

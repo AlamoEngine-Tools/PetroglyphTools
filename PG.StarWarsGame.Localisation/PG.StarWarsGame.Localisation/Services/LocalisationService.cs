@@ -32,7 +32,7 @@ namespace PG.StarWarsGame.Localisation.Services
         [NotNull] private readonly IFileSystem m_fileSystem;
         [NotNull] private readonly IDatFileUtilityService m_datFileUtilityService;
         [NotNull] private readonly ISortedDatFileProcessService m_sortedDatFileProcessService;
-        [NotNull] private readonly LocalisationHolder m_localisationHolder;
+        private ILocalisationHolder<ILocalisationElement> m_localisationHolder;
 
         private bool Loaded { get; set; }
 
@@ -54,7 +54,6 @@ namespace PG.StarWarsGame.Localisation.Services
                 datFileUtilityService ?? throw new ArgumentNullException(nameof(datFileUtilityService));
             m_sortedDatFileProcessService = sortedDatFileProcessService ??
                                             throw new ArgumentNullException(nameof(sortedDatFileProcessService));
-            m_localisationHolder = LocalisationHolder.GetEmptyDefault(datFileUtilityService, loggerFactory);
         }
 
         ///<inheritdoc/>
@@ -75,7 +74,7 @@ namespace PG.StarWarsGame.Localisation.Services
                     throw new System.NotImplementedException();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(textProjectConfigVersion), textProjectConfigVersion,
-                        null);
+                        string.Empty);
             }
         }
 
@@ -141,7 +140,7 @@ namespace PG.StarWarsGame.Localisation.Services
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(textProjectConfigVersion), textProjectConfigVersion,
-                        null);
+                        string.Empty);
             }
         }
 

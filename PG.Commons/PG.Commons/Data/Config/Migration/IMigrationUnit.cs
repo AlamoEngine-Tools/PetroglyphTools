@@ -1,5 +1,3 @@
-using PG.Commons.Environment;
-
 namespace PG.Commons.Data.Config.Migration
 {
     /// <summary>

@@ -19,7 +19,7 @@ namespace PG.StarWarsGame.Files.DAT.Services
         public SortedDatFileProcessService(IFileSystem fileSystem, ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
-            m_logger = loggerFactory.CreateLogger<SortedDatFileProcessService>();
+            m_logger = loggerFactory?.CreateLogger<SortedDatFileProcessService>();
         }
 
         /// <inheritdoc/>

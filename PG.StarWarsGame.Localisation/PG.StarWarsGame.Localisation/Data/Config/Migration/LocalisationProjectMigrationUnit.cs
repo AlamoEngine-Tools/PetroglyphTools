@@ -45,7 +45,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config.Migration
                     MigrateDatFiles();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(m_migrateFrom), m_migrateFrom, string.Empty);
+                    throw new ArgumentOutOfRangeException($"The requested conversion from \"{m_migrateFrom}\" not possible.");
             }
         }
 
@@ -69,7 +69,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config.Migration
                         $"The requested conversion from {nameof(ConfigVersion.DatFiles)} to {nameof(ConfigVersion.DatFiles)} is unnecessary.");
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(m_migrateTo), m_migrateTo, string.Empty);
+                    throw new ArgumentOutOfRangeException($"The requested conversion from \"{m_migrateFrom}\" not possible.");
             }
         }
 
@@ -93,7 +93,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config.Migration
                     MigrateSingleFileCsvToDatFiles();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(m_migrateTo), m_migrateTo, string.Empty);
+                    throw new ArgumentOutOfRangeException($"The requested conversion to \"{m_migrateTo}\" not possible.");
             }
         }
 
@@ -117,7 +117,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config.Migration
                     MigrateHierarchicalTextProjectToDatFiles();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(m_migrateTo), m_migrateTo, string.Empty);
+                    throw new ArgumentOutOfRangeException($"The requested conversion to \"{m_migrateTo}\" not possible.");
             }
         }
 
@@ -141,7 +141,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config.Migration
                     MigrateEaWTextEditorXmlToDatFiles();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(m_migrateTo), m_migrateTo, string.Empty);
+                    throw new ArgumentOutOfRangeException($"The requested conversion to \"{m_migrateTo}\" not possible.");
             }
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Composition;
 using System.Globalization;
 using System.IO;
@@ -32,7 +33,9 @@ namespace PG.StarWarsGame.Localisation.Services
         [NotNull] private readonly IFileSystem m_fileSystem;
         [NotNull] private readonly IDatFileUtilityService m_datFileUtilityService;
         [NotNull] private readonly ISortedDatFileProcessService m_sortedDatFileProcessService;
-        private ILocalisationHolder<ILocalisationElement> m_localisationHolder;
+        [NotNull] private readonly ReadOnlyDictionary<string, LocalisationElement> m_core;
+        [NotNull] private readonly ReadOnlyDictionary<string, LocalisationElement> m_expansion;
+        [NotNull] private readonly Dictionary<string, LocalisationElement> m_mod;
 
         private bool Loaded { get; set; }
 
@@ -54,6 +57,19 @@ namespace PG.StarWarsGame.Localisation.Services
                 datFileUtilityService ?? throw new ArgumentNullException(nameof(datFileUtilityService));
             m_sortedDatFileProcessService = sortedDatFileProcessService ??
                                             throw new ArgumentNullException(nameof(sortedDatFileProcessService));
+            m_core = AssembleReadonlyCore();
+            m_expansion = AssembleReadonlyExpansion();
+            m_mod = new Dictionary<string, LocalisationElement>();
+        }
+
+        private ReadOnlyDictionary<string, LocalisationElement> AssembleReadonlyCore()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ReadOnlyDictionary<string, LocalisationElement> AssembleReadonlyExpansion()
+        {
+            throw new NotImplementedException();
         }
 
         ///<inheritdoc/>
@@ -84,7 +100,35 @@ namespace PG.StarWarsGame.Localisation.Services
             if (!Loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
-            return m_localisationHolder.Get(textKey).Get(cultureInfo);
+            if (m_mod.ContainsKey(textKey))
+            {
+                return m_mod[textKey].Get(cultureInfo);
+            }
+
+            if (m_expansion.ContainsKey(textKey))
+            {
+                return m_expansion[textKey].Get(cultureInfo);
+            }
+
+            return m_core.ContainsKey(textKey) ? m_core[textKey].Get(cultureInfo) : LocalisationElement.MISSING;
+        }
+
+        private LocalisationElement GetLocalisationElement(string textKey)
+        {
+            if (!Loaded)
+                throw new LocalisationProjectNotLoadedException(
+                    "The localisation service has been created, but no localisation project has been loaded.");
+            if (m_mod.ContainsKey(textKey))
+            {
+                return m_mod[textKey];
+            }
+
+            if (m_expansion.ContainsKey(textKey))
+            {
+                return m_expansion[textKey];
+            }
+            
+            return m_core.ContainsKey(textKey) ? m_core[textKey] : LocalisationElement.GetEmptyElement();
         }
 
         ///<inheritdoc/>
@@ -93,7 +137,17 @@ namespace PG.StarWarsGame.Localisation.Services
             if (!Loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
-            return m_localisationHolder.Get(textKey).GetAll();
+            if (m_mod.ContainsKey(textKey))
+            {
+                return m_mod[textKey].GetAll();
+            }
+
+            if (m_expansion.ContainsKey(textKey))
+            {
+                return m_expansion[textKey].GetAll();
+            }
+
+            return m_core.ContainsKey(textKey) ? m_core[textKey].GetAll() : new List<string>();
         }
 
         ///<inheritdoc/>
@@ -102,7 +156,42 @@ namespace PG.StarWarsGame.Localisation.Services
             if (!Loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
-            ILocalisationElement element = m_localisationHolder.Get(textKey);
+            LocalisationElement element;
+            if (m_mod.ContainsKey(textKey))
+            {
+                element = m_mod[textKey];
+            }
+            else
+            {
+                if (m_expansion.ContainsKey(textKey))
+                {
+                    element = LocalisationElement.GetEmptyElement();
+                    // [gruenwaldlu]: If an element is overwritten in the hierarchy, it has to be overwritten in ALL languages. 
+                    IEnumerable<CultureInfo> cultures = CollectAllCulturesFromProject();
+                    foreach (CultureInfo culture in cultures)
+                    {
+                        element.TryUpdate(culture, LocalisationElement.MISSING);
+                    }
+                    m_mod.Add(textKey, element);
+                }
+                else
+                {
+                    if (!m_core.ContainsKey(textKey))
+                    {
+                        return false;
+                    }
+
+                    element = LocalisationElement.GetEmptyElement();
+                    // [gruenwaldlu]: If an element is overwritten in the hierarchy, it has to be overwritten in ALL languages.
+                    IEnumerable<CultureInfo> cultures = CollectAllCulturesFromProject();
+                    foreach (CultureInfo culture in cultures)
+                    {
+                        element.TryUpdate(culture, LocalisationElement.MISSING);
+                    }
+                    m_mod.Add(textKey, element);
+                }
+            }
+
             return element != null && element.TryUpdate(cultureInfo, localisation);
         }
 
@@ -112,7 +201,18 @@ namespace PG.StarWarsGame.Localisation.Services
             if (!Loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
-            throw new System.NotImplementedException();
+            if (TryUpdateLocalisation(textKey, localisation, cultureInfo)) return true;
+            LocalisationElement element = LocalisationElement.GetEmptyElement();
+            IEnumerable<CultureInfo> cultures = CollectAllCulturesFromProject();
+            foreach (CultureInfo culture in cultures)
+            {
+                element.TryUpdate(culture, LocalisationElement.MISSING);
+            }
+
+            if (!element.TryUpdate(cultureInfo, localisation)) return false;
+            m_mod.Add(textKey, element);
+            return true;
+
         }
 
         ///<inheritdoc/>
@@ -131,7 +231,8 @@ namespace PG.StarWarsGame.Localisation.Services
                     SaveEaWTextEditorXmlToDiscInternal(textProjectDirectoryPath);
                     break;
                 case ConfigVersion.HierarchicalTextProject:
-                    throw new System.NotImplementedException();
+                    SaveHierarchicalTextProjectToDisc(textProjectDirectoryPath);
+                    break;
                 case ConfigVersion.SingleFileCsv:
                     SaveSingleFileCsvToDiscInternal(textProjectDirectoryPath);
                     break;
@@ -144,6 +245,11 @@ namespace PG.StarWarsGame.Localisation.Services
             }
         }
 
+        private void SaveHierarchicalTextProjectToDisc(string textProjectDirectoryPath)
+        {
+            throw new NotImplementedException();
+        }
+
         private void SaveSingleFileCsvToDiscInternal(string textProjectDirectoryPath)
         {
             IEnumerable<CultureInfo> cultures = CollectAllCulturesFromProject();
@@ -152,7 +258,7 @@ namespace PG.StarWarsGame.Localisation.Services
                 if (m_datFileUtilityService.TryGetFileNamePartFromCultureInfo(cultureInfo, out string languageIndicator)
                 )
                 {
-                    IEnumerable<Data.Config.Csv.Localisation> records = CreateCsvRecords(cultureInfo);
+                    IEnumerable<Data.Config.Csv.Localisation> records = CreateCsvRecordsForSingleFileCsv(cultureInfo);
                     string exportPath = m_fileSystem.Path.Combine(textProjectDirectoryPath,
                         MASTER_TEXT_FILE_BASE_NAME_BUILDER_PART + languageIndicator + ".csv");
                     using StreamWriter writer =
@@ -168,17 +274,17 @@ namespace PG.StarWarsGame.Localisation.Services
             }
         }
 
-        private IEnumerable<Data.Config.Csv.Localisation> CreateCsvRecords(CultureInfo cultureInfo)
+        private IEnumerable<Data.Config.Csv.Localisation> CreateCsvRecordsForSingleFileCsv(CultureInfo cultureInfo)
         {
             List<Data.Config.Csv.Localisation> records = new List<Data.Config.Csv.Localisation>();
-            foreach (string key in m_localisationHolder.GetAllKeys())
+            foreach (string key in CollectAllKeysFromProject())
             {
                 try
                 {
                     records.Add(new Data.Config.Csv.Localisation
                     {
                         Key = key,
-                        Text = m_localisationHolder.Get(key).Get(cultureInfo)
+                        Text = GetLocalisation(key, cultureInfo)
                     });
                 }
                 catch (Exception e)
@@ -195,10 +301,10 @@ namespace PG.StarWarsGame.Localisation.Services
         private void SaveEaWTextEditorXmlToDiscInternal(string textProjectPath)
         {
             List<LocalisationType> localisations = new List<LocalisationType>();
-            foreach (string key in m_localisationHolder.GetAllKeys())
+            foreach (string key in CollectAllKeysFromProject())
             {
                 List<TranslationType> translations = new List<TranslationType>();
-                ILocalisationElement localisationElement = m_localisationHolder.Get(key);
+                LocalisationElement localisationElement = GetLocalisationElement(key);
                 foreach (CultureInfo cultureInfo in localisationElement.GetAllKeys())
                 {
                     if (m_datFileUtilityService.TryGetFileNamePartFromCultureInfo(cultureInfo, out string fileNamePart))
@@ -254,7 +360,7 @@ namespace PG.StarWarsGame.Localisation.Services
         {
             HashSet<string> set = new HashSet<string>();
             List<CultureInfo> cultures = new List<CultureInfo>();
-            foreach (ILocalisationElement localisationElement in m_localisationHolder.GetAll())
+            foreach (LocalisationElement localisationElement in m_core.Values)
             {
                 foreach (CultureInfo cultureInfo in localisationElement.GetAllKeys())
                 {
@@ -264,7 +370,26 @@ namespace PG.StarWarsGame.Localisation.Services
                     cultures.Add(cultureInfo);
                 }
             }
-
+            foreach (LocalisationElement localisationElement in m_expansion.Values)
+            {
+                foreach (CultureInfo cultureInfo in localisationElement.GetAllKeys())
+                {
+                    if (set.Contains(cultureInfo.Name)) continue;
+                    m_logger.LogInformation($"Discovered new culture info \"{cultureInfo}\".");
+                    set.Add(cultureInfo.Name);
+                    cultures.Add(cultureInfo);
+                }
+            }
+            foreach (LocalisationElement localisationElement in m_mod.Values)
+            {
+                foreach (CultureInfo cultureInfo in localisationElement.GetAllKeys())
+                {
+                    if (set.Contains(cultureInfo.Name)) continue;
+                    m_logger.LogInformation($"Discovered new culture info \"{cultureInfo}\".");
+                    set.Add(cultureInfo.Name);
+                    cultures.Add(cultureInfo);
+                }
+            }
             return cultures;
         }
 
@@ -278,7 +403,7 @@ namespace PG.StarWarsGame.Localisation.Services
                 if (m_datFileUtilityService.TryGetFileNamePartFromCultureInfo(cultureInfo, out string languageIndicator)
                 )
                 {
-                    IEnumerable<string> keys = m_localisationHolder.GetAllKeys();
+                    IEnumerable<string> keys = CollectAllKeysFromProject();
                     List<Tuple<string, string>> initList =
                         (from key in keys
                             let localisation = GetLocalisation(key, cultureInfo)
@@ -297,6 +422,24 @@ namespace PG.StarWarsGame.Localisation.Services
             }
 
             return sortedDatFileHolders;
+        }
+
+        private IEnumerable<string> CollectAllKeysFromProject()
+        {
+            HashSet<string> uniqueKeys = new HashSet<string>();
+            foreach (string coreKey in m_core.Keys)
+            {
+                uniqueKeys.Add(coreKey);
+            }
+            foreach (string expansionKey in m_expansion.Keys)
+            {
+                uniqueKeys.Add(expansionKey);
+            }
+            foreach (string modKey in m_mod.Keys)
+            {
+                uniqueKeys.Add(modKey);
+            }
+            return uniqueKeys.AsEnumerable();
         }
     }
 }

@@ -35,7 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Localisatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.LSP.Test", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.Test\PG.StarWarsGame.LSP.Test.csproj", "{A1008BA0-FED6-4791-ADB8-29C247EBED66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.MEG.CLI", "PG.StarWarsGame.Files.MEG.CLI\PG.StarWarsGame.Files.MEG.CLI.csproj", "{9F11CF1D-19D0-4DBC-8192-079A487BB2A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.MEG.CLI", "PG.StarWarsGame.Files.MEG.CLI\PG.StarWarsGame.Files.MEG.CLI.csproj", "{9F11CF1D-19D0-4DBC-8192-079A487BB2A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.MEG.CLI.Test", "PG.StarWarsGame.Files.MEG.CLI.Test\PG.StarWarsGame.Files.MEG.CLI.Test.csproj", "{BF3A893F-1FB0-49F1-8736-8B138226907E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,10 @@ Global
 		{9F11CF1D-19D0-4DBC-8192-079A487BB2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F11CF1D-19D0-4DBC-8192-079A487BB2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F11CF1D-19D0-4DBC-8192-079A487BB2A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF3A893F-1FB0-49F1-8736-8B138226907E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF3A893F-1FB0-49F1-8736-8B138226907E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF3A893F-1FB0-49F1-8736-8B138226907E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF3A893F-1FB0-49F1-8736-8B138226907E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

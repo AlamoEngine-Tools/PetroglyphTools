@@ -19,7 +19,9 @@ install:
   - dotnet restore PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.csproj
   - dotnet restore PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj
   - dotnet restore PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj
+  - dotnet restore PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.CLI/PG.StarWarsGame.Files.MEG.CLI.csproj
   - dotnet restore PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj
+  - dotnet restore PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.CLI.Test/PG.StarWarsGame.Files.MEG.CLI.Test.csproj
   - dotnet restore PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.csproj
   - dotnet restore PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj
   - dotnet restore PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.csproj
@@ -41,6 +43,8 @@ script:
   - dotnet test PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:MergeWith=../../lcov.opencover.xml
   - dotnet build PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj
   - dotnet test PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:MergeWith=../../lcov.opencover.xml
+  - dotnet build PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.CLI/PG.StarWarsGame.Files.MEG.CLI.csproj
+  - dotnet test PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.CLI.Test/PG.StarWarsGame.Files.MEG.CLI.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:MergeWith=../../lcov.opencover.xml
   - dotnet build PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.csproj
   - dotnet test PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:MergeWith=../../lcov.opencover.xml
   - dotnet build PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.csproj

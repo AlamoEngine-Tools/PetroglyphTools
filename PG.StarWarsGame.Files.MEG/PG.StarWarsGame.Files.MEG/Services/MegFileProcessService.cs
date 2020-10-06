@@ -42,6 +42,25 @@ namespace PG.StarWarsGame.Files.MEG.Services
             if (!m_fileSystem.Directory.Exists(targetDirectory))
             {
                 m_logger?.LogWarning($"The given directory does not exist. Trying to create it.");
+                m_fileSystem.Directory.CreateDirectory(targetDirectory);
+            }
+
+            using BinaryReader reader = new BinaryReader(m_fileSystem.FileStream.Create(
+                m_fileSystem.Path.Combine(holder.FilePath, $"{holder.FileName}.{holder.FileType.FileExtension}"),
+                FileMode.Open));
+            foreach (MegFileDataEntry megFileDataEntry in holder.Content)
+            {
+                string filePath = m_fileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
+                string path = m_fileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
+                if (!m_fileSystem.Directory.Exists(path))
+                {
+                    m_logger?.LogWarning($"The given directory does not exist. Trying to create it.");
+                    m_fileSystem.Directory.CreateDirectory(path);
+                }
+                byte[] file = new byte[megFileDataEntry.Size];
+                reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
+                reader.Read(file, 0, file.Length);
+                m_fileSystem.File.WriteAllBytes(filePath, file);
             }
         }
 
@@ -64,6 +83,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
 
             uint headerSize = GetMegFileHeaderSize(filePath);
             byte[] megFileHeader = new byte[headerSize];
+            //TODO [gruenwaldlu, 2020-10-06-10:47:46+2]: Update to IFIleSystem!
             using (BinaryReader reader = new BinaryReader(new FileStream(filePath, FileMode.Open)))
             {
                 reader.Read(megFileHeader, 0, megFileHeader.Length);

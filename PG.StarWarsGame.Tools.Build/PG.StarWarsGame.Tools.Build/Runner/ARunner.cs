@@ -2,6 +2,7 @@ using System;
 using System.IO.Abstractions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using PG.Commons.Cli.Options;
 using PG.Commons.Environment;
 using PG.StarWarsGame.Tools.Build.Cli.Options;
 

@@ -37,7 +37,7 @@ namespace PG.StarWarsGame.Localisation.Services
         [NotNull] private readonly ReadOnlyDictionary<string, LocalisationElement> m_expansion;
         [NotNull] private readonly Dictionary<string, LocalisationElement> m_mod;
 
-        private bool Loaded { get; set; }
+        private bool m_loaded = false;
 
         /// <summary>
         /// .ctor
@@ -62,12 +62,14 @@ namespace PG.StarWarsGame.Localisation.Services
             m_mod = new Dictionary<string, LocalisationElement>();
         }
 
-        private ReadOnlyDictionary<string, LocalisationElement> AssembleReadonlyCore()
+        private static ReadOnlyDictionary<string, LocalisationElement> AssembleReadonlyCore()
         {
-            throw new NotImplementedException();
+            Dictionary<string, LocalisationElement> core = new Dictionary<string, LocalisationElement>();
+            
+            return new ReadOnlyDictionary<string, LocalisationElement>(core);
         }
 
-        private ReadOnlyDictionary<string, LocalisationElement> AssembleReadonlyExpansion()
+        private static ReadOnlyDictionary<string, LocalisationElement> AssembleReadonlyExpansion()
         {
             throw new NotImplementedException();
         }
@@ -97,7 +99,7 @@ namespace PG.StarWarsGame.Localisation.Services
         ///<inheritdoc/>
         public string GetLocalisation(string textKey, CultureInfo cultureInfo)
         {
-            if (!Loaded)
+            if (!m_loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
             if (m_mod.ContainsKey(textKey))
@@ -115,7 +117,7 @@ namespace PG.StarWarsGame.Localisation.Services
 
         private LocalisationElement GetLocalisationElement(string textKey)
         {
-            if (!Loaded)
+            if (!m_loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
             if (m_mod.ContainsKey(textKey))
@@ -134,7 +136,7 @@ namespace PG.StarWarsGame.Localisation.Services
         ///<inheritdoc/>
         public IEnumerable<string> GetAllLocalisations(string textKey)
         {
-            if (!Loaded)
+            if (!m_loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
             if (m_mod.ContainsKey(textKey))
@@ -153,7 +155,7 @@ namespace PG.StarWarsGame.Localisation.Services
         ///<inheritdoc/>
         public bool TryUpdateLocalisation(string textKey, string localisation, CultureInfo cultureInfo)
         {
-            if (!Loaded)
+            if (!m_loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
             LocalisationElement element;
@@ -198,7 +200,7 @@ namespace PG.StarWarsGame.Localisation.Services
         ///<inheritdoc/>
         public bool TryAddLocalisation(string textKey, string localisation, CultureInfo cultureInfo)
         {
-            if (!Loaded)
+            if (!m_loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
             if (TryUpdateLocalisation(textKey, localisation, cultureInfo)) return true;
@@ -219,7 +221,7 @@ namespace PG.StarWarsGame.Localisation.Services
         public void SaveToDisc(string textProjectDirectoryPath, ConfigVersion textProjectConfigVersion,
             bool cleanDirectory = true)
         {
-            if (!Loaded)
+            if (!m_loaded)
                 throw new LocalisationProjectNotLoadedException(
                     "The localisation service has been created, but no localisation project has been loaded.");
             switch (textProjectConfigVersion)

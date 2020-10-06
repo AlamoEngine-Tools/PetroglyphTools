@@ -33,6 +33,11 @@
           </e>
           <e p="ISizeable.cs" t="Include" />
         </e>
+        <e p="Cli" t="Include">
+          <e p="Options" t="Include">
+            <e p="IOptions.cs" t="Include" />
+          </e>
+        </e>
         <e p="Data" t="Include">
           <e p="Config" t="Include">
             <e p="Migration" t="Include">
@@ -929,6 +934,9 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Files.MEG.Test.csproj" t="IncludeRecursive" />
+        <e p="Services" t="Include">
+          <e p="MegFileProcessServiceTest.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -1037,7 +1045,6 @@
         </e>
         <e p="PG.StarWarsGame.Localisation.csproj" t="IncludeRecursive" />
         <e p="Services" t="Include">
-          <e p="ILocalisationHelperService.cs" t="Include" />
           <e p="ILocalisationProjectMigrationService.cs" t="Include" />
           <e p="ILocalisationService.cs" t="Include" />
           <e p="LocalisationService.cs" t="Include" />
@@ -1100,7 +1107,6 @@
             <e p="BuildOptions.cs" t="Include" />
             <e p="CookOptions.cs" t="Include" />
             <e p="Defaults.cs" t="Include" />
-            <e p="IOptions.cs" t="Include" />
             <e p="MigrationOptions.cs" t="Include" />
             <e p="NewOptions.cs" t="Include" />
             <e p="ReleaseOptions.cs" t="Include" />

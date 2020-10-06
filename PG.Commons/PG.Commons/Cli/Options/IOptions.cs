@@ -1,4 +1,4 @@
-namespace PG.StarWarsGame.Tools.Build.Cli.Options
+namespace PG.Commons.Cli.Options
 {
     /// <summary>
     /// Basic interface for all valid command-line-options and their shared elements.

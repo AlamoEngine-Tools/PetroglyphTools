@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
+    <ProjectReference Include="..\..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
   </ItemGroup>
 
 </Project>

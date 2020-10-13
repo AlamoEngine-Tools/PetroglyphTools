@@ -7,7 +7,7 @@ using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Util;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
+namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
     internal class MegFileNameTableRecord : IBinaryFile, ISizeable, IComparable
     {

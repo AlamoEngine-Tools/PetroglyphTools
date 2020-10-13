@@ -3,6 +3,9 @@ using JetBrains.Annotations;
 
 namespace PG.Commons.Util
 {
+    /// <summary>
+    /// A utility class to handle Petroglyph's CRC32 checksum implementation used throughout the Alamo Engine 
+    /// </summary>
     public static class ChecksumUtility
     {
         [NotNull] private static readonly ulong[] LOOKUP_TABLE = new ulong[256];
@@ -25,6 +28,11 @@ namespace PG.Commons.Util
             }
         }
 
+        /// <summary>
+        /// Computes the CRC32 checksum for a given not nullable <c>string</c> as <code>uint</code>. 
+        /// </summary>
+        /// <param name="s">Not-nullable input.</param>
+        /// <returns></returns>
         public static uint GetChecksum([NotNull] string s)
         {
             return ComputeCrc32(s);
@@ -40,6 +48,12 @@ namespace PG.Commons.Util
             return Convert.ToUInt32(crc ^ 0xFFFFFFFF);
         }
 
+        /// <summary>
+        /// Convenience method to directly get a CRC32 checksum as byte array.
+        /// Analogue to calling <code>BitConverter.GetBytes(ChecksumUtility.ComputeCrc32(s))</code>
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static byte[] GetChecksumAsBytes([NotNull] string s)
         {
             return BitConverter.GetBytes(ComputeCrc32(s));

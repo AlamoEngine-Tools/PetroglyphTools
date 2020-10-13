@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
+namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
     internal class MegHeader : IBinaryFile, ISizeable
     {

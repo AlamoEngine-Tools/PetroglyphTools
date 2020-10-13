@@ -13,13 +13,13 @@ namespace PG.StarWarsGame.Files.DAT.Services
     [Export(nameof(IUnsortedDatFileProcessService))]
     internal class UnsortedDatFileProcessService : IUnsortedDatFileProcessService
     {
-        private readonly ILogger m_logger;
+        [CanBeNull] private readonly ILogger m_logger;
         [NotNull] private readonly IFileSystem m_fileSystem;
 
-        public UnsortedDatFileProcessService(IFileSystem fileSystem, ILogger logger = null)
+        public UnsortedDatFileProcessService([CanBeNull] IFileSystem fileSystem, [CanBeNull] ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
-            m_logger = logger;
+            m_logger = loggerFactory?.CreateLogger<UnsortedDatFileProcessService>();
         }
 
         public UnsortedDatFileHolder LoadFromFile(string filePath)
@@ -40,13 +40,11 @@ namespace PG.StarWarsGame.Files.DAT.Services
 
         public void SaveToFile(UnsortedDatFileHolder unsortedDatFileHolder)
         {
-            using (BinaryWriter writer = new BinaryWriter(m_fileSystem.File.Open(
+            using BinaryWriter writer = new BinaryWriter(m_fileSystem.File.Open(
                 m_fileSystem.Path.Combine(unsortedDatFileHolder.FilePath, unsortedDatFileHolder.FileName),
-                FileMode.CreateNew)))
-            {
-                DatFile datFile = new UnsortedDatFileBuilder().FromHolder(unsortedDatFileHolder);
-                writer.Write(datFile.ToBytes());
-            }
+                FileMode.CreateNew));
+            DatFile datFile = new UnsortedDatFileBuilder().FromHolder(unsortedDatFileHolder);
+            writer.Write(datFile.ToBytes());
         }
     }
 }

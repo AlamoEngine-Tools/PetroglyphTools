@@ -6,7 +6,7 @@ using PG.Commons.Binary.File;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.MEG.Test")]
 
-namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
+namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
     internal class MegFile : IBinaryFile
     {

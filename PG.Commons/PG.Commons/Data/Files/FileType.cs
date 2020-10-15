@@ -13,5 +13,9 @@ namespace PG.Commons.Data.Files
         /// A plain-text file type.
         /// </summary>
         Text,
+        /// <summary>
+        /// A chunk file type.
+        /// </summary>
+        Chunk,
     }
 }

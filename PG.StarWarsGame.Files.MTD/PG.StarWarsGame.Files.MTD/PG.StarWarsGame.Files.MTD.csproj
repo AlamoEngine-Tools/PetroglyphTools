@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.9" />
-    <PackageReference Include="System.IO.Abstractions" Version="12.2.5" />
+    <PackageReference Include="System.IO.Abstractions" Version="12.2.7" />
   </ItemGroup>
 
 </Project>

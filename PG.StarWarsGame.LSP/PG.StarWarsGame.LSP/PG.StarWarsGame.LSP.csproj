@@ -11,7 +11,7 @@
       <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.9" />
       <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.18.2" />
-      <PackageReference Include="System.IO.Abstractions" Version="12.2.7" />
+      <PackageReference Include="System.IO.Abstractions" Version="13.2.4" />
     </ItemGroup>
 
     <ItemGroup>

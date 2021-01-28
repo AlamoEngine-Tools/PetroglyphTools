@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test_project: [PG.Core/PG.Core.Test/PG.Core.Test.csproj, PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj, PG.StarWarsGame/PG.StarWarsGame.Test/PG.StarWarsGame.Test.csproj, PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj, PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj, PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj, PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.Test/PG.StarWarsGame.Localisation.Test.csproj]
+        test_project: [PG.Core, PG.Commons, PG.StarWarsGame, PG.StarWarsGame.Files.DAT, PG.StarWarsGame.Files.MEG, PG.StarWarsGame.Files.MTD, PG.StarWarsGame.Localisation]
       fail-fast: false
     continue-on-error: true
     steps:
@@ -25,9 +25,20 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Generate Code Coverage Report
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      run: dotnet test ${{ matrix.test_project }}/${{ matrix.test_project }}.Test/${{ matrix.test_project }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
     - name: Publish Coverage Report
-      uses: coverallsapp/github-action@v1.0.1
+      uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.COVERALL_TOKEN }}
-        path-to-lcov: ./TestResults/coverage.info
+        flag-name: run-${{ matrix.test_project }}
+        path-to-lcov: ./${{ matrix.test_project }}/${{ matrix.test_project }}.Test/TestResults/coverage.info
+        parallel: true
+  finish:
+    needs: code-coverage
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finish
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.COVERALL_TOKEN }}
+        parallel-finished: true

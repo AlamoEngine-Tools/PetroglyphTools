@@ -1,6 +1,6 @@
 # PetroglyphTools
 The core repository for all AlamoEngine Tools
 
-[![Build Status](https://travis-ci.com/AlamoEngine-Tools/PetroglyphTools.svg?branch=master)](https://travis-ci.com/AlamoEngine-Tools/PetroglyphTools)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/AlamoEngine-Tools/PetroglyphTools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/AlamoEngine-Tools/PetroglyphTools/alerts/)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AlamoEngine-Tools_PetroglyphTools&metric=alert_status)](https://sonarcloud.io/dashboard?id=AlamoEngine-Tools_PetroglyphTools)
+[![Build Status](https://github.com/AlamoEngine-Tools/PetroglyphTools/workflows/Petroglyph%20Tools%20.NET%20Core%20Build%20%26%20Test/badge.svg)](https://github.com/AlamoEngine-Tools/PetroglyphTools/actions)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/AlamoEngine-Tools/PetroglyphTools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/AlamoEngine-Tools/PetroglyphTools/alerts/)
+[![Coverage Status](https://coveralls.io/repos/github/AlamoEngine-Tools/PetroglyphTools/badge.svg?branch=master)](https://coveralls.io/github/AlamoEngine-Tools/PetroglyphTools?branch=master)

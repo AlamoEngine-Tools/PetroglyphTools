@@ -12,8 +12,8 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        project: [PG.Core/PG.Core/PG.Core.csproj]
-        test_project: [PG.Core/PG.Core.Test/PG.Core.Test.csproj]
+        project: [PG.Core/PG.Core/PG.Core.csproj, PG.Commons/PG.Commons/PG.Commons.csproj]
+        test_project: [PG.Core/PG.Core.Test/PG.Core.Test.csproj, PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj]
         configuration: [Debug, Release]
     runs-on: ${{ matrix.os }}
     steps:

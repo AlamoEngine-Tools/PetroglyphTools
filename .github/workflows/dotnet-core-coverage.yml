@@ -29,7 +29,7 @@ jobs:
     - name: Publish Coverage Report
       uses: coverallsapp/github-action@master
       with:
-        github-token: ${{ secrets.COVERALL_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         flag-name: run-${{ matrix.test_project }}
         path-to-lcov: ./${{ matrix.test_project }}/${{ matrix.test_project }}.Test/TestResults/coverage.info
         parallel: true
@@ -40,5 +40,5 @@ jobs:
     - name: Coveralls Finish
       uses: coverallsapp/github-action@master
       with:
-        github-token: ${{ secrets.COVERALL_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true

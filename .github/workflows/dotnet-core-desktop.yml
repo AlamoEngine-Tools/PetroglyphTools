@@ -1,4 +1,4 @@
-name: .NET Core Desktop
+name: .NET Core
 
 on:
   push:
@@ -14,9 +14,8 @@ jobs:
         configuration: [Debug, Release]
     runs-on: windows-latest
     env:
-      Solution_Name: PG.Core/PG.Core/PG.Core.sln
-      Test_Project_Path: PG.Core/PG.Core.Test/PG.Core.Test.sln
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true      
+      project_path: PG.Core/PG.Core/PG.Core.csproj
+      test_project_path: PG.Core/PG.Core.Test/PG.Core.Test.csproj
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -26,11 +25,9 @@ jobs:
       uses: actions/setup-dotnet@v1.7.2
       with:
         dotnet-version: 3.1.x
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@2008f912f56e61277eefaac6d1888b750582aa16
-    - name: Execute unit tests
-      run: dotnet test
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+    - name: Build 
+      run: dotnet build $env:project_path
+    - name: Unit Tests
+      run: dotnet test $env:test_project_path
       env:
         Configuration: ${{ matrix.configuration }}

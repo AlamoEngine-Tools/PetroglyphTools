@@ -12,11 +12,10 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
+        project: [PG.Core/PG.Core/PG.Core.csproj]
+        test_project: [PG.Core/PG.Core.Test/PG.Core.Test.csproj]
         configuration: [Debug, Release]
     runs-on: ${{ matrix.os }}
-    env:
-      project_path: PG.Core/PG.Core/PG.Core.csproj
-      test_project_path: PG.Core/PG.Core.Test/PG.Core.Test.csproj
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -27,8 +26,8 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Build 
-      run: dotnet build $env:project_path
+      run: dotnet build ${{ matrix.project }}
     - name: Unit Tests
-      run: dotnet test $env:test_project_path
+      run: dotnet test ${{ matrix.test_project }}
       env:
         Configuration: ${{ matrix.configuration }}

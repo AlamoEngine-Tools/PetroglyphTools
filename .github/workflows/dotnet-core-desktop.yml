@@ -8,11 +8,12 @@ on:
 
 jobs:
   pg-core:
-    name: Build & Test PG.Core
+    name: Build & Test
     strategy:
       matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
         configuration: [Debug, Release]
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     env:
       project_path: PG.Core/PG.Core/PG.Core.csproj
       test_project_path: PG.Core/PG.Core.Test/PG.Core.Test.csproj

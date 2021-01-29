@@ -18,10 +18,10 @@ namespace PG.StarWarsGame.Files.MEG.Holder
         /// If not set, this offset is -1. If a *.MEG file is read from disc using the standard implementation of the
         /// <see cref="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService"/> this is the byte offset from the
         /// start of the file.</param>
-        /// <param name="size">Optional file size in byte. If not set, this is -1. If a *.MEG file is read from disc
+        /// <param name="size">Optional file size in byte. If not set, this is 0. If a *.MEG file is read from disc
         /// using the standard implementation of the <see cref="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService"/>
         /// this is set to the size in bytes of the packaged file.</param>
-        public MegFileDataEntry(string relativeFilePath, int offset = -1, int size = -1)
+        public MegFileDataEntry(string relativeFilePath, int offset = -1, uint size = 0)
         {
             RelativeFilePath = relativeFilePath;
             Offset = offset;
@@ -46,6 +46,6 @@ namespace PG.StarWarsGame.Files.MEG.Holder
         /// <see cref="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService"/> this is set to the size
         /// in bytes of the packaged file.
         /// </summary>
-        public int Size { get; }
+        public uint Size { get; }
     }
 }

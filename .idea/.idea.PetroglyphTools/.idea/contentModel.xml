@@ -82,6 +82,9 @@
           </e>
         </e>
         <e p="PG.Commons.Test.csproj" t="IncludeRecursive" />
+        <e p="TestResults" t="Include">
+          <e p="coverage.info" t="Include" />
+        </e>
         <e p="TestUtility.cs" t="Include" />
         <e p="Util" t="Include">
           <e p="BooleanUtilityTest.cs" t="Include" />
@@ -800,7 +803,7 @@
         <e p="Commons" t="Include">
           <e p="Exceptions" t="Include">
             <e p="DatFileContentInvalidException.cs" t="Include" />
-            <e p="IndexTableInvalidException.cs" t="Include" />
+            <e p="IndexAndValueTableOutOfSyncException.cs" t="Include" />
           </e>
         </e>
         <e p="Files" t="Include">

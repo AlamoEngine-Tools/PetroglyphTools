@@ -63,7 +63,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
 
             for (int i = 0; i < keyCount; i++)
             {
-                long valueLength = indexTable.IndexTableRecords[i]?.ValueLength ?? throw new IndexTableInvalidException(
+                long valueLength = indexTable.IndexTableRecords[i]?.ValueLength ?? throw new IndexAndValueTableOutOfSyncException(
                     $"Building the DAT file failed at offset {m_currentOffset} due to an invalid IndexTableRecord at position {i}");
                 ValueTableRecord valueTableRecord = new ValueTableRecord(bytes, m_currentOffset, valueLength);
                 m_currentOffset += valueTableRecord.Size;
@@ -82,7 +82,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             for (int i = 0; i < keyCount; i++)
             {
                 long keyLength = indexTable.IndexTableRecords[i]?.KeyLength ??
-                                 throw new IndexTableInvalidException(
+                                 throw new IndexAndValueTableOutOfSyncException(
                                      $"Building the DAT file failed at offset {m_currentOffset} due to an invalid IndexTableRecord at position {i}");
                 KeyTableRecord keyTableRecord = new KeyTableRecord(bytes, m_currentOffset, keyLength);
                 m_currentOffset += keyTableRecord.Size;

@@ -35,7 +35,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             List<string> absoluteFilePaths,
             string targetDirectory)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void UnpackMegFile(string filePath, string targetDirectory)
@@ -145,7 +145,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             {
                 string fileName = megFile.FileNameTable.MegFileNameTableRecords[i].FileName;
                 uint fileOffset = megFile.FileContentTable.MegFileContentTableRecords[i].FileStartOffsetInBytes;
-                int fileSize = megFile.FileNameTable.MegFileNameTableRecords[i].Size;
+                uint fileSize = megFile.FileContentTable.MegFileContentTableRecords[i].FileSizeInBytes;
                 holder.Content.Add(new MegFileDataEntry(fileName, Convert.ToInt32(fileOffset), fileSize));
             }
 

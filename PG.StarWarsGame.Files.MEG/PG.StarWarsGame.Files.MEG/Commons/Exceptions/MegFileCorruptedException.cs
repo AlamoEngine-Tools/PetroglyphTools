@@ -7,7 +7,7 @@ namespace PG.StarWarsGame.Files.MEG.Commons.Exceptions
     /// An <see cref="Exception"/> that is thrown when the specified <code>*.MEG</code> archive file is corrupted.
     /// </summary>
     [Serializable]
-    public class MegFileCorruptedException : Exception
+    public sealed class MegFileCorruptedException : Exception
     {
         public MegFileCorruptedException()
         {
@@ -21,7 +21,7 @@ namespace PG.StarWarsGame.Files.MEG.Commons.Exceptions
         {
         }
 
-        protected MegFileCorruptedException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public MegFileCorruptedException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

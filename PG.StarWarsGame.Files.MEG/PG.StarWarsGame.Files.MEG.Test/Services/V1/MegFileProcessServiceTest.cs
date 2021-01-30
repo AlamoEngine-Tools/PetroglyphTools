@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
 using PG.Commons.Util;
+using PG.StarWarsGame.Files.MEG.Commons.Exceptions;
 using PG.StarWarsGame.Files.MEG.Holder;
 using PG.StarWarsGame.Files.MEG.Holder.V1;
 using PG.StarWarsGame.Files.MEG.Services;
@@ -46,6 +47,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestUtility.TEST_TYPE_HOLY)]
         [TestCategory(TestUtility.TEST_TYPE_API)]
         [ExpectedException(typeof(NotImplementedException))]
+        // TODO - [gruenwaldlu]: Implement functionality.
         public void PackFilesAsMegArchive_Test__()
         {
             IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
@@ -62,6 +64,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [DataRow("\t    \r\n")]
         public void Load_Test__GivenInvalidFilePathThrowsArgumentNullException(string invalidValue)
         {
+            Assert.IsFalse(StringUtility.HasText(invalidValue));
             IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
             svc.Load(invalidValue);
         }
@@ -151,6 +154,68 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
             AssertAreBinaryEquivalent(expected, actual);
             expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_GAMEOBJECTFILES);
             actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(fullExportPath,
+                TestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
+            AssertAreBinaryEquivalent(expected, actual);
+        }
+        
+        [TestMethod]
+        [TestCategory(TestUtility.TEST_TYPE_HOLY)]
+        [TestCategory(TestUtility.TEST_TYPE_API)]
+        [DataRow("", TestConstants.FILE_NAME_GAMEOBJECTFILES)]
+        [DataRow(@"c:\mod\data\xml\gameobjectfiles.xml", "")]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UnpackSingleFileFromMegFile_Test__ThrowsArgumentException(string targetDirectory, string fileName)
+        {
+            IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
+            MegFileHolder megFileHolder = svc.Load(TestConstants.FILE_PATH_MEG_FILE);
+            svc.UnpackSingleFileFromMegFile(megFileHolder, targetDirectory, fileName);
+        }
+        
+        [TestMethod]
+        [TestCategory(TestUtility.TEST_TYPE_HOLY)]
+        [TestCategory(TestUtility.TEST_TYPE_API)]
+        [ExpectedException(typeof(FileNotContainedInArchiveException))]
+        public void UnpackSingleFileFromMegFile_Test__ThrowsFileNotContainedInArchiveException()
+        {string exportTestPath =
+                m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
+                    "UnpackSingleFileFromMegFile_Test__ThrowsFileNotContainedInArchiveException");
+            IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
+            MegFileHolder megFileHolder = svc.Load(TestConstants.FILE_PATH_MEG_FILE);
+            svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, "I_DO_NO_EXIST.XML", false);
+        }
+
+        [TestMethod]
+        [TestCategory(TestUtility.TEST_TYPE_HOLY)]
+        [TestCategory(TestUtility.TEST_TYPE_API)]
+        public void UnpackSingleFileFromMegFile_Test__DirectoryHierarchyPreservedUnpackedFileIsBinaryEquivalent()
+        {
+            string exportTestPath =
+                m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
+                    "UnpackSingleFileFromMegFile_Test__UnpackedFileIsBinaryEquivalent");
+            string fullExportPath = m_fileSystem.Path.Combine(exportTestPath, "DATA", "XML");
+            IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
+            MegFileHolder megFileHolder = svc.Load(TestConstants.FILE_PATH_MEG_FILE);
+            svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, TestConstants.FILE_NAME_GAMEOBJECTFILES);
+            byte[] expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_GAMEOBJECTFILES);
+            byte[] actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(fullExportPath,
+                TestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
+            AssertAreBinaryEquivalent(expected, actual);
+        }
+
+        [TestMethod]
+        [TestCategory(TestUtility.TEST_TYPE_HOLY)]
+        [TestCategory(TestUtility.TEST_TYPE_API)]
+        public void UnpackSingleFileFromMegFile_Test__DirectoryHierarchyFlatUnpackedFileIsBinaryEquivalent()
+        {
+            string exportTestPath =
+                m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
+                    "UnpackSingleFileFromMegFile_Test__UnpackedFileIsBinaryEquivalent");
+            IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
+            MegFileHolder megFileHolder = svc.Load(TestConstants.FILE_PATH_MEG_FILE);
+            svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, TestConstants.FILE_NAME_GAMEOBJECTFILES,
+                false);
+            byte[] expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_GAMEOBJECTFILES);
+            byte[] actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(exportTestPath,
                 TestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
             AssertAreBinaryEquivalent(expected, actual);
         }

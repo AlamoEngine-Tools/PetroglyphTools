@@ -875,6 +875,7 @@
         </e>
         <e p="Commons" t="Include">
           <e p="Exceptions" t="Include">
+            <e p="FileNotContainedInArchiveException.cs" t="Include" />
             <e p="MegFileCorruptedException.cs" t="Include" />
           </e>
         </e>

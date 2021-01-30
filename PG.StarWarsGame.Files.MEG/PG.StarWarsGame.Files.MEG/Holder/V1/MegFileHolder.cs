@@ -48,6 +48,9 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         /// <inheritdoc />
         public List<MegFileDataEntry> Content { get; set; } = new List<MegFileDataEntry>();
 
+        /// <inheritdoc />
+        public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
+
         /// <summary>
         ///     Tries to get a <see cref="MegFileDataEntry" /> by the provided filename.
         /// </summary>

@@ -57,7 +57,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
         ///     If set to false, any directory structure within the meg file will be
         ///     disregarded.
         /// </param>
-        void UnpackMegFile([NotNull] MegFileHolder holder, [NotNull] string targetDirectory, [NotNull] string fileName,
+        void UnpackSingleFileFromMegFile([NotNull] MegFileHolder holder, [NotNull] string targetDirectory, [NotNull] string fileName,
             bool preserveDirectoryHierarchy = true);
 
         /// <summary>

@@ -26,4 +26,8 @@
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PG.StarWarsGame\PG.StarWarsGame.csproj" />
+  </ItemGroup>
+
 </Project>

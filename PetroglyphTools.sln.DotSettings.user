@@ -1,8 +1,14 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CustomTools/CustomToolsData/@EntryValue"></s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=595db445_002Dec2d_002D43e8_002Dafe4_002D2f428e4e4c0e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Solution /&gt;&#xD;
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\gruen\AppData\Local\JetBrains\Rider2020.3\resharper-host\temp\Rider\vAny\CoverageData\_PetroglyphTools.-1693569080\Snapshot\snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0e4d291d_002D1e71_002D40bd_002D98d5_002D7d83d859529e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.Commons\PG.Commons.Test" Presentation="&amp;lt;PG.Commons.Test&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.DAT.Test&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.MEG.Test&amp;gt;" /&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=ED05FB8597AD9F4292CA730050460C44/Text/@EntryValue">$HEADER$
 using System;
 using System.Runtime.Serialization;

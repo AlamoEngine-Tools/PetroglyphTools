@@ -77,10 +77,10 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Builder
                     megFileHolder.FileName + "." + megFileHolder.FileType.FileExtension), megFile.ToBytes());
             byte[] readMegFile = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
                 megFileHolder.FileName + "." + megFileHolder.FileType.FileExtension));
-            Assert.AreEqual(TestConstants.CONTENT_MEG_FILE.Length, readMegFile.Length);
-            for (int i = 0; i < TestConstants.CONTENT_MEG_FILE.Length; i++)
+            Assert.AreEqual(TestConstants.CONTENT_MEG_FILE_HEADER.Length, readMegFile.Length);
+            for (int i = 0; i < TestConstants.CONTENT_MEG_FILE_HEADER.Length; i++)
             {
-                Assert.AreEqual(TestConstants.CONTENT_MEG_FILE[i], readMegFile[i]);
+                Assert.AreEqual(TestConstants.CONTENT_MEG_FILE_HEADER[i], readMegFile[i]);
             }
         }
     }

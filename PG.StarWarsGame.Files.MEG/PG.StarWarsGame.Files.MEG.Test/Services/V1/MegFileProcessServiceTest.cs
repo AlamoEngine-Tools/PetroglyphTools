@@ -130,7 +130,6 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestMethod]
         [TestCategory(TestUtility.TEST_TYPE_HOLY)]
         [TestCategory(TestUtility.TEST_TYPE_API)]
-        [Ignore] // TODO - [gruenwlaldlk]: Fix underlying reading issue.
         public void UnpackMegFile_Test__UnpackedFilesAreBinaryEquivalent()
         {
             string exportTestPath =

@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Composition;
@@ -14,18 +17,20 @@ using PG.StarWarsGame.Files.MEG.Holder.V1;
 namespace PG.StarWarsGame.Files.MEG.Services.V1
 {
     /// <summary>
-    /// Default implementation of <see cref="IMegFileProcessService"/> for <a href="https://modtools.petrolution.net/docs/MegFileFormat">v1 <code>*.MEG</code> files</a>.
-    /// When requesting the default implementation via an IoC Container or registering via injection, you may pass
-    /// a file system as argument implementing <see cref="System.IO.Abstractions.IFileSystem"/> and a logger factory
-    /// implementing <see cref="Microsoft.Extensions.Logging.ILoggerFactory"/>
+    ///     Default implementation of <see cref="IMegFileProcessService" /> for
+    ///     <a href="https://modtools.petrolution.net/docs/MegFileFormat">v1 <code>*.MEG</code> files</a>.
+    ///     When requesting the default implementation via an IoC Container or registering via injection, you may pass
+    ///     a file system as argument implementing <see cref="System.IO.Abstractions.IFileSystem" /> and a logger factory
+    ///     implementing <see cref="Microsoft.Extensions.Logging.ILoggerFactory" />
     /// </summary>
     [Export(nameof(IMegFileProcessService))]
     public sealed class MegFileProcessService : IMegFileProcessService
     {
-        [CanBeNull] private readonly ILogger m_logger;
         [NotNull] private readonly IFileSystem m_fileSystem;
+        [CanBeNull] private readonly ILogger m_logger;
 
-        public MegFileProcessService([CanBeNull] IFileSystem fileSystem, [CanBeNull] ILoggerFactory loggerFactory = null)
+        public MegFileProcessService([CanBeNull] IFileSystem fileSystem,
+            [CanBeNull] ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
             m_logger = loggerFactory?.CreateLogger<MegFileProcessService>();
@@ -64,17 +69,6 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             }
         }
 
-        private void CreateTargetDirectoryIfNotExists(string targetDirectory)
-        {
-            if (m_fileSystem.Directory.Exists(targetDirectory))
-            {
-                return;
-            }
-
-            m_logger?.LogWarning($"The given directory \"{targetDirectory}\" does not exist. Trying to create it.");
-            m_fileSystem.Directory.CreateDirectory(targetDirectory);
-        }
-
         public void UnpackMegFile(MegFileHolder holder, string targetDirectory, string fileName,
             bool preserveDirectoryHierarchy = true)
         {
@@ -84,38 +78,6 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             }
 
             UnpackMegFileFlatDirectoryHierarchy(holder, targetDirectory, fileName);
-        }
-
-        private void UnpackMegFilePreservingDirectoryHierarchy(MegFileHolder holder, string targetDirectory,
-            string fileName)
-        {
-            CreateTargetDirectoryIfNotExists(targetDirectory);
-            if (!holder.TryGetMegFileDataEntry(fileName, out MegFileDataEntry megFileDataEntry)) return;
-            string filePath = m_fileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
-            string path = m_fileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
-            CreateTargetDirectoryIfNotExists(path);
-            using BinaryReader reader = new BinaryReader(m_fileSystem.FileStream.Create(
-                m_fileSystem.Path.Combine(holder.FilePath, $"{holder.FileName}.{holder.FileType.FileExtension}"),
-                FileMode.Open));
-            byte[] file = new byte[megFileDataEntry.Size];
-            reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
-            reader.Read(file, 0, file.Length);
-            m_fileSystem.File.WriteAllBytes(filePath, file);
-        }
-
-        private void UnpackMegFileFlatDirectoryHierarchy(MegFileHolder holder, string targetDirectory, string fileName)
-        {
-            CreateTargetDirectoryIfNotExists(targetDirectory);
-            if (!holder.TryGetMegFileDataEntry(fileName, out MegFileDataEntry megFileDataEntry)) return;
-            string filePath = m_fileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
-            filePath = m_fileSystem.Path.Combine(targetDirectory, m_fileSystem.Path.GetFileName(filePath));
-            using BinaryReader reader = new BinaryReader(m_fileSystem.FileStream.Create(
-                m_fileSystem.Path.Combine(holder.FilePath, $"{holder.FileName}.{holder.FileType.FileExtension}"),
-                FileMode.Open));
-            byte[] file = new byte[megFileDataEntry.Size];
-            reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
-            reader.Read(file, 0, file.Length);
-            m_fileSystem.File.WriteAllBytes(filePath, file);
         }
 
         public MegFileHolder Load(string filePath)
@@ -150,6 +112,57 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             }
 
             return holder;
+        }
+
+        private void CreateTargetDirectoryIfNotExists(string targetDirectory)
+        {
+            if (m_fileSystem.Directory.Exists(targetDirectory))
+            {
+                return;
+            }
+
+            m_logger?.LogWarning($"The given directory \"{targetDirectory}\" does not exist. Trying to create it.");
+            m_fileSystem.Directory.CreateDirectory(targetDirectory);
+        }
+
+        private void UnpackMegFilePreservingDirectoryHierarchy(MegFileHolder holder, string targetDirectory,
+            string fileName)
+        {
+            CreateTargetDirectoryIfNotExists(targetDirectory);
+            if (!holder.TryGetMegFileDataEntry(fileName, out MegFileDataEntry megFileDataEntry))
+            {
+                return;
+            }
+
+            string filePath = m_fileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
+            string path = m_fileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
+            CreateTargetDirectoryIfNotExists(path);
+            using BinaryReader reader = new BinaryReader(m_fileSystem.FileStream.Create(
+                m_fileSystem.Path.Combine(holder.FilePath, $"{holder.FileName}.{holder.FileType.FileExtension}"),
+                FileMode.Open));
+            byte[] file = new byte[megFileDataEntry.Size];
+            reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
+            reader.Read(file, 0, file.Length);
+            m_fileSystem.File.WriteAllBytes(filePath, file);
+        }
+
+        private void UnpackMegFileFlatDirectoryHierarchy(MegFileHolder holder, string targetDirectory, string fileName)
+        {
+            CreateTargetDirectoryIfNotExists(targetDirectory);
+            if (!holder.TryGetMegFileDataEntry(fileName, out MegFileDataEntry megFileDataEntry))
+            {
+                return;
+            }
+
+            string filePath = m_fileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
+            filePath = m_fileSystem.Path.Combine(targetDirectory, m_fileSystem.Path.GetFileName(filePath));
+            using BinaryReader reader = new BinaryReader(m_fileSystem.FileStream.Create(
+                m_fileSystem.Path.Combine(holder.FilePath, $"{holder.FileName}.{holder.FileType.FileExtension}"),
+                FileMode.Open));
+            byte[] file = new byte[megFileDataEntry.Size];
+            reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
+            reader.Read(file, 0, file.Length);
+            m_fileSystem.File.WriteAllBytes(filePath, file);
         }
 
         private uint GetMegFileHeaderSize([NotNull] string path)

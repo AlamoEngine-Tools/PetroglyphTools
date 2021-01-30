@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +15,18 @@ using PG.StarWarsGame.Files.MEG.Files.V1;
 namespace PG.StarWarsGame.Files.MEG.Holder.V1
 {
     /// <summary>
-    /// The provided holder for Petroglyph's <a href="https://modtools.petrolution.net/docs/MegFileFormat">v1 *.MEG files</a>.
-    /// *.MEG or Mega files are a proprietary archive type bundling files together in a RAM friendly way. 
-    /// <remarks>This file holder does not hold all files that are packaged in a *.MEG file,
-    /// but all necessary meta-information to extract a given file on-demand.</remarks>
+    ///     The provided holder for Petroglyph's
+    ///     <a href="https://modtools.petrolution.net/docs/MegFileFormat">v1 *.MEG files</a>.
+    ///     *.MEG or Mega files are a proprietary archive type bundling files together in a RAM friendly way.
+    ///     <remarks>
+    ///         This file holder does not hold all files that are packaged in a *.MEG file,
+    ///         but all necessary meta-information to extract a given file on-demand.
+    ///     </remarks>
     /// </summary>
     public sealed class MegFileHolder : IFileHolder<List<MegFileDataEntry>, MegAlamoFileType>
     {
         /// <summary>
-        /// .ctor
+        ///     .ctor
         /// </summary>
         /// <param name="filePath">The path to the directory that holds the file on disc.</param>
         /// <param name="fileName">The desired file name without the file extension.</param>
@@ -43,7 +49,7 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         public List<MegFileDataEntry> Content { get; set; } = new List<MegFileDataEntry>();
 
         /// <summary>
-        /// Tries to get a <see cref="MegFileDataEntry"/> by the provided filename.
+        ///     Tries to get a <see cref="MegFileDataEntry" /> by the provided filename.
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="megFileDataEntry"></param>

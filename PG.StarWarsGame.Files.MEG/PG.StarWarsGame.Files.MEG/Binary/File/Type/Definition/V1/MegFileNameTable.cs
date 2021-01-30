@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -10,12 +13,12 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
     internal class MegFileNameTable : IBinaryFile, ISizeable
     {
-        [NotNull] private readonly List<MegFileNameTableRecord> m_megFileNameTableRecords;
-
         public MegFileNameTable(List<MegFileNameTableRecord> megFileNameTableRecords)
         {
-            m_megFileNameTableRecords = megFileNameTableRecords ?? new List<MegFileNameTableRecord>();
+            MegFileNameTableRecords = megFileNameTableRecords ?? new List<MegFileNameTableRecord>();
         }
+
+        [NotNull] internal List<MegFileNameTableRecord> MegFileNameTableRecords { get; }
 
         public byte[] ToBytes()
         {
@@ -29,7 +32,5 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
         }
 
         public int Size => ToBytes().Length;
-
-        internal List<MegFileNameTableRecord> MegFileNameTableRecords => m_megFileNameTableRecords;
     }
 }

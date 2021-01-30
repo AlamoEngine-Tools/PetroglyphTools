@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -11,18 +14,17 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
     internal class MegFileContentTable : IBinaryFile, ISizeable
     {
-        [NotNull] private readonly List<MegFileContentTableRecord> m_megFileContentTableRecords;
-        internal List<MegFileContentTableRecord> MegFileContentTableRecords => m_megFileContentTableRecords;
-
         public MegFileContentTable(List<MegFileContentTableRecord> megFileContentTableRecords)
         {
-            m_megFileContentTableRecords = megFileContentTableRecords ?? new List<MegFileContentTableRecord>();
+            MegFileContentTableRecords = megFileContentTableRecords ?? new List<MegFileContentTableRecord>();
         }
+
+        [NotNull] internal List<MegFileContentTableRecord> MegFileContentTableRecords { get; }
 
         public byte[] ToBytes()
         {
             List<byte> b = new List<byte>();
-            foreach (MegFileContentTableRecord megFileContentTableRecord in m_megFileContentTableRecords)
+            foreach (MegFileContentTableRecord megFileContentTableRecord in MegFileContentTableRecords)
             {
                 b.AddRange(megFileContentTableRecord.ToBytes());
             }
@@ -30,8 +32,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
             return b.ToArray();
         }
 
-        public int Size => m_megFileContentTableRecords.Aggregate(0,
+        public int Size => MegFileContentTableRecords.Aggregate(0,
             (current, megFileContentTableRecord) => current + megFileContentTableRecord.Size);
-
     }
 }

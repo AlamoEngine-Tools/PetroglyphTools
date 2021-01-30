@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -10,29 +13,25 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
     internal class MegFile : IBinaryFile
     {
-        [NotNull] private readonly MegHeader m_header;
-        [NotNull] private readonly MegFileNameTable m_fileNameTable;
-        [NotNull] private readonly MegFileContentTable m_fileContentTable;
-
-        [NotNull] internal MegHeader Header => m_header;
-
-        [NotNull] internal MegFileNameTable FileNameTable => m_fileNameTable;
-
-        [NotNull] public MegFileContentTable FileContentTable => m_fileContentTable;
-
         public MegFile(MegHeader header, MegFileNameTable fileNameTable, MegFileContentTable fileContentTable)
         {
-            m_header = header ?? throw new ArgumentNullException(nameof(header));
-            m_fileNameTable = fileNameTable ?? throw new ArgumentNullException(nameof(fileNameTable));
-            m_fileContentTable = fileContentTable ?? throw new ArgumentNullException(nameof(fileContentTable));
+            Header = header ?? throw new ArgumentNullException(nameof(header));
+            FileNameTable = fileNameTable ?? throw new ArgumentNullException(nameof(fileNameTable));
+            FileContentTable = fileContentTable ?? throw new ArgumentNullException(nameof(fileContentTable));
         }
+
+        [NotNull] internal MegHeader Header { get; }
+
+        [NotNull] internal MegFileNameTable FileNameTable { get; }
+
+        [NotNull] public MegFileContentTable FileContentTable { get; }
 
         public byte[] ToBytes()
         {
             List<byte> b = new List<byte>();
-            b.AddRange(m_header.ToBytes());
-            b.AddRange(m_fileNameTable.ToBytes());
-            b.AddRange(m_fileContentTable.ToBytes());
+            b.AddRange(Header.ToBytes());
+            b.AddRange(FileNameTable.ToBytes());
+            b.AddRange(FileContentTable.ToBytes());
             return b.ToArray();
         }
     }

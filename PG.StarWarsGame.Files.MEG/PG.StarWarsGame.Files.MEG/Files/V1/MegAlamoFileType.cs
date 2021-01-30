@@ -1,9 +1,13 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using PG.Commons.Data.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Files.V1
 {
     /// <summary>
-    /// Minimal file info for the <a href="https://modtools.petrolution.net/docs/MegFileFormat">v1 <code>*.MEG</code> archive file type</a>.
+    ///     Minimal file info for the
+    ///     <a href="https://modtools.petrolution.net/docs/MegFileFormat">v1 <code>*.MEG</code> archive file type</a>.
     /// </summary>
     public sealed class MegAlamoFileType : IAlamoFileType
     {

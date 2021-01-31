@@ -35,6 +35,15 @@ namespace PG.StarWarsGame.Files.MEG.Holder
             RelativeFilePath = relativeFilePath;
             Offset = offset;
             Size = size;
+            AbsoluteFilePath = null;
+        }
+        
+        public MegFileDataEntry(string relativeFilePath, string absoluteFilePath)
+        {
+            RelativeFilePath = relativeFilePath;
+            AbsoluteFilePath = absoluteFilePath;
+            Offset = -1;
+            Size = 0;
         }
 
         /// <summary>
@@ -42,6 +51,8 @@ namespace PG.StarWarsGame.Files.MEG.Holder
         ///     Usually this file path is relative to the game or mod's DATA directory, e.g. Data/My/file.xml
         /// </summary>
         public string RelativeFilePath { get; }
+
+        public string AbsoluteFilePath { get; }
 
         /// <summary>
         ///     Optional offset from the start of the *.MEG file archive.

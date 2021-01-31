@@ -11,6 +11,7 @@ using PG.Commons.Binary.File.Builder;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1;
 using PG.StarWarsGame.Files.MEG.Commons.Exceptions;
+using PG.StarWarsGame.Files.MEG.Holder;
 using PG.StarWarsGame.Files.MEG.Holder.V1;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.MEG.Test")]
@@ -45,7 +46,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
             return new MegFile(header, megFileNameTable, megFileContentTable);
         }
 
-        public MegFile FromHolder(MegFileHolder holder)
+        public MegFile FromHolder(MegFileHolder holder, out List<string> filesToStream)
         {
             List<string> files = holder.Content.Select(megFileDataEntry => megFileDataEntry.RelativeFilePath).ToList();
             List<MegFileNameTableRecord> megFileNameTableRecords =
@@ -54,19 +55,25 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
             // Workaround for Unix compatibility.
             // File names are always stored as uppercase and without delimiter (\0), but Unix's file system is case sensitive,
             // so we cache the proper file paths sorted by the "cleaned" version's CRC for quick access later.  
-            List<string> sortedFiles = (from megFileNameTableRecord in megFileNameTableRecords
-                from file in files
-                where megFileNameTableRecord.FileName.Equals(file, StringComparison.InvariantCultureIgnoreCase)
-                select file).ToList();
+            filesToStream = new List<string>();
+            foreach (MegFileNameTableRecord megFileNameTableRecord in megFileNameTableRecords)
+            {
+                foreach (MegFileDataEntry megFileDataEntry in holder.Content.Where(megFileDataEntry =>
+                    megFileNameTableRecord.FileName.Equals(
+                        megFileDataEntry.RelativeFilePath.Replace("\\", "/").Replace("\0", string.Empty),
+                        StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    filesToStream.Add(megFileDataEntry.AbsoluteFilePath);
+                    break;
+                }
+            }
+
             List<MegFileContentTableRecord> megFileContentTableRecords = new List<MegFileContentTableRecord>();
             for (int i = 0; i < megFileNameTableRecords.Count; i++)
             {
                 uint crc32 = ChecksumUtility.GetChecksum(megFileNameTableRecords[i].FileName);
                 uint fileTableRecordIndex = Convert.ToUInt32(i);
-                uint fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo
-                    .FromFileName(
-                        m_fileSystem.Path.GetFullPath(m_fileSystem.Path.Combine(holder.FilePath, sortedFiles[i])))
-                    .Length);
+                uint fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo.FromFileName(filesToStream[i]).Length);
                 uint fileNameTableIndex = Convert.ToUInt32(i);
                 megFileContentTableRecords.Add(new MegFileContentTableRecord(crc32, fileTableRecordIndex,
                     fileSizeInBytes, 0, fileNameTableIndex));
@@ -87,6 +94,11 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
 
             MegFileContentTable megFileContentTable = new MegFileContentTable(megFileContentTableRecords);
             return new MegFile(header, megFileNameTable, megFileContentTable);
+        }
+
+        public MegFile FromHolder(MegFileHolder holder)
+        {
+            return FromHolder(holder, out List<string> _);
         }
 
         private MegHeader BuildMegHeaderInternal(byte[] byteStream)

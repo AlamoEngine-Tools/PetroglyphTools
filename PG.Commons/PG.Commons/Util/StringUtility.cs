@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 
 namespace PG.Commons.Util
 {
+    /// <summary>
+    /// A utility class that provides various static functions for generic string operations.
+    /// </summary>
     public static class StringUtility
     {
         /// <summary>
@@ -19,6 +23,7 @@ namespace PG.Commons.Util
         {
             return !IsNullEmptyOrWhiteSpace(s);
         }
+
         /// <summary>
         /// Tests whether a provided string contains any non-whitespace characters starting from the
         /// provided offset until the end of the string.
@@ -60,6 +65,7 @@ namespace PG.Commons.Util
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -76,12 +82,21 @@ namespace PG.Commons.Util
             return SplitStringInternal(s, separator);
         }
 
+        /// <summary>
+        /// Parses a given string into a list. Optionally cleans all strings by either
+        /// dropping whitespace-only/null strings, trimming them, or both. 
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="separator"></param>
+        /// <param name="shouldClean"></param>
+        /// <returns></returns>
         [NotNull]
         public static List<string> ParseSeparatedStringToList(string s, char separator, bool shouldClean = true)
         {
+            // TODO: Add option to retain empty strings in the list.
             return SplitStringInternal(s, separator, shouldClean);
         }
-        
+
         [NotNull]
         private static List<string> SplitStringInternal(string s, char separator, bool shouldClean = true)
         {
@@ -95,6 +110,23 @@ namespace PG.Commons.Util
             string[] split = s.Split(separator);
             list.AddRange(from str in split where !IsNullEmptyOrWhiteSpace(str) select shouldClean ? str.Trim() : str);
             return list;
+        }
+
+        /// <summary>
+        /// Removes any file extension form a file or filepath.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static string StripFileExtension(string fileName)
+        {
+            if (!StringUtility.HasText(fileName))
+            {
+                throw new ArgumentException("The provided argument is null or only consists of whitespace.",
+                    nameof(fileName));
+            }
+
+            return Path.ChangeExtension(fileName, null);
         }
     }
 }

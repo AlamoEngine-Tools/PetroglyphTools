@@ -24,7 +24,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
                 throw new ArgumentNullException($"{nameof(fileName)} may never be null.");
             }
 
-            string fn = fileName.ToUpper().Replace("\0", string.Empty);
+            string fn = fileName.ToUpper().Replace("\\", "/").Replace("\0", string.Empty);
             int l = fn.Length;
             try
             {

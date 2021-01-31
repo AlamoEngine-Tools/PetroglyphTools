@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,6 +42,27 @@ namespace PG.Commons.Test.Util
             {
                 Assert.AreEqual(expected[i], l[i]);
             }
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow("\r\n\t  \r\n")]
+        [DataRow(" ")]
+        [ExpectedException(typeof(ArgumentException))]
+        public void StripFileExtension_Test__ThrowsArgumentException(string invalidFilePath)
+        {
+            StringUtility.StripFileExtension(invalidFilePath);
+        }
+        
+        [TestMethod]
+        [DataRow("test", "test.xml")]
+        [DataRow("c:/tester/test", "c:/tester/test.xml")]
+        [DataRow("c:\\tester\\test", "c:\\tester\\test.xml")]
+        public void StripFileExtension_Test__ReturnsExpected(string expected, string input)
+        {
+            string actual = StringUtility.StripFileExtension(input);
+            Assert.AreEqual(expected, actual);
         }
     }
 }

@@ -38,12 +38,58 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             m_logger = loggerFactory?.CreateLogger<MegFileProcessService>();
         }
 
-        public void PackFilesAsMegArchive(string megArchiveName, string baseDirectoryPath,
-            List<string> absoluteFilePaths,
-            string targetDirectory)
+        public void PackFilesAsMegArchive(string megArchiveName,
+            Dictionary<string, string> packedFileNameToAbsoluteFilePathsMap, string targetDirectory)
         {
-            // TODO - [gruenwaldlk]: Implement service function. 
-            throw new NotImplementedException();
+            if (!StringUtility.HasText(megArchiveName))
+            {
+                throw new ArgumentException(
+                    "The provided argument is null, an empty string or only consists of whitespace.",
+                    nameof(megArchiveName));
+            }
+
+            if (!packedFileNameToAbsoluteFilePathsMap.Any())
+            {
+                throw new ArgumentException(
+                    "The provided argument does not contain any elements.",
+                    nameof(packedFileNameToAbsoluteFilePathsMap));
+            }
+
+            if (!StringUtility.HasText(targetDirectory))
+            {
+                throw new ArgumentException(
+                    "The provided argument is null, an empty string or only consists of whitespace.",
+                    nameof(targetDirectory));
+            }
+
+            string actualName = StringUtility.StripFileExtension(megArchiveName);
+            MegFileHolder megFileHolder = new MegFileHolder(targetDirectory, actualName);
+            foreach ((string key, string value) in packedFileNameToAbsoluteFilePathsMap)
+            {
+                megFileHolder.Content.Add(new MegFileDataEntry(key, value));
+            }
+
+            MegFileBuilder builder = new MegFileBuilder(m_fileSystem);
+            MegFile megFile = builder.FromHolder(megFileHolder, out List<string> filesToStream);
+            string writePath = m_fileSystem.Path.Combine(megFileHolder.FilePath, megFileHolder.FullyQualifiedName);
+            CreateTargetDirectoryIfNotExists(megFileHolder.FilePath);
+            using (BinaryWriter writer = new BinaryWriter(m_fileSystem.FileStream.Create(writePath, FileMode.Create)))
+            {
+                writer.Write(megFile.ToBytes());
+            }
+
+            foreach (string file in filesToStream)
+            {
+                using Stream readStream = m_fileSystem.File.OpenRead(file);
+                using Stream writeStream =
+                    m_fileSystem.FileStream.Create(writePath, FileMode.Append, FileAccess.Write, FileShare.None);
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    writeStream.Write(buffer, 0, bytesRead);
+                }
+            }
         }
 
         public void UnpackMegFile(string filePath, string targetDirectory)

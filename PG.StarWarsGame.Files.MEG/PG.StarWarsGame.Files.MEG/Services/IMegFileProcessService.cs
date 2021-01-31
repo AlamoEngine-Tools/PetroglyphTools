@@ -21,15 +21,9 @@ namespace PG.StarWarsGame.Files.MEG.Services
         ///     Packs a list of files as *.MEG archive.
         /// </summary>
         /// <param name="megArchiveName">The desired name of the archive.</param>
-        /// <param name="baseDirectoryPath">
-        ///     The base directory to normalise all file paths to.
-        ///     For Empire at War that could be something like <code>C:/Empire at War/Data</code> which would then lead to
-        ///     all file paths within the meg file starting with <code>Data/...</code>
-        /// </param>
-        /// <param name="absoluteFilePaths">A list of files to be packed.</param>
+        /// <param name="packedFileNameToAbsoluteFilePathsMap">A list of absolute file paths, identified by their name in the MEG file.</param>
         /// <param name="targetDirectory">The target directory to which the *.MEG archive will be written.</param>
-        void PackFilesAsMegArchive([NotNull] string megArchiveName, [NotNull] string baseDirectoryPath,
-            [NotNull] List<string> absoluteFilePaths, [NotNull] string targetDirectory);
+        void PackFilesAsMegArchive([NotNull] string megArchiveName, [NotNull] Dictionary<string,string> packedFileNameToAbsoluteFilePathsMap, [NotNull] string targetDirectory);
 
         /// <summary>
         ///     Unpacks a given *.MEG file into a given directory.

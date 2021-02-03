@@ -73,6 +73,9 @@
         </e>
       </e>
       <e p="PG.Commons\PG.Commons.Test" t="IncludeRecursive">
+        <e p="Attributes" t="Include">
+          <e p="PlatformSpecificTestMethod.cs" t="Include" />
+        </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -911,6 +914,13 @@
           <e p="File" t="Include">
             <e p="Builder" t="Include">
               <e p="MegFileBuilderTest.cs" t="Include" />
+            </e>
+            <e p="Type" t="Include">
+              <e p="Definition" t="Include">
+                <e p="v1" t="Include">
+                  <e p="MegFileNameTableRecordTest.cs" t="Include" />
+                </e>
+              </e>
             </e>
           </e>
         </e>

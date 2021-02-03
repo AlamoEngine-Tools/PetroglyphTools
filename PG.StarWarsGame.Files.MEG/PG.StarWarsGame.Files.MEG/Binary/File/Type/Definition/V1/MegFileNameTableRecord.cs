@@ -17,11 +17,11 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
         private readonly Encoding m_fileNameEncoding = Encoding.ASCII;
         private readonly ushort m_fileNameLength;
 
-        public MegFileNameTableRecord(string fileName)
+        public MegFileNameTableRecord([NotNull] string fileName)
         {
             if (!StringUtility.HasText(fileName))
             {
-                throw new ArgumentNullException($"{nameof(fileName)} may never be null.");
+                throw new ArgumentException($"{nameof(fileName)} may never be null.");
             }
 
             string fn = fileName.ToUpper().Replace("\\", "/").Replace("\0", string.Empty);

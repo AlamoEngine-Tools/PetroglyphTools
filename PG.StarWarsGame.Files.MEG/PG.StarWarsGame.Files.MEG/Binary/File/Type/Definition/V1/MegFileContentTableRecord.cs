@@ -1,20 +1,17 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 
-[assembly: InternalsVisibleTo("PG.StarWarsGame.Files.MEG.Test")]
-
-namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
+namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
     internal class MegFileContentTableRecord : IBinaryFile, ISizeable, IComparable
     {
         private readonly uint m_crc32;
-        private uint m_fileTableRecordIndex;
-        private readonly uint m_fileSizeInBytes;
-        private uint m_fileStartOffsetInBytes;
         private readonly uint m_fileNameTableIndex;
 
         public MegFileContentTableRecord(uint crc32, uint fileTableRecordIndex, uint fileSizeInBytes,
@@ -22,41 +19,33 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition
         {
             m_crc32 = crc32;
             FileTableRecordIndex = fileTableRecordIndex;
-            m_fileSizeInBytes = fileSizeInBytes;
+            FileSizeInBytes = fileSizeInBytes;
             FileStartOffsetInBytes = fileStartOffsetInBytes;
             m_fileNameTableIndex = fileNameTableIndex;
         }
+
+        internal uint FileTableRecordIndex { get; set; }
+
+        internal uint FileStartOffsetInBytes { get; set; }
+
+        internal uint FileSizeInBytes { get; }
 
         public byte[] ToBytes()
         {
             List<byte> b = new List<byte>();
             b.AddRange(BitConverter.GetBytes(m_crc32));
-            b.AddRange(BitConverter.GetBytes(m_fileTableRecordIndex));
-            b.AddRange(BitConverter.GetBytes(m_fileSizeInBytes));
-            b.AddRange(BitConverter.GetBytes(m_fileStartOffsetInBytes));
+            b.AddRange(BitConverter.GetBytes(FileTableRecordIndex));
+            b.AddRange(BitConverter.GetBytes(FileSizeInBytes));
+            b.AddRange(BitConverter.GetBytes(FileStartOffsetInBytes));
             b.AddRange(BitConverter.GetBytes(m_fileNameTableIndex));
             return b.ToArray();
         }
 
         public int Size => sizeof(uint) * 5;
 
-        internal uint FileTableRecordIndex
-        {
-            get => m_fileTableRecordIndex;
-            set => m_fileTableRecordIndex = value;
-        }
-
-        internal uint FileStartOffsetInBytes
-        {
-            get => m_fileStartOffsetInBytes;
-            set => m_fileStartOffsetInBytes = value;
-        }
-
-        internal uint FileSizeInBytes => m_fileSizeInBytes;
-
         #region Auto-Generated IComparable Implementation
 
-        sealed class MegFileContentTableRecordComparer : IComparer
+        private sealed class MegFileContentTableRecordComparer : IComparer
         {
             public int Compare(object x, object y)
             {

@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,6 +10,7 @@ using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Commons.Exceptions;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
+
 namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
 {
     internal abstract class ADatFileBuilder
@@ -63,8 +67,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
 
             for (int i = 0; i < keyCount; i++)
             {
-                long valueLength = indexTable.IndexTableRecords[i]?.ValueLength ?? throw new IndexTableInvalidException(
-                    $"Building the DAT file failed at offset {m_currentOffset} due to an invalid IndexTableRecord at position {i}");
+                long valueLength = indexTable.IndexTableRecords[i]?.ValueLength ??
+                                   throw new IndexAndValueTableOutOfSyncException(
+                                       $"Building the DAT file failed at offset {m_currentOffset} due to an invalid IndexTableRecord at position {i}");
                 ValueTableRecord valueTableRecord = new ValueTableRecord(bytes, m_currentOffset, valueLength);
                 m_currentOffset += valueTableRecord.Size;
                 valueTableRecords.Add(valueTableRecord);
@@ -82,7 +87,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             for (int i = 0; i < keyCount; i++)
             {
                 long keyLength = indexTable.IndexTableRecords[i]?.KeyLength ??
-                                 throw new IndexTableInvalidException(
+                                 throw new IndexAndValueTableOutOfSyncException(
                                      $"Building the DAT file failed at offset {m_currentOffset} due to an invalid IndexTableRecord at position {i}");
                 KeyTableRecord keyTableRecord = new KeyTableRecord(bytes, m_currentOffset, keyLength);
                 m_currentOffset += keyTableRecord.Size;

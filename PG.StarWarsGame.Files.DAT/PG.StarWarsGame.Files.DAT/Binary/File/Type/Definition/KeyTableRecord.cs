@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -42,10 +45,12 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
             {
                 return 1;
             }
+
             if (ChecksumUtility.GetChecksum(Key) < ChecksumUtility.GetChecksum(other.Key))
             {
                 return -1;
             }
+
             return 0;
         }
 
@@ -68,16 +73,17 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
         {
             return left.CompareTo(right) == -1;
         }
-        
+
         public static bool operator <=(KeyTableRecord left, KeyTableRecord right)
         {
             return left.CompareTo(right) == -1 || left.CompareTo(right) == 0;
         }
-        
+
         public static bool operator >(KeyTableRecord left, KeyTableRecord right)
         {
             return left.CompareTo(right) == 1;
         }
+
         public static bool operator >=(KeyTableRecord left, KeyTableRecord right)
         {
             return left.CompareTo(right) == 1 || left.CompareTo(right) == 0;

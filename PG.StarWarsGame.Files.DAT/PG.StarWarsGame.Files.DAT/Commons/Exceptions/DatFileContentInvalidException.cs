@@ -1,10 +1,16 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Runtime.Serialization;
 
 namespace PG.StarWarsGame.Files.DAT.Commons.Exceptions
 {
+    /// <summary>
+    /// An exception thrown when a contained Key-Value pair is invalid, eg. a key has no text.
+    /// </summary>
     [Serializable]
-    public class DatFileContentInvalidException : Exception
+    public sealed class DatFileContentInvalidException : Exception
     {
         public DatFileContentInvalidException()
         {
@@ -18,7 +24,7 @@ namespace PG.StarWarsGame.Files.DAT.Commons.Exceptions
         {
         }
 
-        protected DatFileContentInvalidException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public DatFileContentInvalidException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

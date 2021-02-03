@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PG.Commons.Data.Files;
@@ -7,6 +10,11 @@ using PG.Commons.Data.Holder;
 
 namespace PG.StarWarsGame.Files.DAT.Holder
 {
+    /// <summary>
+    /// Abstract DatFileHolder implementation.
+    /// </summary>
+    /// <typeparam name="TContent"></typeparam>
+    /// <typeparam name="TAlamoFileType"></typeparam>
     public abstract class ADatFileHolder<TContent, TAlamoFileType> : IFileHolder<TContent, TAlamoFileType>
         where TAlamoFileType : IAlamoFileType, new()
     {
@@ -21,7 +29,8 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 
         public abstract TAlamoFileType FileType { get; }
 
-        [NotNull]
-        public abstract TContent Content { get; set; }
+        [NotNull] public abstract TContent Content { get; set; }
+
+        [NotNull] public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
     }
 }

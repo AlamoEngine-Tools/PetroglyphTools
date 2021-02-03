@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -13,13 +16,14 @@ namespace PG.StarWarsGame.Files.DAT.Services
     [Export(nameof(ISortedDatFileProcessService))]
     internal class SortedDatFileProcessService : ISortedDatFileProcessService
     {
-        private readonly ILogger m_logger;
+        [CanBeNull] private readonly ILogger m_logger;
         [NotNull] private readonly IFileSystem m_fileSystem;
 
-        public SortedDatFileProcessService(IFileSystem fileSystem, ILogger logger = null)
+        public SortedDatFileProcessService([CanBeNull] IFileSystem fileSystem,
+            [CanBeNull] ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
-            m_logger = logger;
+            m_logger = loggerFactory?.CreateLogger<SortedDatFileProcessService>();
         }
 
         public SortedDatFileHolder LoadFromFile(string filePath)
@@ -40,13 +44,11 @@ namespace PG.StarWarsGame.Files.DAT.Services
 
         public void SaveToFile(SortedDatFileHolder sortedDatFileHolder)
         {
-            using (BinaryWriter writer = new BinaryWriter(m_fileSystem.File.Open(
+            using BinaryWriter writer = new BinaryWriter(m_fileSystem.File.Open(
                 m_fileSystem.Path.Combine(sortedDatFileHolder.FilePath, sortedDatFileHolder.FileName),
-                FileMode.CreateNew)))
-            {
-                DatFile datFile = new SortedDatFileBuilder().FromHolder(sortedDatFileHolder);
-                writer.Write(datFile.ToBytes());
-            }
+                FileMode.CreateNew));
+            DatFile datFile = new SortedDatFileBuilder().FromHolder(sortedDatFileHolder);
+            writer.Write(datFile.ToBytes());
         }
     }
 }

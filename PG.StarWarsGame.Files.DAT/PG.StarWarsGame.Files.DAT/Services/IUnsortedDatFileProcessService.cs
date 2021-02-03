@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using PG.StarWarsGame.Files.DAT.Holder;
 
 namespace PG.StarWarsGame.Files.DAT.Services
@@ -19,6 +22,7 @@ namespace PG.StarWarsGame.Files.DAT.Services
         /// If not validated properly any IO Exceptions may occur.</param>
         /// <returns>An instance of a <see cref="UnsortedDatFileHolder"/>.</returns>
         UnsortedDatFileHolder LoadFromFile(string filePath);
+
         /// <summary>
         /// Saves a given <see cref="unsortedDatFileHolder"/> to disc.
         /// The save path provided with the holder must be valid, otherwise IO Exceptions may occur.

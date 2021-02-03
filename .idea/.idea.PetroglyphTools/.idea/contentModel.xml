@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.net.test.sdk\16.7.1\build\netcoreapp2.1" t="Include">
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.net.test.sdk\16.8.3\build\netcoreapp2.1" t="Include">
       <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
     </e>
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.1\build\netcoreapp2.1\x64\testhost.dll" t="Include" />
-    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.7.1\build\netcoreapp2.1\x64\testhost.exe" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.8.3\build\netcoreapp2.1\x64\Microsoft.TestPlatform.PlatformAbstractions.dll" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.8.3\build\netcoreapp2.1\x64\testhost.dll" t="Include" />
+    <e p="C:\Users\gruen\.nuget\packages\microsoft.testplatform.testhost\16.8.3\build\netcoreapp2.1\x64\testhost.exe" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" t="Include" />
     <e p="C:\Users\gruen\.nuget\packages\mstest.testadapter\2.1.2\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" t="Include" />
-    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.2\resharper-host\local\Transient\Rider\v202\SolutionCaches\_PetroglyphTools.-1693569080.00" t="ExcludeRecursive" />
+    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.3\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\gruen\AppData\local\JetBrains\Rider2020.3\resharper-host\local\Transient\Rider\v203\SolutionCaches\_PetroglyphTools.-1693569080.00" t="ExcludeRecursive" />
     <e p="E:\github\alamoengine-tools\PetroglyphTools" t="IncludeFlat">
       <e p="packages" t="ExcludeRecursive" />
       <e p="PetroglyphTools.sln" t="IncludeFlat" />
@@ -57,7 +58,6 @@
           <e p="BooleanUtility.cs" t="Include" />
           <e p="ChecksumUtility.cs" t="Include" />
           <e p="HtmlUtility.cs" t="Include" />
-          <e p="IOUtility.cs" t="Include" />
           <e p="StringUtility.cs" t="Include" />
         </e>
         <e p="Xml" t="Include">
@@ -73,6 +73,9 @@
         </e>
       </e>
       <e p="PG.Commons\PG.Commons.Test" t="IncludeRecursive">
+        <e p="Attributes" t="Include">
+          <e p="PlatformSpecificTestMethod.cs" t="Include" />
+        </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -82,6 +85,9 @@
           </e>
         </e>
         <e p="PG.Commons.Test.csproj" t="IncludeRecursive" />
+        <e p="TestResults" t="Include">
+          <e p="coverage.info" t="Include" />
+        </e>
         <e p="TestUtility.cs" t="Include" />
         <e p="Util" t="Include">
           <e p="BooleanUtilityTest.cs" t="Include" />
@@ -800,7 +806,7 @@
         <e p="Commons" t="Include">
           <e p="Exceptions" t="Include">
             <e p="DatFileContentInvalidException.cs" t="Include" />
-            <e p="IndexTableInvalidException.cs" t="Include" />
+            <e p="IndexAndValueTableOutOfSyncException.cs" t="Include" />
           </e>
         </e>
         <e p="Files" t="Include">
@@ -852,31 +858,41 @@
         <e p="Binary" t="Include">
           <e p="File" t="Include">
             <e p="Builder" t="Include">
-              <e p="MegFileBuilder.cs" t="Include" />
+              <e p="v1" t="Include">
+                <e p="MegFileBuilder.cs" t="Include" />
+              </e>
             </e>
             <e p="Type" t="Include">
               <e p="Definition" t="Include">
-                <e p="MegFile.cs" t="Include" />
-                <e p="MegFileContentTable.cs" t="Include" />
-                <e p="MegFileContentTableRecord.cs" t="Include" />
-                <e p="MegFileNameTable.cs" t="Include" />
-                <e p="MegFileNameTableRecord.cs" t="Include" />
-                <e p="MegHeader.cs" t="Include" />
+                <e p="v1" t="Include">
+                  <e p="MegFile.cs" t="Include" />
+                  <e p="MegFileContentTable.cs" t="Include" />
+                  <e p="MegFileContentTableRecord.cs" t="Include" />
+                  <e p="MegFileNameTable.cs" t="Include" />
+                  <e p="MegFileNameTableRecord.cs" t="Include" />
+                  <e p="MegHeader.cs" t="Include" />
+                </e>
               </e>
             </e>
           </e>
         </e>
         <e p="Commons" t="Include">
           <e p="Exceptions" t="Include">
+            <e p="FileNotContainedInArchiveException.cs" t="Include" />
             <e p="MegFileCorruptedException.cs" t="Include" />
+            <e p="MultipleFilesWithNameInArchiveException.cs" t="Include" />
           </e>
         </e>
         <e p="Files" t="Include">
-          <e p="MegAlamoFileType.cs" t="Include" />
+          <e p="v1" t="Include">
+            <e p="MegAlamoFileType.cs" t="Include" />
+          </e>
         </e>
         <e p="Holder" t="Include">
           <e p="MegFileDataEntry.cs" t="Include" />
-          <e p="MegFileHolder.cs" t="Include" />
+          <e p="v1" t="Include">
+            <e p="MegFileHolder.cs" t="Include" />
+          </e>
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -888,7 +904,9 @@
         <e p="PG.StarWarsGame.Files.MEG.csproj" t="IncludeRecursive" />
         <e p="Services" t="Include">
           <e p="IMegFileProcessService.cs" t="Include" />
-          <e p="MegFileProcessService.cs" t="Include" />
+          <e p="v1" t="Include">
+            <e p="MegFileProcessService.cs" t="Include" />
+          </e>
         </e>
       </e>
       <e p="PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test" t="IncludeRecursive">
@@ -898,6 +916,18 @@
             <e p="Builder" t="Include">
               <e p="MegFileBuilderTest.cs" t="Include" />
             </e>
+            <e p="Type" t="Include">
+              <e p="Definition" t="Include">
+                <e p="v1" t="Include">
+                  <e p="MegFileNameTableRecordTest.cs" t="Include" />
+                </e>
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Holder" t="Include">
+          <e p="v1" t="Include">
+            <e p="MegFileHolderTest.cs" t="Include" />
           </e>
         </e>
         <e p="obj" t="ExcludeRecursive">
@@ -908,6 +938,12 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Files.MEG.Test.csproj" t="IncludeRecursive" />
+        <e p="Services" t="Include">
+          <e p="v1" t="Include">
+            <e p="MegFileProcessServiceTest.cs" t="Include" />
+          </e>
+        </e>
+        <e p="TestConstants.cs" t="Include" />
       </e>
       <e p="PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />

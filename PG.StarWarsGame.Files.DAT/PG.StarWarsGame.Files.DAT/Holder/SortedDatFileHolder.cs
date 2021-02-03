@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,13 +57,15 @@ namespace PG.StarWarsGame.Files.DAT.Holder
             }
         }
 
-        public static SortedDatFileHolder FromDictionary([NotNull]SortedDatFileHolder holder, [NotNull]Dictionary<string, string> dictionary)
+        public static SortedDatFileHolder FromDictionary([NotNull] SortedDatFileHolder holder,
+            [NotNull] Dictionary<string, string> dictionary)
         {
             holder.Content.Clear();
             foreach ((string key, string value) in dictionary)
             {
-                holder.Content.Add(new Tuple<string, string>(key,value));
+                holder.Content.Add(new Tuple<string, string>(key, value));
             }
+
             return holder;
         }
 

@@ -53,12 +53,14 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
 
         /// <summary>
-        ///     Tries to get a <see cref="MegFileDataEntry" /> by the provided filename.
+        ///     Tries to get a <see cref="MegFileDataEntry" /> by matching the provided filename.
+        ///     If multiple matches are found it will always return the first match.
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="megFileDataEntry"></param>
         /// <returns></returns>
-        public bool TryGetMegFileDataEntry([NotNull] string fileName, [CanBeNull] out MegFileDataEntry megFileDataEntry)
+        public bool TryGetFirstMegFileDataEntryWithMatchingName([NotNull] string fileName,
+            [CanBeNull] out MegFileDataEntry megFileDataEntry)
         {
             if (StringUtility.HasText(fileName))
             {
@@ -72,6 +74,26 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
 
             megFileDataEntry = null;
             return false;
+        }
+
+        /// <summary>
+        ///     Tries to get a list of <see cref="MegFileDataEntry" /> by matching the provided filename.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="megFileDataEntries"></param>
+        /// <returns></returns>
+        public bool TryGetAllMegFileDataEntriesWithMatchingName([NotNull] string fileName,
+            [NotNull] out IList<MegFileDataEntry> megFileDataEntries)
+        {
+            if (!StringUtility.HasText(fileName))
+            {
+                megFileDataEntries = new List<MegFileDataEntry>();
+                return false;
+            }
+
+            megFileDataEntries = Content.Where(dataEntry =>
+                dataEntry.RelativeFilePath.Contains(fileName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            return megFileDataEntries.Any();
         }
     }
 }

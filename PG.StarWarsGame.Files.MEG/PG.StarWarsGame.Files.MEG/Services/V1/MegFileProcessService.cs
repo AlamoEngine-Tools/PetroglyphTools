@@ -136,20 +136,28 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
                     $"{typeof(string)}:{nameof(fileName)} is not valid or contains no data.");
             }
 
-            if (!holder.TryGetMegFileDataEntry(fileName, out MegFileDataEntry megFileDataEntry))
+            if (!holder.TryGetAllMegFileDataEntriesWithMatchingName(fileName,
+                out IList<MegFileDataEntry> megFileDataEntries))
             {
                 throw new FileNotContainedInArchiveException(
                     $"The file \"{fileName}\" is not contained in the currently loaded MEG archive \"{holder.FullyQualifiedName}\"");
             }
 
+            if (megFileDataEntries.Count > 1)
+            {
+                throw new MultipleFilesWithMatchingNameInArchiveException(
+                    $"There are multiple files matching the search filer \"{fileName}\" in the currently loaded MEG archive \"{holder.FullyQualifiedName}\". The files cannot be extracted without conflicting overwrites." +
+                    $"\nFiles in question: {megFileDataEntries}");
+            }
+
             CreateTargetDirectoryIfNotExists(targetDirectory);
             if (preserveDirectoryHierarchy)
             {
-                UnpackMegFilePreservingDirectoryHierarchy(holder, targetDirectory, megFileDataEntry);
+                UnpackMegFilePreservingDirectoryHierarchy(holder, targetDirectory, megFileDataEntries[0]);
             }
             else
             {
-                UnpackMegFileFlatDirectoryHierarchy(holder, targetDirectory, megFileDataEntry);
+                UnpackMegFileFlatDirectoryHierarchy(holder, targetDirectory, megFileDataEntries[0]);
             }
         }
 

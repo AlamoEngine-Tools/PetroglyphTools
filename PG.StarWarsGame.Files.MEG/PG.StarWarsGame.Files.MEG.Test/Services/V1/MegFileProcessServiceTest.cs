@@ -80,7 +80,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [DataRow("test", "")]
         [DataRow("test", "    ")]
         [ExpectedException(typeof(ArgumentException))]
-        public void AsMegArchive_Test__ThrowsArgumentExceptionForStringTypes(string megArchiveName,
+        public void PackFilesAsMegArchive_Test__ThrowsArgumentExceptionForStringTypes(string megArchiveName,
             string targetDirectory)
         {
             IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
@@ -103,12 +103,12 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestUtility.TEST_TYPE_HOLY)]
         [TestCategory(TestUtility.TEST_TYPE_API)]
         [ExpectedException(typeof(ArgumentException))]
-        public void AsMegArchive_Test__ThrowsArgumentException()
+        public void PackFilesAsMegArchive_Test__ThrowsArgumentException()
         {
             IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
-            svc.PackFilesAsMegArchive(nameof(AsMegArchive_Test__ThrowsArgumentException),
+            svc.PackFilesAsMegArchive(nameof(PackFilesAsMegArchive_Test__ThrowsArgumentException),
                 new Dictionary<string, string>(),
-                m_fileSystem.Path.Combine(TestConstants.BASE_PATH, nameof(AsMegArchive_Test__ThrowsArgumentException)));
+                m_fileSystem.Path.Combine(TestConstants.BASE_PATH, nameof(PackFilesAsMegArchive_Test__ThrowsArgumentException)));
         }
 
         [TestMethod]
@@ -241,6 +241,20 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
             IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
             MegFileHolder megFileHolder = svc.Load(TestConstants.FILE_PATH_MEG_FILE);
             svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, "I_DO_NO_EXIST.XML", false);
+        }
+        
+        [TestMethod]
+        [TestCategory(TestUtility.TEST_TYPE_HOLY)]
+        [TestCategory(TestUtility.TEST_TYPE_API)]
+        [ExpectedException(typeof(MultipleFilesWithMatchingNameInArchiveException))]
+        public void UnpackSingleFileFromMegFile_Test__ThrowsMultipleFilesWithMatchingNameInArchiveException()
+        {
+            string exportTestPath =
+                m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
+                    "UnpackSingleFileFromMegFile_Test__ThrowsFileNotContainedInArchiveException");
+            IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
+            MegFileHolder megFileHolder = svc.Load(TestConstants.FILE_PATH_MEG_FILE);
+            svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, "XML", false);
         }
 
         [TestMethod]

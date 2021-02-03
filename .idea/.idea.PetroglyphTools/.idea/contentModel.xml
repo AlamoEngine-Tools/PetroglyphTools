@@ -880,6 +880,7 @@
           <e p="Exceptions" t="Include">
             <e p="FileNotContainedInArchiveException.cs" t="Include" />
             <e p="MegFileCorruptedException.cs" t="Include" />
+            <e p="MultipleFilesWithNameInArchiveException.cs" t="Include" />
           </e>
         </e>
         <e p="Files" t="Include">
@@ -922,6 +923,11 @@
                 </e>
               </e>
             </e>
+          </e>
+        </e>
+        <e p="Holder" t="Include">
+          <e p="v1" t="Include">
+            <e p="MegFileHolderTest.cs" t="Include" />
           </e>
         </e>
         <e p="obj" t="ExcludeRecursive">

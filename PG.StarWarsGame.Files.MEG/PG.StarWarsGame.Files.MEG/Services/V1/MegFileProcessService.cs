@@ -74,7 +74,9 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             MegFile megFile = builder.FromHolder(megFileHolder, out IList<string> filesToStream);
             string writePath = m_fileSystem.Path.Combine(megFileHolder.FilePath, megFileHolder.FullyQualifiedName);
             CreateTargetDirectoryIfNotExists(megFileHolder.FilePath);
-            using (BinaryWriter writer = new BinaryWriter(m_fileSystem.FileStream.Create(writePath, FileMode.Create, FileAccess.Write, FileShare.None)))
+            using (BinaryWriter writer =
+                new BinaryWriter(m_fileSystem.FileStream.Create(writePath, FileMode.Create, FileAccess.Write,
+                    FileShare.None)))
             {
                 writer.Write(megFile.ToBytes());
             }
@@ -103,17 +105,13 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
         {
             CreateTargetDirectoryIfNotExists(targetDirectory);
 
-            using BinaryReader reader = GetBinaryReaderForFileHolder(holder);
+            using BinaryReader readStream = GetBinaryReaderForFileHolder(holder);
             foreach (MegFileDataEntry megFileDataEntry in holder.Content)
             {
                 string filePath = m_fileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
                 string path = m_fileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
                 CreateTargetDirectoryIfNotExists(path);
-
-                byte[] file = new byte[megFileDataEntry.Size];
-                reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
-                reader.Read(file, 0, file.Length);
-                m_fileSystem.File.WriteAllBytes(filePath, file);
+                ExtractFileFromMegArchive(readStream, megFileDataEntry, filePath);
             }
         }
 
@@ -189,6 +187,22 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             return holder;
         }
 
+        private void ExtractFileFromMegArchive(BinaryReader readStream, MegFileDataEntry megFileDataEntry,
+            string filePath)
+        {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            readStream.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
+            using Stream writeStream =
+                m_fileSystem.FileStream.Create(filePath, FileMode.Append, FileAccess.Write, FileShare.None);
+            int bytesRead;
+            int bytesToWrite = Convert.ToInt32(megFileDataEntry.Size);
+            while ((bytesRead = readStream.Read(buffer, 0, Math.Min(buffer.Length, bytesToWrite))) > 0)
+            {
+                bytesToWrite -= bytesRead;
+                writeStream.Write(buffer, 0, bytesRead);
+            }
+        }
+
         private void CreateTargetDirectoryIfNotExists(string targetDirectory)
         {
             if (m_fileSystem.Directory.Exists(targetDirectory))
@@ -207,10 +221,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             string path = m_fileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
             CreateTargetDirectoryIfNotExists(path);
             using BinaryReader reader = GetBinaryReaderForFileHolder(holder);
-            byte[] file = new byte[megFileDataEntry.Size];
-            reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
-            reader.Read(file, 0, file.Length);
-            m_fileSystem.File.WriteAllBytes(filePath, file);
+            ExtractFileFromMegArchive(reader, megFileDataEntry, filePath);
         }
 
         private void UnpackMegFileFlatDirectoryHierarchy(MegFileHolder holder, string targetDirectory,
@@ -219,17 +230,14 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             string filePath = m_fileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
             filePath = m_fileSystem.Path.Combine(targetDirectory, m_fileSystem.Path.GetFileName(filePath));
             using BinaryReader reader = GetBinaryReaderForFileHolder(holder);
-            byte[] file = new byte[megFileDataEntry.Size];
-            reader.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
-            reader.Read(file, 0, file.Length);
-            m_fileSystem.File.WriteAllBytes(filePath, file);
+            ExtractFileFromMegArchive(reader, megFileDataEntry, filePath);
         }
 
         private BinaryReader GetBinaryReaderForFileHolder(MegFileHolder holder)
         {
             return new BinaryReader(m_fileSystem.FileStream.Create(
                 m_fileSystem.Path.Combine(holder.FilePath, $"{holder.FileName}.{holder.FileType.FileExtension}"),
-                FileMode.Open));
+                FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
         private uint GetMegFileHeaderSize([NotNull] string path)

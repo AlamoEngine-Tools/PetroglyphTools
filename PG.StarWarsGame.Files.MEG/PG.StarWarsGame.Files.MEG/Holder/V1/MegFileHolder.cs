@@ -4,13 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PG.Commons.Data.Holder;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.MEG.Files.V1;
-
-[assembly: InternalsVisibleTo("PG.StarWarsGame.Files.MEG.Test")]
 
 namespace PG.StarWarsGame.Files.MEG.Holder.V1
 {
@@ -23,7 +20,7 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
     ///         but all necessary meta-information to extract a given file on-demand.
     ///     </remarks>
     /// </summary>
-    public sealed class MegFileHolder : IFileHolder<List<MegFileDataEntry>, MegAlamoFileType>
+    public sealed class MegFileHolder : IFileHolder<IList<MegFileDataEntry>, MegAlamoFileType>
     {
         /// <summary>
         ///     .ctor
@@ -32,8 +29,12 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         /// <param name="fileName">The desired file name without the file extension.</param>
         public MegFileHolder([NotNull] string filePath, [NotNull] string fileName)
         {
-            FilePath = filePath ?? throw new ArgumentNullException($"Argument {nameof(filePath)} may not be null.");
-            FileName = fileName ?? throw new ArgumentNullException($"Argument {nameof(fileName)} may not be null.");
+            FilePath = StringUtility.HasText(filePath)
+                ? filePath
+                : throw new ArgumentNullException($"Argument {nameof(filePath)} may not be null.");
+            FileName = StringUtility.HasText(fileName)
+                ? fileName
+                : throw new ArgumentNullException($"Argument {nameof(fileName)} may not be null.");
         }
 
         /// <inheritdoc />
@@ -46,7 +47,7 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         public MegAlamoFileType FileType { get; } = new MegAlamoFileType();
 
         /// <inheritdoc />
-        public List<MegFileDataEntry> Content { get; set; } = new List<MegFileDataEntry>();
+        public IList<MegFileDataEntry> Content { get; set; } = new List<MegFileDataEntry>();
 
         /// <inheritdoc />
         public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
@@ -57,7 +58,7 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         /// <param name="fileName"></param>
         /// <param name="megFileDataEntry"></param>
         /// <returns></returns>
-        public bool TryGetMegFileDataEntry(string fileName, out MegFileDataEntry megFileDataEntry)
+        public bool TryGetMegFileDataEntry([NotNull] string fileName, [CanBeNull] out MegFileDataEntry megFileDataEntry)
         {
             if (StringUtility.HasText(fileName))
             {

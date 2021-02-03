@@ -4,11 +4,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
-
-[assembly: InternalsVisibleTo("PG.StarWarsGame.Files.MEG.Test")]
 
 namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {

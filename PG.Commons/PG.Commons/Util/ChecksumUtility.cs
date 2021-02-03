@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using JetBrains.Annotations;
 
@@ -19,11 +22,12 @@ namespace PG.Commons.Util
         {
             for (int i = 0; i < 256; i++)
             {
-                uint crc = (uint)i;
+                uint crc = (uint) i;
                 for (int j = 0; j < 8; j++)
                 {
                     crc = ((crc & 1) != 0) ? (crc >> 1) ^ 0xEDB88320 : (crc >> 1);
                 }
+
                 LOOKUP_TABLE[i] = crc & 0xFFFFFFFF;
             }
         }
@@ -45,6 +49,7 @@ namespace PG.Commons.Util
             {
                 crc = ((crc >> 8) & 0x00FFFFFF) ^ LOOKUP_TABLE[(crc ^ (s)[j]) & 0xFF];
             }
+
             return Convert.ToUInt32(crc ^ 0xFFFFFFFF);
         }
 

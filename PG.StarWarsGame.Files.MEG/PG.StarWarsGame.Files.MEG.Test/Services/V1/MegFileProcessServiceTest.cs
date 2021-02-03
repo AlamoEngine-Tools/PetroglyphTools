@@ -67,7 +67,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                 targetDirectory);
             byte[] expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_MEG_FILE);
             byte[] actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(targetDirectory, testMegFileName));
-            AssertAreBinaryEquivalent(expected, actual);
+            TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
 
         [TestMethod]
@@ -193,7 +193,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         public void UnpackMegFile_Test__UnpackedFilesAreBinaryEquivalent()
         {
             string exportTestPath =
-                m_fileSystem.Path.Combine(TestConstants.BASE_PATH, "UnpackMegFile_Test__FromFilePath");
+                m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
+                    nameof(UnpackMegFile_Test__UnpackedFilesAreBinaryEquivalent));
             IMegFileProcessService svc = new MegFileProcessService(m_fileSystem);
             svc.UnpackMegFile(TestConstants.FILE_PATH_MEG_FILE, exportTestPath);
             Assert.IsTrue(m_fileSystem.Directory.Exists(exportTestPath));
@@ -208,11 +209,11 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
             byte[] expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_GAMEOBJECTFILES);
             byte[] actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(fullExportPath,
                 TestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
-            AssertAreBinaryEquivalent(expected, actual);
+            TestUtility.AssertAreBinaryEquivalent(expected, actual);
             expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_GAMEOBJECTFILES);
             actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(fullExportPath,
                 TestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
-            AssertAreBinaryEquivalent(expected, actual);
+            TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
 
         [TestMethod]
@@ -257,7 +258,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
             byte[] expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_GAMEOBJECTFILES);
             byte[] actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(fullExportPath,
                 TestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
-            AssertAreBinaryEquivalent(expected, actual);
+            TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
 
         [TestMethod]
@@ -275,16 +276,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
             byte[] expected = m_fileSystem.File.ReadAllBytes(TestConstants.FILE_PATH_GAMEOBJECTFILES);
             byte[] actual = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(exportTestPath,
                 TestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
-            AssertAreBinaryEquivalent(expected, actual);
-        }
-
-        private static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
-        {
-            Assert.AreEqual(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Assert.AreEqual(expected[i], actual[i]);
-            }
+            TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
     }
 }

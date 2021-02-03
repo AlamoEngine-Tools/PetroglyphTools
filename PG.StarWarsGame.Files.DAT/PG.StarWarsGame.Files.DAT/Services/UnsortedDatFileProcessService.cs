@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +19,8 @@ namespace PG.StarWarsGame.Files.DAT.Services
         [CanBeNull] private readonly ILogger m_logger;
         [NotNull] private readonly IFileSystem m_fileSystem;
 
-        public UnsortedDatFileProcessService([CanBeNull] IFileSystem fileSystem, [CanBeNull] ILoggerFactory loggerFactory = null)
+        public UnsortedDatFileProcessService([CanBeNull] IFileSystem fileSystem,
+            [CanBeNull] ILoggerFactory loggerFactory = null)
         {
             m_fileSystem = fileSystem ?? new FileSystem();
             m_logger = loggerFactory?.CreateLogger<UnsortedDatFileProcessService>();

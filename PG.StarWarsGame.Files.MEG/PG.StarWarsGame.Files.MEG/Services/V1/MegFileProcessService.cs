@@ -28,6 +28,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
     [Export(nameof(IMegFileProcessService))]
     public sealed class MegFileProcessService : IMegFileProcessService
     {
+        private const int BUFFER_SIZE = 4096;
         [NotNull] private readonly IFileSystem m_fileSystem;
         [CanBeNull] private readonly ILogger m_logger;
 
@@ -39,7 +40,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
         }
 
         public void PackFilesAsMegArchive(string megArchiveName,
-            Dictionary<string, string> packedFileNameToAbsoluteFilePathsMap, string targetDirectory)
+            IDictionary<string, string> packedFileNameToAbsoluteFilePathsMap, string targetDirectory)
         {
             if (!StringUtility.HasText(megArchiveName))
             {
@@ -62,7 +63,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
                     nameof(targetDirectory));
             }
 
-            string actualName = StringUtility.StripFileExtension(megArchiveName);
+            string actualName = StringUtility.RemoveFileExtension(megArchiveName);
             MegFileHolder megFileHolder = new MegFileHolder(targetDirectory, actualName);
             foreach ((string key, string value) in packedFileNameToAbsoluteFilePathsMap)
             {
@@ -70,10 +71,10 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             }
 
             MegFileBuilder builder = new MegFileBuilder(m_fileSystem);
-            MegFile megFile = builder.FromHolder(megFileHolder, out List<string> filesToStream);
+            MegFile megFile = builder.FromHolder(megFileHolder, out IList<string> filesToStream);
             string writePath = m_fileSystem.Path.Combine(megFileHolder.FilePath, megFileHolder.FullyQualifiedName);
             CreateTargetDirectoryIfNotExists(megFileHolder.FilePath);
-            using (BinaryWriter writer = new BinaryWriter(m_fileSystem.FileStream.Create(writePath, FileMode.Create)))
+            using (BinaryWriter writer = new BinaryWriter(m_fileSystem.FileStream.Create(writePath, FileMode.Create, FileAccess.Write, FileShare.None)))
             {
                 writer.Write(megFile.ToBytes());
             }
@@ -83,7 +84,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
                 using Stream readStream = m_fileSystem.File.OpenRead(file);
                 using Stream writeStream =
                     m_fileSystem.FileStream.Create(writePath, FileMode.Append, FileAccess.Write, FileShare.None);
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[BUFFER_SIZE];
                 int bytesRead;
                 while ((bytesRead = readStream.Read(buffer, 0, buffer.Length)) > 0)
                 {
@@ -148,8 +149,10 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             {
                 UnpackMegFilePreservingDirectoryHierarchy(holder, targetDirectory, megFileDataEntry);
             }
-
-            UnpackMegFileFlatDirectoryHierarchy(holder, targetDirectory, megFileDataEntry);
+            else
+            {
+                UnpackMegFileFlatDirectoryHierarchy(holder, targetDirectory, megFileDataEntry);
+            }
         }
 
         public MegFileHolder Load(string filePath)
@@ -177,9 +180,9 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
                 m_fileSystem.Path.GetFileNameWithoutExtension(filePath));
             for (int i = 0; i < megFile.Header.NumFiles; i++)
             {
-                string fileName = megFile.FileNameTable.MegFileNameTableRecords[i].FileName;
-                uint fileOffset = megFile.FileContentTable.MegFileContentTableRecords[i].FileStartOffsetInBytes;
-                uint fileSize = megFile.FileContentTable.MegFileContentTableRecords[i].FileSizeInBytes;
+                string fileName = megFile.FileNameTable[i].FileName;
+                uint fileOffset = megFile.FileContentTable[i].FileStartOffsetInBytes;
+                uint fileSize = megFile.FileContentTable[i].FileSizeInBytes;
                 holder.Content.Add(new MegFileDataEntry(fileName, Convert.ToInt32(fileOffset), fileSize));
             }
 

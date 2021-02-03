@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Runtime.Serialization;
 
@@ -17,11 +20,13 @@ namespace PG.StarWarsGame.Files.DAT.Commons.Exceptions
         {
         }
 
-        public IndexAndValueTableOutOfSyncException(string message, Exception innerException) : base(message, innerException)
+        public IndexAndValueTableOutOfSyncException(string message, Exception innerException) : base(message,
+            innerException)
         {
         }
 
-        public IndexAndValueTableOutOfSyncException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public IndexAndValueTableOutOfSyncException(SerializationInfo info, StreamingContext context) : base(info,
+            context)
         {
         }
     }

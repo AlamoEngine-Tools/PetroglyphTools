@@ -1,29 +1,27 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 
-[assembly: InternalsVisibleTo("PG.StarWarsGame.Files.MEGs.Test")]
-
 namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
-    internal class MegFileNameTable : IBinaryFile, ISizeable
+    internal class MegFileNameTable : IBinaryFile, ISizeable, IEnumerable<MegFileNameTableRecord>
     {
         public MegFileNameTable(List<MegFileNameTableRecord> megFileNameTableRecords)
         {
-            MegFileNameTableRecords = megFileNameTableRecords ?? new List<MegFileNameTableRecord>();
+            m_megFileNameTableRecords = megFileNameTableRecords ?? new List<MegFileNameTableRecord>();
         }
 
-        [NotNull] internal List<MegFileNameTableRecord> MegFileNameTableRecords { get; }
+        [NotNull] private readonly List<MegFileNameTableRecord> m_megFileNameTableRecords;
 
         public byte[] ToBytes()
         {
             List<byte> b = new List<byte>();
-            foreach (MegFileNameTableRecord megFileNameTableRecord in MegFileNameTableRecords)
+            foreach (MegFileNameTableRecord megFileNameTableRecord in this)
             {
                 b.AddRange(megFileNameTableRecord.ToBytes());
             }
@@ -32,5 +30,17 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
         }
 
         public int Size => ToBytes().Length;
+
+        public IEnumerator<MegFileNameTableRecord> GetEnumerator()
+        {
+            return m_megFileNameTableRecords.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable) m_megFileNameTableRecords).GetEnumerator();
+        }
+
+        public MegFileNameTableRecord this[int i] => m_megFileNameTableRecords[i];
     }
 }

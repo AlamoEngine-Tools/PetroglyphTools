@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PG.Commons.Data.Files;
@@ -28,6 +31,6 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 
         [NotNull] public abstract TContent Content { get; set; }
 
-        public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
+        [NotNull] public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
     }
 }

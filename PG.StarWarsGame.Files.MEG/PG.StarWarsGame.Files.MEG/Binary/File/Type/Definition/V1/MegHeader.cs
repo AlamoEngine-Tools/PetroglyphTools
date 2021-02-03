@@ -29,6 +29,6 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
             return bytes.ToArray();
         }
 
-        public int Size => sizeof(uint) * 2;
+        public int Size => sizeof(uint) + sizeof(uint);
     }
 }

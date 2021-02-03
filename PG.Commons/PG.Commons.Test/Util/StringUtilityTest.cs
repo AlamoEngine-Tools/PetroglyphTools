@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -52,16 +55,17 @@ namespace PG.Commons.Test.Util
         [ExpectedException(typeof(ArgumentException))]
         public void StripFileExtension_Test__ThrowsArgumentException(string invalidFilePath)
         {
-            StringUtility.StripFileExtension(invalidFilePath);
+            StringUtility.RemoveFileExtension(invalidFilePath);
         }
-        
+
         [TestMethod]
         [DataRow("test", "test.xml")]
         [DataRow("c:/tester/test", "c:/tester/test.xml")]
+        [DataRow("/mnt/c/tester/test", "/mnt/c/tester/test.xml")]
         [DataRow("c:\\tester\\test", "c:\\tester\\test.xml")]
         public void StripFileExtension_Test__ReturnsExpected(string expected, string input)
         {
-            string actual = StringUtility.StripFileExtension(input);
+            string actual = StringUtility.RemoveFileExtension(input);
             Assert.AreEqual(expected, actual);
         }
     }

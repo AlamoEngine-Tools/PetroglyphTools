@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Runtime.CompilerServices;
 using PG.Commons.Data.Files;
 
@@ -17,10 +20,12 @@ namespace PG.StarWarsGame.Files.DAT.Files
     {
         private const FileType FILE_TYPE = FileType.Binary;
         private const string FILE_EXTENSION = "dat";
+
         /// <summary>
         /// The discerning flag between <see cref="SortedDatAlamoFileType"/> and <see cref="UnsortedDatAlamoFileType"/>.
         /// </summary>
         public abstract bool IsSorted { get; }
+
         public FileType Type => FILE_TYPE;
         public string FileExtension => FILE_EXTENSION;
     }

@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +51,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
             if (ReferenceEquals(this, other)) return true;
             return CompareTo(other) == 0;
         }
-        
+
         public override bool Equals(object obj)
         {
             return ReferenceEquals(this, obj) || obj is ValueTableRecord other && Equals(other);

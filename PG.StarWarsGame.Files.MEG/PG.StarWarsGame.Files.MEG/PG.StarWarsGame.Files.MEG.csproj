@@ -1,23 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <ProjectGuid>{999D1E81-59E0-4E1B-9819-5D0448BC5C30}</ProjectGuid>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-    <PackageReference Include="System.Composition.AttributedModel" Version="5.0.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.9" />
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <ProjectGuid>{999D1E81-59E0-4E1B-9819-5D0448BC5C30}</ProjectGuid>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Title>PG.StarWarsGame.Files.MEG</Title>
+        <PackageId>PG.StarWarsGame.Files.MEG</PackageId>
+        <Authors>Alamo Engine Tools and Contributors</Authors>
+        <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
+        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Company>Alamo Engine Tools</Company>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Product>PG.StarWarsGame.Files.MEG 1.0.0-alpha.1</Product>
+        <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+        <PackageReference Include="System.Composition.AttributedModel" Version="5.0.1" />
+        <PackageReference Include="System.IO.Abstractions" Version="13.2.9" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Commons" />
+    </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>$(AssemblyName).Test</_Parameter1>
+        </AssemblyAttribute>
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Commons" />
-  </ItemGroup>
-
 </Project>

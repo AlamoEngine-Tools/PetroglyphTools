@@ -23,7 +23,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
         /// <param name="megArchiveName">The desired name of the archive.</param>
         /// <param name="packedFileNameToAbsoluteFilePathsMap">A list of absolute file paths, identified by their name in the MEG file.</param>
         /// <param name="targetDirectory">The target directory to which the *.MEG archive will be written.</param>
-        void PackFilesAsMegArchive([NotNull] string megArchiveName, [NotNull] Dictionary<string,string> packedFileNameToAbsoluteFilePathsMap, [NotNull] string targetDirectory);
+        void PackFilesAsMegArchive([NotNull] string megArchiveName, [NotNull] IDictionary<string,string> packedFileNameToAbsoluteFilePathsMap, [NotNull] string targetDirectory);
 
         /// <summary>
         ///     Unpacks a given *.MEG file into a given directory.

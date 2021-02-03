@@ -36,7 +36,7 @@ namespace PG.Commons.Data.Holder
         TContent Content { get; set; }
 
         /// <summary>
-        /// The fully qualified file name, eg. "myfile.txt"
+        /// The file name excluding the full path, eg. "myfile.txt"
         /// </summary>
         string FullyQualifiedName { get; }
     }

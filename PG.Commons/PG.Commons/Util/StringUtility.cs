@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -93,7 +96,7 @@ namespace PG.Commons.Util
         [NotNull]
         public static List<string> ParseSeparatedStringToList(string s, char separator, bool shouldClean = true)
         {
-            // TODO: Add option to retain empty strings in the list.
+            // TODO: https://github.com/AlamoEngine-Tools/PetroglyphTools/issues/103
             return SplitStringInternal(s, separator, shouldClean);
         }
 
@@ -109,6 +112,7 @@ namespace PG.Commons.Util
             Debug.Assert(s != null, nameof(s) + " != null");
             string[] split = s.Split(separator);
             list.AddRange(from str in split where !IsNullEmptyOrWhiteSpace(str) select shouldClean ? str.Trim() : str);
+
             return list;
         }
 
@@ -118,9 +122,9 @@ namespace PG.Commons.Util
         /// <param name="fileName"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static string StripFileExtension(string fileName)
+        public static string RemoveFileExtension(string fileName)
         {
-            if (!StringUtility.HasText(fileName))
+            if (!HasText(fileName))
             {
                 throw new ArgumentException("The provided argument is null or only consists of whitespace.",
                     nameof(fileName));

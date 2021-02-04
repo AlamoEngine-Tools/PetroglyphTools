@@ -31,4 +31,7 @@
     <ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
   </ItemGroup>
 
+  <ItemGroup>    
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
 </Project>

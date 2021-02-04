@@ -2,11 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
-namespace PG.StarWarsGame.Files.MTD.Commons
+namespace PG.StarWarsGame.Files.MTD.Commons.Exceptions
 {
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public sealed class InvalidIconNameException : Exception
     {
         public InvalidIconNameException()
@@ -24,7 +26,5 @@ namespace PG.StarWarsGame.Files.MTD.Commons
         public InvalidIconNameException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
-
-        
     }
 }

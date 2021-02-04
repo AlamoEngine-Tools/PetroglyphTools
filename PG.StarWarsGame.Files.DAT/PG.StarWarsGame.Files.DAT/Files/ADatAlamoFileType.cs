@@ -1,6 +1,7 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using PG.Commons.Data.Files;
 
@@ -16,6 +17,7 @@ namespace PG.StarWarsGame.Files.DAT.Files
     /// The unsorted file type <see cref="UnsortedDatAlamoFileType"/> is used as a credits file (yes, like those movie
     /// credits). It allows duplicate keys which are used as formatting instructions. 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public abstract class ADatAlamoFileType : IAlamoFileType
     {
         private const FileType FILE_TYPE = FileType.Binary;

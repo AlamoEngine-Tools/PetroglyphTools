@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Util;
-using PG.StarWarsGame.Files.MTD.Commons;
+using PG.StarWarsGame.Files.MTD.Commons.Exceptions;
 
 namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
 {

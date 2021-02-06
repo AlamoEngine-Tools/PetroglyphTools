@@ -122,6 +122,9 @@
       <e p="PG.StarWarsGame\PG.StarWarsGame" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Commons" t="Include">
+          <e p="Platforms" t="Include">
+            <e p="Platform.cs" t="Include" />
+          </e>
           <e p="Xml" t="Include">
             <e p="Files" t="Include">
               <e p="AXmlFileDefinition.cs" t="Include" />
@@ -1072,6 +1075,20 @@
               </e>
             </e>
           </e>
+        </e>
+        <e p="Languages" t="Include">
+          <e p="ChineseLanguageDefinition.cs" t="Include" />
+          <e p="EnglishLanguageDefinition.cs" t="Include" />
+          <e p="FrenchLanguageDefinition.cs" t="Include" />
+          <e p="GermanLanguageDefinition.cs" t="Include" />
+          <e p="ILanguageDefinition.cs" t="Include" />
+          <e p="ItalianLanguageDefinition.cs" t="Include" />
+          <e p="JapaneseLanguageDefinition.cs" t="Include" />
+          <e p="KoreanLanguageDefinition.cs" t="Include" />
+          <e p="PolishLanguageDefinition.cs" t="Include" />
+          <e p="RussianLanguageDefinition.cs" t="Include" />
+          <e p="SpanishLanguageDefinition.cs" t="Include" />
+          <e p="ThaiLanguageDefinition.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

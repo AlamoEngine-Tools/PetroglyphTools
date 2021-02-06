@@ -947,6 +947,33 @@
       </e>
       <e p="PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Binary" t="Include">
+          <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="MtdFileBuilder.cs" t="Include" />
+            </e>
+            <e p="Type" t="Include">
+              <e p="Definition" t="Include">
+                <e p="MtdFile.cs" t="Include" />
+                <e p="MtdHeader.cs" t="Include" />
+                <e p="MtdImageTable.cs" t="Include" />
+                <e p="MtdImageTableRecord.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Commons" t="Include">
+          <e p="Exceptions" t="Include">
+            <e p="InvalidIconNameException.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Files" t="Include">
+          <e p="MtdAlamoFileType.cs" t="Include" />
+        </e>
+        <e p="Holder" t="Include">
+          <e p="MtdFileHolder.cs" t="Include" />
+          <e p="MtdIcon.cs" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
@@ -958,6 +985,21 @@
       </e>
       <e p="PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Binary" t="Include">
+          <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="MtdFileBuilderTest.cs" t="Include" />
+            </e>
+            <e p="Type" t="Include">
+              <e p="Definition" t="Include">
+                <e p="MtdFileTest.cs" t="Include" />
+                <e p="MtdHeaderTest.cs" t="Include" />
+                <e p="MtdImageTableRecordTest.cs" t="Include" />
+                <e p="MtdImageTableTest.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
@@ -966,6 +1008,7 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Files.MTD.Test.csproj" t="IncludeRecursive" />
+        <e p="TestConstants.cs" t="Include" />
       </e>
       <e p="PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />

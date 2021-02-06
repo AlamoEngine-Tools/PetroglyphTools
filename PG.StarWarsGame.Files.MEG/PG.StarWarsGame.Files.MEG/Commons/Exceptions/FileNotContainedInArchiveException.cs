@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PG.StarWarsGame.Files.MEG.Commons.Exceptions
@@ -10,6 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Commons.Exceptions
     /// Exception thrown, if a file is not contained in the current archive.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public sealed class FileNotContainedInArchiveException : Exception
     {
         public FileNotContainedInArchiveException()

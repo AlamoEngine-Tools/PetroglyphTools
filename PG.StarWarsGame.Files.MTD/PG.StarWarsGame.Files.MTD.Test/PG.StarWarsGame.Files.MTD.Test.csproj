@@ -27,7 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
     <ProjectReference Include="..\PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>    
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
 </Project>

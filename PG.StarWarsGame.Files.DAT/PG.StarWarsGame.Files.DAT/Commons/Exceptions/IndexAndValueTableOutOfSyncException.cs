@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PG.StarWarsGame.Files.DAT.Commons.Exceptions
@@ -10,6 +11,7 @@ namespace PG.StarWarsGame.Files.DAT.Commons.Exceptions
     /// An exception thrown when the <code>*.DAT</code> file's index table and value table are out of sync.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public sealed class IndexAndValueTableOutOfSyncException : Exception
     {
         public IndexAndValueTableOutOfSyncException()

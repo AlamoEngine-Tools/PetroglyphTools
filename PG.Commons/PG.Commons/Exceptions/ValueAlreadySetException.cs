@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PG.Commons.Exceptions
 {
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class ValueAlreadySetException : Exception
     {
         public ValueAlreadySetException()

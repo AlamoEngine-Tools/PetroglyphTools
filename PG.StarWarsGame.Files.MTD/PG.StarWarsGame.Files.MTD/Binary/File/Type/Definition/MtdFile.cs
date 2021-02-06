@@ -13,14 +13,21 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
         private readonly MtdHeader m_header;
         private readonly MtdImageTable m_imageTable;
 
-        public MtdFile([NotNull] IEnumerable<MtdImageTableRecord> imageTableRecords) : this(new MtdImageTable(imageTableRecords))
+        public MtdFile([NotNull] IEnumerable<MtdImageTableRecord> imageTableRecords) : this(
+            new MtdImageTable(imageTableRecords))
         {
         }
-        
+
         public MtdFile([NotNull] MtdImageTable imageTable)
         {
             m_imageTable = imageTable;
             m_header = new MtdHeader(Convert.ToUInt32(imageTable.Count));
+        }
+
+        public MtdFile([NotNull] MtdHeader header, [NotNull] MtdImageTable imageTable)
+        {
+            m_header = header;
+            m_imageTable = imageTable;
         }
 
         public byte[] ToBytes()

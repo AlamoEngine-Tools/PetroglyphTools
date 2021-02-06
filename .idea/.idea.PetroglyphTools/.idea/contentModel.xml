@@ -972,6 +972,7 @@
         </e>
         <e p="Holder" t="Include">
           <e p="MtdFileHolder.cs" t="Include" />
+          <e p="MtdIcon.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -986,6 +987,9 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="Binary" t="Include">
           <e p="File" t="Include">
+            <e p="Builder" t="Include">
+              <e p="MtdFileBuilderTest.cs" t="Include" />
+            </e>
             <e p="Type" t="Include">
               <e p="Definition" t="Include">
                 <e p="MtdFileTest.cs" t="Include" />

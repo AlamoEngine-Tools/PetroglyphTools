@@ -1,7 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CustomTools/CustomToolsData/@EntryValue"></s:String>
 	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\gruen\AppData\Local\JetBrains\Rider2020.3\resharper-host\temp\Rider\vAny\CoverageData\_PetroglyphTools.-1693569080\Snapshot\snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c1a5e3a1_002D4a26_002D40bc_002Dba59_002Dd92ecdca1839/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b2e949ec_002D4e24_002D4be7_002D9cc0_002D7c52eb53b005/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.Commons\PG.Commons.Test" Presentation="&amp;lt;PG.Commons.Test&amp;gt;" /&gt;&#xD;
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.DAT.Test&amp;gt;" /&gt;&#xD;
@@ -9,6 +9,7 @@
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.MTD.Test&amp;gt;" /&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
 	
 	
 	

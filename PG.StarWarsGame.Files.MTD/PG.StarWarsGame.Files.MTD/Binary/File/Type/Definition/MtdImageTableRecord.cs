@@ -14,7 +14,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
 {
     internal sealed class MtdImageTableRecord : IBinaryFile, ISizeable
     {
-        private const int BINARY_NAME_LENGTH = 64;
+        internal const int BINARY_NAME_LENGTH = 64;
         private readonly string m_name;
         private readonly uint m_xPosition;
         private readonly uint m_yPosition;
@@ -31,7 +31,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
                 throw new ArgumentException($"{nameof(name)} may never be null, empty or whitespace.");
             }
 
-            m_name = name;
+            m_name = name.Trim().ToUpper();
             m_xPosition = xPosition;
             m_yPosition = yPosition;
             m_xExtend = xExtend;

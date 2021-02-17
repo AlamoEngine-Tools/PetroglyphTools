@@ -97,6 +97,9 @@
       </e>
       <e p="PG.Core\PG.Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Localisation" t="Include">
+          <e p="IAlamoLanguageDefinition.cs" t="Include" />
+        </e>
         <e p="LocalizableTexts.Designer.cs" t="Include" />
         <e p="LocalizableTexts.resx" t="Include" />
         <e p="obj" t="ExcludeRecursive">
@@ -1075,20 +1078,22 @@
               </e>
             </e>
           </e>
+          <e p="Translation" t="Include">
+            <e p="TranslationItem.cs" t="Include" />
+          </e>
         </e>
         <e p="Languages" t="Include">
-          <e p="ChineseLanguageDefinition.cs" t="Include" />
-          <e p="EnglishLanguageDefinition.cs" t="Include" />
-          <e p="FrenchLanguageDefinition.cs" t="Include" />
-          <e p="GermanLanguageDefinition.cs" t="Include" />
-          <e p="ILanguageDefinition.cs" t="Include" />
-          <e p="ItalianLanguageDefinition.cs" t="Include" />
-          <e p="JapaneseLanguageDefinition.cs" t="Include" />
-          <e p="KoreanLanguageDefinition.cs" t="Include" />
-          <e p="PolishLanguageDefinition.cs" t="Include" />
-          <e p="RussianLanguageDefinition.cs" t="Include" />
-          <e p="SpanishLanguageDefinition.cs" t="Include" />
-          <e p="ThaiLanguageDefinition.cs" t="Include" />
+          <e p="ChineseAlamoLanguageDefinition.cs" t="Include" />
+          <e p="EnglishAlamoLanguageDefinition.cs" t="Include" />
+          <e p="FrenchAlamoLanguageDefinition.cs" t="Include" />
+          <e p="GermanAlamoLanguageDefinition.cs" t="Include" />
+          <e p="ItalianAlamoLanguageDefinition.cs" t="Include" />
+          <e p="JapaneseAlamoLanguageDefinition.cs" t="Include" />
+          <e p="KoreanAlamoLanguageDefinition.cs" t="Include" />
+          <e p="PolishAlamoLanguageDefinition.cs" t="Include" />
+          <e p="RussianAlamoLanguageDefinition.cs" t="Include" />
+          <e p="SpanishAlamoLanguageDefinition.cs" t="Include" />
+          <e p="ThaiAlamoLanguageDefinition.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -1101,6 +1106,11 @@
       </e>
       <e p="PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Data" t="Include">
+          <e p="Translation" t="Include">
+            <e p="TranslationItemTest.cs" t="Include" />
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">

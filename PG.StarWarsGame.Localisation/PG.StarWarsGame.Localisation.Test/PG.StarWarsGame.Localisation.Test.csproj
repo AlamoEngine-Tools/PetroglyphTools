@@ -26,11 +26,11 @@
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.15" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.csproj" />
-  </ItemGroup>
-
   <ItemGroup>    
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.csproj" />
   </ItemGroup>
 </Project>

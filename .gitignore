@@ -391,6 +391,11 @@ MigrationBackup/
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 
+# Custom Rider Plugins
+**/.idea/**/discord.xml
+**/.idea/**/codestream.xml
+
+
 Thumbs.db
 Desktop.ini
 .DS_Store

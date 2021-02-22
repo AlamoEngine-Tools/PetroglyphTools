@@ -50,7 +50,7 @@ namespace PG.StarWarsGame.Localisation.Test.Util
         }
 
         [TestMethod]
-        public void TryGuessAlamoLanguageDefinitionByIdentifier_Test__GuessBuiltInCorrectly()
+        public void TryGuessAlamoLanguageDefinitionByIdentifier_Test__GuessBuiltinCorrectly()
         {
             foreach (OfficialLanguage officialLanguage in Enum.GetValues(typeof(OfficialLanguage)))
             {

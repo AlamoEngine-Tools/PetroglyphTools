@@ -78,7 +78,7 @@ namespace PG.Core.Localisation
         /// <summary>
         /// Turns a given enum value into a recognised string identifier for use with the Alamo Engine.
         /// </summary>
-        /// <param name="enumValue"></param>
+        /// <param name="enumValue">The extension base type.</param>
         /// <returns></returns>
         [ExcludeFromCodeCoverage]
         public static string ToAlamoLanguageIdentifierString(this OfficialLanguage enumValue)
@@ -89,10 +89,9 @@ namespace PG.Core.Localisation
         /// <summary>
         /// Returns the appropriate <see cref="CultureInfo"/> for a given Alamo Language.
         /// </summary>
-        /// <param name="enumValue">The official language.</param>
+        /// <param name="enumValue">The extension base type.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        [ExcludeFromCodeCoverage]
         public static CultureInfo ToCultureInfo(this OfficialLanguage enumValue)
         {
             return enumValue switch
@@ -110,6 +109,65 @@ namespace PG.Core.Localisation
                 OfficialLanguage.Thai => CultureInfo.GetCultureInfo("th"),
                 _ => throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, null)
             };
+        }
+
+        /// <summary>
+        /// Tries to parse a <see cref="CultureInfo"/> to a <see cref="OfficialLanguage"/>.
+        /// </summary>
+        /// <param name="enumValue">The extension base type.</param>
+        /// <param name="cultureInfo">The culture info to parse.</param>
+        /// <param name="ol">The parsed language or the default language <see cref="OfficialLanguage.English"/></param>
+        /// <returns></returns>
+        [ExcludeFromCodeCoverage]
+        public static bool TryGetFromCultureInfo(this OfficialLanguage enumValue, CultureInfo cultureInfo,
+            out OfficialLanguage ol)
+        {
+            foreach (OfficialLanguage officialLanguage in Enum.GetValues(typeof(OfficialLanguage)))
+            {
+                if (!cultureInfo.Equals(officialLanguage.ToCultureInfo()))
+                {
+                    continue;
+                }
+
+                ol = officialLanguage;
+                return true;
+            }
+
+            ol = OfficialLanguage.English;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to parse a string into a <see cref="OfficialLanguage"/>.
+        /// </summary>
+        /// <param name="enumValue">The extension base type.</param>
+        /// <param name="s">The string to parse.</param>
+        /// <param name="ol">The parsed value.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        [ExcludeFromCodeCoverage]
+        public static bool TryParse(this OfficialLanguage enumValue, string s,
+            out OfficialLanguage ol)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                throw new ArgumentException("No string to parse.", nameof(s));
+            }
+
+            s = s.Trim();
+            foreach (OfficialLanguage officialLanguage in Enum.GetValues(typeof(OfficialLanguage)))
+            {
+                if (!s.Equals(officialLanguage.ToAlamoLanguageIdentifierString()))
+                {
+                    continue;
+                }
+
+                ol = officialLanguage;
+                return true;
+            }
+
+            ol = OfficialLanguage.English;
+            return false;
         }
     }
 }

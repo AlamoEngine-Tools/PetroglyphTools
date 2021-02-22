@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Localisation.Languages
     [ExcludeFromCodeCoverage]
     public sealed class RussianAlamoLanguageDefinition : IAlamoLanguageDefinition
     {
-        [ExcludeFromCodeCoverage] public string LanguageIdentifier => "RUSSIAN";
-        [ExcludeFromCodeCoverage] public CultureInfo Culture => CultureInfo.GetCultureInfo("ru");
+        [ExcludeFromCodeCoverage] public string LanguageIdentifier => OfficialLanguage.Russian.ToAlamoLanguageIdentifierString();
+        [ExcludeFromCodeCoverage] public CultureInfo Culture => OfficialLanguage.Russian.ToCultureInfo();
     }
 }

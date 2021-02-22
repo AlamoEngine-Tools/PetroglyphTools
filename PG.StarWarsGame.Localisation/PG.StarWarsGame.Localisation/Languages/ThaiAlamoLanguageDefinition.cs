@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Localisation.Languages
     [ExcludeFromCodeCoverage]
     public sealed class ThaiAlamoLanguageDefinition : IAlamoLanguageDefinition
     {
-        [ExcludeFromCodeCoverage] public string LanguageIdentifier => "THAI";
-        [ExcludeFromCodeCoverage] public CultureInfo Culture => CultureInfo.GetCultureInfo("th");
+        [ExcludeFromCodeCoverage] public string LanguageIdentifier => OfficialLanguage.Thai.ToAlamoLanguageIdentifierString();
+        [ExcludeFromCodeCoverage] public CultureInfo Culture => OfficialLanguage.Thai.ToCultureInfo();
     }
 }

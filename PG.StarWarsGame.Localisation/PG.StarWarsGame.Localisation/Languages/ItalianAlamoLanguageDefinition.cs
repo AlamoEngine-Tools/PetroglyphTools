@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Localisation.Languages
     [ExcludeFromCodeCoverage]
     public sealed class ItalianAlamoLanguageDefinition : IAlamoLanguageDefinition
     {
-        [ExcludeFromCodeCoverage] public string LanguageIdentifier => "ITALIAN";
-        [ExcludeFromCodeCoverage] public CultureInfo Culture => CultureInfo.GetCultureInfo("it-IT");
+        [ExcludeFromCodeCoverage] public string LanguageIdentifier => OfficialLanguage.Italian.ToAlamoLanguageIdentifierString();
+        [ExcludeFromCodeCoverage] public CultureInfo Culture => OfficialLanguage.Italian.ToCultureInfo();
     }
 }

@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Localisation.Languages
     [ExcludeFromCodeCoverage]
     public sealed class PolishAlamoLanguageDefinition : IAlamoLanguageDefinition
     {
-        [ExcludeFromCodeCoverage] public string LanguageIdentifier => "POLISH";
-        [ExcludeFromCodeCoverage] public CultureInfo Culture => CultureInfo.GetCultureInfo("pl");
+        [ExcludeFromCodeCoverage] public string LanguageIdentifier => OfficialLanguage.Polish.ToAlamoLanguageIdentifierString();
+        [ExcludeFromCodeCoverage] public CultureInfo Culture => OfficialLanguage.Polish.ToCultureInfo();
     }
 }

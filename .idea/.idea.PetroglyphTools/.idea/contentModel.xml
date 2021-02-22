@@ -98,15 +98,18 @@
       <e p="PG.Core\PG.Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Data" t="Include">
-          <e p="Extract" t="Include">
-            <e p="IExtractService.cs" t="Include" />
-          </e>
-          <e p="Transform" t="Include">
-            <e p="ITransformService.cs" t="Include" />
+          <e p="Etl" t="Include">
+            <e p="Extract" t="Include">
+              <e p="IExtractService.cs" t="Include" />
+            </e>
+            <e p="Transform" t="Include">
+              <e p="ITransformService.cs" t="Include" />
+            </e>
           </e>
         </e>
         <e p="Localisation" t="Include">
           <e p="IAlamoLanguageDefinition.cs" t="Include" />
+          <e p="OfficialLanguage.cs" t="Include" />
         </e>
         <e p="LocalizableTexts.Designer.cs" t="Include" />
         <e p="LocalizableTexts.resx" t="Include" />
@@ -1044,9 +1047,15 @@
               <e p="TranslationResourceType.cs" t="Include" />
             </e>
           </e>
-          <e p="Extract" t="Include">
-            <e p="SortedDatFileExtractService.cs" t="Include" />
-            <e p="SortedTranslationStage1Bean.cs" t="Include" />
+          <e p="Etl" t="Include">
+            <e p="Extract" t="Include">
+              <e p="SortedDatFileExtractService.cs" t="Include" />
+              <e p="SortedTranslationStage1Bean.cs" t="Include" />
+            </e>
+            <e p="Transform" t="Include">
+              <e p="SortedTranslationStage2Bean.cs" t="Include" />
+              <e p="SortedTranslationTransformService.cs" t="Include" />
+            </e>
           </e>
           <e p="Resources" t="Include">
             <e p="Dat" t="Include">
@@ -1096,10 +1105,6 @@
               </e>
             </e>
           </e>
-          <e p="Transform" t="Include">
-            <e p="SortedDatFileTransformService.cs" t="Include" />
-            <e p="SortedTranslationStage2Bean.cs" t="Include" />
-          </e>
           <e p="Translation" t="Include">
             <e p="TranslationItem.cs" t="Include" />
           </e>
@@ -1125,6 +1130,9 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Localisation.csproj" t="IncludeRecursive" />
+        <e p="Util" t="Include">
+          <e p="LocalisationUtility.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />

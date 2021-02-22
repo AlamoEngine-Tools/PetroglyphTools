@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Localisation.Languages
     [ExcludeFromCodeCoverage]
     public sealed class JapaneseAlamoLanguageDefinition : IAlamoLanguageDefinition
     {
-        [ExcludeFromCodeCoverage] public string LanguageIdentifier => "JAPANESE";
-        [ExcludeFromCodeCoverage] public CultureInfo Culture => CultureInfo.GetCultureInfo("ja");
+        [ExcludeFromCodeCoverage] public string LanguageIdentifier => OfficialLanguage.Japanese.ToAlamoLanguageIdentifierString();
+        [ExcludeFromCodeCoverage] public CultureInfo Culture => OfficialLanguage.Japanese.ToCultureInfo();
     }
 }

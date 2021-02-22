@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using PG.Core.Data.Extract;
+using PG.Core.Data.Etl.Extract;
 using PG.Core.Services;
 using PG.StarWarsGame.Files.DAT.Services;
 
-namespace PG.StarWarsGame.Localisation.Data.Extract
+namespace PG.StarWarsGame.Localisation.Data.Etl.Extract
 {
     public class SortedDatFileExtractService : AService<SortedDatFileExtractService>, IExtractService<SortedTranslationStage1Bean>
     {

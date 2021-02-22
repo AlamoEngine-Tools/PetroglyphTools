@@ -4,11 +4,11 @@
 using System.Collections.Generic;
 using PG.Core.Services;
 
-namespace PG.Core.Data.Transform
+namespace PG.Core.Data.Etl.Extract
 {
-    public interface ITransformService<TStage1, TStage2> : IService
+    public interface IExtractService<TStage1> : IService
     {
-        IReadOnlyList<TStage1> Stage1Beans { get; }
-        IReadOnlyList<TStage2> Stage2Beans { get; }
+        IList<TStage1> Stage1Beans { get; }
+        public void Extract();
     }
 }

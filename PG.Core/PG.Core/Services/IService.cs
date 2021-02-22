@@ -3,6 +3,10 @@
 
 namespace PG.Core.Services
 {
+    /// <summary>
+    /// A simple marker interface.
+    /// Currently holds no contract whatsoever.
+    /// </summary>
     public interface IService
     {
     }

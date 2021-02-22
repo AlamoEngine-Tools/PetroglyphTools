@@ -97,6 +97,14 @@
       </e>
       <e p="PG.Core\PG.Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Data" t="Include">
+          <e p="Extract" t="Include">
+            <e p="IExtractService.cs" t="Include" />
+          </e>
+          <e p="Transform" t="Include">
+            <e p="ITransformService.cs" t="Include" />
+          </e>
+        </e>
         <e p="Localisation" t="Include">
           <e p="IAlamoLanguageDefinition.cs" t="Include" />
         </e>
@@ -110,6 +118,10 @@
           </e>
         </e>
         <e p="PG.Core.csproj" t="IncludeRecursive" />
+        <e p="Services" t="Include">
+          <e p="AService.cs" t="Include" />
+          <e p="IService.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.Core\PG.Core.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -1032,51 +1044,61 @@
               <e p="TranslationResourceType.cs" t="Include" />
             </e>
           </e>
-          <e p="Dat" t="Include">
-            <e p="EaW" t="Include">
-              <e p="de" t="Include">
-                <e p="creditstext_german.dat" t="Include" />
-                <e p="mastertextfile_german.dat" t="Include" />
+          <e p="Extract" t="Include">
+            <e p="SortedDatFileExtractService.cs" t="Include" />
+            <e p="SortedTranslationStage1Bean.cs" t="Include" />
+          </e>
+          <e p="Resources" t="Include">
+            <e p="Dat" t="Include">
+              <e p="EaW" t="Include">
+                <e p="de" t="Include">
+                  <e p="creditstext_german.dat" t="Include" />
+                  <e p="mastertextfile_german.dat" t="Include" />
+                </e>
+                <e p="en" t="Include">
+                  <e p="creditstext_english.dat" t="Include" />
+                  <e p="mastertextfile_english.dat" t="Include" />
+                </e>
+                <e p="es" t="Include">
+                  <e p="creditstext_spanish.dat" t="Include" />
+                  <e p="mastertextfile_spanish.dat" t="Include" />
+                </e>
+                <e p="fr" t="Include">
+                  <e p="creditstext_french.dat" t="Include" />
+                  <e p="mastertextfile_french.dat" t="Include" />
+                </e>
+                <e p="it" t="Include">
+                  <e p="creditstext_italian.dat" t="Include" />
+                  <e p="mastertextfile_italian.dat" t="Include" />
+                </e>
               </e>
-              <e p="en" t="Include">
-                <e p="creditstext_english.dat" t="Include" />
-                <e p="mastertextfile_english.dat" t="Include" />
-              </e>
-              <e p="es" t="Include">
-                <e p="creditstext_spanish.dat" t="Include" />
-                <e p="mastertextfile_spanish.dat" t="Include" />
-              </e>
-              <e p="fr" t="Include">
-                <e p="creditstext_french.dat" t="Include" />
-                <e p="mastertextfile_french.dat" t="Include" />
-              </e>
-              <e p="it" t="Include">
-                <e p="creditstext_italian.dat" t="Include" />
-                <e p="mastertextfile_italian.dat" t="Include" />
+              <e p="FoC" t="Include">
+                <e p="de" t="Include">
+                  <e p="creditstext_german.dat" t="Include" />
+                  <e p="mastertextfile_german.dat" t="Include" />
+                </e>
+                <e p="en" t="Include">
+                  <e p="creditstext_english.dat" t="Include" />
+                  <e p="mastertextfile_english.dat" t="Include" />
+                </e>
+                <e p="es" t="Include">
+                  <e p="creditstext_spanish.dat" t="Include" />
+                  <e p="mastertextfile_spanish.dat" t="Include" />
+                </e>
+                <e p="fr" t="Include">
+                  <e p="creditstext_french.dat" t="Include" />
+                  <e p="mastertextfile_french.dat" t="Include" />
+                </e>
+                <e p="it" t="Include">
+                  <e p="creditstext_italian.dat" t="Include" />
+                  <e p="mastertextfile_italian.dat" t="Include" />
+                </e>
               </e>
             </e>
-            <e p="FoC" t="Include">
-              <e p="de" t="Include">
-                <e p="creditstext_german.dat" t="Include" />
-                <e p="mastertextfile_german.dat" t="Include" />
-              </e>
-              <e p="en" t="Include">
-                <e p="creditstext_english.dat" t="Include" />
-                <e p="mastertextfile_english.dat" t="Include" />
-              </e>
-              <e p="es" t="Include">
-                <e p="creditstext_spanish.dat" t="Include" />
-                <e p="mastertextfile_spanish.dat" t="Include" />
-              </e>
-              <e p="fr" t="Include">
-                <e p="creditstext_french.dat" t="Include" />
-                <e p="mastertextfile_french.dat" t="Include" />
-              </e>
-              <e p="it" t="Include">
-                <e p="creditstext_italian.dat" t="Include" />
-                <e p="mastertextfile_italian.dat" t="Include" />
-              </e>
-            </e>
+          </e>
+          <e p="Transform" t="Include">
+            <e p="SortedDatFileTransformService.cs" t="Include" />
+            <e p="SortedTranslationStage2Bean.cs" t="Include" />
           </e>
           <e p="Translation" t="Include">
             <e p="TranslationItem.cs" t="Include" />

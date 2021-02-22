@@ -1149,6 +1149,9 @@
           </e>
         </e>
         <e p="PG.StarWarsGame.Localisation.Test.csproj" t="IncludeRecursive" />
+        <e p="Util" t="Include">
+          <e p="LocalisationUtilityTest.cs" t="Include" />
+        </e>
       </e>
       <e p="PG.StarWarsGame.LSP\PG.StarWarsGame.LSP" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />

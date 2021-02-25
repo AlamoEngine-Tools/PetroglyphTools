@@ -114,12 +114,11 @@ namespace PG.Core.Localisation
         /// <summary>
         /// Tries to parse a <see cref="CultureInfo"/> to a <see cref="OfficialLanguage"/>.
         /// </summary>
-        /// <param name="enumValue">The extension base type.</param>
         /// <param name="cultureInfo">The culture info to parse.</param>
         /// <param name="ol">The parsed language or the default language <see cref="OfficialLanguage.English"/></param>
         /// <returns></returns>
         [ExcludeFromCodeCoverage]
-        public static bool TryGetFromCultureInfo(this OfficialLanguage enumValue, CultureInfo cultureInfo,
+        public static bool TryGetFromCultureInfo(CultureInfo cultureInfo,
             out OfficialLanguage ol)
         {
             foreach (OfficialLanguage officialLanguage in Enum.GetValues(typeof(OfficialLanguage)))
@@ -140,13 +139,12 @@ namespace PG.Core.Localisation
         /// <summary>
         /// Tries to parse a string into a <see cref="OfficialLanguage"/>.
         /// </summary>
-        /// <param name="enumValue">The extension base type.</param>
         /// <param name="s">The string to parse.</param>
         /// <param name="ol">The parsed value.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         [ExcludeFromCodeCoverage]
-        public static bool TryParse(this OfficialLanguage enumValue, string s,
+        public static bool TryParse(string s,
             out OfficialLanguage ol)
         {
             if (string.IsNullOrWhiteSpace(s))

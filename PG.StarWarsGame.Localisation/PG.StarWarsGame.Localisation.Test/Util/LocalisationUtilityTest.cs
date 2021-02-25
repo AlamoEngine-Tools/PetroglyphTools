@@ -6,6 +6,7 @@ using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
 using PG.Core.Localisation;
+using PG.StarWarsGame.Localisation.Languages;
 using PG.StarWarsGame.Localisation.Util;
 
 namespace PG.StarWarsGame.Localisation.Test.Util
@@ -57,9 +58,56 @@ namespace PG.StarWarsGame.Localisation.Test.Util
                 TestAlamoLanguageDefinition expected = new TestAlamoLanguageDefinition(
                     officialLanguage.ToAlamoLanguageIdentifierString(),
                     officialLanguage.ToCultureInfo());
-                Assert.IsTrue(LocalisationUtility.TryGuessAlamoLanguageDefinitionByIdentifier(officialLanguage.ToString().ToLower(), out IAlamoLanguageDefinition actual));
+                Assert.IsTrue(LocalisationUtility.TryGuessAlamoLanguageDefinitionByIdentifier(
+                    officialLanguage.ToString().ToLower(), out IAlamoLanguageDefinition actual));
                 Assert.IsTrue(expected.Equals(actual));
             }
+        }
+
+        [TestMethod]
+        public void TryGuessAlamoLanguageDefinitionByIdentifier_Test__GuessFromUnknown()
+        {
+            Assert.IsFalse(
+                LocalisationUtility.TryGuessAlamoLanguageDefinitionByIdentifier("Unknown",
+                    out IAlamoLanguageDefinition actual));
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual is EnglishAlamoLanguageDefinition);
+            TestAlamoLanguageDefinition fallback = new TestAlamoLanguageDefinition("test", CultureInfo.CurrentCulture);
+            Assert.IsFalse(
+                LocalisationUtility.TryGuessAlamoLanguageDefinitionByIdentifier("Unknown",
+                    out actual, fallback));
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(fallback.Equals(actual));
+        }
+
+        [TestMethod]
+        public void IsOfficialLanguage_Test__AsExpectedForBuiltinTypes()
+        {
+            Type[] builtins =
+            {
+                typeof(ChineseAlamoLanguageDefinition),
+                typeof(EnglishAlamoLanguageDefinition),
+                typeof(FrenchAlamoLanguageDefinition),
+                typeof(GermanAlamoLanguageDefinition),
+                typeof(GermanAlamoLanguageDefinition),
+                typeof(ItalianAlamoLanguageDefinition),
+                typeof(JapaneseAlamoLanguageDefinition),
+                typeof(KoreanAlamoLanguageDefinition),
+                typeof(PolishAlamoLanguageDefinition),
+                typeof(RussianAlamoLanguageDefinition),
+                typeof(SpanishAlamoLanguageDefinition),
+                typeof(ThaiAlamoLanguageDefinition)
+            };
+            foreach (Type builtin in builtins)
+            {
+                Assert.IsTrue(
+                    LocalisationUtility.IsOfficiallySupportedLanguage(
+                        Activator.CreateInstance(builtin) as IAlamoLanguageDefinition));
+            }
+
+            Assert.IsFalse(
+                LocalisationUtility.IsOfficiallySupportedLanguage(
+                    new TestAlamoLanguageDefinition("test", CultureInfo.CurrentCulture)));
         }
     }
 }

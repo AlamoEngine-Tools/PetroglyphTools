@@ -11,16 +11,18 @@ using PG.Commons.Util;
 using PG.Core.Data.Etl.Transform;
 using PG.Core.Localisation;
 using PG.Core.Services;
+using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Localisation.Data.Etl.Extract;
 using PG.StarWarsGame.Localisation.Util;
 
 namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
 {
-    public class SortedTranslationTransformService : AService<SortedTranslationTransformService>,
+    internal class SortedTranslationTransformService : AService<SortedTranslationTransformService>,
         ITransformService<SortedTranslationStage1Bean, SortedTranslationStage2Bean>
     {
         private readonly List<SortedTranslationStage2Bean> m_stage2Beans;
         private readonly List<SortedTranslationStage2Bean> m_badBeans;
+        private readonly SortedDatAlamoFileType m_alamoFileType = new SortedDatAlamoFileType();
 
         public SortedTranslationTransformService(IFileSystem fileSystem,
             IReadOnlyList<SortedTranslationStage1Bean> stage1Beans, ILoggerFactory loggerFactory) : base(fileSystem,
@@ -54,10 +56,14 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
         public bool TryTransformItem(SortedTranslationStage1Bean s1, out SortedTranslationStage2Bean s2)
         {
             string languageDefinitionException = null;
-            if (!LocalisationUtility.TryGuessAlamoLanguageDefinitionByIdentifier(s1.LanguageIdentifier, out IAlamoLanguageDefinition alamoLanguageDefinition))
+
+            if (!LocalisationUtility.TryGuessAlamoLanguageDefinitionByIdentifier(
+                LanguageIdentifierFromFileName(s1.OriginFileName),
+                out IAlamoLanguageDefinition alamoLanguageDefinition))
             {
-                languageDefinitionException = CreateTransformException($"No matching {nameof(IAlamoLanguageDefinition)} found.",
-                    nameof(s1.LanguageIdentifier), nameof(s2.LanguageDefinition));
+                languageDefinitionException = CreateTransformException(
+                    $"No matching {nameof(IAlamoLanguageDefinition)} found.",
+                    nameof(s1.OriginFileName), nameof(s2.LanguageDefinition));
             }
 
             string key = null;
@@ -65,14 +71,14 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
 
             if (StringUtility.HasText(s1.Key))
             {
-                if (!m_stage2Beans.Any(p=> p.Key.Equals(s1.Key, StringComparison.InvariantCultureIgnoreCase)))
+                if (!m_stage2Beans.Any(p => p.Key.Equals(s1.Key, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    
                     key = s1.Key;
                 }
                 else
                 {
-                    keyException = CreateTransformException($"Duplicate key [{s1.Key}]", nameof(s1.Key), nameof(s1.Key));
+                    keyException =
+                        CreateTransformException($"Duplicate key [{s1.Key}]", nameof(s1.Key), nameof(s1.Key));
                 }
             }
             else
@@ -89,7 +95,8 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
             }
             else
             {
-                valueException = CreateTransformException($"Invalid value [{s1.Value}]", nameof(s1.Value), nameof(s1.Value));
+                valueException =
+                    CreateTransformException($"Invalid value [{s1.Value}]", nameof(s1.Value), nameof(s1.Value));
             }
 
             s2 = new SortedTranslationStage2Bean
@@ -123,6 +130,20 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
             }
 
             return builder.ToString();
+        }
+
+
+        private string LanguageIdentifierFromFileName(string fileName)
+        {
+            string languageIdentifierFromFileName = FileSystem.Path.GetFileName(fileName).ToUpper();
+            languageIdentifierFromFileName = languageIdentifierFromFileName.Replace(m_alamoFileType.FileExtension,
+                string.Empty, StringComparison.InvariantCultureIgnoreCase);
+            languageIdentifierFromFileName = languageIdentifierFromFileName.Replace(m_alamoFileType.FileBaseName,
+                string.Empty, StringComparison.InvariantCultureIgnoreCase);
+            languageIdentifierFromFileName = languageIdentifierFromFileName.Replace(
+                m_alamoFileType.FileBaseNameSeparator, string.Empty, StringComparison.InvariantCultureIgnoreCase);
+            languageIdentifierFromFileName = languageIdentifierFromFileName.Trim();
+            return languageIdentifierFromFileName;
         }
     }
 }

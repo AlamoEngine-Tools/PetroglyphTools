@@ -5,7 +5,7 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Extract
 {
     public struct SortedTranslationStage1Bean
     {
-        public string LanguageIdentifier { get; set; }
+        public string OriginFileName { get; set; }
         public string Key { get; set; }
         public string Value { get; set; }
     }

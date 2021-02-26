@@ -17,7 +17,11 @@ namespace PG.StarWarsGame.Files.DAT.Files
     public sealed class UnsortedDatAlamoFileType : ADatAlamoFileType
     {
         private const bool IS_SORTED = false;
+        private const string FILE_BASE_NAME = "creditstext";
+        private const string FILE_BASE_SEPARATOR = "_";
 
         public override bool IsSorted => IS_SORTED;
+        public override string FileBaseName => FILE_BASE_NAME;
+        public override string FileBaseNameSeparator => FILE_BASE_SEPARATOR;
     }
 }

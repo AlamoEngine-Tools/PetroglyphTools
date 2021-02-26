@@ -30,5 +30,16 @@ namespace PG.StarWarsGame.Files.DAT.Files
 
         public FileType Type => FILE_TYPE;
         public string FileExtension => FILE_EXTENSION;
+
+        /// <summary>
+        /// The Alamo Dat File base name convention for the file type.
+        /// </summary>
+        public abstract string FileBaseName { get; }
+        
+
+        /// <summary>
+        /// The Alamo Dat File separator convention for the file type.
+        /// </summary>
+        public abstract string FileBaseNameSeparator { get; }
     }
 }

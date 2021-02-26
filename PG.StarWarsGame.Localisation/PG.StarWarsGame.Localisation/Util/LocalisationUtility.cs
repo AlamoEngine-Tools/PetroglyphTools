@@ -4,10 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Enumeration;
 using System.Linq;
 using JetBrains.Annotations;
 using PG.Commons.Util;
 using PG.Core.Localisation;
+using PG.StarWarsGame.Files.DAT;
+using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Localisation.Languages;
 
 namespace PG.StarWarsGame.Localisation.Util
@@ -34,7 +38,7 @@ namespace PG.StarWarsGame.Localisation.Util
         /// <returns>Returns true if a matching <see cref="IAlamoLanguageDefinition"/> is found. If no match is found,
         /// the function will return true, even if a fallback is provided.</returns>
         public static bool TryGuessAlamoLanguageDefinitionByIdentifier([NotNull] string identifier,
-            [CanBeNull] out IAlamoLanguageDefinition languageDefinition,
+            [NotNull] out IAlamoLanguageDefinition languageDefinition,
             [CanBeNull] IAlamoLanguageDefinition fallback = null)
         {
             fallback ??= new EnglishAlamoLanguageDefinition();
@@ -59,7 +63,8 @@ namespace PG.StarWarsGame.Localisation.Util
                 {
                     IAlamoLanguageDefinition a = Activator.CreateInstance(probableType) as IAlamoLanguageDefinition;
 
-                    if (a != null && !identifier.Equals(a.LanguageIdentifier, StringComparison.InvariantCultureIgnoreCase))
+                    if (a != null &&
+                        !identifier.Equals(a.LanguageIdentifier, StringComparison.InvariantCultureIgnoreCase))
                     {
                         continue;
                     }
@@ -69,7 +74,7 @@ namespace PG.StarWarsGame.Localisation.Util
                 }
                 catch (Exception)
                 {
-                    // NOP - Type doesn't have a parameter-less constructor, so we're screwed anyways.
+                    // [gruenwaldlu, 2021-02-26-11:45:53+1]: NOP - Type doesn't have a parameter-less constructor, so we're screwed anyways.
                 }
             }
 
@@ -83,7 +88,8 @@ namespace PG.StarWarsGame.Localisation.Util
         /// <returns></returns>
         public static bool IsOfficiallySupportedLanguage(IAlamoLanguageDefinition alamoLanguageDefinition)
         {
-            return OfficialLanguageExtension.TryParse(alamoLanguageDefinition.LanguageIdentifier, out OfficialLanguage _);
+            return OfficialLanguageExtension.TryParse(alamoLanguageDefinition.LanguageIdentifier,
+                out OfficialLanguage _);
         }
 
         private static void BuildIAlamoLanguageDefinitionCache()

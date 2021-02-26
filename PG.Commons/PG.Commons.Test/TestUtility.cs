@@ -16,6 +16,7 @@ namespace PG.Commons.Test
         public const string TEST_TYPE_HOLY = "Holy Test";
         public const string TEST_TYPE_BUILDER = "Builder Test";
         public const string TEST_TYPE_UTILITY = "Utility Test";
+        public const string TEST_TYPE_ETL = "ETL Test";
 
         public static bool IsWindows()
         {

@@ -3,20 +3,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using PG.Commons.Util;
 using PG.Core.Data.Etl.Extract;
-using PG.Core.Localisation;
 using PG.Core.Services;
-using PG.StarWarsGame.Files.DAT;
 using PG.StarWarsGame.Files.DAT.Holder;
 using PG.StarWarsGame.Files.DAT.Services;
-using PG.StarWarsGame.Localisation.Languages;
-using PG.StarWarsGame.Localisation.Util;
 
 namespace PG.StarWarsGame.Localisation.Data.Etl.Extract
 {

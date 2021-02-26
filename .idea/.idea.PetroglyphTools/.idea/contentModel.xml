@@ -1137,6 +1137,11 @@
       <e p="PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Data" t="Include">
+          <e p="Etl" t="Include">
+            <e p="Extract" t="Include">
+              <e p="SortedDatFileExtractServiceTest.cs" t="Include" />
+            </e>
+          </e>
           <e p="Translation" t="Include">
             <e p="TranslationItemTest.cs" t="Include" />
           </e>

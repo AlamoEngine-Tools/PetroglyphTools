@@ -128,6 +128,13 @@
       </e>
       <e p="PG.Core\PG.Core.Test" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Data" t="Include">
+          <e p="Etl" t="Include">
+            <e p="Transform" t="Include">
+              <e p="ATransformServiceTest.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
@@ -1140,6 +1147,9 @@
           <e p="Etl" t="Include">
             <e p="Extract" t="Include">
               <e p="SortedDatFileExtractServiceTest.cs" t="Include" />
+            </e>
+            <e p="Transform" t="Include">
+              <e p="SortedTranslationTransformServiceTest.cs" t="Include" />
             </e>
           </e>
           <e p="Translation" t="Include">

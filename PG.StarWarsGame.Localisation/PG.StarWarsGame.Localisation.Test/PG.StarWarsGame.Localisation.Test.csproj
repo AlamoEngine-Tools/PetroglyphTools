@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
+    <ProjectReference Include="..\..\PG.Core\PG.Core.Test\PG.Core.Test.csproj" />
     <ProjectReference Include="..\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.csproj" />
   </ItemGroup>
 </Project>

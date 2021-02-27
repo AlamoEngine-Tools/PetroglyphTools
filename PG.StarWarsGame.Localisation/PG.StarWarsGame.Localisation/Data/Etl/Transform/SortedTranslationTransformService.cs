@@ -25,7 +25,7 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
         private readonly SortedDatAlamoFileType m_alamoFileType = new SortedDatAlamoFileType();
 
         public SortedTranslationTransformService(IFileSystem fileSystem,
-            IReadOnlyList<SortedTranslationStage1Bean> stage1Beans, ILoggerFactory loggerFactory) : base(fileSystem,
+            IReadOnlyList<SortedTranslationStage1Bean> stage1Beans, ILoggerFactory loggerFactory = null) : base(fileSystem,
             loggerFactory)
         {
             Stage1Beans = stage1Beans ?? throw new ArgumentNullException(nameof(stage1Beans));
@@ -118,7 +118,7 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
             builder.Append(propertyStage1);
             builder.Append("] to target property [");
             builder.Append(propertyStage2);
-            builder.Append("].");
+            builder.AppendLine("].");
             if (StringUtility.HasText(message))
             {
                 builder.AppendLine($"Message: {message}");
@@ -135,7 +135,14 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
 
         private string LanguageIdentifierFromFileName(string fileName)
         {
+            if (!StringUtility.HasText(fileName))
+            {
+                return string.Empty;
+            }
+
             string languageIdentifierFromFileName = FileSystem.Path.GetFileName(fileName).ToUpper();
+            languageIdentifierFromFileName = languageIdentifierFromFileName.Replace(".",
+                string.Empty, StringComparison.InvariantCultureIgnoreCase);
             languageIdentifierFromFileName = languageIdentifierFromFileName.Replace(m_alamoFileType.FileExtension,
                 string.Empty, StringComparison.InvariantCultureIgnoreCase);
             languageIdentifierFromFileName = languageIdentifierFromFileName.Replace(m_alamoFileType.FileBaseName,

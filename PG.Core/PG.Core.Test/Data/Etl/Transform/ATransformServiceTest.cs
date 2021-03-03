@@ -22,7 +22,7 @@ namespace PG.Core.Test.Data.Etl.Transform
         protected abstract ITransformService<TStage1Bean, TStage2Bean> GetService(List<TStage1Bean> beans);
 
         [TestMethod]
-        public void TestPositiveBeans()
+        public void Transform_Test__PositiveBeansTransformSuccessfully()
         {
             List<TStage1Bean> beans = GetPositiveStage1Beans();
             ITransformService<TStage1Bean, TStage2Bean> svc = GetService(beans);
@@ -32,7 +32,7 @@ namespace PG.Core.Test.Data.Etl.Transform
         }
 
         [TestMethod]
-        public void TestBadBeans()
+        public void Transform_Test__BadBeansTransformWithErrorState()
         {
             List<TStage1Bean> beans = GetPositiveStage1Beans();
             beans.AddRange(GetBadBeans());

@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using PG.Core.Data;
 using PG.Core.Localisation;
 
 namespace PG.StarWarsGame.Localisation.Data.Translation
@@ -15,7 +16,7 @@ namespace PG.StarWarsGame.Localisation.Data.Translation
     /// The versioned representation of an Alamo Engine localisation entry, consisting of a
     /// <see cref="Key"/>, <see cref="Value"/> and <see cref="Language"/>. 
     /// </summary>
-    public sealed class TranslationItem : INotifyPropertyChanged
+    public sealed class TranslationItem : INotifyPropertyChanged, IPersistenceEntity
     {
         private readonly string m_missingValue;
         private string m_key;
@@ -217,5 +218,7 @@ namespace PG.StarWarsGame.Localisation.Data.Translation
         }
 
         #endregion
+
+        public string Id => Key;
     }
 }

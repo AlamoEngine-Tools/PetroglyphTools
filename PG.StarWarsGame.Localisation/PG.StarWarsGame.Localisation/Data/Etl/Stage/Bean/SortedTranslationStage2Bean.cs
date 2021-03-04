@@ -4,9 +4,9 @@
 using PG.Core.Data.Etl.Stage.Bean.Impl;
 using PG.Core.Localisation;
 
-namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
+namespace PG.StarWarsGame.Localisation.Data.Etl.Stage.Bean
 {
-    public class SortedTranslationStage2Bean : AStageBean
+    public sealed class SortedTranslationStage2Bean : AStageBean
     {
         public SortedTranslationStage2Bean(string key, string keyException, string value, string valueException, IAlamoLanguageDefinition languageDefinition, string languageDefinitionException)
         {

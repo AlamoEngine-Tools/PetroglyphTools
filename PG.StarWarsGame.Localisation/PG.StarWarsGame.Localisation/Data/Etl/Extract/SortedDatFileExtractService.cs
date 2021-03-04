@@ -12,6 +12,7 @@ using PG.Core.Data.Etl.Extract;
 using PG.Core.Services;
 using PG.StarWarsGame.Files.DAT.Holder;
 using PG.StarWarsGame.Files.DAT.Services;
+using PG.StarWarsGame.Localisation.Data.Etl.Stage.Bean;
 
 namespace PG.StarWarsGame.Localisation.Data.Etl.Extract
 {

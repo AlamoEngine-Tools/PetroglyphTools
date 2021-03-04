@@ -167,5 +167,10 @@ namespace PG.Core.Localisation
             ol = OfficialLanguage.English;
             return false;
         }
+
+        public static OfficialLanguage Default()
+        {
+            return OfficialLanguage.English;
+        }
     }
 }

@@ -12,7 +12,7 @@ using PG.Core.Data.Etl.Transform;
 using PG.Core.Localisation;
 using PG.Core.Services;
 using PG.StarWarsGame.Files.DAT.Files;
-using PG.StarWarsGame.Localisation.Data.Etl.Extract;
+using PG.StarWarsGame.Localisation.Data.Etl.Stage.Bean;
 using PG.StarWarsGame.Localisation.Util;
 
 namespace PG.StarWarsGame.Localisation.Data.Etl.Transform

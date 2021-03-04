@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
 using PG.Core.Data.Etl.Transform;
 using PG.Core.Test.Data.Etl.Transform;
-using PG.StarWarsGame.Localisation.Data.Etl.Extract;
+using PG.StarWarsGame.Localisation.Data.Etl.Stage.Bean;
 using PG.StarWarsGame.Localisation.Data.Etl.Transform;
 
 namespace PG.StarWarsGame.Localisation.Test.Data.Etl.Transform

@@ -103,6 +103,7 @@
               <e p="IExtractService.cs" t="Include" />
             </e>
             <e p="Load" t="Include">
+              <e p="EtlLoadException.cs" t="Include" />
               <e p="ILoadService.cs" t="Include" />
             </e>
             <e p="Stage" t="Include">
@@ -1072,10 +1073,17 @@
           <e p="Etl" t="Include">
             <e p="Extract" t="Include">
               <e p="SortedDatFileExtractService.cs" t="Include" />
-              <e p="SortedTranslationStage1Bean.cs" t="Include" />
+            </e>
+            <e p="Load" t="Include">
+              <e p="SortedTranslationLoadService.cs" t="Include" />
+            </e>
+            <e p="Stage" t="Include">
+              <e p="Bean" t="Include">
+                <e p="SortedTranslationStage1Bean.cs" t="Include" />
+                <e p="SortedTranslationStage2Bean.cs" t="Include" />
+              </e>
             </e>
             <e p="Transform" t="Include">
-              <e p="SortedTranslationStage2Bean.cs" t="Include" />
               <e p="SortedTranslationTransformService.cs" t="Include" />
             </e>
           </e>
@@ -1162,6 +1170,9 @@
           <e p="Etl" t="Include">
             <e p="Extract" t="Include">
               <e p="SortedDatFileExtractServiceTest.cs" t="Include" />
+            </e>
+            <e p="Load" t="Include">
+              <e p="SortedTranslationLoadServiceTest.cs" t="Include" />
             </e>
             <e p="Transform" t="Include">
               <e p="SortedTranslationTransformServiceTest.cs" t="Include" />

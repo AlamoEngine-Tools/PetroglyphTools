@@ -4,14 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Enumeration;
 using System.Linq;
 using JetBrains.Annotations;
 using PG.Commons.Util;
 using PG.Core.Localisation;
-using PG.StarWarsGame.Files.DAT;
-using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Localisation.Languages;
 
 namespace PG.StarWarsGame.Localisation.Util
@@ -90,6 +86,15 @@ namespace PG.StarWarsGame.Localisation.Util
         {
             return OfficialLanguageExtension.TryParse(alamoLanguageDefinition.LanguageIdentifier,
                 out OfficialLanguage _);
+        }
+
+        public static IAlamoLanguageDefinition GetDefaultAlamoLanguageDefinition()
+        {
+            return TryGuessAlamoLanguageDefinitionByIdentifier(
+                OfficialLanguage.English.ToAlamoLanguageIdentifierString(),
+                out IAlamoLanguageDefinition ld)
+                ? ld
+                : new EnglishAlamoLanguageDefinition();
         }
 
         private static void BuildIAlamoLanguageDefinitionCache()

@@ -3,7 +3,7 @@
 
 using PG.Core.Data.Etl.Stage.Bean.Impl;
 
-namespace PG.StarWarsGame.Localisation.Data.Etl.Extract
+namespace PG.StarWarsGame.Localisation.Data.Etl.Stage.Bean
 {
     public sealed class SortedTranslationStage1Bean : AStageBean
     {

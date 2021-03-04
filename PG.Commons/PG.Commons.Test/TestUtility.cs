@@ -10,6 +10,13 @@ namespace PG.Commons.Test
 {
     public static class TestUtility
     {
+        private static long s_seq = 0;
+
+        public static long SequenceNext()
+        {
+            return s_seq++;
+        }
+        
         private static readonly Random RANDOM_GENERATOR = new Random();
         
         public const string TEST_TYPE_API = "Public API Test";

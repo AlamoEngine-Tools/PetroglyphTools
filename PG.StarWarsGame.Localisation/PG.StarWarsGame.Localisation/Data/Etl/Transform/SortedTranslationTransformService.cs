@@ -25,7 +25,8 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
         private readonly SortedDatAlamoFileType m_alamoFileType = new SortedDatAlamoFileType();
 
         public SortedTranslationTransformService(IFileSystem fileSystem,
-            IReadOnlyList<SortedTranslationStage1Bean> stage1Beans, ILoggerFactory loggerFactory = null) : base(fileSystem,
+            IReadOnlyList<SortedTranslationStage1Bean> stage1Beans, ILoggerFactory loggerFactory = null) : base(
+            fileSystem,
             loggerFactory)
         {
             Stage1Beans = stage1Beans ?? throw new ArgumentNullException(nameof(stage1Beans));
@@ -99,16 +100,9 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Transform
                     CreateTransformException($"Invalid value [{s1.Value}]", nameof(s1.Value), nameof(s1.Value));
             }
 
-            s2 = new SortedTranslationStage2Bean
-            {
-                LanguageDefinition = alamoLanguageDefinition,
-                LanguageDefinitionException = languageDefinitionException,
-                Key = key,
-                KeyException = keyException,
-                Value = value,
-                ValueException = valueException,
-            };
-            return languageDefinitionException == null && keyException == null && valueException == null;
+            s2 = new SortedTranslationStage2Bean(key, keyException, value, valueException, alamoLanguageDefinition,
+                languageDefinitionException);
+            return s2.KeyException == null && s2.ValueException == null && s2.LanguageDefinitionException == null;
         }
 
         public string CreateTransformException(string message, string propertyStage1, string propertyStage2,

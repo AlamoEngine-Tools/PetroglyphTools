@@ -3,19 +3,23 @@
 
 using System;
 using System.Collections.Generic;
+using PG.Core.Data.Etl.Stage.Bean;
 using PG.Core.Services;
 
 namespace PG.Core.Data.Etl.Transform
 {
-    public interface ITransformService<TStage1, TStage2> : IService
+    public interface ITransformService<TStage1Bean, TStage2Bean> : IService
+        where TStage1Bean : IStageBean
+        where TStage2Bean : IStageBean
     {
-        IReadOnlyList<TStage1> Stage1Beans { get; }
-        IReadOnlyList<TStage2> Stage2Beans { get; }
-        IReadOnlyList<TStage2> BadBeans { get; }
+        IReadOnlyList<TStage1Bean> Stage1Beans { get; }
+        IReadOnlyList<TStage2Bean> Stage2Beans { get; }
+        IReadOnlyList<TStage2Bean> BadBeans { get; }
 
         public void Transform();
-        public bool TryTransformItem(TStage1 s1, out TStage2 s2);
-        public string CreateTransformException(string message, string propertyStage1, string propertyStage2, Exception e = null);
+        public bool TryTransformItem(TStage1Bean s1, out TStage2Bean s2);
 
+        public string CreateTransformException(string message, string propertyStage1, string propertyStage2,
+            Exception e = null);
     }
 }

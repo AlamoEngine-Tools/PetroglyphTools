@@ -102,10 +102,22 @@
             <e p="Extract" t="Include">
               <e p="IExtractService.cs" t="Include" />
             </e>
+            <e p="Load" t="Include">
+              <e p="ILoadService.cs" t="Include" />
+            </e>
+            <e p="Stage" t="Include">
+              <e p="Bean" t="Include">
+                <e p="Impl" t="Include">
+                  <e p="AStageBean.cs" t="Include" />
+                </e>
+                <e p="IStageBean.cs" t="Include" />
+              </e>
+            </e>
             <e p="Transform" t="Include">
               <e p="ITransformService.cs" t="Include" />
             </e>
           </e>
+          <e p="IPersistenceEntity.cs" t="Include" />
         </e>
         <e p="Localisation" t="Include">
           <e p="IAlamoLanguageDefinition.cs" t="Include" />
@@ -130,6 +142,9 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="Data" t="Include">
           <e p="Etl" t="Include">
+            <e p="Load" t="Include">
+              <e p="ALoadServiceTest.cs" t="Include" />
+            </e>
             <e p="Transform" t="Include">
               <e p="ATransformServiceTest.cs" t="Include" />
             </e>

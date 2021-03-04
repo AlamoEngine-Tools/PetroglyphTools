@@ -32,6 +32,7 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Extract
             {
                 throw new ArgumentException("Required argument is null or empty.", nameof(stage0FilePath));
             }
+
             m_stage0FilePath = stage0FilePath;
         }
 
@@ -44,12 +45,7 @@ namespace PG.StarWarsGame.Localisation.Data.Etl.Extract
             string id = Path.GetFileName(m_stage0FilePath);
             foreach ((string key, string value) in dict)
             {
-                m_stage1Beans.Add(new SortedTranslationStage1Bean
-                {
-                    Key = key,
-                    Value = value,
-                    OriginFileName = id
-                });
+                m_stage1Beans.Add(new SortedTranslationStage1Bean(key, value, id));
             }
         }
     }

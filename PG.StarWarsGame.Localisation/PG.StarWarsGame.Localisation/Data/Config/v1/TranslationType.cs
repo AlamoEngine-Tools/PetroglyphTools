@@ -1,18 +1,29 @@
+// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using System;
+using System.CodeDom.Compiler;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
+
 namespace PG.StarWarsGame.Localisation.Data.Config.v1
 {
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.example.org/eaw-translation/")]
-    public partial class TranslationType : object, System.ComponentModel.INotifyPropertyChanged
+    /// <remarks />
+    [ExcludeFromCodeCoverage]
+    [GeneratedCode("xsd", "4.8.3928.0")]
+    [Serializable]
+    [DebuggerStepThrough]
+    [DesignerCategory("code")]
+    [XmlType(Namespace = "http://www.example.org/eaw-translation/")]
+    public class TranslationType : object, INotifyPropertyChanged
     {
         private string m_languageField;
         private string m_valueField;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        /// <remarks />
+        [XmlAttribute]
         public string Language
         {
             get => m_languageField;
@@ -23,8 +34,8 @@ namespace PG.StarWarsGame.Localisation.Data.Config.v1
             }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
+        /// <remarks />
+        [XmlText]
         public string Value
         {
             get => m_valueField;
@@ -35,12 +46,12 @@ namespace PG.StarWarsGame.Localisation.Data.Config.v1
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            propertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

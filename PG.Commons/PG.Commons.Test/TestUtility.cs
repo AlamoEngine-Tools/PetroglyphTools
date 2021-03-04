@@ -10,12 +10,20 @@ namespace PG.Commons.Test
 {
     public static class TestUtility
     {
+        private static long s_seq = 0;
+
+        public static long SequenceNext()
+        {
+            return s_seq++;
+        }
+        
         private static readonly Random RANDOM_GENERATOR = new Random();
         
         public const string TEST_TYPE_API = "Public API Test";
         public const string TEST_TYPE_HOLY = "Holy Test";
         public const string TEST_TYPE_BUILDER = "Builder Test";
         public const string TEST_TYPE_UTILITY = "Utility Test";
+        public const string TEST_TYPE_ETL = "ETL Test";
 
         public static bool IsWindows()
         {

@@ -23,7 +23,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions" Version="13.2.28" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.25" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.28" />
   </ItemGroup>
 
   <ItemGroup>    

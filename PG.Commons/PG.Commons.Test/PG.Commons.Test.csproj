@@ -1,34 +1,44 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <IsPackable>false</IsPackable>
-    <ProjectGuid>{BE03C61C-CEC3-47A8-839B-A778E56607EA}</ProjectGuid>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="3.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.4" />
-    <PackageReference Include="coverlet.collector" Version="3.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.33" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.33" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\PG.Commons\PG.Commons.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>    
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <ProjectGuid>{BE03C61C-CEC3-47A8-839B-A778E56607EA}</ProjectGuid>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Title>PG.Commons.Test</Title>
+        <PackageId>PG.Commons.Test</PackageId>
+        <Authors>Alamo Engine Tools and Contributors</Authors>
+        <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
+        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Company>Alamo Engine Tools</Company>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Product>PG.Commons.Test 1.0.0-alpha.1</Product>
+        <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.msbuild" Version="3.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+        <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
+        <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
+        <PackageReference Include="coverlet.collector" Version="3.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
+        <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.29" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\PG.Commons\PG.Commons.csproj" />
+    </ItemGroup>
+    <ItemGroup>    
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
-  </ItemGroup>
+    </ItemGroup>
 </Project>

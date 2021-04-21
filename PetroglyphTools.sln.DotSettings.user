@@ -1,7 +1,19 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CustomTools/CustomToolsData/@EntryValue"></s:String>
-	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\gruen\AppData\Local\JetBrains\Rider2020.3\resharper-host\temp\Rider\vAny\CoverageData\_PetroglyphTools.-1693569080\Snapshot\snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b2e949ec_002D4e24_002D4be7_002D9cc0_002D7c52eb53b005/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3238808e_002D2889_002D4c17_002Db9bc_002D4e1098265667/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.Commons\PG.Commons.Test" Presentation="&amp;lt;PG.Commons.Test&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.DAT.Test&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.MEG.Test&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.MTD.Test&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test" Presentation="&amp;lt;PG.StarWarsGame.Localisation.Test&amp;gt;" /&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;MSTest::94DE9C2D-2E9F-42F0-94C6-FE388976431C::.NETCoreApp,Version=v3.1::PG.Core.Test.Data.Key.AbstractKeyTest.Test_Equals__AsExpected&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b2e949ec_002D4e24_002D4be7_002D9cc0_002D7c52eb53b005/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.Commons\PG.Commons.Test" Presentation="&amp;lt;PG.Commons.Test&amp;gt;" /&gt;&#xD;
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test" Presentation="&amp;lt;PG.StarWarsGame.Files.DAT.Test&amp;gt;" /&gt;&#xD;
@@ -37,4 +49,5 @@ namespace $NAMESPACE$
     {
     }
 $END$}
-}</s:String></wpf:ResourceDictionary>
+}</s:String>
+	</wpf:ResourceDictionary>

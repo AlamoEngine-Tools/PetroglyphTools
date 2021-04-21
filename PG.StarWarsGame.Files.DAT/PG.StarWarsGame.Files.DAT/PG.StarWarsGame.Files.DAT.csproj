@@ -1,19 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <ProjectGuid>{4358BDCA-3CBA-42B6-A794-82973F48714F}</ProjectGuid>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
-    <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.33" />
-  </ItemGroup>
-
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <ProjectGuid>{4358BDCA-3CBA-42B6-A794-82973F48714F}</ProjectGuid>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Title>PG.StarWarsGame.Files.DAT</Title>
+        <PackageId>PG.StarWarsGame.Files.DAT</PackageId>
+        <Authors>Alamo Engine Tools and Contributors</Authors>
+        <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
+        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Company>Alamo Engine Tools</Company>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Product>PG.StarWarsGame.Files.DAT 1.0.0-alpha.1</Product>
+        <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
+        <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+        <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
+    </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>$(AssemblyName).Test</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 </Project>

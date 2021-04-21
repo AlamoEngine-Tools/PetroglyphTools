@@ -2,15 +2,17 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PG.Core.Localisation.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class OfficiallySupportedLanguageAttribute : Attribute
+    [ExcludeFromCodeCoverage]
+    public sealed class OfficiallySupportedLanguageAttribute : Attribute
     {
         private readonly bool m_isOfficiallySupported;
         public bool IsOfficiallySupported => m_isOfficiallySupported;
-        
+
         public OfficiallySupportedLanguageAttribute()
         {
             m_isOfficiallySupported = true;

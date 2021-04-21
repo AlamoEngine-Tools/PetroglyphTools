@@ -2,10 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using PG.Commons.Test;
+using PG.Core.Test;
 
 namespace PG.StarWarsGame.Files.MEG.Test
 {
-    internal static class TestConstants
+    internal sealed class MegTestConstants : TestConstants
     {
         internal const string FILE_NAME_GAMEOBJECTFILES = "gameobjectfiles.xml";
 

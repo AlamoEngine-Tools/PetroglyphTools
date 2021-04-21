@@ -14,7 +14,7 @@ namespace PG.StarWarsGame.Files.DAT.Files
     /// It is used for all localisation purposes.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public sealed class SortedDatAlamoFileType : ADatAlamoFileType
+    public sealed class SortedDatAlamoFileType : AbstractDatAlamoFileType
     {
         private const bool IS_SORTED = true;
 

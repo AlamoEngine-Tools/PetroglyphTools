@@ -23,22 +23,22 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         {
             MtdImageTable mtdImageTable = new MtdImageTable(new[]
             {
-                new MtdImageTableRecord(TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA),
-                new MtdImageTableRecord(TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA)
+                new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA),
+                new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA)
             });
             byte[] actual = mtdImageTable.ToBytes();
-            Assert.AreEqual(actual.Length, 2 * TestConstants.MtdImageTableRecordTestConstants.OBJECT_SIZE_IN_BYTE);
-            TestUtility.AssertAreBinaryEquivalent(TestConstants.MtdImageTableTestConstants.DEFAULT_TO_BYTES, actual);
+            Assert.AreEqual(actual.Length, 2 * MtdTestConstants.MtdImageTableRecordTestConstants.OBJECT_SIZE_IN_BYTE);
+            TestUtility.AssertAreBinaryEquivalent(MtdTestConstants.MtdImageTableTestConstants.DEFAULT_TO_BYTES, actual);
         }
 
         [TestMethod]
@@ -46,20 +46,20 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         {
             MtdImageTable mtdImageTable = new MtdImageTable(new[]
             {
-                new MtdImageTableRecord(TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA),
-                new MtdImageTableRecord(TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA)
+                new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA),
+                new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA)
             });
-            Assert.AreEqual(mtdImageTable.Size, 2 * TestConstants.MtdImageTableRecordTestConstants.OBJECT_SIZE_IN_BYTE);
+            Assert.AreEqual(mtdImageTable.Size, 2 * MtdTestConstants.MtdImageTableRecordTestConstants.OBJECT_SIZE_IN_BYTE);
 
         }
     }

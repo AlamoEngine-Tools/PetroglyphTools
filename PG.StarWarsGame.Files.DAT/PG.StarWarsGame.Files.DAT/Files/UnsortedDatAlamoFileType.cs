@@ -14,7 +14,7 @@ namespace PG.StarWarsGame.Files.DAT.Files
     /// given order of keys is retained.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public sealed class UnsortedDatAlamoFileType : ADatAlamoFileType
+    public sealed class UnsortedDatAlamoFileType : AbstractDatAlamoFileType
     {
         private const bool IS_SORTED = false;
 

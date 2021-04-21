@@ -23,21 +23,21 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         {
             MtdFile mtdFile = new MtdFile(new[]
             {
-                new MtdImageTableRecord(TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA),
-                new MtdImageTableRecord(TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
-                    TestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA)
+                new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA),
+                new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_POSITION,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
+                    MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA)
             });
             byte[] actual = mtdFile.ToBytes();
-            TestUtility.AssertAreBinaryEquivalent(TestConstants.MtdFileTestConstants.METADATA_TO_BYTES, actual);
+            TestUtility.AssertAreBinaryEquivalent(MtdTestConstants.MtdFileTestConstants.METADATA_TO_BYTES, actual);
         }
     }
 }

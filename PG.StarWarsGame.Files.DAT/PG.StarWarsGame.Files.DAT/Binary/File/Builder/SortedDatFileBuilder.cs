@@ -10,7 +10,7 @@ using PG.StarWarsGame.Files.DAT.Holder;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
 {
-    internal class SortedDatFileBuilder : ADatFileBuilder, IBinaryFileBuilder<DatFile, SortedDatFileHolder>
+    internal class SortedDatFileBuilder : AbstractDatFileBuilder, IBinaryFileBuilder<DatFile, SortedDatFileHolder>
     {
         public SortedDatFileBuilder() : base()
         {

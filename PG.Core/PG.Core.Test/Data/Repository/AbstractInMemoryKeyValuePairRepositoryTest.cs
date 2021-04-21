@@ -3,19 +3,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Core.Data;
 using PG.Core.Data.Bean;
+using PG.Core.Data.Key;
 using PG.Core.Data.Repository;
 
 namespace PG.Core.Test.Data.Repository
 {
     [TestClass]
-    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-    public abstract class ARepositoryTest<TRepository, TKey, TBean>
-        where TRepository : ARepository<TKey, TBean> where TKey : IKey where TBean : IBean<TKey>
+    public abstract class AbstractInMemoryKeyValuePairRepositoryTest<TRepository, TKey, TBean>
+        where TRepository : AbstractInMemoryKeyValuePairRepository<TKey, TBean> where TKey : IKey where TBean : IBean<TKey>
     {
         protected internal virtual TRepository CreateRepository()
         {

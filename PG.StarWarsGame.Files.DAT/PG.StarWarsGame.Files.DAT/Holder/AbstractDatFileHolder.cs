@@ -15,10 +15,10 @@ namespace PG.StarWarsGame.Files.DAT.Holder
     /// </summary>
     /// <typeparam name="TContent"></typeparam>
     /// <typeparam name="TAlamoFileType"></typeparam>
-    public abstract class ADatFileHolder<TContent, TAlamoFileType> : IFileHolder<TContent, TAlamoFileType>
+    public abstract class AbstractDatFileHolder<TContent, TAlamoFileType> : IFileHolder<TContent, TAlamoFileType>
         where TAlamoFileType : IAlamoFileType, new()
     {
-        protected ADatFileHolder(string filePath, string fileName)
+        protected AbstractDatFileHolder(string filePath, string fileName)
         {
             FilePath = filePath;
             FileName = fileName;

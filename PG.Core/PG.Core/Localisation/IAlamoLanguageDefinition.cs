@@ -2,12 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Globalization;
+using PG.Core.Attributes;
 
 namespace PG.Core.Localisation
 {
     /// <summary>
     /// An interface exposing all relevant data to describe a language to be used in the Alamo Engine.
     /// </summary>
+    [Order(OrderAttribute.DEFAULT_ORDER)]
     public interface IAlamoLanguageDefinition
     {
         /// <summary>

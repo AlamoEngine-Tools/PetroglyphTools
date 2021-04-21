@@ -2,23 +2,15 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.Core.Attributes;
 
-namespace PG.Core.Data
+namespace PG.Core.Data.Key
 {
     /// <summary>
     /// The contract for a basic key.
     /// </summary>
+    [Order(OrderAttribute.DEFAULT_ORDER)]
     public interface IKey : IComparable<IKey>, IEquatable<IKey>
     {
-        /// <summary>
-        /// Unwraps the inner system UID.
-        /// </summary>
-        /// <returns></returns>
-        long Unwrap();
-
-        /// <summary>
-        /// The global key.
-        /// </summary>
-        Guid GlobalKey { get; }
     }
 }

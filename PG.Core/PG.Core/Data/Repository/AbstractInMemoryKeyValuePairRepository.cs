@@ -5,10 +5,16 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using PG.Core.Data.Bean;
+using PG.Core.Data.Key;
 
 namespace PG.Core.Data.Repository
 {
-    public abstract class ARepository<TKey, TBean> : IRepository<TKey, TBean>, IDisposable
+    /// <summary>
+    /// Abstract base implementation of an in-memory <see cref="IRepository{TKey,TBean}"/>  
+    /// </summary>
+    /// <typeparam name="TKey">The identifying <see cref="IKey"/>.</typeparam>
+    /// <typeparam name="TBean">The contained <see cref="IBean{TKey}"/></typeparam>
+    public abstract class AbstractInMemoryKeyValuePairRepository<TKey, TBean> : IRepository<TKey, TBean>, IDisposable
         where TKey : IKey where TBean : IBean<TKey>
     {
         private bool m_isDisposed;

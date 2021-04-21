@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
 using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.MTD.Commons.Exceptions;
-using Constants = PG.StarWarsGame.Files.MTD.Test.TestConstants.MtdImageTableRecordTestConstants;
+using Constants = PG.StarWarsGame.Files.MTD.Test.MtdTestConstants.MtdImageTableRecordTestConstants;
 
 namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
 {

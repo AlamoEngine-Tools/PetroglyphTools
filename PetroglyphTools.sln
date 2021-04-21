@@ -32,6 +32,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.LSP.Test", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.Test\PG.StarWarsGame.LSP.Test.csproj", "{A1008BA0-FED6-4791-ADB8-29C247EBED66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.AnimationSfxMap", "PG.StarWarsGame.Files.AnimationSfxMap\PG.StarWarsGame.Files.AnimationSfxMap\PG.StarWarsGame.Files.AnimationSfxMap.csproj", "{2F7030FF-62D9-4828-809D-579AE214732C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.AnimationSfxMap.Test", "PG.StarWarsGame.Files.AnimationSfxMap\PG.StarWarsGame.Files.AnimationSfxMap.Test\PG.StarWarsGame.Files.AnimationSfxMap.Test.csproj", "{94A53624-DCFC-4A28-92DC-D64592A567B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,5 +106,13 @@ Global
 		{A1008BA0-FED6-4791-ADB8-29C247EBED66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1008BA0-FED6-4791-ADB8-29C247EBED66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1008BA0-FED6-4791-ADB8-29C247EBED66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F7030FF-62D9-4828-809D-579AE214732C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F7030FF-62D9-4828-809D-579AE214732C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F7030FF-62D9-4828-809D-579AE214732C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F7030FF-62D9-4828-809D-579AE214732C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94A53624-DCFC-4A28-92DC-D64592A567B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94A53624-DCFC-4A28-92DC-D64592A567B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94A53624-DCFC-4A28-92DC-D64592A567B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94A53624-DCFC-4A28-92DC-D64592A567B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Diagnostics.CodeAnalysis;
+using PG.Core.Attributes;
 using PG.Core.Data.Bean;
+using PG.Core.Data.Key;
 
 namespace PG.Core.Data.Repository
 {
@@ -11,6 +13,7 @@ namespace PG.Core.Data.Repository
     /// </summary>
     /// <typeparam name="TKey">The primary key type.</typeparam>
     /// <typeparam name="TBean">The entity type identified by the primary key of type <see cref="TKey"/></typeparam>
+    [Order]
     public interface IRepository<in TKey,TBean> where TKey : IKey where TBean : IBean<TKey>
     {
         /// <summary>

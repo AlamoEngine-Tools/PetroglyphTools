@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
+using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PG.Core.Attributes;
@@ -56,7 +57,7 @@ namespace PG.Core.Services
         /// Internal <see cref="Dispose"/> function. 
         /// </summary>
         /// <param name="disposing">True when called by <see cref="Dispose"/></param>
-        protected internal virtual void DisposeInternal(bool disposing)
+        protected internal void DisposeInternal(bool disposing)
         {
             if (!m_isDisposed)
             {
@@ -74,10 +75,25 @@ namespace PG.Core.Services
         
         /// <summary>
         /// Disposes of private object references as part of the internal <see cref="IDisposable"/> implementation.
+        /// Currently only disposes of properties accessible via reflection.
+        /// Collects all properties with <see cref="BindingFlags.NonPublic"/> and <see cref="BindingFlags.Instance"/> 
         /// </summary>
         protected internal void DisposePrivateObjectReferencesInternal()
         {
-            // NOP
+            foreach (PropertyInfo property in GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                object value0 = property.GetValue(this);
+                if (value0 == null)
+                {
+                    continue;
+                }
+                if (!property.GetType().IsInstanceOfType(typeof(IDisposable)))
+                {
+                    continue;
+                }
+                IDisposable value = value0 as IDisposable;
+                value?.Dispose();
+            }
         }
 
         /// <summary>

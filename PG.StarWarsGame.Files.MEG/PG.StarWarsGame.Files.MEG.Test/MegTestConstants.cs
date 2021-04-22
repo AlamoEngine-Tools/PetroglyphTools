@@ -1,11 +1,15 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using PG.Commons.Test;
+using PG.Core.Test;
 
 namespace PG.StarWarsGame.Files.MEG.Test
 {
-    internal static class TestConstants
+    internal sealed class MegTestConstants : TestConstants
     {
         internal const string FILE_NAME_GAMEOBJECTFILES = "gameobjectfiles.xml";
 
@@ -19,19 +23,150 @@ namespace PG.StarWarsGame.Files.MEG.Test
 
         internal const string FILE_NAME_MEG_FILE = "testfile.meg";
 
-        internal static readonly string FILE_PATH_GAMEOBJECTFILES = TestUtility.IsWindows()
-            ? @"c:\mod\data\xml\gameobjectfiles.xml"
-            : @"/mnt/c/mod/data/xml/gameobjectfiles.xml";
+        private static readonly IDictionary<string, string> FILE_PATH_GAMEOBJECTFILES =
+            new Dictionary<string, string>
+            {
+                {
+                    PLATFORM_WINDOWS,
+                    @"c:\mod\data\xml\gameobjectfiles.xml"
+                },
+                {
+                    PLATFORM_OSX,
+                    @"/mnt/c/mod/data/xml/gameobjectfiles.xml"
+                },
+                {
+                    PLATFORM_LINUX,
+                    @"/mnt/c/mod/data/xml/gameobjectfiles.xml"
+                }
+            };
 
-        internal static readonly string FILE_PATH_CAMPAIGNFILES = TestUtility.IsWindows()
-            ? @"c:\mod\data\xml\campaignfiles.xml"
-            : @"/mnt/c/mod/data/xml/campaignfiles.xml";
+        internal static string GetGameObjectFilesPath()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return FILE_PATH_GAMEOBJECTFILES[PLATFORM_WINDOWS];
+            }
 
-        internal static readonly string BASE_PATH = TestUtility.IsWindows() ? @"c:\mod" : @"/mnt/c/mod";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return FILE_PATH_GAMEOBJECTFILES[PLATFORM_OSX];
+            }
 
-        internal static readonly string FILE_PATH_MEG_FILE = TestUtility.IsWindows()
-            ? @"c:\mod\data\testfile.meg"
-            : @"/mnt/c/mod/data/testfile.meg";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return FILE_PATH_GAMEOBJECTFILES[PLATFORM_LINUX];
+            }
+
+            throw new NotSupportedException("The current operating system is not supported.");
+        }
+
+        private static readonly IDictionary<string, string> FILE_PATH_CAMPAIGNFILES = new Dictionary<string, string>
+        {
+            {
+                PLATFORM_WINDOWS,
+                @"c:\mod\data\xml\campaignfiles.xml"
+            },
+            {
+                PLATFORM_OSX,
+                @"/mnt/c/mod/data/xml/campaignfiles.xml"
+            },
+            {
+                PLATFORM_LINUX,
+                @"/mnt/c/mod/data/xml/campaignfiles.xml"
+            }
+        };
+
+        internal static string GetCampaignFilesPath()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return FILE_PATH_CAMPAIGNFILES[PLATFORM_WINDOWS];
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return FILE_PATH_CAMPAIGNFILES[PLATFORM_OSX];
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return FILE_PATH_CAMPAIGNFILES[PLATFORM_LINUX];
+            }
+
+            throw new NotSupportedException("The current operating system is not supported.");
+        }
+
+        private static readonly IDictionary<string, string> BASE_PATH = new Dictionary<string, string>
+        {
+            {
+                PLATFORM_WINDOWS,
+                @"c:\mod"
+            },
+            {
+                PLATFORM_OSX,
+                @"/mnt/c/mod"
+            },
+            {
+                PLATFORM_LINUX,
+                @"/mnt/c/mod"
+            }
+        };
+
+        internal static string GetBasePath()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return BASE_PATH[PLATFORM_WINDOWS];
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return BASE_PATH[PLATFORM_OSX];
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return BASE_PATH[PLATFORM_LINUX];
+            }
+
+            throw new NotSupportedException("The current operating system is not supported.");
+        }
+
+        private static readonly IDictionary<string, string> FILE_PATH_MEG_FILE = new Dictionary<string, string>
+        {
+            {
+                PLATFORM_WINDOWS,
+                @"c:\mod\data\testfile.meg"
+            },
+            {
+                PLATFORM_OSX,
+                @"/mnt/c/mod/data/testfile.meg"
+            },
+            {
+                PLATFORM_LINUX,
+                @"/mnt/c/mod/data/testfile.meg"
+            }
+        };
+        
+        internal static string GetMegFilePath()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return FILE_PATH_MEG_FILE[PLATFORM_WINDOWS];
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return FILE_PATH_MEG_FILE[PLATFORM_OSX];
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return FILE_PATH_MEG_FILE[PLATFORM_LINUX];
+            }
+
+            throw new NotSupportedException("The current operating system is not supported.");
+        }
 
         internal static readonly byte[] CONTENT_MEG_FILE =
         {

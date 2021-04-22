@@ -37,4 +37,7 @@
     <ItemGroup>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\PG.Core\PG.Core.csproj" />
+    </ItemGroup>
 </Project>

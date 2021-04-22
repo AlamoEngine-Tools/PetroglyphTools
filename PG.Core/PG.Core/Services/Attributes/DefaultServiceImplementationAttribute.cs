@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PG.Core.Services
+namespace PG.Core.Services.Attributes
 {
     /// <summary>
     /// An attribute that can be used on an interface to mark a given <see cref="Type"/> as the default (or fallback) implementation for a service.

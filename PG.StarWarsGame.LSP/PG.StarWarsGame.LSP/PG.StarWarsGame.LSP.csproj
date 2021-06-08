@@ -10,7 +10,7 @@
       <PackageReference Include="GuiLabs.Language.Xml" Version="1.2.46" />
       <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-      <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.18.3" />
+      <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.19.2" />
       <PackageReference Include="System.IO.Abstractions" Version="13.2.33" />
     </ItemGroup>
 

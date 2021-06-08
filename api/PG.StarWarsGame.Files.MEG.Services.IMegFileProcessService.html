@@ -1,0 +1,374 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IMegFileProcessService
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IMegFileProcessService
+   ">
+    <meta name="generator" content="docfx 2.56.7.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService">
+  
+  
+  <h1 id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService" class="text-break">Interface IMegFileProcessService
+  </h1>
+  <div class="markdown level0 summary"><p>MEF service interface definition for handling sorted *.DAT files.
+A default implementation is provided in <a class="xref" href="PG.StarWarsGame.Files.MEG.Services.V1.MegFileProcessService.html">MegFileProcessService</a>.
+When requesting the default implementation via an IoC Container or registering via injection, you may pass
+a file system as argument implementing <see cref="!:System.IO.Abstractions.IFileSystem"></see> and a logger factory
+implementing <see cref="!:Microsoft.Extensions.Logging.ILoggerFactory"></see></p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="PG.StarWarsGame.Files.MEG.Services.html">PG.StarWarsGame.Files.MEG.Services</a></h6>
+  <h6><strong>Assembly</strong>: PG.StarWarsGame.Files.MEG.dll</h6>
+  <h5 id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IMegFileProcessService</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/new/master/apiSpec/new?filename=PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_Load_System_String_.md&amp;value=---%0Auid%3A%20PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.Load(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/Services/IMegFileProcessService.cs/#L63">View Source</a>
+  </span>
+  <a id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_Load_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.Load*"></a>
+  <h4 id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_Load_System_String_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.Load(System.String)">Load(String)</h4>
+  <div class="markdown level1 summary"><p>Loads a *.MEG file's metadata into a <a class="xref" href="PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder.html">MegFileHolder</a>. This holder can be used for targeted unpacking
+of single files or checks for existence of a given file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">MegFileHolder Load(string filePath)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">filePath</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder.html">MegFileHolder</a></td>
+        <td><p>The specified *.MEG file's metadata.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/new/master/apiSpec/new?filename=PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_PackFilesAsMegArchive_System_String_IDictionary_System_String_System_String__System_String_.md&amp;value=---%0Auid%3A%20PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.PackFilesAsMegArchive(System.String%2CIDictionary%7BSystem.String%2CSystem.String%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/Services/IMegFileProcessService.cs/#L26">View Source</a>
+  </span>
+  <a id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_PackFilesAsMegArchive_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.PackFilesAsMegArchive*"></a>
+  <h4 id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_PackFilesAsMegArchive_System_String_IDictionary_System_String_System_String__System_String_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.PackFilesAsMegArchive(System.String,IDictionary{System.String,System.String},System.String)">PackFilesAsMegArchive(String, IDictionary&lt;String, String&gt;, String)</h4>
+  <div class="markdown level1 summary"><p>Packs a list of files as *.MEG archive.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void PackFilesAsMegArchive(string megArchiveName, IDictionary&lt;string, string&gt; packedFileNameToAbsoluteFilePathsMap, string targetDirectory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">megArchiveName</span></td>
+        <td><p>The desired name of the archive.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">packedFileNameToAbsoluteFilePathsMap</span></td>
+        <td><p>A list of absolute file paths, identified by their name in the MEG file.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">targetDirectory</span></td>
+        <td><p>The target directory to which the *.MEG archive will be written.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/new/master/apiSpec/new?filename=PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackMegFile_PG_StarWarsGame_Files_MEG_Holder_V1_MegFileHolder_System_String_.md&amp;value=---%0Auid%3A%20PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackMegFile(PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/Services/IMegFileProcessService.cs/#L42">View Source</a>
+  </span>
+  <a id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackMegFile_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackMegFile*"></a>
+  <h4 id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackMegFile_PG_StarWarsGame_Files_MEG_Holder_V1_MegFileHolder_System_String_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackMegFile(PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder,System.String)">UnpackMegFile(MegFileHolder, String)</h4>
+  <div class="markdown level1 summary"><p>Same as <a class="xref" href="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.html#PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackMegFile_System_String_System_String_">UnpackMegFile(String, String)</a>, but with a previously loaded
+<a class="xref" href="PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder.html">MegFileHolder</a> instead of a file path to a meg file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnpackMegFile(MegFileHolder holder, string targetDirectory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder.html">MegFileHolder</a></td>
+        <td><span class="parametername">holder</span></td>
+        <td><p>The previously loaded *.MEG file.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">targetDirectory</span></td>
+        <td><p>Directory to unpack the files into.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/new/master/apiSpec/new?filename=PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackMegFile_System_String_System_String_.md&amp;value=---%0Auid%3A%20PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackMegFile(System.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/Services/IMegFileProcessService.cs/#L34">View Source</a>
+  </span>
+  <a id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackMegFile_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackMegFile*"></a>
+  <h4 id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackMegFile_System_String_System_String_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackMegFile(System.String,System.String)">UnpackMegFile(String, String)</h4>
+  <div class="markdown level1 summary"><p>Unpacks a given *.MEG file into a given directory.
+The file structure within the *.MEG file will be preserved relative to the target directory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnpackMegFile(string filePath, string targetDirectory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">filePath</span></td>
+        <td><p>Path to the *.MEG file to unpack.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">targetDirectory</span></td>
+        <td><p>Directory to unpack the files into.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/new/master/apiSpec/new?filename=PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackSingleFileFromMegFile_PG_StarWarsGame_Files_MEG_Holder_V1_MegFileHolder_System_String_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackSingleFileFromMegFile(PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder%2CSystem.String%2CSystem.String%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/Services/IMegFileProcessService.cs/#L54">View Source</a>
+  </span>
+  <a id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackSingleFileFromMegFile_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackSingleFileFromMegFile*"></a>
+  <h4 id="PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService_UnpackSingleFileFromMegFile_PG_StarWarsGame_Files_MEG_Holder_V1_MegFileHolder_System_String_System_String_System_Boolean_" data-uid="PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService.UnpackSingleFileFromMegFile(PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder,System.String,System.String,System.Boolean)">UnpackSingleFileFromMegFile(MegFileHolder, String, String, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Unpacks a single file from a given *.MEG file, provided the file is stored in the archive.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnpackSingleFileFromMegFile(MegFileHolder holder, string targetDirectory, string fileName, bool preserveDirectoryHierarchy = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="PG.StarWarsGame.Files.MEG.Holder.V1.MegFileHolder.html">MegFileHolder</a></td>
+        <td><span class="parametername">holder</span></td>
+        <td><p>The previously loaded *.MEG file.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">targetDirectory</span></td>
+        <td><p>Directory to unpack the file into.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">fileName</span></td>
+        <td><p>The name of the file to unpack.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">preserveDirectoryHierarchy</span></td>
+        <td><p>If set to false, any directory structure within the meg file will be
+disregarded.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/new/master/apiSpec/new?filename=PG_StarWarsGame_Files_MEG_Services_IMegFileProcessService.md&amp;value=---%0Auid%3A%20PG.StarWarsGame.Files.MEG.Services.IMegFileProcessService%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/Services/IMegFileProcessService.cs/#L18" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

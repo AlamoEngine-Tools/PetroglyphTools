@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Server;
 using PG.StarWarsGame.LSP.Server.Buffering;
-using PG.StarWarsGame.LSP.Server.Handlers.Engine;
 
 namespace PG.StarWarsGame.LSP.Server
 {
@@ -17,7 +16,6 @@ namespace PG.StarWarsGame.LSP.Server
                     .WithInput(Console.OpenStandardInput())
                     .WithOutput(Console.OpenStandardOutput())
                     .WithServices(ConfigureServices)
-                    .WithHandler<GameConstantsFileDocumentSyncHandler>()
             );
             await server.WaitForExit;
         }

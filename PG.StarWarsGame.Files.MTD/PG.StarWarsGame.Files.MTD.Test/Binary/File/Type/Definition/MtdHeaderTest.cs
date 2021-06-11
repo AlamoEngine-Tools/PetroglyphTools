@@ -16,6 +16,7 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         [DataRow(0u)]
         [DataRow(12345u)]
         [DataRow(uint.MaxValue)]
+        [Ignore]
         public void ToBytes_Test__AreBinaryEquivalent(uint input)
         {
             MtdHeader header = new MtdHeader(input);

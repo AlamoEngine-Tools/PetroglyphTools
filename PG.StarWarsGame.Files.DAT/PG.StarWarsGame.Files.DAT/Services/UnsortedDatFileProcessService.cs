@@ -1,6 +1,7 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -23,8 +24,7 @@ namespace PG.StarWarsGame.Files.DAT.Services
     public sealed class UnsortedDatFileProcessService : AbstractService<UnsortedDatFileProcessService>,
         IUnsortedDatFileProcessService
     {
-        public UnsortedDatFileProcessService([CanBeNull] IFileSystem fileSystem,
-            [CanBeNull] ILoggerFactory loggerFactory = null) : base(fileSystem, loggerFactory)
+        public UnsortedDatFileProcessService(IServiceProvider services) : base(services)
         {
         }
 

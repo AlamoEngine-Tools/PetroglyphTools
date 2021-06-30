@@ -33,8 +33,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
     {
         private const int BUFFER_SIZE = 4096;
 
-        public MegFileProcessService([CanBeNull] IFileSystem fileSystem,
-            [CanBeNull] ILoggerFactory loggerFactory = null):base(fileSystem, loggerFactory)
+        public MegFileProcessService(IServiceProvider services) : base(services)
         {
         }
 

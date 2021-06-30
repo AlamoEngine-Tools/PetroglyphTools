@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <ProjectGuid>{429CFC27-EEBC-4331-8EE8-43AE70E1DF3D}</ProjectGuid>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.37" />
+    <PackageReference Include="System.IO.Abstractions" Version="13.2.38" />
   </ItemGroup>
 
   <ItemGroup>

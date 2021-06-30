@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <NeutralLanguage>en-GB</NeutralLanguage>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <ProjectGuid>{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}</ProjectGuid>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.StarWarsGame</Title>
@@ -17,6 +17,7 @@
         <Product>PG.StarWarsGame 1.0.0-alpha.1</Product>
         <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
         <FileVersion>1.0.0.0</FileVersion>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
     <PropertyGroup>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -27,7 +28,7 @@
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-        <PackageReference Include="System.IO.Abstractions" Version="13.2.37" />
+        <PackageReference Include="System.IO.Abstractions" Version="13.2.38" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Commons" />

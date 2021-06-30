@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PG.Core.Attributes;
@@ -21,6 +22,7 @@ namespace PG.Core.Services
     {
         private bool m_isDisposed;
         private IFileSystem m_fileSystem;
+        private IServiceProvider m_services;
 
         [JetBrains.Annotations.NotNullAttribute] protected internal ILogger<T> Logger { get; }
 
@@ -33,22 +35,22 @@ namespace PG.Core.Services
         /// FileSystem.Path.Combine("c:/my", "path");
         /// </example>
         protected internal IFileSystem FileSystem => m_fileSystem;
+        
+        /// <summary>
+        /// The service provider.
+        /// </summary>
+        protected internal IServiceProvider Services => m_services;
 
         /// <summary>
         /// Base .ctor
         /// </summary>
-        /// <param name="fileSystem">
-        /// The file system to be used. Initialised with the base file system <see cref="System.IO"/> if null is passed.
-        /// </param>
-        /// <param name="loggerFactory">
-        /// The logger factory to be used to create the service <see cref="Logger"/>.
-        /// Initialised via the <see cref="NullLogger"/> if not provided. 
-        /// </param>
-        protected AbstractService([JetBrains.Annotations.CanBeNullAttribute] IFileSystem fileSystem = null, [JetBrains.Annotations.CanBeNullAttribute] ILoggerFactory loggerFactory = null)
+        /// <param name="services"></param>
+        protected AbstractService([NotNull] IServiceProvider services)
         {
-            m_fileSystem = fileSystem ?? new FileSystem();
-            loggerFactory ??= new NullLoggerFactory();
+            m_fileSystem = services.GetService<IFileSystem>() ?? new FileSystem();
+            ILoggerFactory loggerFactory = services.GetService<ILoggerFactory>() ?? new NullLoggerFactory();
             Logger = loggerFactory.CreateLogger<T>();
+            m_services = services;
         }
 
         #region IDisposable Pattern
@@ -110,6 +112,7 @@ namespace PG.Core.Services
         protected internal void NullLargeFieldsInternal()
         {
             m_fileSystem = null;
+            m_services = null;
         }
 
         /// <inheritdoc />

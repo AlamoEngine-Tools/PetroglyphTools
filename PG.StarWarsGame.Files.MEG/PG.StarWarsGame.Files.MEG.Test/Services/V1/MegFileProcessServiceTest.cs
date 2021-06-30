@@ -7,6 +7,9 @@ using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
 using PG.Commons.Util;
@@ -29,11 +32,12 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestConstants.TEST_TYPE_API)]
         public void PackFilesAsMegArchive_Test__CreatedMegFileIsBinaryEquivalent()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            string targetDirectory = fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
+            IServiceProvider services = GetServiceProviderInternal();
+            string targetDirectory = services.GetRequiredService<IFileSystem>().Path.Combine(
+                MegTestConstants.GetBasePath(),
                 nameof(PackFilesAsMegArchive_Test__CreatedMegFileIsBinaryEquivalent));
             const string testMegFileName = "test_meg_file.meg";
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IMegFileProcessService svc = GetServiceInstance(services);
             svc.PackFilesAsMegArchive(testMegFileName,
                 new Dictionary<string, string>
                 {
@@ -47,8 +51,11 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     }
                 },
                 targetDirectory);
-            byte[] expected = fileSystem.File.ReadAllBytes(MegTestConstants.GetMegFilePath());
-            byte[] actual = fileSystem.File.ReadAllBytes(fileSystem.Path.Combine(targetDirectory, testMegFileName));
+            byte[] expected = services.GetRequiredService<IFileSystem>().File
+                .ReadAllBytes(MegTestConstants.GetMegFilePath());
+            byte[] actual = services.GetRequiredService<IFileSystem>().File
+                .ReadAllBytes(services.GetRequiredService<IFileSystem>().Path
+                    .Combine(targetDirectory, testMegFileName));
             TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
 
@@ -65,8 +72,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         public void PackFilesAsMegArchive_Test__ThrowsArgumentExceptionForStringTypes(string megArchiveName,
             string targetDirectory)
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IMegFileProcessService svc = GetServiceInstance();
             svc.PackFilesAsMegArchive(megArchiveName,
                 new Dictionary<string, string>
                 {
@@ -88,11 +94,11 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [ExpectedException(typeof(ArgumentException))]
         public void PackFilesAsMegArchive_Test__ThrowsArgumentException()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            IMegFileProcessService svc = GetServiceInstance(services);
             svc.PackFilesAsMegArchive(nameof(PackFilesAsMegArchive_Test__ThrowsArgumentException),
                 new Dictionary<string, string>(),
-                fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
+                services.GetRequiredService<IFileSystem>().Path.Combine(MegTestConstants.GetBasePath(),
                     nameof(PackFilesAsMegArchive_Test__ThrowsArgumentException)));
         }
 
@@ -107,8 +113,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         public void Load_Test__GivenInvalidFilePathThrowsArgumentNullException(string invalidValue)
         {
             Assert.IsFalse(StringUtility.HasText(invalidValue));
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            IMegFileProcessService svc = GetServiceInstance(services);
             svc.Load(invalidValue);
         }
 
@@ -122,8 +128,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         {
             Assert.IsTrue(StringUtility.HasText(invalidPath));
             invalidPath = "mnt/c/" + invalidPath;
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            IMegFileProcessService svc = GetServiceInstance();
             svc.Load(invalidPath);
         }
 
@@ -137,8 +143,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         {
             Assert.IsTrue(StringUtility.HasText(invalidPath));
             invalidPath = "mnt/c/" + invalidPath;
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            IMegFileProcessService svc = GetServiceInstance();
             svc.Load(invalidPath);
         }
 
@@ -153,8 +159,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
             Assert.IsTrue(StringUtility.HasText(invalidPath));
             invalidPath = "c:/" + invalidPath;
             invalidPath = invalidPath.Replace('/', '\\');
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IMegFileProcessService svc = GetServiceInstance();
             svc.Load(invalidPath);
         }
 
@@ -163,8 +168,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestConstants.TEST_TYPE_API)]
         public void Load_Test__MegFileHolderIntegrity__OSX()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            IMegFileProcessService svc = GetServiceInstance(services);
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             Assert.IsTrue(StringUtility.HasText(megFileHolder.FileName));
             string expectedFileName = MegTestConstants.FILE_NAME_MEG_FILE.Replace(".meg", string.Empty);
@@ -181,7 +186,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     StringComparison.InvariantCultureIgnoreCase))
                 {
                     uint expectedFileSize =
-                        (uint) fileSystem.File.ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
+                        (uint) services.GetRequiredService<IFileSystem>().File
+                            .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
                     Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
                 }
 
@@ -190,7 +196,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     StringComparison.InvariantCultureIgnoreCase))
                 {
                     uint expectedFileSize =
-                        (uint) fileSystem.File.ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
+                        (uint) services.GetRequiredService<IFileSystem>().File
+                            .ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
                     Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
                 }
             }
@@ -201,8 +208,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestConstants.TEST_TYPE_API)]
         public void Load_Test__MegFileHolderIntegrity__Linux()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            IMegFileProcessService svc = GetServiceInstance(services);
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             Assert.IsTrue(StringUtility.HasText(megFileHolder.FileName));
             string expectedFileName = MegTestConstants.FILE_NAME_MEG_FILE.Replace(".meg", string.Empty);
@@ -219,7 +226,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     StringComparison.InvariantCultureIgnoreCase))
                 {
                     uint expectedFileSize =
-                        (uint) fileSystem.File.ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
+                        (uint) services.GetRequiredService<IFileSystem>().File
+                            .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
                     Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
                 }
 
@@ -228,7 +236,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     StringComparison.InvariantCultureIgnoreCase))
                 {
                     uint expectedFileSize =
-                        (uint) fileSystem.File.ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
+                        (uint) services.GetRequiredService<IFileSystem>().File
+                            .ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
                     Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
                 }
             }
@@ -239,8 +248,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestConstants.TEST_TYPE_API)]
         public void Load_Test__MegFileHolderIntegrity__Windows()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            IMegFileProcessService svc = GetServiceInstance(services);
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             Assert.IsTrue(StringUtility.HasText(megFileHolder.FileName));
             string expectedFileName = MegTestConstants.FILE_NAME_MEG_FILE.Replace(".meg", string.Empty);
@@ -257,7 +266,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     StringComparison.InvariantCultureIgnoreCase))
                 {
                     uint expectedFileSize =
-                        (uint) fileSystem.File.ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
+                        (uint) services.GetRequiredService<IFileSystem>().File
+                            .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
                     Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
                 }
 
@@ -266,7 +276,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     StringComparison.InvariantCultureIgnoreCase))
                 {
                     uint expectedFileSize =
-                        (uint) fileSystem.File.ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
+                        (uint) services.GetRequiredService<IFileSystem>().File
+                            .ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
                     Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
                 }
             }
@@ -277,28 +288,33 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestConstants.TEST_TYPE_API)]
         public void UnpackMegFile_Test__UnpackedFilesAreBinaryEquivalent()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
+            IServiceProvider services = GetServiceProviderInternal();
             string exportTestPath =
-                fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
+                services.GetRequiredService<IFileSystem>().Path.Combine(MegTestConstants.GetBasePath(),
                     nameof(UnpackMegFile_Test__UnpackedFilesAreBinaryEquivalent));
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IMegFileProcessService svc = GetServiceInstance(services);
             svc.UnpackMegFile(MegTestConstants.GetMegFilePath(), exportTestPath);
-            Assert.IsTrue(fileSystem.Directory.Exists(exportTestPath));
-            string fullExportPath = fileSystem.Path.Combine(exportTestPath, "DATA", "XML");
-            Assert.IsTrue(fileSystem.Directory.Exists(fullExportPath));
-            string[] files = fileSystem.Directory.GetFiles(fullExportPath);
+            Assert.IsTrue(services.GetRequiredService<IFileSystem>().Directory.Exists(exportTestPath));
+            string fullExportPath =
+                services.GetRequiredService<IFileSystem>().Path.Combine(exportTestPath, "DATA", "XML");
+            Assert.IsTrue(services.GetRequiredService<IFileSystem>().Directory.Exists(fullExportPath));
+            string[] files = services.GetRequiredService<IFileSystem>().Directory.GetFiles(fullExportPath);
             Assert.IsTrue(files.Length == 2);
-            Assert.IsTrue(files.Contains(fileSystem.Path.Combine(fullExportPath,
+            Assert.IsTrue(files.Contains(services.GetRequiredService<IFileSystem>().Path.Combine(fullExportPath,
                 MegTestConstants.FILE_NAME_CAMPAIGNFILES.ToUpper())));
-            Assert.IsTrue(files.Contains(fileSystem.Path.Combine(fullExportPath,
+            Assert.IsTrue(files.Contains(services.GetRequiredService<IFileSystem>().Path.Combine(fullExportPath,
                 MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper())));
-            byte[] expected = fileSystem.File.ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
-            byte[] actual = fileSystem.File.ReadAllBytes(fileSystem.Path.Combine(fullExportPath,
-                MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
+            byte[] expected = services.GetRequiredService<IFileSystem>().File
+                .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
+            byte[] actual = services.GetRequiredService<IFileSystem>().File.ReadAllBytes(services
+                .GetRequiredService<IFileSystem>().Path.Combine(fullExportPath,
+                    MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
             TestUtility.AssertAreBinaryEquivalent(expected, actual);
-            expected = fileSystem.File.ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
-            actual = fileSystem.File.ReadAllBytes(fileSystem.Path.Combine(fullExportPath,
-                MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
+            expected = services.GetRequiredService<IFileSystem>().File
+                .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
+            actual = services.GetRequiredService<IFileSystem>().File.ReadAllBytes(services
+                .GetRequiredService<IFileSystem>().Path.Combine(fullExportPath,
+                    MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
             TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
 
@@ -310,8 +326,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [ExpectedException(typeof(ArgumentException))]
         public void UnpackSingleFileFromMegFile_Test__ThrowsArgumentException(string targetDirectory, string fileName)
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IMegFileProcessService svc = GetServiceInstance();
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             svc.UnpackSingleFileFromMegFile(megFileHolder, targetDirectory, fileName);
         }
@@ -322,11 +337,11 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [ExpectedException(typeof(FileNotContainedInArchiveException))]
         public void UnpackSingleFileFromMegFile_Test__ThrowsFileNotContainedInArchiveException()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
+            IServiceProvider services = GetServiceProviderInternal();
             string exportTestPath =
-                fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
+                services.GetRequiredService<IFileSystem>().Path.Combine(MegTestConstants.GetBasePath(),
                     "UnpackSingleFileFromMegFile_Test__ThrowsFileNotContainedInArchiveException");
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IMegFileProcessService svc = GetServiceInstance(services);
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, "I_DO_NO_EXIST.XML", false);
         }
@@ -337,11 +352,11 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [ExpectedException(typeof(MultipleFilesWithMatchingNameInArchiveException))]
         public void UnpackSingleFileFromMegFile_Test__ThrowsMultipleFilesWithMatchingNameInArchiveException()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
+            IServiceProvider services = GetServiceProviderInternal();
             string exportTestPath =
-                fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
+                services.GetRequiredService<IFileSystem>().Path.Combine(MegTestConstants.GetBasePath(),
                     "UnpackSingleFileFromMegFile_Test__ThrowsFileNotContainedInArchiveException");
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IMegFileProcessService svc = GetServiceInstance(services);
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, "XML", false);
         }
@@ -351,17 +366,20 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestConstants.TEST_TYPE_API)]
         public void UnpackSingleFileFromMegFile_Test__DirectoryHierarchyPreservedUnpackedFileIsBinaryEquivalent()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
+            IServiceProvider services = GetServiceProviderInternal();
             string exportTestPath =
-                fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
+                services.GetRequiredService<IFileSystem>().Path.Combine(MegTestConstants.GetBasePath(),
                     "UnpackSingleFileFromMegFile_Test__UnpackedFileIsBinaryEquivalent");
-            string fullExportPath = fileSystem.Path.Combine(exportTestPath, "DATA", "XML");
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            string fullExportPath =
+                services.GetRequiredService<IFileSystem>().Path.Combine(exportTestPath, "DATA", "XML");
+            IMegFileProcessService svc = GetServiceInstance(services);
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, MegTestConstants.FILE_NAME_GAMEOBJECTFILES);
-            byte[] expected = fileSystem.File.ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
-            byte[] actual = fileSystem.File.ReadAllBytes(fileSystem.Path.Combine(fullExportPath,
-                MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
+            byte[] expected = services.GetRequiredService<IFileSystem>().File
+                .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
+            byte[] actual = services.GetRequiredService<IFileSystem>().File.ReadAllBytes(services
+                .GetRequiredService<IFileSystem>().Path.Combine(fullExportPath,
+                    MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
             TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
 
@@ -370,28 +388,26 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         [TestCategory(TestConstants.TEST_TYPE_API)]
         public void UnpackSingleFileFromMegFile_Test__DirectoryHierarchyFlatUnpackedFileIsBinaryEquivalent()
         {
-            IFileSystem fileSystem = GetFileSystemInternal();
-            string exportTestPath =
-                fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
-                    "UnpackSingleFileFromMegFile_Test__UnpackedFileIsBinaryEquivalent");
-            IMegFileProcessService svc = GetServiceInstance(fileSystem);
+            IServiceProvider services = GetServiceProviderInternal();
+            string exportTestPath = services.GetRequiredService<IFileSystem>().Path.Combine(
+                MegTestConstants.GetBasePath(),
+                "UnpackSingleFileFromMegFile_Test__UnpackedFileIsBinaryEquivalent");
+            IMegFileProcessService svc = GetServiceInstance(services);
             MegFileHolder megFileHolder = svc.Load(MegTestConstants.GetMegFilePath());
             svc.UnpackSingleFileFromMegFile(megFileHolder, exportTestPath, MegTestConstants.FILE_NAME_GAMEOBJECTFILES,
                 false);
-            byte[] expected = fileSystem.File.ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
-            byte[] actual = fileSystem.File.ReadAllBytes(fileSystem.Path.Combine(exportTestPath,
-                MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
+            byte[] expected = services.GetRequiredService<IFileSystem>().File
+                .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath());
+            byte[] actual = services.GetRequiredService<IFileSystem>().File.ReadAllBytes(services
+                .GetRequiredService<IFileSystem>().Path.Combine(exportTestPath,
+                    MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
             TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
 
-        protected override MegFileProcessService GetServiceInstance(IFileSystem fileSystem)
-        {
-            return new MegFileProcessService(fileSystem);
-        }
 
-        protected override IFileSystem GetFileSystemInternal()
+        public class MegFileServiceMockFileSystem : MockFileSystem
         {
-            return new MockFileSystem(new Dictionary<string, MockFileData>
+            public MegFileServiceMockFileSystem() : base(new Dictionary<string, MockFileData>
             {
                 {
                     MegTestConstants.GetGameObjectFilesPath(),
@@ -405,7 +421,17 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     MegTestConstants.GetMegFilePath(),
                     new MockFileData(MegTestConstants.CONTENT_MEG_FILE)
                 }
-            });
+            })
+            {
+            }
+        }
+
+        protected override IServiceProvider GetServiceProviderInternal()
+        {
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddSingleton<IFileSystem, MegFileServiceMockFileSystem>()
+                .AddSingleton<ILoggerFactory, NullLoggerFactory>().BuildServiceProvider();
+            return serviceProvider;
         }
     }
 }

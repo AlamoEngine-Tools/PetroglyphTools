@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <ProjectGuid>{4358BDCA-3CBA-42B6-A794-82973F48714F}</ProjectGuid>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.StarWarsGame.Files.DAT</Title>
@@ -16,6 +16,7 @@
         <Product>PG.StarWarsGame.Files.DAT 1.0.0-alpha.1</Product>
         <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
         <FileVersion>1.0.0.0</FileVersion>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
     <PropertyGroup>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -28,7 +29,7 @@
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
         <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-        <PackageReference Include="System.IO.Abstractions" Version="13.2.37" />
+        <PackageReference Include="System.IO.Abstractions" Version="13.2.38" />
     </ItemGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">

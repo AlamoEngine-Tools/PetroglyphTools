@@ -1,6 +1,7 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.IO.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Core.Test.Services;
@@ -11,9 +12,5 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services
     [TestClass]
     public class UnsortedDatFileProcessServiceTest: AbstractServiceTest<UnsortedDatFileProcessService>
     {
-        protected override UnsortedDatFileProcessService GetServiceInstance(IFileSystem fileSystem)
-        {
-            return new UnsortedDatFileProcessService(fileSystem);
-        }
     }
 }

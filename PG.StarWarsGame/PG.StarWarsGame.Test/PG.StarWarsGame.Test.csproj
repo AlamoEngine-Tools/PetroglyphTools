@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <ProjectGuid>{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}</ProjectGuid>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.StarWarsGame.Test</Title>
@@ -17,6 +17,7 @@
         <Product>PG.StarWarsGame.Test 1.0.0-alpha.1</Product>
         <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
         <FileVersion>1.0.0.0</FileVersion>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="3.0.3">
@@ -26,14 +27,14 @@
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
-        <PackageReference Include="MSTest.TestAdapter" Version="2.2.4" />
-        <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
+        <PackageReference Include="MSTest.TestAdapter" Version="2.2.5" />
+        <PackageReference Include="MSTest.TestFramework" Version="2.2.5" />
         <PackageReference Include="coverlet.collector" Version="3.0.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.IO.Abstractions" Version="13.2.37" />
-        <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.37" />
+        <PackageReference Include="System.IO.Abstractions" Version="13.2.38" />
+        <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.38" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\PG.StarWarsGame\PG.StarWarsGame.csproj" />

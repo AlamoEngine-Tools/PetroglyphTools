@@ -1,12 +1,12 @@
 using System;
-using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Util;
+using PG.Core.Test;
 
 namespace PG.Commons.Test.Util
 {
     [TestClass]
-    [TestCategory(TestUtility.TEST_TYPE_UTILITY)]
+    [TestCategory(TestConstants.TEST_TYPE_UTILITY)]
     public class BooleanUtilityTest
     {
         [TestMethod]

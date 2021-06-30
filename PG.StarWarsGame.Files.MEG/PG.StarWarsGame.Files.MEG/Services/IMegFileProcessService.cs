@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using PG.Core.Attributes;
+using PG.Core.Services.Attributes;
 using PG.StarWarsGame.Files.MEG.Holder.V1;
 using PG.StarWarsGame.Files.MEG.Services.V1;
 
@@ -15,6 +17,8 @@ namespace PG.StarWarsGame.Files.MEG.Services
     ///     a file system as argument implementing <see cref="System.IO.Abstractions.IFileSystem" /> and a logger factory
     ///     implementing <see cref="Microsoft.Extensions.Logging.ILoggerFactory" />
     /// </summary>
+    [Order(OrderAttribute.DEFAULT_ORDER)]
+    [DefaultServiceImplementation(typeof(MegFileProcessService))]
     public interface IMegFileProcessService
     {
         /// <summary>

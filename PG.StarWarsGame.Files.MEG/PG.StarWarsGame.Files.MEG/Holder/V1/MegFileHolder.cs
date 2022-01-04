@@ -31,10 +31,10 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         {
             FilePath = StringUtility.HasText(filePath)
                 ? filePath
-                : throw new ArgumentNullException($"Argument {nameof(filePath)} may not be null.");
+                : throw new ArgumentNullException(nameof(filePath), $"Argument {nameof(filePath)} may not be null.");
             FileName = StringUtility.HasText(fileName)
                 ? fileName
-                : throw new ArgumentNullException($"Argument {nameof(fileName)} may not be null.");
+                : throw new ArgumentNullException(nameof(fileName), $"Argument {nameof(fileName)} may not be null.");
         }
 
         /// <inheritdoc />

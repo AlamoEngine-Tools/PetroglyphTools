@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
@@ -19,7 +18,6 @@ namespace PG.StarWarsGame.Files.DAT.Services
     /// <summary>
     /// Base implementation of the <see cref="IUnsortedDatFileProcessService"/> interface. 
     /// </summary>
-    [Export(nameof(IUnsortedDatFileProcessService))]
     [Order(OrderAttribute.DEFAULT_ORDER)]
     public sealed class UnsortedDatFileProcessService : AbstractService<UnsortedDatFileProcessService>,
         IUnsortedDatFileProcessService

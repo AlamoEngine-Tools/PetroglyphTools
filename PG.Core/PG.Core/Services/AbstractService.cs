@@ -24,12 +24,12 @@ namespace PG.Core.Services
         private IFileSystem m_fileSystem;
         private IServiceProvider m_services;
 
-        [JetBrains.Annotations.NotNullAttribute] protected internal ILogger<T> Logger { get; }
+        [JetBrains.Annotations.NotNull] protected internal ILogger<T> Logger { get; }
 
         /// <summary>
         /// The file system implementation to be used.
         /// Instead of relying on <see cref="System.IO"/> functionality this field should be used,
-        /// as it can replaced by a mock implementation in tests quite easily.
+        /// as it can replaced be by a mock implementation in tests quite easily.
         /// </summary>
         /// <example>
         /// FileSystem.Path.Combine("c:/my", "path");

@@ -10,7 +10,7 @@ namespace PG.Commons.Test
 {
     public static class TestUtility
     {
-        private static readonly Random RANDOM_GENERATOR = new Random();
+        private static readonly Random RANDOM_GENERATOR = new();
         
         public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
         {

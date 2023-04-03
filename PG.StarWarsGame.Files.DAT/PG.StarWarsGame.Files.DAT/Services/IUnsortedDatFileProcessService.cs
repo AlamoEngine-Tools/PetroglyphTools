@@ -1,6 +1,8 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Core.Attributes;
+using PG.Core.Services.Attributes;
 using PG.StarWarsGame.Files.DAT.Holder;
 
 namespace PG.StarWarsGame.Files.DAT.Services
@@ -12,6 +14,8 @@ namespace PG.StarWarsGame.Files.DAT.Services
     /// a file system as argument implementing <see cref="System.IO.Abstractions.IFileSystem"/> and a logger
     /// implementing <see cref="Microsoft.Extensions.Logging.ILogger"/>
     /// </summary>
+    [Order(OrderAttribute.DEFAULT_ORDER)]
+    [DefaultServiceImplementation(typeof(UnsortedDatFileProcessService))]
     public interface IUnsortedDatFileProcessService
     {
         /// <summary>

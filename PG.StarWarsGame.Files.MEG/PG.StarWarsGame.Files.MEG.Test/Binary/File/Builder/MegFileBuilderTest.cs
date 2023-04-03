@@ -7,6 +7,7 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
+using PG.Core.Test;
 using PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1;
 using PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1;
 using PG.StarWarsGame.Files.MEG.Holder;
@@ -25,29 +26,29 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Builder
             m_fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
                 {
-                    TestConstants.FILE_PATH_GAMEOBJECTFILES,
-                    new MockFileData(TestConstants.CONTENT_GAMEOBJECTFILES)
+                    MegTestConstants.GetGameObjectFilesPath(),
+                    new MockFileData(MegTestConstants.CONTENT_GAMEOBJECTFILES)
                 },
                 {
-                    TestConstants.FILE_PATH_CAMPAIGNFILES,
-                    new MockFileData(TestConstants.CONTENT_CAMPAIGNFILES)
+                    MegTestConstants.GetCampaignFilesPath(),
+                    new MockFileData(MegTestConstants.CONTENT_CAMPAIGNFILES)
                 },
                 {
-                    TestConstants.FILE_PATH_MEG_FILE,
-                    new MockFileData(TestConstants.CONTENT_MEG_FILE)
+                    MegTestConstants.GetMegFilePath(),
+                    new MockFileData(MegTestConstants.CONTENT_MEG_FILE)
                 }
             });
         }
 
         [TestMethod]
-        [TestCategory(TestUtility.TEST_TYPE_BUILDER)]
+        [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromHolder_Test__FileHeaderIsConsistent()
         {
-            MegFileHolder megFileHolder = new MegFileHolder(TestConstants.BASE_PATH, "test");
+            MegFileHolder megFileHolder = new MegFileHolder(MegTestConstants.GetBasePath(), "test");
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/campaignfiles.xml",
-                TestConstants.FILE_PATH_CAMPAIGNFILES));
+                MegTestConstants.GetCampaignFilesPath()));
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/gameobjectfiles.xml",
-                TestConstants.FILE_PATH_GAMEOBJECTFILES));
+                MegTestConstants.GetGameObjectFilesPath()));
             MegFileBuilder builder = new MegFileBuilder(m_fileSystem);
             MegFile megFile = builder.FromHolder(megFileHolder);
             Assert.IsNotNull(megFile);
@@ -65,27 +66,27 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Builder
         }
 
         [TestMethod]
-        [TestCategory(TestUtility.TEST_TYPE_BUILDER)]
+        [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromHolder_Test__FileHeaderIsBinaryEquivalent()
         {
             MegFileHolder megFileHolder =
-                new MegFileHolder(TestConstants.BASE_PATH, "FromHolder_Test__FileHeaderIsBinaryEquivalent");
+                new MegFileHolder(MegTestConstants.GetBasePath(), "FromHolder_Test__FileHeaderIsBinaryEquivalent");
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/campaignfiles.xml",
-                TestConstants.FILE_PATH_CAMPAIGNFILES));
+                MegTestConstants.GetCampaignFilesPath()));
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/gameobjectfiles.xml",
-                TestConstants.FILE_PATH_GAMEOBJECTFILES));
+                MegTestConstants.GetGameObjectFilesPath()));
             MegFileBuilder builder = new MegFileBuilder(m_fileSystem);
             MegFile megFile = builder.FromHolder(megFileHolder);
             Assert.IsNotNull(megFile);
             m_fileSystem.File.WriteAllBytes(
-                m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
+                m_fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
                     megFileHolder.FullyQualifiedName), megFile.ToBytes());
-            byte[] readMegFile = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(TestConstants.BASE_PATH,
+            byte[] readMegFile = m_fileSystem.File.ReadAllBytes(m_fileSystem.Path.Combine(MegTestConstants.GetBasePath(),
                 megFileHolder.FullyQualifiedName));
-            Assert.AreEqual(TestConstants.CONTENT_MEG_FILE_HEADER.Length, readMegFile.Length);
-            for (int i = 0; i < TestConstants.CONTENT_MEG_FILE_HEADER.Length; i++)
+            Assert.AreEqual(MegTestConstants.CONTENT_MEG_FILE_HEADER.Length, readMegFile.Length);
+            for (int i = 0; i < MegTestConstants.CONTENT_MEG_FILE_HEADER.Length; i++)
             {
-                Assert.AreEqual(TestConstants.CONTENT_MEG_FILE_HEADER[i], readMegFile[i]);
+                Assert.AreEqual(MegTestConstants.CONTENT_MEG_FILE_HEADER[i], readMegFile[i]);
             }
         }
     }

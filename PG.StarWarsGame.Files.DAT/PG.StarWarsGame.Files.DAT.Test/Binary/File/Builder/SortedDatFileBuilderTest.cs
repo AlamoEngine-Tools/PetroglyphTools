@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Test;
+using PG.Core.Test;
 using PG.StarWarsGame.Files.DAT.Binary.File.Builder;
 using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Holder;
@@ -16,8 +16,8 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
     public class SortedDatFileBuilderTest
     {
         [TestMethod]
-        [TestCategory(TestUtility.TEST_TYPE_HOLY)]
-        [TestCategory(TestUtility.TEST_TYPE_BUILDER)]
+        [TestCategory(TestConstants.TEST_TYPE_HOLY)]
+        [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromHolder()
         {
             List<Tuple<string, string>> translations = new List<Tuple<string, string>>
@@ -50,8 +50,8 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
         }
 
         [TestMethod]
-        [TestCategory(TestUtility.TEST_TYPE_HOLY)]
-        [TestCategory(TestUtility.TEST_TYPE_BUILDER)]
+        [TestCategory(TestConstants.TEST_TYPE_HOLY)]
+        [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromBytes()
         {
             SortedDatFileHolder sortedDatFileHolder = new SortedDatFileHolder("", "")

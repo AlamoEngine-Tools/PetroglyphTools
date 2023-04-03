@@ -6,16 +6,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PG.Commons.Test.Attributes
+namespace PG.Core.Test.Attributes
 {
-    public class PlatformSpecificTestMethod : TestMethodAttribute
+    public class PlatformSpecificTestMethodAttribute : TestMethodAttribute
     {
-        public PlatformSpecificTestMethod(params string[] platforms)
+        private readonly IEnumerable<OSPlatform> m_platforms;
+
+        public PlatformSpecificTestMethodAttribute(params string[] platforms)
         {
             m_platforms = platforms.Select(platformName => OSPlatform.Create(platformName.ToUpper()));
         }
-
-        private readonly IEnumerable<OSPlatform> m_platforms;
 
         public override TestResult[] Execute(ITestMethod testMethod)
         {

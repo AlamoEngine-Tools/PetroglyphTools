@@ -8,13 +8,13 @@ namespace PG.StarWarsGame.Commons.Xml.Files
 {
     public abstract class AXmlFileDefinition : IXmlFileDefinition
     {
-        public bool Contains<T>() where T : IXmlTagDefinition
+        public bool ContainsProperty<T>() where T : IXmlTagDefinition
         {
             PropertyInfo[] propInfos = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             return propInfos.Any(propertyInfo => propertyInfo.CanRead && propertyInfo.PropertyType == typeof(T));
         }
 
-        public T GetByClass<T>() where T : IXmlTagDefinition
+        public T GetPropertyByClass<T>() where T : IXmlTagDefinition
         {
             PropertyInfo[] propInfos = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo propertyInfo in propInfos)

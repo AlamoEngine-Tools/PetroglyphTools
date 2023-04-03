@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ProjectGuid>{999D1E81-59E0-4E1B-9819-5D0448BC5C30}</ProjectGuid>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.StarWarsGame.Files.MEG</Title>
@@ -16,18 +16,20 @@
         <Product>PG.StarWarsGame.Files.MEG 1.0.0-alpha.1</Product>
         <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
         <FileVersion>1.0.0.0</FileVersion>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
     <PropertyGroup>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-        <PackageReference Include="System.Composition.AttributedModel" Version="5.0.1" />
-        <PackageReference Include="System.IO.Abstractions" Version="13.2.33" />
+        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+        <PackageReference Include="System.Composition.AttributedModel" Version="7.0.0" />
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.4" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+        <ProjectReference Include="..\..\PG.Core\PG.Core\PG.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Commons" />
@@ -36,5 +38,5 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>$(AssemblyName).Test</_Parameter1>
         </AssemblyAttribute>
-  </ItemGroup>
+    </ItemGroup>
 </Project>

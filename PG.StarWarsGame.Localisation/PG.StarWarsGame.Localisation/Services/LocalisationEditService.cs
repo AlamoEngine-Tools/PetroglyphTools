@@ -1,6 +1,7 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using PG.Core.Data.Etl.Source;
@@ -15,8 +16,7 @@ namespace PG.StarWarsGame.Localisation.Services
     {
         private bool m_isInitialised = false;
 
-        public LocalisationEditService(ISourceDescriptor sourceDescriptor, ITargetDescriptor targetDescriptor,
-            IFileSystem fileSystem = null, ILoggerFactory loggerFactory = null) : base(fileSystem, loggerFactory)
+        public LocalisationEditService(ISourceDescriptor sourceDescriptor, ITargetDescriptor targetDescriptor, IServiceProvider services) : base(services)
         {
             SourceDescriptor = sourceDescriptor;
             TargetDescriptor = targetDescriptor;

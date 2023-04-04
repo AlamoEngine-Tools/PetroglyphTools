@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files
 {
     public abstract class AXmlFileDescriptor : IXmlFileDescriptor
     {
-        public virtual string Description => LocalizableTexts.NoDescriptionAvailable;
+        public virtual string Description => Resources.LocalizableTexts.NoDescriptionAvailable;
 
         public bool Contains<T>() where T : IXmlTagDescriptor
         {

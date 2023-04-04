@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Tags
     /// </summary>
     public abstract class AXmlTagDescriptor : IXmlTagDescriptor
     {
-        public virtual string Description => LocalizableTexts.NoDescriptionAvailable;
+        public virtual string Description => Resources.LocalizableTexts.NoDescriptionAvailable;
         public abstract string Id { get; }
         public abstract XmlValueType Type { get; }
         public abstract XmlValueTypeInternal TypeInternal { get; }

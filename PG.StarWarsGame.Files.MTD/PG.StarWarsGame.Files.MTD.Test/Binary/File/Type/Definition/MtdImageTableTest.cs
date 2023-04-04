@@ -59,7 +59,7 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
                     MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_Y_EXTEND,
                     MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_ALPHA)
             });
-            Assert.AreEqual(mtdImageTable.Size, 2 * TestConstants.MtdImageTableRecordTestConstants.OBJECT_SIZE_IN_BYTE);
+            Assert.AreEqual(mtdImageTable.Size, 2 * MtdTestConstants.MtdImageTableRecordTestConstants.OBJECT_SIZE_IN_BYTE);
         }
     }
 }

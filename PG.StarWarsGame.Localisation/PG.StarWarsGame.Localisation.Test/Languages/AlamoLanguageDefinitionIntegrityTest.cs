@@ -12,7 +12,6 @@ using PG.StarWarsGame.Localisation.Util;
 namespace PG.StarWarsGame.Localisation.Test.Languages
 {
     [TestClass]
-    [TestCategory(TestConstants.TEST_TYPE_INTEGRITY)]
     [TestCategory(TestConstants.TEST_TYPE_HOLY)]
     public class AlamoLanguageDefinitionIntegrityTest
     {

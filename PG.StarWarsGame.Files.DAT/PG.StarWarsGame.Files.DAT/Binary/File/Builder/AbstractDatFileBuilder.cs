@@ -13,13 +13,13 @@ using System.Runtime.CompilerServices;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
 {
-    internal abstract class ADatFileBuilder
+    internal abstract class AbstractDatFileBuilder
     {
         private int m_currentOffset;
         private const int HEADER_STARTING_OFFSET = 0;
         private const int INDEX_TABLE_STARTING_OFFSET = 4;
 
-        protected ADatFileBuilder()
+        protected AbstractDatFileBuilder()
         {
             m_currentOffset = INDEX_TABLE_STARTING_OFFSET;
         }

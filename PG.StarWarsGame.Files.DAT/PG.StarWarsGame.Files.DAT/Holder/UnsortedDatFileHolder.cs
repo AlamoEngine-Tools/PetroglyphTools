@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace PG.StarWarsGame.Files.DAT.Holder
 {
-    public sealed class UnsortedDatFileHolder : ADatFileHolder<List<Tuple<string, string>>, UnsortedDatAlamoFileType>
+    public sealed class UnsortedDatFileHolder : AbstractDatFileHolder<List<Tuple<string, string>>, UnsortedDatAlamoFileType>
     {
         public UnsortedDatFileHolder(string filePath, string fileName) : base(filePath, fileName)
         {

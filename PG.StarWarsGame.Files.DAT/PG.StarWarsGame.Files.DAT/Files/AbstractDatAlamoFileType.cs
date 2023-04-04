@@ -18,7 +18,7 @@ namespace PG.StarWarsGame.Files.DAT.Files
     /// credits). It allows duplicate keys which are used as formatting instructions.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public abstract class ADatAlamoFileType : IAlamoFileType
+    public abstract class AbstractDatAlamoFileType : IAlamoFileType
     {
         private const FileType FILE_TYPE = FileType.Binary;
         private const string FILE_EXTENSION = "dat";

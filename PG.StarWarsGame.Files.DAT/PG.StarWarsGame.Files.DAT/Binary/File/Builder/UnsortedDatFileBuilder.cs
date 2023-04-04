@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
 {
-    internal class UnsortedDatFileBuilder : ADatFileBuilder, IBinaryFileBuilder<DatFile, UnsortedDatFileHolder>
+    internal class UnsortedDatFileBuilder : AbstractDatFileBuilder, IBinaryFileBuilder<DatFile, UnsortedDatFileHolder>
     {
         public UnsortedDatFileBuilder() : base()
         {

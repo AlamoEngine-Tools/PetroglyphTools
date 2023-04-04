@@ -1,6 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/CustomTools/CustomToolsData/@EntryValue"></s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=18c512c8_002Dcdbe_002D4cbd_002D9b03_002D0615bdf741e9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  <s:String x:Key="/Default/CustomTools/CustomToolsData/@EntryValue"></s:String>
+  <s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=18c512c8_002Dcdbe_002D4cbd_002D9b03_002D0615bdf741e9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.Commons\PG.Commons" Presentation="&amp;lt;PG.Commons&amp;gt;" /&gt;&#xD;
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.Commons\PG.Commons.Test" Presentation="&amp;lt;PG.Commons.Test&amp;gt;" /&gt;&#xD;
@@ -20,15 +20,15 @@
     &lt;Project Location="E:\github\alamoengine-tools\PetroglyphTools\PG.StarWarsGame\PG.StarWarsGame.Test" Presentation="&amp;lt;PG.StarWarsGame.Test&amp;gt;" /&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	
-	
-	
-	
-	
-	
-	
-	
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=ED05FB8597AD9F4292CA730050460C44/Text/@EntryValue">$HEADER$
+  
+  
+  
+  
+  
+  
+  
+  
+  <s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=ED05FB8597AD9F4292CA730050460C44/Text/@EntryValue">$HEADER$
 using System;
 using System.Runtime.Serialization;
 
@@ -53,13 +53,13 @@ namespace $NAMESPACE$
     }
 $END$}
 }</s:String>
-	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=PG_002EStarWarsGame_002ELSP_002FServer_002FLocalizableTexts/@EntryIndexedValue">False</s:Boolean>
-	
-	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=PG_002EStarWarsGame_002FResources_002FLocalizableTexts/@EntryIndexedValue">True</s:Boolean>
-	
-	
-	
-	
-	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/ResxEditorPersonal/ShowOnlyErrors/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/ResxEditorPersonal/ShowOnlyStringResources/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>
+  <s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=PG_002EStarWarsGame_002ELSP_002FServer_002FLocalizableTexts/@EntryIndexedValue">False</s:Boolean>
+  
+  <s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=PG_002EStarWarsGame_002FResources_002FLocalizableTexts/@EntryIndexedValue">True</s:Boolean>
+  
+  
+  
+  
+  <s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/ResxEditorPersonal/ShowOnlyErrors/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/ResxEditorPersonal/ShowOnlyStringResources/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>

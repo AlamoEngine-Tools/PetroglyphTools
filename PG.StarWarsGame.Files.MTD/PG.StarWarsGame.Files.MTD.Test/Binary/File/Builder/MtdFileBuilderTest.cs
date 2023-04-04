@@ -41,7 +41,7 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Builder
         public void FromBytes_Test__AsExpected()
         {
             MtdFileBuilder builder = new MtdFileBuilder();
-            MtdFile file = builder.FromBytes(TestConstants.MtdFileTestConstants.METADATA_TO_BYTES);
+            MtdFile file = builder.FromBytes(MtdTestConstants.MtdFileTestConstants.METADATA_TO_BYTES);
         }
     }
 }

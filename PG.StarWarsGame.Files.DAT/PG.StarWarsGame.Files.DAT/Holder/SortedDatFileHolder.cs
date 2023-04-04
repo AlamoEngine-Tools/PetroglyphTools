@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace PG.StarWarsGame.Files.DAT.Holder
 {
-    public sealed class SortedDatFileHolder : ADatFileHolder<List<Tuple<string, string>>, SortedDatAlamoFileType>
+    public sealed class SortedDatFileHolder : AbstractDatFileHolder<List<Tuple<string, string>>, SortedDatAlamoFileType>
     {
         [NotNull] private readonly List<Tuple<string, string>> m_content = new List<Tuple<string, string>>();
 

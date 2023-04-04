@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace PG.Core.Reporting
 {
-    public abstract class AbstractReport : IReport
+public abstract class AbstractReport : IReport
     {
         public event EventHandler<IMessage> OnMessageAddedEvent;
 

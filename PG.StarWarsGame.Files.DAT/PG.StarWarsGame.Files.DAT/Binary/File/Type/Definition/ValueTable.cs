@@ -24,7 +24,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 
         public byte[] ToBytes()
         {
-            List<byte> b = new List<byte>();
+            List<byte> b = new();
             foreach (ValueTableRecord keyTableRecord in ValueTableRecords.Where(
                 keyTableRecord => keyTableRecord != null))
             {

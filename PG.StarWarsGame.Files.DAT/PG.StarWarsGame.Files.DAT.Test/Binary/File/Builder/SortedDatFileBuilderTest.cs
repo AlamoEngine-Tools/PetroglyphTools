@@ -20,7 +20,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
         [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromHolder()
         {
-            List<Tuple<string, string>> translations = new List<Tuple<string, string>>
+            List<Tuple<string, string>> translations = new()
             {
                 new Tuple<string, string>("KEY_00", "VALUE"),
                 new Tuple<string, string>("KEY_01", "VALUE"),
@@ -28,12 +28,12 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
                 new Tuple<string, string>("KEY_03", "VALUE"),
                 new Tuple<string, string>("KEY_04", "VALUE")
             };
-            SortedDatFileHolder sortedDatFileHolder = new SortedDatFileHolder("", "") { Content = translations };
-            SortedDatFileBuilder builder = new SortedDatFileBuilder();
+            SortedDatFileHolder sortedDatFileHolder = new("", "") { Content = translations };
+            SortedDatFileBuilder builder = new();
             DatFile file = builder.FromHolder(sortedDatFileHolder);
             Assert.IsNotNull(file);
             Assert.AreEqual((uint) translations.Count, file.KeyValuePairCount);
-            List<string> expectedOrder = new List<string>
+            List<string> expectedOrder = new()
             {
                 "KEY_01",
                 "KEY_04",
@@ -54,7 +54,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
         [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromBytes()
         {
-            SortedDatFileHolder sortedDatFileHolder = new SortedDatFileHolder("", "")
+            SortedDatFileHolder sortedDatFileHolder = new("", "")
             {
                 Content = new List<Tuple<string, string>>
                 {
@@ -65,7 +65,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
                     new Tuple<string, string>("KEY_04", "VALUE")
                 }
             };
-            SortedDatFileBuilder builder = new SortedDatFileBuilder();
+            SortedDatFileBuilder builder = new();
             DatFile file = builder.FromHolder(sortedDatFileHolder);
             byte[] bytes = file.ToBytes();
             DatFile fileFromBytes = builder.FromBytes(bytes);

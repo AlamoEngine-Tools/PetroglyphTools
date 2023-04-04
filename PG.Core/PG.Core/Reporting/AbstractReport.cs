@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace PG.Core.Reporting
 {
-public abstract class AbstractReport : IReport
+    public abstract class AbstractReport : IReport
     {
         public event EventHandler<IMessage> OnMessageAddedEvent;
 
@@ -19,7 +19,7 @@ public abstract class AbstractReport : IReport
 
         private DateTime m_reportEndTime;
         private TimeSpan m_reportDuration = TimeSpan.Zero;
-        private readonly List<IMessage> m_messages = new List<IMessage>();
+        private readonly List<IMessage> m_messages = new();
         private readonly IReportExportHandler m_exportHandler;
 
         public DateTime ReportStartTime { get; }

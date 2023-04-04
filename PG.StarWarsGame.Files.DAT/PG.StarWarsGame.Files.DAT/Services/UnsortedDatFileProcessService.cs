@@ -42,7 +42,7 @@ namespace PG.StarWarsGame.Files.DAT.Services
 
         public void SaveToFile(UnsortedDatFileHolder unsortedDatFileHolder)
         {
-            using BinaryWriter writer = new BinaryWriter(FileSystem.File.Open(
+            using BinaryWriter writer = new(FileSystem.File.Open(
                 FileSystem.Path.Combine(unsortedDatFileHolder.FilePath, unsortedDatFileHolder.FileName),
                 FileMode.CreateNew));
             DatFile datFile = new UnsortedDatFileBuilder().FromHolder(unsortedDatFileHolder);

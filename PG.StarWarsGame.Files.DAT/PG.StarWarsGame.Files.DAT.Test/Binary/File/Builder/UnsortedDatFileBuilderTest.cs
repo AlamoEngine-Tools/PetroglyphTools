@@ -20,7 +20,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
         [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromHolder()
         {
-            List<Tuple<string, string>> translations = new List<Tuple<string, string>>
+            List<Tuple<string, string>> translations = new()
             {
                 new Tuple<string, string>("KEY_00", "VALUE"),
                 new Tuple<string, string>("KEY_01", "VALUE"),
@@ -28,12 +28,12 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
                 new Tuple<string, string>("KEY_03", "VALUE"),
                 new Tuple<string, string>("KEY_04", "VALUE")
             };
-            UnsortedDatFileHolder unsortedDatFileHolder = new UnsortedDatFileHolder("", "") { Content = translations };
-            UnsortedDatFileBuilder builder = new UnsortedDatFileBuilder();
+            UnsortedDatFileHolder unsortedDatFileHolder = new("", "") { Content = translations };
+            UnsortedDatFileBuilder builder = new();
             DatFile file = builder.FromHolder(unsortedDatFileHolder);
             Assert.IsNotNull(file);
             Assert.AreEqual((uint) translations.Count, file.KeyValuePairCount);
-            List<string> expectedOrder = new List<string>
+            List<string> expectedOrder = new()
             {
                 "KEY_00",
                 "KEY_01",
@@ -54,7 +54,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
         [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromBytes()
         {
-            UnsortedDatFileHolder unsortedDatFileHolder = new UnsortedDatFileHolder("", "")
+            UnsortedDatFileHolder unsortedDatFileHolder = new("", "")
             {
                 Content = new List<Tuple<string, string>>
                 {
@@ -65,7 +65,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
                     new Tuple<string, string>("KEY_04", "VALUE")
                 }
             };
-            UnsortedDatFileBuilder builder = new UnsortedDatFileBuilder();
+            UnsortedDatFileBuilder builder = new();
             DatFile file = builder.FromHolder(unsortedDatFileHolder);
             byte[] bytes = file.ToBytes();
             DatFile fileFromBytes = builder.FromBytes(bytes);

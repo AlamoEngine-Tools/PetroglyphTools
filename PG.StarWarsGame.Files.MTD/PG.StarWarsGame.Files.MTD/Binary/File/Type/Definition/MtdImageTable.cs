@@ -30,7 +30,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
 
         public byte[] ToBytes()
         {
-            List<byte> bytes = new List<byte>();
+            List<byte> bytes = new();
             foreach (MtdImageTableRecord mtdImageTableRecord in this)
             {
                 bytes.AddRange(mtdImageTableRecord.ToBytes());

@@ -43,7 +43,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
         [NotNull]
         private IndexTable BuildIndexTableFromBytesInternal([NotNull] byte[] bytes, uint keyCount)
         {
-            List<IndexTableRecord> indexTable = new List<IndexTableRecord>();
+            List<IndexTableRecord> indexTable = new();
             for (int i = 0; i < keyCount; i++)
             {
                 uint crc32 = BitConverter.ToUInt32(bytes, m_currentOffset);
@@ -52,7 +52,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
                 m_currentOffset += sizeof(uint);
                 uint keyLength = BitConverter.ToUInt32(bytes, m_currentOffset);
                 m_currentOffset += sizeof(uint);
-                IndexTableRecord indexTableRecord = new IndexTableRecord(crc32, keyLength, valueLenght);
+                IndexTableRecord indexTableRecord = new(crc32, keyLength, valueLenght);
                 indexTable.Add(indexTableRecord);
             }
 
@@ -63,14 +63,14 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
         private ValueTable BuildValueTableFromBytesInternal([NotNull] byte[] bytes, [NotNull] IndexTable indexTable,
             uint keyCount)
         {
-            List<ValueTableRecord> valueTableRecords = new List<ValueTableRecord>();
+            List<ValueTableRecord> valueTableRecords = new();
 
             for (int i = 0; i < keyCount; i++)
             {
                 long valueLength = indexTable.IndexTableRecords[i]?.ValueLength ??
                                    throw new IndexAndValueTableOutOfSyncException(
                                        $"Building the DAT file failed at offset {m_currentOffset} due to an invalid IndexTableRecord at position {i}");
-                ValueTableRecord valueTableRecord = new ValueTableRecord(bytes, m_currentOffset, valueLength);
+                ValueTableRecord valueTableRecord = new(bytes, m_currentOffset, valueLength);
                 m_currentOffset += valueTableRecord.Size;
                 valueTableRecords.Add(valueTableRecord);
             }
@@ -82,14 +82,14 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
         private KeyTable BuildKeyTableFromBytesInternal([NotNull] byte[] bytes, [NotNull] IndexTable indexTable,
             uint keyCount)
         {
-            List<KeyTableRecord> keyTableRecords = new List<KeyTableRecord>();
+            List<KeyTableRecord> keyTableRecords = new();
 
             for (int i = 0; i < keyCount; i++)
             {
                 long keyLength = indexTable.IndexTableRecords[i]?.KeyLength ??
                                  throw new IndexAndValueTableOutOfSyncException(
                                      $"Building the DAT file failed at offset {m_currentOffset} due to an invalid IndexTableRecord at position {i}");
-                KeyTableRecord keyTableRecord = new KeyTableRecord(bytes, m_currentOffset, keyLength);
+                KeyTableRecord keyTableRecord = new(bytes, m_currentOffset, keyLength);
                 m_currentOffset += keyTableRecord.Size;
                 keyTableRecords.Add(keyTableRecord);
             }
@@ -100,10 +100,10 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
         [NotNull]
         protected DatFile FromHolderInternal([NotNull] List<Tuple<string, string>> content)
         {
-            DatHeader datHeader = new DatHeader(Convert.ToUInt32(content.Count));
-            List<IndexTableRecord> indexTableRecords = new List<IndexTableRecord>();
-            List<ValueTableRecord> valueTableRecords = new List<ValueTableRecord>();
-            List<KeyTableRecord> keyTableRecords = new List<KeyTableRecord>();
+            DatHeader datHeader = new(Convert.ToUInt32(content.Count));
+            List<IndexTableRecord> indexTableRecords = new();
+            List<ValueTableRecord> valueTableRecords = new();
+            List<KeyTableRecord> keyTableRecords = new();
 
             foreach (Tuple<string, string> keyValuePair in content)
             {
@@ -126,9 +126,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
                     value = "";
                 }
 
-                ValueTableRecord valueTableRecord = new ValueTableRecord(value);
-                KeyTableRecord keyTableRecord = new KeyTableRecord(key);
-                IndexTableRecord indexTableRecord = new IndexTableRecord(ChecksumUtility.GetChecksum(key),
+                ValueTableRecord valueTableRecord = new(value);
+                KeyTableRecord keyTableRecord = new(key);
+                IndexTableRecord indexTableRecord = new(ChecksumUtility.GetChecksum(key),
                     Convert.ToUInt32(key.Length), Convert.ToUInt32(value.Length));
 
                 valueTableRecords.Add(valueTableRecord);
@@ -136,9 +136,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
                 indexTableRecords.Add(indexTableRecord);
             }
 
-            IndexTable indexTable = new IndexTable(indexTableRecords);
-            ValueTable valueTable = new ValueTable(valueTableRecords);
-            KeyTable keyTable = new KeyTable(keyTableRecords);
+            IndexTable indexTable = new(indexTableRecords);
+            ValueTable valueTable = new(valueTableRecords);
+            KeyTable keyTable = new(keyTableRecords);
             return new DatFile(datHeader, indexTable, valueTable, keyTable);
         }
     }

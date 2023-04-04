@@ -20,7 +20,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1
         [ExpectedException(typeof(ArgumentException))]
         public void Ctor_Test__ThrowsArgumentException(string fileName)
         {
-            MegFileNameTableRecord _ = new MegFileNameTableRecord(fileName);
+            MegFileNameTableRecord _ = new(fileName);
         }
 
         [TestMethod]
@@ -28,7 +28,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1
         public void Ctor_Test__ThrowsOverflowException()
         {
             string fn = TestUtility.GetRandomStringOfLength(ushort.MaxValue + 5);
-            MegFileNameTableRecord _ = new MegFileNameTableRecord(fn);
+            MegFileNameTableRecord _ = new(fn);
         }
     }
 }

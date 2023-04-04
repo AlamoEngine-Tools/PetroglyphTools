@@ -61,18 +61,18 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
             }
 
             string actualName = StringUtility.RemoveFileExtension(megArchiveName);
-            MegFileHolder megFileHolder = new MegFileHolder(targetDirectory, actualName);
+            MegFileHolder megFileHolder = new(targetDirectory, actualName);
             foreach ((string key, string value) in packedFileNameToAbsoluteFilePathsMap)
             {
                 megFileHolder.Content.Add(new MegFileDataEntry(key, value));
             }
 
-            MegFileBuilder builder = new MegFileBuilder(FileSystem);
+            MegFileBuilder builder = new(FileSystem);
             MegFile megFile = builder.FromHolder(megFileHolder, out IList<string> filesToStream);
             string writePath = FileSystem.Path.Combine(megFileHolder.FilePath, megFileHolder.FullyQualifiedName);
             CreateTargetDirectoryIfNotExists(megFileHolder.FilePath);
             using (BinaryWriter writer =
-                new BinaryWriter(FileSystem.FileStream.Create(writePath, FileMode.Create, FileAccess.Write,
+                new(FileSystem.FileStream.Create(writePath, FileMode.Create, FileAccess.Write,
                     FileShare.None)))
             {
                 writer.Write(megFile.ToBytes());
@@ -172,14 +172,14 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
 
             uint headerSize = GetMegFileHeaderSize(filePath);
             byte[] megFileHeader = new byte[headerSize];
-            using (BinaryReader reader = new BinaryReader(FileSystem.FileStream.Create(filePath, FileMode.Open)))
+            using (BinaryReader reader = new(FileSystem.FileStream.Create(filePath, FileMode.Open)))
             {
                 reader.Read(megFileHeader, 0, megFileHeader.Length);
             }
 
-            MegFileBuilder builder = new MegFileBuilder();
+            MegFileBuilder builder = new();
             MegFile megFile = builder.FromBytes(megFileHeader);
-            MegFileHolder holder = new MegFileHolder(FileSystem.Path.GetDirectoryName(filePath),
+            MegFileHolder holder = new(FileSystem.Path.GetDirectoryName(filePath),
                 FileSystem.Path.GetFileNameWithoutExtension(filePath));
             for (int i = 0; i < megFile.Header.NumFiles; i++)
             {
@@ -248,7 +248,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
         private uint GetMegFileHeaderSize([NotNull] string path)
         {
             uint headerSize = 0;
-            using BinaryReader reader = new BinaryReader(FileSystem.FileStream.Create(path, FileMode.Open));
+            using BinaryReader reader = new(FileSystem.FileStream.Create(path, FileMode.Open));
             uint containedFiles = reader.ReadUInt32();
             uint currentOffset = sizeof(uint) * 2;
             for (uint i = 0; i < containedFiles; i++)

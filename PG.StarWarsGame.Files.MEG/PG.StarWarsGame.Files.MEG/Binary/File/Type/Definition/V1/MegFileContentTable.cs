@@ -21,7 +21,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 
         public byte[] ToBytes()
         {
-            List<byte> b = new List<byte>();
+            List<byte> b = new();
             foreach (MegFileContentTableRecord megFileContentTableRecord in this)
             {
                 b.AddRange(megFileContentTableRecord.ToBytes());

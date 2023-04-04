@@ -39,7 +39,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Builder
 
         private static MtdImageTable BuildMtdImageTableInternal(byte[] byteStream)
         {
-            List<MtdImageTableRecord> imageTableRecords = new List<MtdImageTableRecord>();
+            List<MtdImageTableRecord> imageTableRecords = new();
 
             for (int i = IMAGE_TABLE_START_OFFSET; i < byteStream.Length; i += RECORD_SIZE)
             {

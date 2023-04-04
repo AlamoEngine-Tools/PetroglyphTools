@@ -28,7 +28,7 @@ namespace PG.StarWarsGame.Localisation.Util
 
         public static IList<IAlamoLanguageDefinition> GetAllAlamoLanguageDefinitions()
         {
-            List<IAlamoLanguageDefinition> alamoLanguageDefinitions = new List<IAlamoLanguageDefinition>();
+            List<IAlamoLanguageDefinition> alamoLanguageDefinitions = new();
             foreach (Type type in ALAMO_LANGUAGE_DEFINITION_TYPE_CACHE)
             {
                 try

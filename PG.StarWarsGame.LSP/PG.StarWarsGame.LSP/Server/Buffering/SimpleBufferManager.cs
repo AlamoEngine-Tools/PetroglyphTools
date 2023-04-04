@@ -12,7 +12,7 @@ namespace PG.StarWarsGame.LSP.Server.Buffering
     {
         [NotNull]
         private readonly ConcurrentDictionary<string, IDocumentBuffer> m_buffers =
-            new ConcurrentDictionary<string, IDocumentBuffer>();
+            new();
 
         public void UpdateBuffer(string documentPath, IDocumentBuffer buffer)
         {

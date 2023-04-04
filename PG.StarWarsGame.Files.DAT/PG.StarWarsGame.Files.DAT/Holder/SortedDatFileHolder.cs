@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 {
     public sealed class SortedDatFileHolder : AbstractDatFileHolder<List<Tuple<string, string>>, SortedDatAlamoFileType>
     {
-        [NotNull] private readonly List<Tuple<string, string>> m_content = new List<Tuple<string, string>>();
+        [NotNull] private readonly List<Tuple<string, string>> m_content = new();
 
         public SortedDatFileHolder(string filePath, string fileName) : base(filePath, fileName)
         {
@@ -71,7 +71,7 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 
         public Dictionary<string, string> ToDictionary()
         {
-            Dictionary<string, string> d = new Dictionary<string, string>();
+            Dictionary<string, string> d = new();
 
             foreach ((string item1, string item2) in Content)
             {

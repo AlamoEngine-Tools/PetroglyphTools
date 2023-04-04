@@ -26,7 +26,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 
         public byte[] ToBytes()
         {
-            List<byte> b = new List<byte>();
+            List<byte> b = new();
             b.AddRange(BitConverter.GetBytes(Crc32));
             b.AddRange(BitConverter.GetBytes(ValueLength));
             b.AddRange(BitConverter.GetBytes(KeyLength));

@@ -43,12 +43,12 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Builder
         [TestCategory(TestConstants.TEST_TYPE_BUILDER)]
         public void FromHolder_Test__FileHeaderIsConsistent()
         {
-            MegFileHolder megFileHolder = new MegFileHolder(MegTestConstants.GetBasePath(), "test");
+            MegFileHolder megFileHolder = new(MegTestConstants.GetBasePath(), "test");
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/campaignfiles.xml",
                 MegTestConstants.GetCampaignFilesPath()));
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/gameobjectfiles.xml",
                 MegTestConstants.GetGameObjectFilesPath()));
-            MegFileBuilder builder = new MegFileBuilder(m_fileSystem);
+            MegFileBuilder builder = new(m_fileSystem);
             MegFile megFile = builder.FromHolder(megFileHolder);
             Assert.IsNotNull(megFile);
             Assert.IsNotNull(megFile.Header);
@@ -69,12 +69,12 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Builder
         public void FromHolder_Test__FileHeaderIsBinaryEquivalent()
         {
             MegFileHolder megFileHolder =
-                new MegFileHolder(MegTestConstants.GetBasePath(), "FromHolder_Test__FileHeaderIsBinaryEquivalent");
+                new(MegTestConstants.GetBasePath(), "FromHolder_Test__FileHeaderIsBinaryEquivalent");
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/campaignfiles.xml",
                 MegTestConstants.GetCampaignFilesPath()));
             megFileHolder.Content.Add(new MegFileDataEntry("data/xml/gameobjectfiles.xml",
                 MegTestConstants.GetGameObjectFilesPath()));
-            MegFileBuilder builder = new MegFileBuilder(m_fileSystem);
+            MegFileBuilder builder = new(m_fileSystem);
             MegFile megFile = builder.FromHolder(megFileHolder);
             Assert.IsNotNull(megFile);
             m_fileSystem.File.WriteAllBytes(

@@ -15,13 +15,13 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         [ExpectedException(typeof(ArgumentException))]
         public void Ctor_Test__ThrowsArgumentException()
         {
-            MtdImageTable _ = new MtdImageTable(new MtdImageTableRecord[] { });
+            MtdImageTable _ = new(Array.Empty<MtdImageTableRecord>());
         }
 
         [TestMethod]
         public void ToBytes_Test__AreBinaryEquivalent()
         {
-            MtdImageTable mtdImageTable = new MtdImageTable(new[]
+            MtdImageTable mtdImageTable = new(new[]
             {
                 new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
                     MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,
@@ -44,7 +44,7 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         [TestMethod]
         public void Size_Test__AsExpected()
         {
-            MtdImageTable mtdImageTable = new MtdImageTable(new[]
+            MtdImageTable mtdImageTable = new(new[]
             {
                 new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
                     MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,

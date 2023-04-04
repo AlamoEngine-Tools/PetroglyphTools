@@ -33,14 +33,14 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Builder
         [ExpectedException(typeof(ArgumentException))]
         public void FromBytes_Test__ThrowsArgumentException(byte[] byteStream)
         {
-            MtdFileBuilder builder = new MtdFileBuilder();
+            MtdFileBuilder builder = new();
             MtdFile _ = builder.FromBytes(byteStream);
         }
 
         [TestMethod]
         public void FromBytes_Test__AsExpected()
         {
-            MtdFileBuilder builder = new MtdFileBuilder();
+            MtdFileBuilder builder = new();
             MtdFile file = builder.FromBytes(MtdTestConstants.MtdFileTestConstants.METADATA_TO_BYTES);
         }
     }

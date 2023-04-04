@@ -125,7 +125,7 @@ namespace PG.Core.Localisation
 
         protected internal virtual ValidationResult ValidateInternal()
         {
-            AbstractAlamoLanguageDefinitionValidator v = new AbstractAlamoLanguageDefinitionValidator();
+            AbstractAlamoLanguageDefinitionValidator v = new();
             return v.Validate(this);
         }
 
@@ -136,7 +136,7 @@ namespace PG.Core.Localisation
 
         protected internal virtual void ValidateAndThrowInternal()
         {
-            AbstractAlamoLanguageDefinitionValidator v = new AbstractAlamoLanguageDefinitionValidator();
+            AbstractAlamoLanguageDefinitionValidator v = new();
             v.ValidateAndThrow(this);
         }
 

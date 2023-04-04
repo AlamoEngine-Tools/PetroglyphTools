@@ -59,7 +59,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
                 }
             }
 
-            List<MegFileContentTableRecord> megFileContentTableRecords = new List<MegFileContentTableRecord>();
+            List<MegFileContentTableRecord> megFileContentTableRecords = new();
             for (int i = 0; i < megFileNameTableRecords.Count; i++)
             {
                 uint crc32 = ChecksumUtility.GetChecksum(megFileNameTableRecords[i].FileName);
@@ -70,12 +70,12 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
                     fileSizeInBytes, 0, fileNameTableIndex));
             }
 
-            MegHeader header = new MegHeader(Convert.ToUInt32(megFileContentTableRecords.Count),
+            MegHeader header = new(Convert.ToUInt32(megFileContentTableRecords.Count),
                 Convert.ToUInt32(megFileContentTableRecords.Count));
-            MegFileNameTable megFileNameTable = new MegFileNameTable(megFileNameTableRecords);
+            MegFileNameTable megFileNameTable = new(megFileNameTableRecords);
             uint currentOffset = Convert.ToUInt32(header.Size);
             currentOffset += Convert.ToUInt32(megFileNameTable.Size);
-            MegFileContentTable t = new MegFileContentTable(megFileContentTableRecords);
+            MegFileContentTable t = new(megFileContentTableRecords);
             currentOffset += Convert.ToUInt32(t.Size);
             foreach (MegFileContentTableRecord megFileContentTableRecord in megFileContentTableRecords)
             {
@@ -83,7 +83,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
                 currentOffset += Convert.ToUInt32(megFileContentTableRecord.FileSizeInBytes);
             }
 
-            MegFileContentTable megFileContentTable = new MegFileContentTable(megFileContentTableRecords);
+            MegFileContentTable megFileContentTable = new(megFileContentTableRecords);
             return new MegFile(header, megFileNameTable, megFileContentTable);
         }
 
@@ -117,7 +117,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
 
         private MegFileNameTable BuildFileNameTableInternal(byte[] byteStream)
         {
-            List<MegFileNameTableRecord> fileNameTable = new List<MegFileNameTableRecord>();
+            List<MegFileNameTableRecord> fileNameTable = new();
             m_currentOffset = FILE_NAME_TABLE_STARTING_OFFSET;
             for (uint i = 0; i < m_numberOfFiles; i++)
             {
@@ -133,7 +133,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
 
         private MegFileContentTable BuildFileContentTableInternal(byte[] byteStream)
         {
-            List<MegFileContentTableRecord> megFileContentTableRecords = new List<MegFileContentTableRecord>();
+            List<MegFileContentTableRecord> megFileContentTableRecords = new();
 
             for (uint i = 0; i < m_numberOfFiles; i++)
             {

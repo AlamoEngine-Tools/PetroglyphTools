@@ -28,7 +28,7 @@ namespace PG.Core.Test.Data.Key
 
         private static IEnumerable<Tuple<IKey, IKey, bool>> GetEqualsKeyTestMap()
         {
-            List<Tuple<IKey, IKey, bool>> l = new List<Tuple<IKey, IKey, bool>>
+            List<Tuple<IKey, IKey, bool>> l = new()
             {
                 new Tuple<IKey, IKey, bool>(new IntegerTestKey(0), new IntegerTestKey(0), true),
                 new Tuple<IKey, IKey, bool>(new IntegerTestKey(1), new IntegerTestKey(0), false),

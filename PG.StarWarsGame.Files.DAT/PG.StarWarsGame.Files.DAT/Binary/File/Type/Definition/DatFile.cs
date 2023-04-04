@@ -33,7 +33,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 
         public byte[] ToBytes()
         {
-            List<byte> b = new List<byte>();
+            List<byte> b = new();
             b.AddRange(m_header.ToBytes());
             b.AddRange(m_indexTable.ToBytes());
             b.AddRange(m_valueTable.ToBytes());

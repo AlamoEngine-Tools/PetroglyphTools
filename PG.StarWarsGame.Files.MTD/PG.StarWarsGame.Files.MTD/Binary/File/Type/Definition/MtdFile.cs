@@ -32,7 +32,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
 
         public byte[] ToBytes()
         {
-            List<byte> bytes = new List<byte>();
+            List<byte> bytes = new();
             bytes.AddRange(m_header.ToBytes());
             bytes.AddRange(m_imageTable.ToBytes());
             return bytes.ToArray();

@@ -42,7 +42,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 
         public byte[] ToBytes()
         {
-            List<byte> b = new List<byte>();
+            List<byte> b = new();
             b.AddRange(BitConverter.GetBytes(m_fileNameLength));
             b.AddRange(m_fileNameEncoding.GetBytes(FileName));
             return b.ToArray();

@@ -103,7 +103,7 @@ namespace PG.Commons.Util
         [NotNull]
         private static List<string> SplitStringInternal(string s, char separator, bool shouldClean = true)
         {
-            List<string> list = new List<string>();
+            List<string> list = new();
             if (IsNullEmptyOrWhiteSpace(s))
             {
                 return list;

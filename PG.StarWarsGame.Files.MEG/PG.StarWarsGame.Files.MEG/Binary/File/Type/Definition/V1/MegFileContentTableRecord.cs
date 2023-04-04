@@ -32,7 +32,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 
         public byte[] ToBytes()
         {
-            List<byte> b = new List<byte>();
+            List<byte> b = new();
             b.AddRange(BitConverter.GetBytes(m_crc32));
             b.AddRange(BitConverter.GetBytes(FileTableRecordIndex));
             b.AddRange(BitConverter.GetBytes(FileSizeInBytes));

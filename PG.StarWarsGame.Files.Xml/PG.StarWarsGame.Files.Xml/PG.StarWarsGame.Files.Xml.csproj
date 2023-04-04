@@ -15,4 +15,12 @@
     <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Resources\LocalizableTexts.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LocalizableTexts.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

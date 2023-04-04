@@ -43,7 +43,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 
         public bool Equals(IndexTable other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
             {
                 return false;
             }

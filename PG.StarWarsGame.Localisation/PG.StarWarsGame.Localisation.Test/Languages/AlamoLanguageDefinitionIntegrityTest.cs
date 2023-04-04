@@ -1,13 +1,13 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Core.Attributes;
 using PG.Core.Localisation;
 using PG.Core.Localisation.Attributes;
 using PG.Core.Test;
 using PG.StarWarsGame.Localisation.Util;
+using System.Collections.Generic;
 
 namespace PG.StarWarsGame.Localisation.Test.Languages
 {

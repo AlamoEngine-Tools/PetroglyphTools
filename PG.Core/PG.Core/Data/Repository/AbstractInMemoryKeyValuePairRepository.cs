@@ -1,11 +1,11 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Core.Data.Bean;
+using PG.Core.Data.Key;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using PG.Core.Data.Bean;
-using PG.Core.Data.Key;
 
 namespace PG.Core.Data.Repository
 {

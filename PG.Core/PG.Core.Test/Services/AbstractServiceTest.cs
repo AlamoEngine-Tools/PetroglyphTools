@@ -39,6 +39,7 @@ namespace PG.Core.Test.Services
             TestBaseSetupInternal(svc);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Extention method. Can be overwritten to accomodate more complex service setups.")]
         protected internal void TestBaseSetupInternal(TService svc)
         {
             // NOP

@@ -1,14 +1,12 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.IO.Abstractions;
-using Microsoft.Extensions.Logging;
 using PG.Core.Data.Etl.Source;
 using PG.Core.Data.Etl.Target;
 using PG.Core.Reporting;
 using PG.Core.Services;
 using PG.StarWarsGame.Localisation.Data.Translation;
+using System;
 
 namespace PG.StarWarsGame.Localisation.Services
 {

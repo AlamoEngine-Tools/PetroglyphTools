@@ -1,7 +1,5 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
-
-using System.IO.Abstractions;
 
 namespace PG.Core.Data.Key
 {
@@ -13,7 +11,7 @@ namespace PG.Core.Data.Key
 
         public new int CompareTo(IKey other)
         {
-            return !(other is AbstractIntegerKey otherKey) ? int.MinValue : Key.CompareTo(otherKey.Key);
+            return other is not AbstractIntegerKey otherKey ? int.MinValue : Key.CompareTo(otherKey.Key);
         }
 
         public new bool Equals(IKey other)

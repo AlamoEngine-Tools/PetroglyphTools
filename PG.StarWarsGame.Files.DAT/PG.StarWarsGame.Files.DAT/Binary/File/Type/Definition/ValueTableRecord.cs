@@ -41,13 +41,13 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
         public int CompareTo(ValueTableRecord other)
         {
             if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
+            if (other is null) return 1;
             return string.Compare(Value, other.Value, StringComparison.Ordinal);
         }
 
         public bool Equals(ValueTableRecord other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return CompareTo(other) == 0;
         }

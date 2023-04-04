@@ -54,7 +54,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
                     return 0;
                 }
 
-                if (!(x is MegFileContentTableRecord a) || !(y is MegFileContentTableRecord b))
+                if (x is not MegFileContentTableRecord a || y is not MegFileContentTableRecord b)
                 {
                     return 0;
                 }

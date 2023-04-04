@@ -1,15 +1,14 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Core.Attributes;
 using PG.Core.Localisation;
 using PG.Core.Localisation.Attributes;
 using PG.Core.Test;
-using PG.StarWarsGame.Localisation.Languages;
 using PG.StarWarsGame.Localisation.Util;
+using System;
+using System.Collections.Generic;
 
 namespace PG.StarWarsGame.Localisation.Test.Util
 {
@@ -21,7 +20,7 @@ namespace PG.StarWarsGame.Localisation.Test.Util
         public void Test_GetAllAlamoLanguageDefinitions__ReturnsAtLeastDefaults()
         {
             IList<IAlamoLanguageDefinition> l = LocalisationUtility.GetAllAlamoLanguageDefinitions();
-            Assert.IsTrue(l.Count>=LocalisationTestConstants.REGISTERED_LANGUAGE_DEFINITIONS.Count,
+            Assert.IsTrue(l.Count >= LocalisationTestConstants.REGISTERED_LANGUAGE_DEFINITIONS.Count,
                 "This function should always at least return the default language definitions.");
             int actualNumberOfLanguageDefinitionsMarkedAsOfficial = 0;
             int actualDefaultLanguageCount = 0;
@@ -39,9 +38,9 @@ namespace PG.StarWarsGame.Localisation.Test.Util
                     actualDefaultLanguageCount++;
                 }
             }
-            Assert.AreEqual(LocalisationTestConstants.REGISTERED_LANGUAGE_DEFINITIONS.Count, actualNumberOfLanguageDefinitionsMarkedAsOfficial, 
+            Assert.AreEqual(LocalisationTestConstants.REGISTERED_LANGUAGE_DEFINITIONS.Count, actualNumberOfLanguageDefinitionsMarkedAsOfficial,
                 "Someone added a language definition marked as official. This should not happen. Please remove the OfficiallySupportedLanguageAttribute from the offending language.");
-            Assert.AreEqual(1, actualDefaultLanguageCount, 
+            Assert.AreEqual(1, actualDefaultLanguageCount,
                 "Someone added a language definition marked as default. This should not happen. Please remove the DefaultAttribute from the offending language.");
 
         }

@@ -128,7 +128,6 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         {
             Assert.IsTrue(StringUtility.HasText(invalidPath));
             invalidPath = "mnt/c/" + invalidPath;
-            IServiceProvider services = GetServiceProviderInternal();
             IMegFileProcessService svc = GetServiceInstance();
             svc.Load(invalidPath);
         }
@@ -143,7 +142,6 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
         {
             Assert.IsTrue(StringUtility.HasText(invalidPath));
             invalidPath = "mnt/c/" + invalidPath;
-            IServiceProvider services = GetServiceProviderInternal();
             IMegFileProcessService svc = GetServiceInstance();
             svc.Load(invalidPath);
         }

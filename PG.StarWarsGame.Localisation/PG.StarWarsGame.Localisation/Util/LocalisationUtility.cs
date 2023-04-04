@@ -1,12 +1,12 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using PG.Core.Attributes;
 using PG.Core.Localisation;
 using PG.StarWarsGame.Localisation.Commons;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PG.StarWarsGame.Localisation.Util
 {

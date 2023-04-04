@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -13,7 +13,7 @@ namespace PG.Core.Data.Key
 
         public new int CompareTo(IKey other)
         {
-            return !(other is AbstractStringKey otherKey)
+            return other is not AbstractStringKey otherKey
                 ? int.MinValue
                 : string.Compare(Key, otherKey.Key, StringComparison.Ordinal);
         }

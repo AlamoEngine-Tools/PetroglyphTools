@@ -20,7 +20,7 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         [Ignore]
         public void ToBytes_Test__AreBinaryEquivalent(uint input)
         {
-            MtdHeader header = new MtdHeader(input);
+            MtdHeader header = new(input);
             byte[] actual = header.ToBytes();
             TestUtility.AssertAreBinaryEquivalent(BitConverter.GetBytes(input), actual);
         }

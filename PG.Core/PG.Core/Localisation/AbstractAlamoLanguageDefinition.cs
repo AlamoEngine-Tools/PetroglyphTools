@@ -1,13 +1,13 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using FluentValidation;
 using FluentValidation.Results;
 using PG.Core.Attributes;
 using PG.Core.Data.Validation;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace PG.Core.Localisation
 {
@@ -28,7 +28,7 @@ namespace PG.Core.Localisation
 
         /// <summary>
         /// The .NET Culture that best describes the language. This culture can be used for spell checking,
-        /// auto-translation between languages, etc. 
+        /// auto-translation between languages, etc.
         /// </summary>
         protected internal abstract CultureInfo ConfiguredCulture { get; }
 
@@ -89,7 +89,7 @@ namespace PG.Core.Localisation
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }
@@ -104,7 +104,7 @@ namespace PG.Core.Localisation
 
         public int CompareTo(object obj)
         {
-            if (!(obj is IAlamoLanguageDefinition other))
+            if (obj is not IAlamoLanguageDefinition other)
             {
                 throw new ArgumentException(
                     $"The type of {obj.GetType()} is not assignable to {typeof(IAlamoLanguageDefinition)}. The two objects cannot be compared.");

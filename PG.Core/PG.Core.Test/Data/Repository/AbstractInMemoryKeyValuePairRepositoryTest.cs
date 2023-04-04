@@ -1,14 +1,13 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Core.Data;
 using PG.Core.Data.Bean;
 using PG.Core.Data.Key;
 using PG.Core.Data.Repository;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PG.Core.Test.Data.Repository
 {
@@ -28,7 +27,7 @@ namespace PG.Core.Test.Data.Repository
         {
             return default(TBean);
         }
-        
+
         protected internal virtual TKey GetConfiguredNullKey()
         {
             return default(TKey);

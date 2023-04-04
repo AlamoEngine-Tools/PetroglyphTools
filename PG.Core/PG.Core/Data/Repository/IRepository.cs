@@ -1,10 +1,10 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Diagnostics.CodeAnalysis;
 using PG.Core.Attributes;
 using PG.Core.Data.Bean;
 using PG.Core.Data.Key;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PG.Core.Data.Repository
 {
@@ -14,7 +14,7 @@ namespace PG.Core.Data.Repository
     /// <typeparam name="TKey">The primary key type.</typeparam>
     /// <typeparam name="TBean">The entity type identified by the primary key of type <see cref="TKey"/></typeparam>
     [Order]
-    public interface IRepository<in TKey,TBean> where TKey : IKey where TBean : IBean<TKey>
+    public interface IRepository<in TKey, TBean> where TKey : IKey where TBean : IBean<TKey>
     {
         /// <summary>
         /// Tries to add a <see cref="IBean{TKey}"/> to the repository.

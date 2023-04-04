@@ -15,13 +15,13 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
         [ExpectedException(typeof(ArgumentException))]
         public void Ctor_Test__ThrowsArgumentException()
         {
-            MtdFile _ = new MtdFile(new MtdImageTableRecord[] { });
+            MtdFile _ = new(Array.Empty<MtdImageTableRecord>());
         }
 
         [TestMethod]
         public void ToBytes_Test__AreBinaryEquivalent()
         {
-            MtdFile mtdFile = new MtdFile(new[]
+            MtdFile mtdFile = new(new[]
             {
                 new MtdImageTableRecord(MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_NAME,
                     MtdTestConstants.MtdImageTableRecordTestConstants.DEFAULT_TEST_RECORD_X_POSITION,

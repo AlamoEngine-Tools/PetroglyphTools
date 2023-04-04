@@ -64,7 +64,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
             {
                 uint crc32 = ChecksumUtility.GetChecksum(megFileNameTableRecords[i].FileName);
                 uint fileTableRecordIndex = Convert.ToUInt32(i);
-                uint fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo.FromFileName(filesToStream[i]).Length);
+                uint fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo.New(filesToStream[i]).Length);
                 uint fileNameTableIndex = Convert.ToUInt32(i);
                 megFileContentTableRecords.Add(new MegFileContentTableRecord(crc32, fileTableRecordIndex,
                     fileSizeInBytes, 0, fileNameTableIndex));
@@ -87,7 +87,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1
             return new MegFile(header, megFileNameTable, megFileContentTable);
         }
 
-        private IEnumerable<MegFileDataEntry> CollectSortedMegFileDataEntries(MegFileHolder holder, MegFileNameTableRecord megFileNameTableRecord)
+        private static IEnumerable<MegFileDataEntry> CollectSortedMegFileDataEntries(MegFileHolder holder, MegFileNameTableRecord megFileNameTableRecord)
         {
             return holder.Content.Where(megFileDataEntry =>
                 megFileNameTableRecord.FileName.Equals(

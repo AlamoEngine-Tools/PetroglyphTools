@@ -1,11 +1,11 @@
-// Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using PG.Core.Attributes;
 using PG.Core.Localisation;
 using PG.Core.Localisation.Attributes;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace PG.StarWarsGame.Localisation.Languages
 {

@@ -1,14 +1,14 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Util;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {
@@ -96,6 +96,6 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
             return 0;
         }
 
-        #endregion
+        #endregion Auto-Generated IComparable Implementation
     }
 }

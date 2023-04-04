@@ -1,13 +1,13 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Commons.Binary;
+using PG.Commons.Binary.File;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using PG.Commons.Binary;
-using PG.Commons.Binary.File;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
 
@@ -58,7 +58,6 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
         }
 
         public int Size => ToBytes() == null ? 0 : ToBytes().Length;
-
 
         public override int GetHashCode()
         {

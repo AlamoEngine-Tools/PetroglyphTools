@@ -1,17 +1,16 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Test;
 using PG.Core.Test;
 using PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1;
 using PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1;
 using PG.StarWarsGame.Files.MEG.Holder;
 using PG.StarWarsGame.Files.MEG.Holder.V1;
+using System;
+using System.Collections.Generic;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Builder
 {

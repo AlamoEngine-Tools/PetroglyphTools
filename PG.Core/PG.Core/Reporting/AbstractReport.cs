@@ -1,18 +1,20 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Core.Exceptions;
+using PG.Core.Reporting.Export;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PG.Core.Exceptions;
-using PG.Core.Reporting.Export;
 
 namespace PG.Core.Reporting
 {
     public abstract class AbstractReport : IReport
     {
         public event EventHandler<IMessage> OnMessageAddedEvent;
+
         public event EventHandler<IErrorMessage> OnErrorMessageAddedEvent;
+
         public event EventHandler<bool> OnReportFinalizedEvent;
 
         private DateTime m_reportEndTime;
@@ -26,9 +28,9 @@ namespace PG.Core.Reporting
 
         IReadOnlyList<IErrorMessage> IReport.ErrorMessages =>
             (from m in m_messages
-                where m.GetType().IsAssignableFrom(typeof(IErrorMessage))
-                orderby m.CreatedTimestamp
-                select m as IErrorMessage).ToList().AsReadOnly();
+             where m.GetType().IsAssignableFrom(typeof(IErrorMessage))
+             orderby m.CreatedTimestamp
+             select m as IErrorMessage).ToList().AsReadOnly();
 
         IReadOnlyList<IMessage> IReport.Messages =>
             (from m in m_messages orderby m.CreatedTimestamp select m).ToList().AsReadOnly();

@@ -1,15 +1,14 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Test;
 using PG.Core.Test;
 using PG.StarWarsGame.Files.DAT.Binary.File.Builder;
 using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Holder;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
 {
@@ -29,7 +28,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.File.Builder
                 new Tuple<string, string>("KEY_03", "VALUE"),
                 new Tuple<string, string>("KEY_04", "VALUE")
             };
-            UnsortedDatFileHolder unsortedDatFileHolder = new UnsortedDatFileHolder("", "") {Content = translations};
+            UnsortedDatFileHolder unsortedDatFileHolder = new UnsortedDatFileHolder("", "") { Content = translations };
             UnsortedDatFileBuilder builder = new UnsortedDatFileBuilder();
             DatFile file = builder.FromHolder(unsortedDatFileHolder);
             Assert.IsNotNull(file);

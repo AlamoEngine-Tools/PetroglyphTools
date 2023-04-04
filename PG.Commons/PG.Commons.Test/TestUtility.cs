@@ -1,17 +1,16 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PG.Commons.Test
 {
     public static class TestUtility
     {
         private static readonly Random RANDOM_GENERATOR = new();
-        
+
         public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
         {
             Assert.AreEqual(expected.Count, actual.Count);

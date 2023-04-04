@@ -1,11 +1,11 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Core.Exceptions;
 using PG.Core.Reporting;
+using System;
+using System.Collections.Generic;
 
 namespace PG.Core.Test.Reporting
 {
@@ -21,7 +21,7 @@ namespace PG.Core.Test.Reporting
             {
                 report.AddMessage(message);
             }
-            Assert.IsTrue(messages.Count < ((IReport)report).Messages.Count, "The report should always contain more messages than the base creation.");
+            Assert.IsTrue(messages.Count < ((IReport) report).Messages.Count, "The report should always contain more messages than the base creation.");
         }
 
         [TestMethod]
@@ -30,7 +30,7 @@ namespace PG.Core.Test.Reporting
         {
             IList<IMessage> messages = CreateTestMessageList();
             T report = GetConfiguredBaseReportWithMessages(messages);
-            Assert.AreEqual(messages.Count, ((IReport)report).Messages.Count);
+            Assert.AreEqual(messages.Count, ((IReport) report).Messages.Count);
             report.FinalizeReport();
             Assert.IsTrue(report.IsFinalized);
             report.AddMessage(new Message("Message"));

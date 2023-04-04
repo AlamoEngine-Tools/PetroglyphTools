@@ -1,12 +1,6 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -21,6 +15,12 @@ using PG.StarWarsGame.Files.MEG.Holder;
 using PG.StarWarsGame.Files.MEG.Holder.V1;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.V1;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
 {
@@ -403,7 +403,6 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.V1
                     MegTestConstants.FILE_NAME_GAMEOBJECTFILES.ToUpper()));
             TestUtility.AssertAreBinaryEquivalent(expected, actual);
         }
-
 
         public class MegFileServiceMockFileSystem : MockFileSystem
         {

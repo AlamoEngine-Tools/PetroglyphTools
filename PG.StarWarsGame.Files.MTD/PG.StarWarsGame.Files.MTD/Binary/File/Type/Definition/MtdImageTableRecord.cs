@@ -1,14 +1,14 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.MTD.Commons.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
 {

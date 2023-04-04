@@ -1,11 +1,11 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
 using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.MTD.Commons.Exceptions;
+using System;
 using Constants = PG.StarWarsGame.Files.MTD.Test.TestConstants.MtdImageTableRecordTestConstants;
 
 namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
@@ -14,7 +14,6 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition
     public class MtdImageTableRecordTest
     {
         private static MtdImageTableRecord s_defaultRecord;
-
 
         [TestInitialize]
         public void TestInitialize()

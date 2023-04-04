@@ -5,6 +5,5 @@ namespace PG.Core.Data.Etl.Extract
 {
     public interface IExtractProcessor
     {
-        
     }
 }

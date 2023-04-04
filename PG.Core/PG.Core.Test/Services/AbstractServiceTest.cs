@@ -1,9 +1,9 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Core.Services;
+using System;
 
 namespace PG.Core.Test.Services
 {
@@ -24,7 +24,6 @@ namespace PG.Core.Test.Services
         {
             return TestConstants.Services;
         }
-        
 
         [TestMethod]
         public void Test_ServiceBaseSetup__IsValid()

@@ -1,18 +1,15 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Abstractions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using PG.Core.Attributes;
 using PG.Core.Services;
-using PG.Core.Services.Attributes;
 using PG.StarWarsGame.Files.DAT.Binary.File.Builder;
 using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Holder;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace PG.StarWarsGame.Files.DAT.Services
 {

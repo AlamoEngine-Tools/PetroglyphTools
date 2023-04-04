@@ -1,13 +1,13 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Commons.Binary;
+using PG.Commons.Binary.File;
+using PG.Commons.Util;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using PG.Commons.Binary;
-using PG.Commons.Binary.File;
-using PG.Commons.Util;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
 
@@ -28,7 +28,6 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
             char[] chars = ENCODING.GetChars(bytes, Convert.ToInt32(index), Convert.ToInt32(stringLength));
             Key = new string(chars);
         }
-
 
         public string Key { get; }
 

@@ -5,6 +5,5 @@ namespace PG.Core.Data.Etl.Transform
 {
     public interface ITransformProcessor
     {
-        
     }
 }

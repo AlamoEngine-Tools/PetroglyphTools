@@ -1,12 +1,12 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
 {

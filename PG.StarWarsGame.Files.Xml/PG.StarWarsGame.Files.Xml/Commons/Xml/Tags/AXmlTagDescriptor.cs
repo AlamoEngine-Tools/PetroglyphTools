@@ -3,7 +3,6 @@
 
 using PG.Commons.Xml.Tags;
 using PG.Commons.Xml.Values;
-using PG.StarWarsGame.Resources;
 
 namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Tags
 {

@@ -1,13 +1,13 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Commons.Util;
+using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
+using PG.StarWarsGame.Files.DAT.Files;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using PG.Commons.Util;
-using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
-using PG.StarWarsGame.Files.DAT.Files;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
 

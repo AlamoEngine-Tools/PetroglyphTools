@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace PG.Commons.Util
 {
@@ -87,7 +87,7 @@ namespace PG.Commons.Util
 
         /// <summary>
         /// Parses a given string into a list. Optionally cleans all strings by either
-        /// dropping whitespace-only/null strings, trimming them, or both. 
+        /// dropping whitespace-only/null strings, trimming them, or both.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="separator"></param>

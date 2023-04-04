@@ -11,14 +11,23 @@ namespace PG.Core.Data.Etl
     public interface IEtlDescriptor
     {
         public IEtlReport Execute();
+
         public void ExtractPreProcess();
+
         public void Extract();
+
         public void ExtractPostProcess();
+
         public void TransformPreProcess();
+
         public void Transform();
+
         public void TransformPostProcess();
+
         public void LoadPreProcess();
+
         public void Load();
+
         public void LoadPostProcess();
     }
 }

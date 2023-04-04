@@ -1,9 +1,9 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Diagnostics;
 using JetBrains.Annotations;
 using PG.Commons.Util;
+using System.Diagnostics;
 
 namespace PG.StarWarsGame.LSP.Server.Buffering
 {

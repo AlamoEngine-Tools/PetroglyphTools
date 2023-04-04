@@ -1,11 +1,10 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Core.Test;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using PG.Commons.Test;
-using PG.Core.Test;
 
 namespace PG.StarWarsGame.Files.MEG.Test
 {
@@ -147,7 +146,7 @@ namespace PG.StarWarsGame.Files.MEG.Test
                 @"/mnt/c/mod/data/testfile.meg"
             }
         };
-        
+
         internal static string GetMegFilePath()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

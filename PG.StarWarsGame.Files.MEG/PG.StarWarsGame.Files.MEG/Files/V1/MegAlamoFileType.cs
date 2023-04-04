@@ -1,8 +1,8 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Diagnostics.CodeAnalysis;
 using PG.Commons.Data.Files;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PG.StarWarsGame.Files.MEG.Files.V1
 {

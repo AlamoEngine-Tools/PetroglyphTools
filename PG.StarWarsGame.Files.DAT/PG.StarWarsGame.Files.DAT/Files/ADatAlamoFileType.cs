@@ -1,9 +1,9 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Commons.Data.Files;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using PG.Commons.Data.Files;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
 
@@ -15,7 +15,7 @@ namespace PG.StarWarsGame.Files.DAT.Files
     /// does not allow duplicate keys and its contents are sorted ascending by the key's custom CRC32 <see cref="PG.Commons.Util.ChecksumUtility"/>.
     /// It is used for all localisation purposes.
     /// The unsorted file type <see cref="UnsortedDatAlamoFileType"/> is used as a credits file (yes, like those movie
-    /// credits). It allows duplicate keys which are used as formatting instructions. 
+    /// credits). It allows duplicate keys which are used as formatting instructions.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public abstract class ADatAlamoFileType : IAlamoFileType

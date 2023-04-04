@@ -1,12 +1,11 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Linq;
-using System.Reflection;
 using PG.Commons.Exceptions;
 using PG.Commons.Xml;
 using PG.Commons.Xml.Tags;
-using PG.StarWarsGame.Resources;
+using System.Linq;
+using System.Reflection;
 
 namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files
 {

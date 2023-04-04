@@ -8,7 +8,6 @@ namespace PG.Commons.Binary
     /// </summary>
     public interface ISizeable
     {
-
         /// <summary>Gets the chink size of the current binary.</summary>
         /// <value>The chunk size.</value>
         int Size { get; }

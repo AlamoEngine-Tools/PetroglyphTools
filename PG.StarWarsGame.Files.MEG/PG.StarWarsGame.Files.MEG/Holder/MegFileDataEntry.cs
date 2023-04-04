@@ -37,7 +37,7 @@ namespace PG.StarWarsGame.Files.MEG.Holder
             Size = size;
             AbsoluteFilePath = null;
         }
-        
+
         public MegFileDataEntry(string relativeFilePath, string absoluteFilePath)
         {
             RelativeFilePath = relativeFilePath;

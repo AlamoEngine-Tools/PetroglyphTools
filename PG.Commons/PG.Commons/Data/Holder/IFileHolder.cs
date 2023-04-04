@@ -11,7 +11,7 @@ namespace PG.Commons.Data.Holder
     public interface IFileHolder
     {
         /// <summary>
-        /// The path to the directory that holds the file on disc. 
+        /// The path to the directory that holds the file on disc.
         /// </summary>
         string FilePath { get; }
 

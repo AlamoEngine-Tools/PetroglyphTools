@@ -29,7 +29,5 @@ namespace PG.StarWarsGame.Files.MEG.Commons.Exceptions
         public FileNotContainedInArchiveException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
-
-        
     }
 }

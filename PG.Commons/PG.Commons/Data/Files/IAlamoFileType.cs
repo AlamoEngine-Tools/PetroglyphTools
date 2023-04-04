@@ -12,6 +12,7 @@ namespace PG.Commons.Data.Files
         /// Describes how the file content is represented on disc.
         /// </summary>
         FileType Type { get; }
+
         /// <summary>
         /// The expected file extension, e.g. xml, exe, alo, ala, ...
         /// </summary>

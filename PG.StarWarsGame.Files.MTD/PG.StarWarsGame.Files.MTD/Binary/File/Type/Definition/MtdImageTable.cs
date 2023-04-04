@@ -1,19 +1,20 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using JetBrains.Annotations;
+using PG.Commons.Binary;
+using PG.Commons.Binary.File;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
-using PG.Commons.Binary;
-using PG.Commons.Binary.File;
 
 namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
 {
     internal sealed class MtdImageTable : IBinaryFile, ISizeable, IEnumerable<MtdImageTableRecord>
     {
         private readonly List<MtdImageTableRecord> m_mtdImageTableRecords;
+
         public MtdImageTable([NotNull] IEnumerable<MtdImageTableRecord> mtdImageTableRecords)
         {
             IList<MtdImageTableRecord> imageTableRecords = mtdImageTableRecords.ToList();

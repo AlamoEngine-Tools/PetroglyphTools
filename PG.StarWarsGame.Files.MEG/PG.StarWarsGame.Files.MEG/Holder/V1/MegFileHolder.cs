@@ -1,13 +1,13 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using PG.Commons.Data.Holder;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.MEG.Files.V1;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Holder.V1
 {

@@ -1,10 +1,10 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Test;
 using PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1;
+using System;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1
 {

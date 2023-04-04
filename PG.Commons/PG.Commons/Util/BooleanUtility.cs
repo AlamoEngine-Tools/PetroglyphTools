@@ -1,10 +1,10 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using JetBrains.Annotations;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace PG.Commons.Util
 {
@@ -18,12 +18,13 @@ namespace PG.Commons.Util
             YesNo = 0,
             TrueFalse = 1,
         }
+
         [NotNull] private const string PETROGLYPH_TRUE = "True";
         [NotNull] private const string PETROGLYPH_YES = "Yes";
         [NotNull] private const string PETROGLYPH_FALSE = "False";
         [NotNull] private const string PETROGLYPH_NO = "No";
-        [NotNull] private static readonly string[] PETROGLYPH_TRUE_STRING_TYPES = {PETROGLYPH_YES, PETROGLYPH_TRUE};
-        [NotNull] private static readonly string[] PETROGLYPH_FALSE_STRING_TYPES = {PETROGLYPH_NO, PETROGLYPH_FALSE};
+        [NotNull] private static readonly string[] PETROGLYPH_TRUE_STRING_TYPES = { PETROGLYPH_YES, PETROGLYPH_TRUE };
+        [NotNull] private static readonly string[] PETROGLYPH_FALSE_STRING_TYPES = { PETROGLYPH_NO, PETROGLYPH_FALSE };
 
         /// <summary>Parses the specified Petroglyph boolean found in Petroglyph games.</summary>
         /// <param name="s">The string as read from the xml value.</param>

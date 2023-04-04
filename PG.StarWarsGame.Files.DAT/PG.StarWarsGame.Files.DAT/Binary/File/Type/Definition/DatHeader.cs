@@ -1,10 +1,10 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Runtime.CompilerServices;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
+using System;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
 
@@ -63,6 +63,6 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
             return !Equals(left, right);
         }
 
-        #endregion
+        #endregion Auto-Generated IEquatable<T> Implementation
     }
 }

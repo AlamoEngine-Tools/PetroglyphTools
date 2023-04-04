@@ -5,7 +5,7 @@ using System;
 
 namespace PG.Core.Reporting.Export
 {
-/// <summary>
+    /// <summary>
     /// Base implementation of the <see cref="IReportExportHandler"/> contract.
     /// Handles the basic error checking and delegation. All implementations of the <see cref="IReportExportHandler"/>
     /// interface should inherit from this base class.
@@ -30,12 +30,15 @@ namespace PG.Core.Reporting.Export
                 case ExportType.Full:
                     CreateFullExport(report);
                     break;
+
                 case ExportType.MessagesOnly:
                     CreateMessageExport(report);
                     break;
+
                 case ExportType.ErrorsOnly:
                     CreateErrorExport(report);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(exportType), exportType, null);
             }
@@ -53,6 +56,7 @@ namespace PG.Core.Reporting.Export
         /// </summary>
         /// <param name="report"></param>
         protected abstract void CreateMessageExport(IReport report);
+
         /// <summary>
         /// Exports all relevant <see cref="IReport"/> data as well as all <see cref="IMessage"/>s, thereby creating a
         /// full export of the provided <see cref="IReport"/>.

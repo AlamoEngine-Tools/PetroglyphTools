@@ -1,14 +1,14 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO.Abstractions;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PG.Core.Attributes;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO.Abstractions;
+using System.Reflection;
 
 namespace PG.Core.Services
 {
@@ -35,7 +35,7 @@ namespace PG.Core.Services
         /// FileSystem.Path.Combine("c:/my", "path");
         /// </example>
         protected internal IFileSystem FileSystem => m_fileSystem;
-        
+
         /// <summary>
         /// The service provider.
         /// </summary>
@@ -56,7 +56,7 @@ namespace PG.Core.Services
         #region IDisposable Pattern
 
         /// <summary>
-        /// Internal <see cref="Dispose"/> function. 
+        /// Internal <see cref="Dispose"/> function.
         /// </summary>
         /// <param name="disposing">True when called by <see cref="Dispose"/></param>
         protected internal void DisposeInternal(bool disposing)
@@ -74,11 +74,10 @@ namespace PG.Core.Services
             m_isDisposed = true;
         }
 
-        
         /// <summary>
         /// Disposes of private object references as part of the internal <see cref="IDisposable"/> implementation.
         /// Currently only disposes of properties accessible via reflection.
-        /// Collects all properties with <see cref="BindingFlags.NonPublic"/> and <see cref="BindingFlags.Instance"/> 
+        /// Collects all properties with <see cref="BindingFlags.NonPublic"/> and <see cref="BindingFlags.Instance"/>
         /// </summary>
         protected internal void DisposePrivateObjectReferencesInternal()
         {
@@ -122,6 +121,6 @@ namespace PG.Core.Services
             GC.SuppressFinalize(this);
         }
 
-        #endregion
+        #endregion IDisposable Pattern
     }
 }

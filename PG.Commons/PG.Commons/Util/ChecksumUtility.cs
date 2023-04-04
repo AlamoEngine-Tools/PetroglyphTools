@@ -1,13 +1,13 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using JetBrains.Annotations;
+using System;
 
 namespace PG.Commons.Util
 {
     /// <summary>
-    /// A utility class to handle Petroglyph's CRC32 checksum implementation used throughout the Alamo Engine 
+    /// A utility class to handle Petroglyph's CRC32 checksum implementation used throughout the Alamo Engine
     /// </summary>
     public static class ChecksumUtility
     {
@@ -33,7 +33,7 @@ namespace PG.Commons.Util
         }
 
         /// <summary>
-        /// Computes the CRC32 checksum for a given not nullable <c>string</c> as <code>uint</code>. 
+        /// Computes the CRC32 checksum for a given not nullable <c>string</c> as <code>uint</code>.
         /// </summary>
         /// <param name="s">Not-nullable input.</param>
         /// <returns></returns>

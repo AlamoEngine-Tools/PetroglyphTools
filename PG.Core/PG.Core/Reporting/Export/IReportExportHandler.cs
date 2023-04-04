@@ -5,7 +5,7 @@ namespace PG.Core.Reporting.Export
 {
     /// <summary>
     /// Basic contract for an export handler capable of exporting an object implementing the <see cref="IReport"/>
-    /// interface. 
+    /// interface.
     /// </summary>
     public interface IReportExportHandler
     {

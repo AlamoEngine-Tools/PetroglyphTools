@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace PG.StarWarsGame.Files.MEG.Commons.Exceptions
 {
     /// <summary>
-    /// An exception thrown when multiple files packaged in the MEG archive match the provided file filter. 
+    /// An exception thrown when multiple files packaged in the MEG archive match the provided file filter.
     /// </summary>
     [Serializable]
     [ExcludeFromCodeCoverage]
@@ -29,7 +29,5 @@ namespace PG.StarWarsGame.Files.MEG.Commons.Exceptions
         public MultipleFilesWithMatchingNameInArchiveException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
-
-        
     }
 }

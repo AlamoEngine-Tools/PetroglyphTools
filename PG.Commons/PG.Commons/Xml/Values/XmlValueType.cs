@@ -1,4 +1,7 @@
-﻿namespace PG.Commons.Xml.Values
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+namespace PG.Commons.Xml.Values
 {
     /// <summary>
     /// An enumeration that tries to replicate the type index of Petroglyph's database map.

@@ -1,40 +1,41 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Commons", "PG.Commons\PG.Commons\PG.Commons.csproj", "{B475C0EB-4EAE-4D7D-9471-AED06795481A}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Commons", "PG.Commons\PG.Commons\PG.Commons.csproj", "{B475C0EB-4EAE-4D7D-9471-AED06795481A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.LSP", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.csproj", "{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.LSP", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.csproj", "{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame", "PG.StarWarsGame\PG.StarWarsGame\PG.StarWarsGame.csproj", "{FE9F602F-BD0D-4514-A61F-2F32B691E65D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.DAT", "PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj", "{4358BDCA-3CBA-42B6-A794-82973F48714F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.DAT", "PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj", "{4358BDCA-3CBA-42B6-A794-82973F48714F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.MEG", "PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj", "{999D1E81-59E0-4E1B-9819-5D0448BC5C30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.MEG", "PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj", "{999D1E81-59E0-4E1B-9819-5D0448BC5C30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.MTD", "PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.csproj", "{4B5A4FB4-85ED-4000-89BC-4EBD244F032E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.MTD", "PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.csproj", "{4B5A4FB4-85ED-4000-89BC-4EBD244F032E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Localisation", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.csproj", "{429CFC27-EEBC-4331-8EE8-43AE70E1DF3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisation", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.csproj", "{429CFC27-EEBC-4331-8EE8-43AE70E1DF3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Core", "PG.Core\PG.Core\PG.Core.csproj", "{6E3C5E80-B7EC-45CD-8933-8438613048BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Core", "PG.Core\PG.Core\PG.Core.csproj", "{6E3C5E80-B7EC-45CD-8933-8438613048BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Commons.Test", "PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj", "{BE03C61C-CEC3-47A8-839B-A778E56607EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Commons.Test", "PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj", "{BE03C61C-CEC3-47A8-839B-A778E56607EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Core.Test", "PG.Core\PG.Core.Test\PG.Core.Test.csproj", "{94DE9C2D-2E9F-42F0-94C6-FE388976431C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Core.Test", "PG.Core\PG.Core.Test\PG.Core.Test.csproj", "{94DE9C2D-2E9F-42F0-94C6-FE388976431C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.DAT.Test", "PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test\PG.StarWarsGame.Files.DAT.Test.csproj", "{B582FDC3-72EC-4798-BCC2-8AA40325A55E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.DAT.Test", "PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test\PG.StarWarsGame.Files.DAT.Test.csproj", "{B582FDC3-72EC-4798-BCC2-8AA40325A55E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Test", "PG.StarWarsGame\PG.StarWarsGame.Test\PG.StarWarsGame.Test.csproj", "{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Test", "PG.StarWarsGame\PG.StarWarsGame.Test\PG.StarWarsGame.Test.csproj", "{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.MEG.Test", "PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test\PG.StarWarsGame.Files.MEG.Test.csproj", "{B5824B76-F9B5-4E5F-B9C9-DE6E47542EB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.MEG.Test", "PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test\PG.StarWarsGame.Files.MEG.Test.csproj", "{B5824B76-F9B5-4E5F-B9C9-DE6E47542EB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.MTD.Test", "PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.Test\PG.StarWarsGame.Files.MTD.Test.csproj", "{201625C3-820E-4C22-8B75-BF32FDD0E823}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.MTD.Test", "PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.Test\PG.StarWarsGame.Files.MTD.Test.csproj", "{201625C3-820E-4C22-8B75-BF32FDD0E823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Localisation.Test", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test\PG.StarWarsGame.Localisation.Test.csproj", "{2ED38DB7-3347-4B68-8D53-FDBC44A21EC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisation.Test", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test\PG.StarWarsGame.Localisation.Test.csproj", "{2ED38DB7-3347-4B68-8D53-FDBC44A21EC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.LSP.Test", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.Test\PG.StarWarsGame.LSP.Test.csproj", "{A1008BA0-FED6-4791-ADB8-29C247EBED66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.LSP.Test", "PG.StarWarsGame.LSP\PG.StarWarsGame.LSP.Test\PG.StarWarsGame.LSP.Test.csproj", "{A1008BA0-FED6-4791-ADB8-29C247EBED66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.Xml", "PG.StarWarsGame.Files.Xml\PG.StarWarsGame.Files.Xml\PG.StarWarsGame.Files.Xml.csproj", "{7A8E409E-BDE0-4E5C-8457-46529822895C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.Xml", "PG.StarWarsGame.Files.Xml\PG.StarWarsGame.Files.Xml\PG.StarWarsGame.Files.Xml.csproj", "{7A8E409E-BDE0-4E5C-8457-46529822895C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.Xml.Test", "PG.StarWarsGame.Files.Xml\PG.StarWarsGame.Files.Xml.Test\PG.StarWarsGame.Files.Xml.Test.csproj", "{71A4184C-9472-44B5-A81A-2EFC3A11CA96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.Xml.Test", "PG.StarWarsGame.Files.Xml\PG.StarWarsGame.Files.Xml.Test\PG.StarWarsGame.Files.Xml.Test.csproj", "{71A4184C-9472-44B5-A81A-2EFC3A11CA96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +51,6 @@ Global
 		{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4358BDCA-3CBA-42B6-A794-82973F48714F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4358BDCA-3CBA-42B6-A794-82973F48714F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4358BDCA-3CBA-42B6-A794-82973F48714F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -114,5 +111,8 @@ Global
 		{71A4184C-9472-44B5-A81A-2EFC3A11CA96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71A4184C-9472-44B5-A81A-2EFC3A11CA96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71A4184C-9472-44B5-A81A-2EFC3A11CA96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

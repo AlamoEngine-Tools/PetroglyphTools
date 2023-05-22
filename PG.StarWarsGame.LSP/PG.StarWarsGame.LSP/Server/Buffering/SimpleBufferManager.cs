@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using JetBrains.Annotations;
 using PG.Commons.Util;
 
 namespace PG.StarWarsGame.LSP.Server.Buffering

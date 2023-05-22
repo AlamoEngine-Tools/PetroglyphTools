@@ -4,8 +4,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Abstractions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using PG.Core.Attributes;
 using PG.Core.Services;

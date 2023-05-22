@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Util;
 using PG.Core.Test;
@@ -27,7 +26,7 @@ namespace PG.Commons.Test.Util
         [TestMethod]
         [DataRow("", ',', new string[] { })]
         [DataRow("  \n,a,b  ,\tc", ',', new string[] {"a", "b", "c"})]
-        public void SplitClean(string s, char separator, [NotNull] string[] expected)
+        public void SplitClean(string s, char separator, string[] expected)
         {
             List<string> l = StringUtility.SplitClean(s, separator);
             for (int i = 0; i < expected.Length; i++)
@@ -39,7 +38,7 @@ namespace PG.Commons.Test.Util
         [TestMethod]
         [DataRow("", ',', new string[] { })]
         [DataRow("  \n,a,b  ,\tc", ',', new string[] {"a", "b", "c"})]
-        public void ParseSeparatedStringToList(string s, char separator, [NotNull] string[] expected)
+        public void ParseSeparatedStringToList(string s, char separator, string[] expected)
         {
             List<string> l = StringUtility.ParseSeparatedStringToList(s, separator);
             for (int i = 0; i < expected.Length; i++)

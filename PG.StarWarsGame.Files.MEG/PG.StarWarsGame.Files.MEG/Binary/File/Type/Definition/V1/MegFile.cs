@@ -16,11 +16,11 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
             FileContentTable = fileContentTable ?? throw new ArgumentNullException(nameof(fileContentTable));
         }
 
-        [NotNull] internal MegHeader Header { get; }
+        internal MegHeader Header { get; }
 
-        [NotNull] internal MegFileNameTable FileNameTable { get; }
+        internal MegFileNameTable FileNameTable { get; }
 
-        [NotNull] public MegFileContentTable FileContentTable { get; }
+        public MegFileContentTable FileContentTable { get; }
 
         public byte[] ToBytes()
         {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <ProjectGuid>{429CFC27-EEBC-4331-8EE8-43AE70E1DF3D}</ProjectGuid>
     <LangVersion>default</LangVersion>
   </PropertyGroup>

@@ -61,9 +61,9 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
 
             string actualName = StringUtility.RemoveFileExtension(megArchiveName);
             MegFileHolder megFileHolder = new MegFileHolder(targetDirectory, actualName);
-            foreach ((string key, string value) in packedFileNameToAbsoluteFilePathsMap)
+            foreach (var entry in packedFileNameToAbsoluteFilePathsMap)
             {
-                megFileHolder.Content.Add(new MegFileDataEntry(key, value));
+                megFileHolder.Content.Add(new MegFileDataEntry(entry.Key, entry.Value));
             }
 
             MegFileBuilder builder = new MegFileBuilder(FileSystem);
@@ -244,7 +244,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.V1
                 FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
-        private uint GetMegFileHeaderSize([NotNull] string path)
+        private uint GetMegFileHeaderSize(string path)
         {
             uint headerSize = 0;
             using BinaryReader reader = new BinaryReader(FileSystem.FileStream.Create(path, FileMode.Open));

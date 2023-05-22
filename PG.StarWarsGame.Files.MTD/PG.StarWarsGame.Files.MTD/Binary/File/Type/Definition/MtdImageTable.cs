@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
     internal sealed class MtdImageTable : IBinaryFile, ISizeable, IEnumerable<MtdImageTableRecord>
     {
         private readonly List<MtdImageTableRecord> m_mtdImageTableRecords;
-        public MtdImageTable([NotNull] IEnumerable<MtdImageTableRecord> mtdImageTableRecords)
+        public MtdImageTable(IEnumerable<MtdImageTableRecord> mtdImageTableRecords)
         {
             IList<MtdImageTableRecord> imageTableRecords = mtdImageTableRecords.ToList();
             if (!imageTableRecords.Any())

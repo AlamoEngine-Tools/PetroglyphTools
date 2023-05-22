@@ -45,7 +45,7 @@ namespace PG.Core.Services
         /// Base .ctor
         /// </summary>
         /// <param name="services"></param>
-        protected AbstractService([NotNull] IServiceProvider services)
+        protected AbstractService(IServiceProvider services)
         {
             m_fileSystem = services.GetService<IFileSystem>() ?? new FileSystem();
             ILoggerFactory loggerFactory = services.GetService<ILoggerFactory>() ?? new NullLoggerFactory();

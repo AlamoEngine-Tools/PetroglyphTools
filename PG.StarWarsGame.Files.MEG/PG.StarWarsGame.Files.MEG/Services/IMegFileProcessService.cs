@@ -26,7 +26,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
         /// <param name="megArchiveName">The desired name of the archive.</param>
         /// <param name="packedFileNameToAbsoluteFilePathsMap">A list of absolute file paths, identified by their name in the MEG file.</param>
         /// <param name="targetDirectory">The target directory to which the *.MEG archive will be written.</param>
-        void PackFilesAsMegArchive([NotNull] string megArchiveName, [NotNull] IDictionary<string,string> packedFileNameToAbsoluteFilePathsMap, [NotNull] string targetDirectory);
+        void PackFilesAsMegArchive(string megArchiveName, IDictionary<string,string> packedFileNameToAbsoluteFilePathsMap, string targetDirectory);
 
         /// <summary>
         ///     Unpacks a given *.MEG file into a given directory.
@@ -34,7 +34,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
         /// </summary>
         /// <param name="filePath">Path to the *.MEG file to unpack.</param>
         /// <param name="targetDirectory">Directory to unpack the files into.</param>
-        void UnpackMegFile([NotNull] string filePath, [NotNull] string targetDirectory);
+        void UnpackMegFile(string filePath, string targetDirectory);
 
         /// <summary>
         ///     Same as <see cref="UnpackMegFile(string,string)" />, but with a previously loaded
@@ -42,7 +42,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
         /// </summary>
         /// <param name="holder">The previously loaded *.MEG file.</param>
         /// <param name="targetDirectory">Directory to unpack the files into.</param>
-        void UnpackMegFile([NotNull] MegFileHolder holder, [NotNull] string targetDirectory);
+        void UnpackMegFile(MegFileHolder holder, string targetDirectory);
 
         /// <summary>
         ///     Unpacks a single file from a given *.MEG file, provided the file is stored in the archive.
@@ -54,8 +54,7 @@ namespace PG.StarWarsGame.Files.MEG.Services
         ///     If set to false, any directory structure within the meg file will be
         ///     disregarded.
         /// </param>
-        void UnpackSingleFileFromMegFile([NotNull] MegFileHolder holder, [NotNull] string targetDirectory, [NotNull] string fileName,
-            bool preserveDirectoryHierarchy = true);
+        void UnpackSingleFileFromMegFile(MegFileHolder holder, string targetDirectory, string fileName, bool preserveDirectoryHierarchy = true);
 
         /// <summary>
         ///     Loads a *.MEG file's metadata into a <see cref="MegFileHolder" />. This holder can be used for targeted unpacking
@@ -63,6 +62,6 @@ namespace PG.StarWarsGame.Files.MEG.Services
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns>The specified *.MEG file's metadata.</returns>
-        MegFileHolder Load([NotNull] string filePath);
+        MegFileHolder Load(string filePath);
     }
 }

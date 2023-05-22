@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
             m_megFileContentTableRecords = megFileContentTableRecords ?? new List<MegFileContentTableRecord>();
         }
 
-        [NotNull] private readonly List<MegFileContentTableRecord> m_megFileContentTableRecords;
+        private readonly List<MegFileContentTableRecord> m_megFileContentTableRecords;
 
         public byte[] ToBytes()
         {

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Binary.File;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]

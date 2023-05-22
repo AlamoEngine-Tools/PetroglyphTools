@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using JetBrains.Annotations;
 
 namespace PG.Commons.Util
 {
@@ -11,7 +10,7 @@ namespace PG.Commons.Util
     /// </summary>
     public static class ChecksumUtility
     {
-        [NotNull] private static readonly ulong[] LOOKUP_TABLE = new ulong[256];
+        private static readonly ulong[] LOOKUP_TABLE = new ulong[256];
 
         static ChecksumUtility()
         {
@@ -37,12 +36,12 @@ namespace PG.Commons.Util
         /// </summary>
         /// <param name="s">Not-nullable input.</param>
         /// <returns></returns>
-        public static uint GetChecksum([NotNull] string s)
+        public static uint GetChecksum(string s)
         {
             return ComputeCrc32(s);
         }
 
-        private static uint ComputeCrc32([NotNull] string s)
+        private static uint ComputeCrc32(string s)
         {
             ulong crc = 0xFFFFFFFF;
             for (int j = 0; j < s.Length; j++)
@@ -59,7 +58,7 @@ namespace PG.Commons.Util
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static byte[] GetChecksumAsBytes([NotNull] string s)
+        public static byte[] GetChecksumAsBytes(string s)
         {
             return BitConverter.GetBytes(ComputeCrc32(s));
         }

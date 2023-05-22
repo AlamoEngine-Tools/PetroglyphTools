@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using PG.Commons.Binary.File.Builder;
 using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;

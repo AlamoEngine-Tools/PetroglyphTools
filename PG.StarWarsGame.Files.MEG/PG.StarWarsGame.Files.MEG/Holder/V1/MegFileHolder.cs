@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using PG.Commons.Data.Holder;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.MEG.Files.V1;

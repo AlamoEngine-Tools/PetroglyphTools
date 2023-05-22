@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace PG.Commons.Util
 {
@@ -79,7 +78,6 @@ namespace PG.Commons.Util
         /// <param name="s"></param>
         /// <param name="separator"></param>
         /// <returns></returns>
-        [NotNull]
         public static List<string> SplitClean(string s, char separator)
         {
             return SplitStringInternal(s, separator);
@@ -93,14 +91,12 @@ namespace PG.Commons.Util
         /// <param name="separator"></param>
         /// <param name="shouldClean"></param>
         /// <returns></returns>
-        [NotNull]
         public static List<string> ParseSeparatedStringToList(string s, char separator, bool shouldClean = true)
         {
             // TODO: https://github.com/AlamoEngine-Tools/PetroglyphTools/issues/103
             return SplitStringInternal(s, separator, shouldClean);
         }
 
-        [NotNull]
         private static List<string> SplitStringInternal(string s, char separator, bool shouldClean = true)
         {
             List<string> list = new List<string>();

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Files;

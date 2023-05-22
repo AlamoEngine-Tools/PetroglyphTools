@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using PG.Core.Attributes;
 using PG.Core.Services.Attributes;
 using PG.StarWarsGame.Files.MEG.Holder.V1;

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using PG.Commons.Test;
 using PG.Core.Test;
 
 namespace PG.StarWarsGame.Files.MEG.Test

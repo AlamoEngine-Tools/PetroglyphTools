@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Test;
 using PG.Core.Test;
 using PG.StarWarsGame.Files.MEG.Binary.File.Builder.V1;
 using PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1;

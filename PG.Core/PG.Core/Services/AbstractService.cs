@@ -24,7 +24,7 @@ namespace PG.Core.Services
         private IFileSystem m_fileSystem;
         private IServiceProvider m_services;
 
-        [JetBrains.Annotations.NotNull] protected internal ILogger<T> Logger { get; }
+        protected internal ILogger<T> Logger { get; }
 
         /// <summary>
         /// The file system implementation to be used.

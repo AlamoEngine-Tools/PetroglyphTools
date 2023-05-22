@@ -28,8 +28,8 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 
         public abstract TAlamoFileType FileType { get; }
 
-        [NotNull] public abstract TContent Content { get; set; }
+        public abstract TContent Content { get; set; }
 
-        [NotNull] public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
+        public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
     }
 }

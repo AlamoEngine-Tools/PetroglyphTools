@@ -14,9 +14,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 {
     public sealed class ValueTable : IBinaryFile, ISizeable
     {
-        [NotNull] public List<ValueTableRecord> ValueTableRecords { get; }
+        public List<ValueTableRecord> ValueTableRecords { get; }
 
-        public ValueTable([NotNull] List<ValueTableRecord> valueTableRecords)
+        public ValueTable(List<ValueTableRecord> valueTableRecords)
         {
             ValueTableRecords = valueTableRecords;
         }

@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Core.Test", "PG.Core\PG.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.DAT.Test", "PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.Test\PG.StarWarsGame.Files.DAT.Test.csproj", "{B582FDC3-72EC-4798-BCC2-8AA40325A55E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Test", "PG.StarWarsGame\PG.StarWarsGame.Test\PG.StarWarsGame.Test.csproj", "{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.MEG.Test", "PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.Test\PG.StarWarsGame.Files.MEG.Test.csproj", "{B5824B76-F9B5-4E5F-B9C9-DE6E47542EB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.MTD.Test", "PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.Test\PG.StarWarsGame.Files.MTD.Test.csproj", "{201625C3-820E-4C22-8B75-BF32FDD0E823}"
@@ -83,10 +81,6 @@ Global
 		{B582FDC3-72EC-4798-BCC2-8AA40325A55E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B582FDC3-72EC-4798-BCC2-8AA40325A55E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B582FDC3-72EC-4798-BCC2-8AA40325A55E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5824B76-F9B5-4E5F-B9C9-DE6E47542EB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B5824B76-F9B5-4E5F-B9C9-DE6E47542EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5824B76-F9B5-4E5F-B9C9-DE6E47542EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -114,5 +108,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D53DDBBA-F794-4136-8221-E998F793C4CC}
 	EndGlobalSection
 EndGlobal

@@ -1,23 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
-        <ProjectGuid>{BE03C61C-CEC3-47A8-839B-A778E56607EA}</ProjectGuid>
-        <TargetFramework>net7.0</TargetFramework>
+	    <TargetFramework>net7.0</TargetFramework>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.Commons.Test</Title>
         <PackageId>PG.Commons.Test</PackageId>
-        <Authors>Alamo Engine Tools and Contributors</Authors>
-        <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
-        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
-        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <Company>Alamo Engine Tools</Company>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+	    <AssemblyVersion>1.0.0.0</AssemblyVersion>
         <Product>PG.Commons.Test 1.0.0-alpha.1</Product>
         <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
         <FileVersion>1.0.0.0</FileVersion>
-        <LangVersion>default</LangVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">

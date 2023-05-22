@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <ProjectGuid>{999D1E81-59E0-4E1B-9819-5D0448BC5C30}</ProjectGuid>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.StarWarsGame.Files.MEG</Title>

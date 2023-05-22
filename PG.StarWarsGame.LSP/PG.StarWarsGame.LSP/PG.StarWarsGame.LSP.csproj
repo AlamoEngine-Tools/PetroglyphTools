@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <ProjectGuid>{FF2B44BC-E1B6-45CA-97C3-15EC2F683F5D}</ProjectGuid>
         <LangVersion>default</LangVersion>
     </PropertyGroup>

@@ -15,9 +15,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 {
     internal sealed class IndexTable : IBinaryFile, ISizeable, IEquatable<IndexTable>
     {
-        [NotNull] public List<IndexTableRecord> IndexTableRecords { get; }
+        public List<IndexTableRecord> IndexTableRecords { get; }
 
-        public IndexTable([NotNull] List<IndexTableRecord> indexTableRecords)
+        public IndexTable(List<IndexTableRecord> indexTableRecords)
         {
             IndexTableRecords = indexTableRecords;
         }

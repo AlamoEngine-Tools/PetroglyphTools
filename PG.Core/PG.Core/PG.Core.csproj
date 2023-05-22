@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <ProjectGuid>{6E3C5E80-B7EC-45CD-8933-8438613048BC}</ProjectGuid>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.Core</Title>

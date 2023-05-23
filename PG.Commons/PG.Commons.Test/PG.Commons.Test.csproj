@@ -1,16 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
 	    <TargetFramework>net7.0</TargetFramework>
         <PackageVersion>1.0.0</PackageVersion>
-        <Title>PG.Commons.Test</Title>
-        <PackageId>PG.Commons.Test</PackageId>
-	    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <Product>PG.Commons.Test 1.0.0-alpha.1</Product>
-        <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
-        <FileVersion>1.0.0.0</FileVersion>
     </PropertyGroup>
-    <ItemGroup>
+	<ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

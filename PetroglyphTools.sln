@@ -35,6 +35,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.Xml",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.Xml.Test", "PG.StarWarsGame.Files.Xml\PG.StarWarsGame.Files.Xml.Test\PG.StarWarsGame.Files.Xml.Test.csproj", "{71A4184C-9472-44B5-A81A-2EFC3A11CA96}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame", "PG.StarWarsGame\PG.StarWarsGame\PG.StarWarsGame.csproj", "{FE9F602F-BD0D-4514-A61F-2F32B691E65D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Test", "PG.StarWarsGame\PG.StarWarsGame.Test\PG.StarWarsGame.Test.csproj", "{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +109,14 @@ Global
 		{71A4184C-9472-44B5-A81A-2EFC3A11CA96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71A4184C-9472-44B5-A81A-2EFC3A11CA96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71A4184C-9472-44B5-A81A-2EFC3A11CA96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE9F602F-BD0D-4514-A61F-2F32B691E65D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E90543F5-D2A1-4659-9E18-A9D7FBA7697C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

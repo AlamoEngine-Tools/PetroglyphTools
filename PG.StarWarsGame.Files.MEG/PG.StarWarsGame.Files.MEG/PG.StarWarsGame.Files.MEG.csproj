@@ -1,27 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-        <ProjectGuid>{999D1E81-59E0-4E1B-9819-5D0448BC5C30}</ProjectGuid>
-        <PackageVersion>1.0.0</PackageVersion>
+	    <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.StarWarsGame.Files.MEG</Title>
         <PackageId>PG.StarWarsGame.Files.MEG</PackageId>
-        <Authors>Alamo Engine Tools and Contributors</Authors>
-        <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
-        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
-        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <Company>Alamo Engine Tools</Company>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <Product>PG.StarWarsGame.Files.MEG 1.0.0-alpha.1</Product>
-        <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
-        <FileVersion>1.0.0.0</FileVersion>
-        <LangVersion>default</LangVersion>
+	    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Product>PG.StarWarsGame.Files.MEG</Product>
     </PropertyGroup>
-    <PropertyGroup>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    </PropertyGroup>
-    <ItemGroup>
+	<PropertyGroup>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<InformationalVersion>1.0.0-alpha.1</InformationalVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+	</PropertyGroup>
+	<ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
         <PackageReference Include="System.Composition.AttributedModel" Version="7.0.0" />
         <PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
@@ -32,10 +23,5 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Commons" />
-    </ItemGroup>
-    <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>$(AssemblyName).Test</_Parameter1>
-        </AssemblyAttribute>
     </ItemGroup>
 </Project>

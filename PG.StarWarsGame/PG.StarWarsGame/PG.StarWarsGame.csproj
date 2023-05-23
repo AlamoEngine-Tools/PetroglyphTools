@@ -1,40 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <NeutralLanguage>en-GB</NeutralLanguage>
-        <TargetFramework>net7.0</TargetFramework>
-        <ProjectGuid>{FE9F602F-BD0D-4514-A61F-2F32B691E65D}</ProjectGuid>
-        <PackageVersion>1.0.0</PackageVersion>
-        <Title>PG.StarWarsGame</Title>
-        <PackageId>PG.StarWarsGame</PackageId>
-        <Authors>Alamo Engine Tools and Contributors</Authors>
-        <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
-        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
-        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <Company>Alamo Engine Tools</Company>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <Product>PG.StarWarsGame 1.0.0-alpha.1</Product>
-        <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
-        <FileVersion>1.0.0.0</FileVersion>
-        <LangVersion>default</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    </PropertyGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-        <PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Commons" />
-    </ItemGroup>
-    <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>$(AssemblyName).Test</_Parameter1>
-        </AssemblyAttribute>
-    </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<PackageVersion>1.0.0</PackageVersion>
+		<Title>PG.StarWarsGame</Title>
+		<PackageId>PG.StarWarsGame</PackageId>
+		<Product>PG.StarWarsGame</Product>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<InformationalVersion>1.0.0-alpha.1</InformationalVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+		<PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Commons" />
+	</ItemGroup>
 </Project>

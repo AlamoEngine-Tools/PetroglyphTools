@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Util;
@@ -23,7 +22,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition
         private readonly bool m_alpha;
         private readonly IEnumerable<byte> m_binaryName;
 
-        public MtdImageTableRecord([NotNull] string name, uint xPosition, uint yPosition, uint xExtend, uint yExtend,
+        public MtdImageTableRecord(string name, uint xPosition, uint yPosition, uint xExtend, uint yExtend,
             bool alpha)
         {
             if (!StringUtility.HasText(name))

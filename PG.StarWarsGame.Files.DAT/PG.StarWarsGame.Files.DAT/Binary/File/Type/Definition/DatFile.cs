@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Binary.File;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
@@ -13,13 +12,12 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 {
     internal sealed class DatFile : IBinaryFile, IEquatable<DatFile>
     {
-        [NotNull] private readonly DatHeader m_header;
-        [NotNull] private readonly IndexTable m_indexTable;
-        [NotNull] private readonly ValueTable m_valueTable;
-        [NotNull] private readonly KeyTable m_keyTable;
+        private readonly DatHeader m_header;
+        private readonly IndexTable m_indexTable;
+        private readonly ValueTable m_valueTable;
+        private readonly KeyTable m_keyTable;
 
-        public DatFile([NotNull] DatHeader header, [NotNull] IndexTable indexTable, [NotNull] ValueTable valueTable,
-            [NotNull] KeyTable keyTable)
+        public DatFile(DatHeader header, IndexTable indexTable, ValueTable valueTable, KeyTable keyTable)
         {
             m_header = header;
             m_indexTable = indexTable;

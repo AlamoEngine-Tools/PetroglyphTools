@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Commons.Exceptions;
@@ -24,8 +23,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             m_currentOffset = INDEX_TABLE_STARTING_OFFSET;
         }
 
-        [NotNull]
-        protected DatFile FromBytesInternal([NotNull] byte[] bytes)
+        protected DatFile FromBytesInternal(byte[] bytes)
         {
             DatHeader header = BuildDatHeaderFromBytesInternal(bytes);
             IndexTable indexTable = BuildIndexTableFromBytesInternal(bytes, header.KeyCount);
@@ -34,14 +32,12 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             return new DatFile(header, indexTable, valueTable, keyTable);
         }
 
-        [NotNull]
-        private DatHeader BuildDatHeaderFromBytesInternal([NotNull] byte[] bytes)
+        private DatHeader BuildDatHeaderFromBytesInternal(byte[] bytes)
         {
             return new DatHeader(BitConverter.ToUInt32(bytes, HEADER_STARTING_OFFSET));
         }
 
-        [NotNull]
-        private IndexTable BuildIndexTableFromBytesInternal([NotNull] byte[] bytes, uint keyCount)
+        private IndexTable BuildIndexTableFromBytesInternal(byte[] bytes, uint keyCount)
         {
             List<IndexTableRecord> indexTable = new List<IndexTableRecord>();
             for (int i = 0; i < keyCount; i++)
@@ -59,9 +55,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             return new IndexTable(indexTable);
         }
 
-        [NotNull]
-        private ValueTable BuildValueTableFromBytesInternal([NotNull] byte[] bytes, [NotNull] IndexTable indexTable,
-            uint keyCount)
+        private ValueTable BuildValueTableFromBytesInternal(byte[] bytes, IndexTable indexTable, uint keyCount)
         {
             List<ValueTableRecord> valueTableRecords = new List<ValueTableRecord>();
 
@@ -78,8 +72,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             return new ValueTable(valueTableRecords);
         }
 
-        [NotNull]
-        private KeyTable BuildKeyTableFromBytesInternal([NotNull] byte[] bytes, [NotNull] IndexTable indexTable,
+        private KeyTable BuildKeyTableFromBytesInternal(byte[] bytes, IndexTable indexTable,
             uint keyCount)
         {
             List<KeyTableRecord> keyTableRecords = new List<KeyTableRecord>();
@@ -97,8 +90,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Builder
             return new KeyTable(keyTableRecords);
         }
 
-        [NotNull]
-        protected DatFile FromHolderInternal([NotNull] List<Tuple<string, string>> content)
+        protected DatFile FromHolderInternal(List<Tuple<string, string>> content)
         {
             DatHeader datHeader = new DatHeader(Convert.ToUInt32(content.Count));
             List<IndexTableRecord> indexTableRecords = new List<IndexTableRecord>();

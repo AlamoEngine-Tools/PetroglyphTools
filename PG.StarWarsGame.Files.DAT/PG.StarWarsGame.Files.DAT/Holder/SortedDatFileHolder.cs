@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -16,7 +15,7 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 {
     public sealed class SortedDatFileHolder : ADatFileHolder<List<Tuple<string, string>>, SortedDatAlamoFileType>
     {
-        [NotNull] private readonly List<Tuple<string, string>> m_content = new List<Tuple<string, string>>();
+        private readonly List<Tuple<string, string>> m_content = new List<Tuple<string, string>>();
 
         public SortedDatFileHolder(string filePath, string fileName) : base(filePath, fileName)
         {
@@ -57,13 +56,12 @@ namespace PG.StarWarsGame.Files.DAT.Holder
             }
         }
 
-        public static SortedDatFileHolder FromDictionary([NotNull] SortedDatFileHolder holder,
-            [NotNull] Dictionary<string, string> dictionary)
+        public static SortedDatFileHolder FromDictionary(SortedDatFileHolder holder, Dictionary<string, string> dictionary)
         {
             holder.Content.Clear();
-            foreach ((string key, string value) in dictionary)
+            foreach (var entry in dictionary)
             {
-                holder.Content.Add(new Tuple<string, string>(key, value));
+                holder.Content.Add(new Tuple<string, string>(entry.Key, entry.Value));
             }
 
             return holder;
@@ -75,9 +73,14 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 
             foreach ((string item1, string item2) in Content)
             {
+#if NETSTANDARD2_1_OR_GREATER
                 d.TryAdd(item1, item2);
+#else
+                if (d.ContainsKey(item2))
+                    continue;
+                d.Add(item1, item2);
+#endif
             }
-
             return d;
         }
     }

@@ -1,14 +1,12 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using JetBrains.Annotations;
 using PG.Commons.Util;
 
 namespace PG.StarWarsGame.LSP.Server.Buffering
 {
     internal class SimpleBufferManager : IBufferManager
-    {
-        [NotNull] private readonly ConcurrentDictionary<string, IDocumentBuffer> m_buffers =
-            new ConcurrentDictionary<string, IDocumentBuffer>();
+    { 
+        private readonly ConcurrentDictionary<string, IDocumentBuffer> m_buffers = new ConcurrentDictionary<string, IDocumentBuffer>();
 
         public void UpdateBuffer(string documentPath, IDocumentBuffer buffer)
         {

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Test;
 using PG.Core.Test;
 using PG.StarWarsGame.Files.DAT.Binary.File.Builder;
 using PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition;

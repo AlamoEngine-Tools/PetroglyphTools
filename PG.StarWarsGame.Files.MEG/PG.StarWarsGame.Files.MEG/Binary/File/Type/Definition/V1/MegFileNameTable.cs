@@ -3,7 +3,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 
@@ -16,7 +15,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
             m_megFileNameTableRecords = megFileNameTableRecords ?? new List<MegFileNameTableRecord>();
         }
 
-        [NotNull] private readonly List<MegFileNameTableRecord> m_megFileNameTableRecords;
+        private readonly List<MegFileNameTableRecord> m_megFileNameTableRecords;
 
         public byte[] ToBytes()
         {

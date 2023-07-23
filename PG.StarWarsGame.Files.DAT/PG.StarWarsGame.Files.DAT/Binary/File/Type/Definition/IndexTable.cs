@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 
@@ -16,9 +15,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 {
     internal sealed class IndexTable : IBinaryFile, ISizeable, IEquatable<IndexTable>
     {
-        [NotNull] public List<IndexTableRecord> IndexTableRecords { get; }
+        public List<IndexTableRecord> IndexTableRecords { get; }
 
-        public IndexTable([NotNull] List<IndexTableRecord> indexTableRecords)
+        public IndexTable(List<IndexTableRecord> indexTableRecords)
         {
             IndexTableRecords = indexTableRecords;
         }

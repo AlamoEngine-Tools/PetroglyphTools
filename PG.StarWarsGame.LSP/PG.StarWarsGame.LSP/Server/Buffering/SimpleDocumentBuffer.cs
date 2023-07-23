@@ -1,12 +1,11 @@
 using System.Diagnostics;
-using JetBrains.Annotations;
 using PG.Commons.Util;
 
 namespace PG.StarWarsGame.LSP.Server.Buffering
 {
     internal class SimpleDocumentBuffer : IDocumentBuffer
-    {
-        [NotNull] private readonly string m_text;
+    { 
+        private readonly string m_text;
 
         public SimpleDocumentBuffer(string text)
         {

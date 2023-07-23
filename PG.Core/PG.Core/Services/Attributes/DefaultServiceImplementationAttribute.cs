@@ -16,7 +16,7 @@ namespace PG.Core.Services.Attributes
     {
         public Type DefaultServiceImplementation { get; }
 
-        public DefaultServiceImplementationAttribute([JetBrains.Annotations.NotNull] Type defaultServiceImplementation)
+        public DefaultServiceImplementationAttribute(Type defaultServiceImplementation)
         {
             Debug.Assert(typeof(IService).IsAssignableFrom(defaultServiceImplementation), $"The given type {defaultServiceImplementation} is not marked as {nameof(IService)}.");
             DefaultServiceImplementation = defaultServiceImplementation;

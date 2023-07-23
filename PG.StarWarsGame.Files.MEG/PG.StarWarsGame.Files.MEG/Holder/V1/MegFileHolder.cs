@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using PG.Commons.Data.Holder;
 using PG.Commons.Util;
 using PG.StarWarsGame.Files.MEG.Files.V1;
@@ -27,7 +26,7 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         /// </summary>
         /// <param name="filePath">The path to the directory that holds the file on disc.</param>
         /// <param name="fileName">The desired file name without the file extension.</param>
-        public MegFileHolder([NotNull] string filePath, [NotNull] string fileName)
+        public MegFileHolder(string filePath, string fileName)
         {
             FilePath = StringUtility.HasText(filePath)
                 ? filePath
@@ -59,13 +58,11 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         /// <param name="fileName"></param>
         /// <param name="megFileDataEntry"></param>
         /// <returns></returns>
-        public bool TryGetFirstMegFileDataEntryWithMatchingName([NotNull] string fileName,
-            [CanBeNull] out MegFileDataEntry megFileDataEntry)
+        public bool TryGetFirstMegFileDataEntryWithMatchingName(string fileName, out MegFileDataEntry megFileDataEntry)
         {
             if (StringUtility.HasText(fileName))
             {
-                foreach (MegFileDataEntry dataEntry in Content.Where(dataEntry =>
-                    dataEntry.RelativeFilePath.Contains(fileName, StringComparison.InvariantCultureIgnoreCase)))
+                foreach (MegFileDataEntry dataEntry in Content.Where(dataEntry => ContainsPathIgnoreCase(dataEntry.RelativeFilePath, fileName)))
                 {
                     megFileDataEntry = dataEntry;
                     return true;
@@ -82,8 +79,7 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
         /// <param name="fileName"></param>
         /// <param name="megFileDataEntries"></param>
         /// <returns></returns>
-        public bool TryGetAllMegFileDataEntriesWithMatchingName([NotNull] string fileName,
-            [NotNull] out IList<MegFileDataEntry> megFileDataEntries)
+        public bool TryGetAllMegFileDataEntriesWithMatchingName(string fileName, out IList<MegFileDataEntry> megFileDataEntries)
         {
             if (!StringUtility.HasText(fileName))
             {
@@ -92,8 +88,17 @@ namespace PG.StarWarsGame.Files.MEG.Holder.V1
             }
 
             megFileDataEntries = Content.Where(dataEntry =>
-                dataEntry.RelativeFilePath.Contains(fileName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                ContainsPathIgnoreCase(dataEntry.RelativeFilePath, fileName)).ToList();
             return megFileDataEntries.Any();
+        }
+
+        private static bool ContainsPathIgnoreCase(string relativePath, string partFileName)
+        {
+#if NETSTANDARD2_1_OR_GREATER
+            return relativePath.Contains(partFileName, StringComparison.CurrentCultureIgnoreCase);
+#else
+            return relativePath.IndexOf(partFileName, StringComparison.CurrentCultureIgnoreCase) >= 0;
+#endif
         }
     }
 }

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Data.Files;
 using PG.Commons.Data.Holder;
 
@@ -29,8 +28,8 @@ namespace PG.StarWarsGame.Files.DAT.Holder
 
         public abstract TAlamoFileType FileType { get; }
 
-        [NotNull] public abstract TContent Content { get; set; }
+        public abstract TContent Content { get; set; }
 
-        [NotNull] public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
+        public string FullyQualifiedName => $"{FileName}.{FileType.FileExtension}";
     }
 }

@@ -2,28 +2,12 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <TargetFramework>net7.0</TargetFramework>
-        <ProjectGuid>{94DE9C2D-2E9F-42F0-94C6-FE388976431C}</ProjectGuid>
-        <Title>PG.Core.Test</Title>
-        <PackageId>PG.Core.Test</PackageId>
-        <Authors>Alamo Engine Tools and Contributors</Authors>
-        <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
-        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
-        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <Company>Alamo Engine Tools</Company>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <Product>PG.Core.Test 1.0.0-alpha.1</Product>
-        <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
-        <FileVersion>1.0.0.0</FileVersion>
-        <LangVersion>default</LangVersion>
     </PropertyGroup>
-    <ItemGroup>
+	<ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />

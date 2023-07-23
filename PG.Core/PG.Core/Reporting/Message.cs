@@ -13,7 +13,7 @@ namespace PG.Core.Reporting
         public DateTime CreatedTimestamp { get; }
         public string MessageContent { get; }
 
-        public Message([NotNull] string messageContent)
+        public Message(string messageContent)
         {
             CreatedTimestamp = DateTime.Now;
             MessageContent = messageContent;

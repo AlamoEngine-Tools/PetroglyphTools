@@ -1,11 +1,11 @@
 // Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
+// Licensed under the MIT license. See LICENSE file in the project root for detailsem.Collections;
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Util;
@@ -17,7 +17,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
         private readonly Encoding m_fileNameEncoding = Encoding.ASCII;
         private readonly ushort m_fileNameLength;
 
-        public MegFileNameTableRecord([NotNull] string fileName)
+        public MegFileNameTableRecord(string fileName)
         {
             if (!StringUtility.HasText(fileName))
             {
@@ -37,8 +37,8 @@ namespace PG.StarWarsGame.Files.MEG.Binary.File.Type.Definition.V1
                     $"The filename {fn} is too long to be inserted into a meg file. It may not exceed {ushort.MaxValue} characters.");
             }
         }
-
-        [NotNull] internal string FileName { get; }
+        
+        internal string FileName { get; }
 
         public byte[] ToBytes()
         {

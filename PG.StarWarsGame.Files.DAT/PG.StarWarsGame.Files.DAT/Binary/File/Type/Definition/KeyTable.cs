@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 
@@ -15,9 +14,9 @@ namespace PG.StarWarsGame.Files.DAT.Binary.File.Type.Definition
 {
     public sealed class KeyTable : IBinaryFile, ISizeable
     {
-        [NotNull] public List<KeyTableRecord> KeyTableRecords { get; }
+        public List<KeyTableRecord> KeyTableRecords { get; }
 
-        public KeyTable([NotNull] List<KeyTableRecord> keyTableRecords)
+        public KeyTable(List<KeyTableRecord> keyTableRecords)
         {
             KeyTableRecords = keyTableRecords;
         }

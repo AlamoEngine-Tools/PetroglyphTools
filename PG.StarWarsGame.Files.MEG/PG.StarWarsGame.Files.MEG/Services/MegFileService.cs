@@ -110,7 +110,7 @@ public class MegFileService : AbstractService, IMegFileService
     /// <inheritdoc/>
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
-        if (string.IsNullOrEmpty(file))
+        if (string.IsNullOrWhiteSpace(file))
             throw new ArgumentNullException(nameof(file));
 
         using var fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);

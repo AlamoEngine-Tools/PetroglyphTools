@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <Title>PG.StarWarsGame.Files.DAT</Title>
+        <PackageId>AnakinRaw.PG.StarWarsGame.Files.DAT</PackageId>
+	    <Product>PG.StarWarsGame.Files.DAT</Product>
+    </PropertyGroup>
+    <PropertyGroup>
+	    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <InheritDocEnabled>true</InheritDocEnabled>
+    </PropertyGroup>
+    <PropertyGroup>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+	<ItemGroup>
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
+    </ItemGroup>
+</Project>

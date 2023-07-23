@@ -1,0 +1,60 @@
+name: Releasing Petroglyph Tools .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  test:
+    uses: ./.github/workflows/test.yml
+
+  pack:
+    name: Pack
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+      - name: Create packages
+        run: dotnet pack --configuration Release --output ./packages
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: NuGet packages
+          path: packages/*.*
+
+  deploy:
+    name: Deploy
+    if: |
+      github.ref == 'refs/heads/master' &&  github.event_name == 'push'
+    needs: [pack]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: NuGet packages
+          path: packages
+      - name: Push packages
+        run: dotnet nuget push "packages/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      - uses: dotnet/nbgv@v0.4.0
+        id: nbgv
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ steps.nbgv.outputs.SemVer2 }}
+          tag_name: v${{ steps.nbgv.outputs.SemVer2 }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true

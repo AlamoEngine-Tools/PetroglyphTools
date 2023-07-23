@@ -28,9 +28,9 @@ public class MegFileDataEntryLocation
     /// <param name="pathToFile">The current path of the file on the local file system.</param>
     public MegFileDataEntryLocation(string pathInMeg, string pathToFile)
     {
-        if (string.IsNullOrEmpty(pathInMeg))
+        if (string.IsNullOrWhiteSpace(pathInMeg))
             throw new ArgumentNullException(nameof(pathInMeg));
-        if (string.IsNullOrEmpty(pathToFile))
+        if (string.IsNullOrWhiteSpace(pathToFile))
             throw new ArgumentNullException(nameof(pathToFile));
         PathInMeg = pathInMeg;
         PathToFile = pathToFile;

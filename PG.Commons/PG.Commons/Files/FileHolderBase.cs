@@ -59,7 +59,7 @@ public abstract class FileHolderBase<TModel, TFileType> : DisposableObject, IFil
     /// <exception cref="FileNotFoundException">When <paramref name="filePath"/> is not found.</exception>
     protected FileHolderBase(TModel model, string filePath, IServiceProvider serviceProvider)
     {
-        if (string.IsNullOrEmpty(filePath))
+        if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
         Services = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         FileSystem = serviceProvider.GetRequiredService<IFileSystem>();

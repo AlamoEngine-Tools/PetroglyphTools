@@ -31,7 +31,7 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
     public MegFileNameTableRecord(string fileName, Encoding encoding)
     {
-        if (string.IsNullOrEmpty(fileName))
+        if (string.IsNullOrWhiteSpace(fileName))
             throw new ArgumentException($"{nameof(fileName)} must not be null or empty");
 
         if (!encoding.IsSingleByte)

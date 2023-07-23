@@ -81,7 +81,7 @@ public sealed class MegFileHolder : FileHolderBase<IReadOnlyList<MegFileDataEntr
     /// <inheritdoc/>
     public bool TryGetAllEntriesWithMatchingPattern(string fileName, out IReadOnlyList<MegFileDataEntry> megFileDataEntries)
     {
-        if (string.IsNullOrEmpty(fileName))
+        if (string.IsNullOrWhiteSpace(fileName))
         {
             megFileDataEntries = Array.Empty<MegFileDataEntry>();
             return false;

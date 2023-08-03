@@ -10,23 +10,25 @@ using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Files;
 
-/// <inheritdoc cref="IMegFile"/>
+/// <inheritdoc cref="IMegFile" />
 /// <remarks>
 ///     This class does not hold all files that are packaged in a *.MEG file,
 ///     but all necessary meta-information to extract a given file on-demand.
 /// </remarks>
-public sealed class MegFileHolder : FileHolderBase<IReadOnlyList<MegFileDataEntry>, MegAlamoFileType>, IMegFile
+public sealed class
+    MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnlyList<MegFileDataEntry>, MegAlamoFileType>, IMegFile
 {
     private byte[]? _keyValue;
     private byte[]? _ivValue;
 
     /// <summary>
-    /// Gets the file version of the MEG file.
+    ///     Gets the file version of the MEG file.
     /// </summary>
-    public MegFileVersion FileVersion { get; }
+    public MegFileVersion FileVersion { get; private set; }
 
     /// <summary>
-    /// Gets a copy of the initialization vector (IV) used for encryption. <see langword="null"/> if the file is not encrypted.
+    ///     Gets a copy of the initialization vector (IV) used for encryption. <see langword="null" /> if the file is not
+    ///     encrypted.
     /// </summary>
     public byte[]? IV
     {
@@ -34,13 +36,16 @@ public sealed class MegFileHolder : FileHolderBase<IReadOnlyList<MegFileDataEntr
         get
         {
             if (_ivValue is null)
+            {
                 return null;
+            }
+
             return (byte[])_ivValue.Clone();
         }
     }
 
     /// <summary>
-    /// Gets a copy of the encryption key used for encryption. <see langword="null"/> if the file is not encrypted.
+    ///     Gets a copy of the encryption key used for encryption. <see langword="null" /> if the file is not encrypted.
     /// </summary>
     public byte[]? Key
     {
@@ -48,38 +53,40 @@ public sealed class MegFileHolder : FileHolderBase<IReadOnlyList<MegFileDataEntr
         get
         {
             if (_keyValue is null)
+            {
                 return null;
+            }
+
             return (byte[])_keyValue.Clone();
         }
     }
 
 
     /// <summary>
-    /// Gets a value indicating whether the MEG file is encrypted.
+    ///     Gets a value indicating whether the MEG file is encrypted.
     /// </summary>
     public bool HasEncryption
     {
         get
         {
             if (FileVersion is MegFileVersion.V1 or MegFileVersion.V2)
+            {
                 return false;
-            return Key != null && IV != null;
+            }
+
+            return (Key != null) && (IV != null);
         }
     }
 
-    internal MegFileHolder(IReadOnlyList<MegFileDataEntry> dataModel, string filePath, IServiceProvider serviceProvider) 
-        : base(dataModel, filePath, serviceProvider)
-    {
-    }
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool Contains(MegFileDataEntry entry)
     {
         throw new NotImplementedException();
     }
 
-    /// <inheritdoc/>
-    public bool TryGetAllEntriesWithMatchingPattern(string fileName, out IReadOnlyList<MegFileDataEntry> megFileDataEntries)
+    /// <inheritdoc />
+    public bool TryGetAllEntriesWithMatchingPattern(string fileName,
+        out IReadOnlyList<MegFileDataEntry> megFileDataEntries)
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
@@ -87,11 +94,12 @@ public sealed class MegFileHolder : FileHolderBase<IReadOnlyList<MegFileDataEntr
             return false;
         }
 
-        megFileDataEntries = Content.Where(dataEntry => ContainsPathIgnoreCase(dataEntry.RelativeFilePath, fileName)).ToList();
+        megFileDataEntries = Content.Where(dataEntry => ContainsPathIgnoreCase(dataEntry.RelativeFilePath, fileName))
+            .ToList();
         return megFileDataEntries.Any();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected override void DisposeManagedResources()
     {
         base.DisposeManagedResources();
@@ -120,8 +128,21 @@ public sealed class MegFileHolder : FileHolderBase<IReadOnlyList<MegFileDataEntr
 
     private static void ValidateEncryptionLength(ReadOnlySpan<byte> data)
     {
-        var bitLength = data.Length * 8L;
+        long bitLength = data.Length * 8L;
         if (bitLength != 128)
+        {
             throw new ArgumentException("Specified data is not a valid size for MEG encryption.", nameof(data));
+        }
+    }
+
+    internal MegFileHolder(IReadOnlyList<MegFileDataEntry> model, MegFileHolderParam param,
+        IServiceProvider serviceProvider) : base(model, param, serviceProvider)
+    {
+    }
+
+    /// <inheritdoc />
+    protected override void ConstructHook(MegFileHolderParam param)
+    {
+        FileVersion = param.FileVersion ?? throw new ArgumentNullException(nameof(param.FileVersion));
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MTD.Binary.File.Builder;
+using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;
 
 namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Builder;
 
@@ -17,7 +18,7 @@ public class MtdFileBuilderTest
         0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
     })]
     [DataRow(new byte[]
     {
@@ -27,19 +28,19 @@ public class MtdFileBuilderTest
         0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
     })]
     [ExpectedException(typeof(ArgumentException))]
     public void FromBytes_Test__ThrowsArgumentException(byte[] byteStream)
     {
-        var builder = new MtdFileBuilder();
-        var _ = builder.FromBytes(byteStream);
+        var builder = new MtdFileConverter();
+        MtdFile? _ = builder.FromBytes(byteStream);
     }
 
     [TestMethod]
     public void FromBytes_Test__AsExpected()
     {
-        var builder = new MtdFileBuilder();
-        var _ = builder.FromBytes(MtdTestConstants.MtdFileTestConstants.METADATA_TO_BYTES);
+        var builder = new MtdFileConverter();
+        MtdFile? _ = builder.FromBytes(MtdTestConstants.MtdFileTestConstants.METADATA_TO_BYTES);
     }
 }

@@ -18,27 +18,30 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
-internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile>, IBinaryFileReader<IMegFileMetadata>
+internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFile, MegFileHolderParam>,
+    IBinaryFileReader<IMegFileMetadata>
 {
     public IMegFileMetadata ReadBinary(Stream byteStream)
     {
         if (byteStream.Length < 1)
+        {
             throw new InvalidOperationException("Cannot read empty data");
+        }
 
         using var binaryReader = new BinaryReader(byteStream, MegFileConstants.MegContentFileNameEncoding, true);
 
-        var header = BuildMegHeaderInternal(binaryReader);
-        var fileNameTable = BuildFileNameTableInternal(binaryReader, (int)header.NumFiles);
-        var fileTable = BuildFileContentTableInternal(binaryReader, (int)header.NumFiles);
+        MegHeader header = BuildMegHeaderInternal(binaryReader);
+        MegFileNameTable fileNameTable = BuildFileNameTableInternal(binaryReader, (int)header.NumFiles);
+        MegFileTable fileTable = BuildFileContentTableInternal(binaryReader, (int)header.NumFiles);
 
         return new MegMetadata(header, fileNameTable, fileTable);
     }
 
     private MegHeader BuildMegHeaderInternal(BinaryReader reader)
     {
-        var numFileNames = reader.ReadUInt32();
-        var numFiles = reader.ReadUInt32();
-        
+        uint numFileNames = reader.ReadUInt32();
+        uint numFiles = reader.ReadUInt32();
+
         if (numFiles != numFileNames)
         {
             throw new BinaryCorruptedException(
@@ -46,8 +49,10 @@ internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile
         }
 
         if (numFiles > int.MaxValue)
+        {
             throw new NotSupportedException(
                 ".MEG files with a file number greater than int32.MaxValue are not supported.");
+        }
 
         return new MegHeader(numFileNames, numFiles);
     }
@@ -55,13 +60,14 @@ internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile
     private MegFileNameTable BuildFileNameTableInternal(BinaryReader reader, int fileNumber)
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
-        var encoding = MegFileConstants.MegContentFileNameEncoding;
+        Encoding encoding = MegFileConstants.MegContentFileNameEncoding;
         for (uint i = 0; i < fileNumber; i++)
         {
-            var fileNameLength = reader.ReadUInt16();
-            var fileName = GetString(reader, fileNameLength, encoding);
+            ushort fileNameLength = reader.ReadUInt16();
+            string fileName = GetString(reader, fileNameLength, encoding);
             fileNameTable.Add(new MegFileNameTableRecord(fileName, encoding));
         }
+
         return new MegFileNameTable(fileNameTable);
     }
 
@@ -69,7 +75,7 @@ internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile
     {
         byte[]? rentedFromPool = null;
 
-        var buffer =
+        Span<byte> buffer =
 #if NETSTANDARD2_0
             rentedFromPool = ArrayPool<byte>.Shared.Rent(length);
 #else
@@ -78,14 +84,18 @@ internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile
                 : stackalloc byte[length];
 #endif
 
-        var bytesRead = reader.Read();
+        int bytesRead = reader.Read();
         if (bytesRead != length)
+        {
             throw new BinaryCorruptedException($"Unable to read string value of given length '{length}'.");
+        }
 
-        var @string = encoding.GetString(buffer);
+        string @string = encoding.GetString(buffer.ToArray());
 
         if (rentedFromPool is not null)
+        {
             ArrayPool<byte>.Shared.Return(rentedFromPool);
+        }
 
         return @string;
     }
@@ -97,18 +107,25 @@ internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile
         for (var i = 0; i < fileNumber; i++)
         {
             var crc32 = new Crc32(reader.ReadUInt32());
-            var fileTableRecordIndex = reader.ReadUInt32();
-           
+            uint fileTableRecordIndex = reader.ReadUInt32();
+
             if (fileTableRecordIndex > int.MaxValue)
-                throw new NotSupportedException(".MEG files with a file number greater than int32.MaxValue are not supported.");
+            {
+                throw new NotSupportedException(
+                    ".MEG files with a file number greater than int32.MaxValue are not supported.");
+            }
+
             Debug.Assert(fileTableRecordIndex == i);
 
-            var fileSizeInBytes = reader.ReadUInt32();
-            var fileStartOffsetInBytes = reader.ReadUInt32();
+            uint fileSizeInBytes = reader.ReadUInt32();
+            uint fileStartOffsetInBytes = reader.ReadUInt32();
 
-            var fileNameTableIndex = reader.ReadUInt32();
+            uint fileNameTableIndex = reader.ReadUInt32();
             if (fileNameTableIndex > int.MaxValue)
-                throw new NotSupportedException(".MEG files with a file number greater than int32.MaxValue are not supported.");
+            {
+                throw new NotSupportedException(
+                    ".MEG files with a file number greater than int32.MaxValue are not supported.");
+            }
 
             megFileContentTableRecords.Add(new MegFileContentTableRecord(
                 crc32,
@@ -168,7 +185,8 @@ internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile
         throw new NotImplementedException();
     }
 
-    private IEnumerable<MegFileDataEntry> CollectSortedMegFileDataEntries(IMegFile holder, MegFileNameTableRecord megFileNameTableRecord)
+    private IEnumerable<MegFileDataEntry> CollectSortedMegFileDataEntries(IMegFile holder,
+        MegFileNameTableRecord megFileNameTableRecord)
     {
         return holder.Content.Where(megFileDataEntry =>
             megFileNameTableRecord.FileName.Equals(
@@ -178,6 +196,11 @@ internal class MegFileBinaryServiceV1 : IBinaryFileBuilder<MegMetadata, IMegFile
 
     public MegMetadata FromHolder(IMegFile holder)
     {
-        return FromHolder(holder, out var _);
+        return FromHolder(holder, out IList<string> _);
+    }
+
+    public IMegFile ToHolder(MegFileHolderParam param, MegMetadata model)
+    {
+        throw new NotImplementedException();
     }
 }

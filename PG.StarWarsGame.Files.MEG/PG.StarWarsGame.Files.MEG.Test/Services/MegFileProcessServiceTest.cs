@@ -11,14 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Test;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
 [TestClass]
-public class MegFileProcessServiceTest : AbstractServiceTest<MegFileService>
+public class MegFileProcessServiceTest : ServiceTestBase<MegFileService>
 {
     //[TestMethod]
     //public void PackFilesAsMegArchive_Test__CreatedMegFileIsBinaryEquivalent()

@@ -1,16 +1,16 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT
+// license. See LICENSE file in the project root for details.
 
-using System;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+using System;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, IComparable<MegFileContentTableRecord>
 {
     public Crc32 Crc32 { get; }
-    
+
     public uint FileOffset { get; }
 
     public uint FileSize { get; }
@@ -18,8 +18,8 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
     internal uint FileNameIndex { get; }
 
     internal uint FileTableRecordIndex { get; }
-    
-    int IMegFileDescriptor.FileNameIndex => (int) FileNameIndex;
+
+    int IMegFileDescriptor.FileNameIndex => (int)FileNameIndex;
 
     public byte[] Bytes
     {

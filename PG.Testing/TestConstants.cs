@@ -42,9 +42,18 @@ public class TestConstants
             return s_serviceProvider;
         }
 
-        s_serviceProvider = new ServiceCollection()
-            .AddSingleton<IFileSystem, MockFileSystem>()
-            .AddSingleton<ILoggerFactory, NullLoggerFactory>().BuildServiceProvider();
+        var collection = new ServiceCollection();
+        RegisterServicesInternal(collection);
+        
+        s_serviceProvider = collection
+            .BuildServiceProvider();
         return s_serviceProvider;
+    }
+
+    private static void RegisterServicesInternal(ServiceCollection collection)
+    {
+        collection
+            .AddSingleton<IFileSystem, MockFileSystem>()
+            .AddSingleton<ILoggerFactory, NullLoggerFactory>();
     }
 }

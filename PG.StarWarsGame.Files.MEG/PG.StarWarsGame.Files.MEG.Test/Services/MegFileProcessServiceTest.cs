@@ -2,14 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
@@ -17,7 +9,7 @@ using PG.Testing;
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
 [TestClass]
-public class MegFileProcessServiceTest : ServiceTestBase<MegFileService>
+public class MegFileProcessServiceTest : ServiceTestBase
 {
     //[TestMethod]
     //public void PackFilesAsMegArchive_Test__CreatedMegFileIsBinaryEquivalent()
@@ -342,4 +334,8 @@ public class MegFileProcessServiceTest : ServiceTestBase<MegFileService>
     //        .AddSingleton<ILoggerFactory, NullLoggerFactory>().BuildServiceProvider();
     //    return serviceProvider;
     //}
+    protected override Type GetServiceClass()
+    {
+        return typeof(MegFileService);
+    }
 }

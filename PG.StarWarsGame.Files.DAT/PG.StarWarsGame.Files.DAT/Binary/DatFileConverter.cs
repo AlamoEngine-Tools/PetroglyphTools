@@ -72,14 +72,12 @@ internal class DatFileConverter : ServiceBase, IDatFileConverter
 
     public IDatFile ToHolder(IFileHolderParam param, IDatFileMetadata model)
     {
-        if (param is not DatFileHolderParam)
+        if (param is not DatFileHolderParam param0)
         {
             throw new ArgumentException(
                 $"The provided parameter {param} is incompatible with the desired holder type {nameof(IDatFile)}.",
                 nameof(param));
         }
-
-        var param0 = (DatFileHolderParam)param;
 
         var isSorted = true;
         Crc32 currentCrc = model.IndexTable[0].Crc32;

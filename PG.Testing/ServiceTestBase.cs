@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.IO.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Services;
 
@@ -9,16 +10,20 @@ namespace PG.Testing;
 
 [TestClass]
 [TestCategory(TestConstants.TestCategories.SERVICE)]
-public abstract class ServiceTestBase<TService> where TService : ServiceBase
+public abstract class ServiceTestBase
 {
-    protected virtual TService GetServiceInstance()
+    private IFileSystem FileSystem { get; set; }
+
+    protected abstract Type GetServiceClass();
+    protected virtual IService GetServiceInstance()
     {
         return GetServiceInstance(GetServiceProviderInternal());
     }
 
-    protected virtual TService GetServiceInstance(IServiceProvider services)
+    protected virtual IService GetServiceInstance(IServiceProvider services)
     {
-        return (Activator.CreateInstance(typeof(TService), services)! as TService)!;
+        FileSystem = (IFileSystem) services.GetService(typeof(IFileSystem));
+        return (IService)Activator.CreateInstance(GetServiceClass(), services);
     }
 
     protected internal virtual IServiceProvider GetServiceProviderInternal()
@@ -36,12 +41,14 @@ public abstract class ServiceTestBase<TService> where TService : ServiceBase
     private void TestBaseSetup()
     {
         using var svc = GetServiceInstance();
-        Assert.IsNotNull(svc.Logger);
-        Assert.IsNotNull(svc.FileSystem);
+        Assert.IsTrue(svc.GetType().IsSubclassOf(typeof(ServiceBase)));
+        var svc0 = (ServiceBase)svc;
+        Assert.IsNotNull(svc0.Logger);
+        Assert.IsNotNull(svc0.FileSystem);
         TestBaseSetupInternal(svc);
     }
 
-    protected internal void TestBaseSetupInternal(TService svc)
+    protected internal void TestBaseSetupInternal(IService svc)
     {
         // NOP
     }

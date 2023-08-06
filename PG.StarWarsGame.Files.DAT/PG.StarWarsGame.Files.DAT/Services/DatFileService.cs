@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using PG.Commons.Common.Exceptions;
@@ -36,7 +35,9 @@ internal class DatFileService : ServiceBase, IDatFileService
         }
 
         // ReSharper disable once PossibleMultipleEnumeration
-        if (!entries.Any())
+        var entryList = entries.ToList();
+
+        if (!entryList.Any())
         {
             throw new ArgumentException($"No valid dat file entries have been provided.", nameof(entries));
         }
@@ -46,9 +47,9 @@ internal class DatFileService : ServiceBase, IDatFileService
             FileSystem.Directory.CreateDirectory(targetDirectory);
         }
 
-        string absoluteFilePath = FileSystem.Path.Combine(targetDirectory, datFileName);
-        IFileInfo fileInfo = FileSystem.FileInfo.New(absoluteFilePath);
-        string extension = fileInfo.Extension;
+        var absoluteFilePath = FileSystem.Path.Combine(targetDirectory, datFileName);
+        var fileInfo = FileSystem.FileInfo.New(absoluteFilePath);
+        var extension = fileInfo.Extension;
         var fileType = new DatAlamoFileType();
         if (!$".{fileType.FileExtension}".ToLower().Equals(extension.ToLower()))
         {
@@ -60,8 +61,13 @@ internal class DatFileService : ServiceBase, IDatFileService
             }
         }
 
+        if (datFileType == DatFileType.OrderedByCrc32)
+        {
+            entryList.Sort();
+        }
+
         // ReSharper disable once PossibleMultipleEnumeration
-        var datHolder = new DatFileHolder(entries.ToList().AsReadOnly(),
+        var datHolder = new DatFileHolder(entryList.AsReadOnly(),
             new DatFileHolderParam() { FilePath = absoluteFilePath, Order = datFileType }, Services);
 
         var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??

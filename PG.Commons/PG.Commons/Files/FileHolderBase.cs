@@ -81,8 +81,7 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
         // The game supports this as well, e.g. loading file "abc.def" as a meg archive, works just fine.
 
         // This call already throws an FileNotFoundException if the path does not exist at all.
-        if (IsDirectorySeparator(param.FilePath![param.FilePath.Length - 1]) ||
-            FileSystem.File.GetAttributes(param.FilePath).HasFlag(FileAttributes.Directory))
+        if (IsDirectorySeparator(param.FilePath![param.FilePath.Length - 1]))
         {
             throw new ArgumentException("Given file path is a directory.", nameof(param.FilePath));
         }

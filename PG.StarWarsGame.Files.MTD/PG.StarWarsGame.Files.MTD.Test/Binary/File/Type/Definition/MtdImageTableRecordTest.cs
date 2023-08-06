@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Test;
 using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.MTD.Commons.Exceptions;
 

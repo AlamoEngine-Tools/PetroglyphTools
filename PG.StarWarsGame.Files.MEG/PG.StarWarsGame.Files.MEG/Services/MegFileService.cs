@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
@@ -17,74 +18,85 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
-/// <inheritdoc cref="IMegFileService"/>
-public class MegFileService : AbstractService, IMegFileService
+/// <inheritdoc cref="IMegFileService" />
+public class MegFileService : ServiceBase, IMegFileService
 {
     /// <summary>
-    /// Initializes a new <see cref="MegFileService"/> class.
+    ///     Initializes a new <see cref="MegFileService" /> class.
     /// </summary>
     /// <param name="services">The service provider for this instance.</param>
     public MegFileService(IServiceProvider services) : base(services)
     {
     }
 
-    /// <inheritdoc/>
-    public void CreateMegArchive(string megArchiveName, string targetDirectory, IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
+    /// <inheritdoc />
+    public void CreateMegArchive(string megArchiveName, string targetDirectory,
+        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
         MegFileVersion megFileVersion)
     {
         throw new NotImplementedException();
     }
 
-    /// <inheritdoc/>
-    public void CreateMegArchive(string megArchiveName, string targetDirectory, IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
+    /// <inheritdoc />
+    public void CreateMegArchive(string megArchiveName, string targetDirectory,
+        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
         ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
     {
         throw new NotImplementedException();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMegFile Load(string filePath)
     {
-        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
+        using FileSystemStream fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
 
-        var megVersion = GetMegFileVersion(fs, out var encrypted);
+        MegFileVersion megVersion = GetMegFileVersion(fs, out bool encrypted);
 
         if (encrypted)
+        {
             throw new NotSupportedException("Cannot load an encrypted .MEG archive without encryption key.\r\n" +
                                             "Use Load(string, ReadOnlySpan<byte>, ReadOnlySpan<byte>) instead.");
+        }
 
-        var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(megVersion);
+        IBinaryFileReader<IMegFileMetadata> reader = Services.GetRequiredService<IMegBinaryServiceFactory>()
+            .GetReader(megVersion);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return CreateHolderFromMetadata(reader, fs, filePath);
+        return CreateHolderFromMetadata(reader, fs, filePath, megVersion);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMegFile Load(string filePath, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
     {
-        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
+        using FileSystemStream fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
 
-        GetMegFileVersion(fs, out var encrypted);
+        MegFileVersion version = GetMegFileVersion(fs, out bool encrypted);
 
         if (!encrypted)
+        {
             throw new NotSupportedException("The given .MEG archive is not encrypted.\r\n" +
                                             "Use Load(string) instead.");
+        }
 
-        var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(key, iv);
+        IBinaryFileReader<IMegFileMetadata> reader = Services.GetRequiredService<IMegBinaryServiceFactory>()
+            .GetReader(key, iv);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return CreateHolderFromMetadata(reader, fs, filePath);
+        return CreateHolderFromMetadata(reader, fs, filePath, version);
     }
 
-    private IMegFile CreateHolderFromMetadata(IBinaryFileReader<IMegFileMetadata> binaryBuilder, Stream fileStream, string filePath)
+    private IMegFile CreateHolderFromMetadata(IBinaryFileReader<IMegFileMetadata> binaryBuilder, Stream fileStream,
+        string filePath, MegFileVersion version)
     {
-        var megMetadata = binaryBuilder.ReadBinary(fileStream);
+        IMegFileMetadata megMetadata = binaryBuilder.ReadBinary(fileStream);
 
         if (megMetadata.FileNumber == 0)
+        {
             throw new NotSupportedException("Empty .MEG archives are not supported.");
+        }
 
         var files = new List<MegFileDataEntry>(megMetadata.FileNumber);
-        
+
         // According to the specification: 
         //  - The Meg's FileTable is sorted by CRC32.
         //  - It's not specified how or whether the FileNameTable is sorted.
@@ -95,43 +107,50 @@ public class MegFileService : AbstractService, IMegFileService
         // Since an IMegFile expects a List<>, not a Collection<>, we have to preserve the order of the FileTable
         for (var i = 0; i < megMetadata.FileNumber; i++)
         {
-            var fileDescriptor = megMetadata.FileTable[i];
-            var crc = fileDescriptor.Crc32;
-            var fileOffset = fileDescriptor.FileOffset;
-            var fileSize = fileDescriptor.FileSize;
-            var fileNameIndex = fileDescriptor.FileNameIndex;
-            var fileName = megMetadata.FileNameTable[fileNameIndex];
+            IMegFileDescriptor fileDescriptor = megMetadata.FileTable[i];
+            Crc32 crc = fileDescriptor.Crc32;
+            uint fileOffset = fileDescriptor.FileOffset;
+            uint fileSize = fileDescriptor.FileSize;
+            int fileNameIndex = fileDescriptor.FileNameIndex;
+            string fileName = megMetadata.FileNameTable[fileNameIndex];
             files.Add(new MegFileDataEntry(crc, fileName, fileOffset, fileSize));
         }
 
-        return new MegFileHolder(files, filePath, Services);
+        return new MegFileHolder(files, new MegFileHolderParam { FilePath = filePath, FileVersion = version },
+            Services);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
         if (string.IsNullOrWhiteSpace(file))
+        {
             throw new ArgumentNullException(nameof(file));
+        }
 
-        using var fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using FileSystemStream fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         return GetMegFileVersion(fs, out encrypted);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted)
     {
         if (stream == null)
+        {
             throw new ArgumentNullException(nameof(stream));
+        }
+
         if (!stream.CanRead || !stream.CanSeek)
+        {
             throw new ArgumentException("Stream must be readable and seekable.", nameof(stream));
+        }
 
         encrypted = false;
 
         using var reader = new BinaryReader(stream, Encoding.UTF8, true);
 
-        var flags = reader.ReadUInt32();
-        var id = reader.ReadUInt32();
-
+        uint flags = reader.ReadUInt32();
+        uint id = reader.ReadUInt32();
 
 
         // In V2 and V3 id and flags are never equal, where they are in V1.
@@ -141,13 +160,18 @@ public class MegFileService : AbstractService, IMegFileService
         if (flags == id)
         {
             if (flags == 0)
+            {
                 throw new InvalidOperationException("Empty .MEG files re not supported");
+            }
+
             return MegFileVersion.V1;
         }
 
 
         if (id != MegFileConstants.MegFileMagicNumber)
+        {
             throw new BinaryCorruptedException("Unrecognized .MEG file version");
+        }
 
         // This file is encrypted, thus it can only be V3
         if (flags == MegFileConstants.MegFileEncryptedFlag)
@@ -157,14 +181,16 @@ public class MegFileService : AbstractService, IMegFileService
         }
 
 
-        var dataStart = reader.ReadUInt32();
-        var numFilenames = reader.ReadUInt32();
-        var numFiles = reader.ReadUInt32();
+        uint dataStart = reader.ReadUInt32();
+        uint numFilenames = reader.ReadUInt32();
+        uint numFiles = reader.ReadUInt32();
 
         Debug.Assert(numFiles == numFilenames);
 
         if (numFiles == 0)
+        {
             throw new InvalidOperationException("Empty .MEG files re not supported");
+        }
 
         // So far the file could be either V2 or V3. 
         // Efficient approach to check the meg version: 
@@ -202,28 +228,36 @@ public class MegFileService : AbstractService, IMegFileService
             uint filenamesSize;
 
             if (!TryReadUInt32(reader, out filenamesSize))
+            {
                 return MegFileVersion.V2;
+            }
 
             // known start of the FileTable
-            var fileTableOffset = dataStart - numFiles * 20;
+            uint fileTableOffset = dataStart - (numFiles * 20);
 
 
-            if (fileTableOffset != 24 + filenamesSize)
+            if (fileTableOffset != (24 + filenamesSize))
+            {
                 return MegFileVersion.V2;
+            }
 
             // Now check for first and last element values
 
             reader.BaseStream.Position = fileTableOffset;
 
             if (!FileRecordIsV3(reader, 0))
+            {
                 return MegFileVersion.V2;
+            }
 
             if (numFiles == 1)
+            {
                 return MegFileVersion.V3;
+            }
 
-            var lastFileRecordPosition = dataStart - 20;
+            uint lastFileRecordPosition = dataStart - 20;
             reader.BaseStream.Position = lastFileRecordPosition;
-            var lastFileTableIndex = numFiles - 1;
+            uint lastFileTableIndex = numFiles - 1;
 
             return FileRecordIsV3(reader, lastFileTableIndex) ? MegFileVersion.V3 : MegFileVersion.V2;
         }
@@ -235,11 +269,14 @@ public class MegFileService : AbstractService, IMegFileService
     {
         try
         {
-            var flag = reader.ReadUInt16();
+            ushort flag = reader.ReadUInt16();
             if (flag != 0)
+            {
                 return false;
+            }
+
             reader.ReadUInt32(); // CRC
-            var index = reader.ReadUInt32();
+            uint index = reader.ReadUInt32();
             return index == expectedIndex;
         }
         catch

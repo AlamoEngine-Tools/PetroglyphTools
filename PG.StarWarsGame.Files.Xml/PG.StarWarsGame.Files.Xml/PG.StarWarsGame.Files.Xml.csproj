@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-        <Title>PG.StarWarsGame.Files.Xml</Title>
-        <PackageId>AnakinRaw.PG.StarWarsGame.Files.Xml</PackageId>
-        <Product>PG.StarWarsGame.Files.Xml</Product>
-	</PropertyGroup>
     <PropertyGroup>
-	    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Title>PG.StarWarsGame.Files.Xml</Title>
+        <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.Xml</PackageId>
+        <Product>PG.StarWarsGame.Files.Xml</Product>
+        <Version>0.1.0-alpha.1</Version>
+        <AssemblyVersion>0.1.0-alpha.1</AssemblyVersion>
+        <FileVersion>0.1.0-alpha.1</FileVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <InheritDocEnabled>true</InheritDocEnabled>
     </PropertyGroup>
@@ -14,13 +17,13 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
-	<ItemGroup>
-		<EmbeddedResource Update="Resources\LocalizableTexts.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>LocalizableTexts.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\LocalizableTexts.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>LocalizableTexts.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
+    </ItemGroup>
 </Project>

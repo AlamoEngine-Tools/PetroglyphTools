@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PG.Commons.Test;
+namespace PG.Testing;
 
 public static class TestUtility
 {
-    private static readonly Random RANDOM_GENERATOR = new Random();
+    private static readonly Random RandomGenerator = new Random();
         
     public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
     {
@@ -27,7 +27,7 @@ public static class TestUtility
 
         for (var i = 0; i < lenght; i++)
         {
-            chars[i] = allowedChars[RANDOM_GENERATOR.Next(0, allowedChars.Length)];
+            chars[i] = allowedChars[RandomGenerator.Next(0, allowedChars.Length)];
         }
 
         return new string(chars);

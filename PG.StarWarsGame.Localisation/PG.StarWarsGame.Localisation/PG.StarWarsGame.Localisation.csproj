@@ -1,51 +1,66 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Remove="Data\Dat\EaW\de\creditstext_german.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\de\creditstext_german.dat" />
-		<None Remove="Data\Dat\EaW\de\mastertextfile_german.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\de\mastertextfile_german.dat" />
-		<None Remove="Data\Dat\EaW\en\creditstext_english.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\en\creditstext_english.dat" />
-		<None Remove="Data\Dat\EaW\en\mastertextfile_english.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\en\mastertextfile_english.dat" />
-		<None Remove="Data\Dat\EaW\es\creditstext_spanish.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\es\creditstext_spanish.dat" />
-		<None Remove="Data\Dat\EaW\es\mastertextfile_spanish.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\es\mastertextfile_spanish.dat" />
-		<None Remove="Data\Dat\EaW\fr\creditstext_french.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\fr\creditstext_french.dat" />
-		<None Remove="Data\Dat\EaW\fr\mastertextfile_french.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\fr\mastertextfile_french.dat" />
-		<None Remove="Data\Dat\EaW\it\creditstext_italian.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\it\creditstext_italian.dat" />
-		<None Remove="Data\Dat\EaW\it\mastertextfile_italian.dat" />
-		<EmbeddedResource Include="Data\Dat\EaW\it\mastertextfile_italian.dat" />
-		<None Remove="Data\Dat\FoC\de\creditstext_german.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\de\creditstext_german.dat" />
-		<None Remove="Data\Dat\FoC\de\mastertextfile_german.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\de\mastertextfile_german.dat" />
-		<None Remove="Data\Dat\FoC\en\creditstext_english.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\en\creditstext_english.dat" />
-		<None Remove="Data\Dat\FoC\en\mastertextfile_english.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\en\mastertextfile_english.dat" />
-		<None Remove="Data\Dat\FoC\es\creditstext_spanish.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\es\creditstext_spanish.dat" />
-		<None Remove="Data\Dat\FoC\es\mastertextfile_spanish.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\es\mastertextfile_spanish.dat" />
-		<None Remove="Data\Dat\FoC\fr\creditstext_french.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\fr\creditstext_french.dat" />
-		<None Remove="Data\Dat\FoC\fr\mastertextfile_french.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\fr\mastertextfile_french.dat" />
-		<None Remove="Data\Dat\FoC\it\creditstext_italian.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\it\creditstext_italian.dat" />
-		<None Remove="Data\Dat\FoC\it\mastertextfile_italian.dat" />
-		<EmbeddedResource Include="Data\Dat\FoC\it\mastertextfile_italian.dat" />
-	</ItemGroup>
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net8.0;netstandard2.1</TargetFrameworks>
+        <PackageId>AlamoEngineTools.PG.StarWarsGame.Localisation</PackageId>
+        <Version>0.1.0-alpha.1</Version>
+        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/main/LICENSE</PackageLicenseUrl>
+        <AssemblyVersion>0.1.0-alpha.1</AssemblyVersion>
+        <FileVersion>0.1.0-alpha.1</FileVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.6.23329.7"/>
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.29"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="Data\Dat\EaW\de\creditstext_german.dat"/>
+        <None Remove="Data\Dat\EaW\de\mastertextfile_german.dat"/>
+        <None Remove="Data\Dat\EaW\en\creditstext_english.dat"/>
+        <None Remove="Data\Dat\EaW\en\mastertextfile_english.dat"/>
+        <None Remove="Data\Dat\EaW\es\creditstext_spanish.dat"/>
+        <None Remove="Data\Dat\EaW\es\mastertextfile_spanish.dat"/>
+        <None Remove="Data\Dat\EaW\fr\creditstext_french.dat"/>
+        <None Remove="Data\Dat\EaW\fr\mastertextfile_french.dat"/>
+        <None Remove="Data\Dat\EaW\it\creditstext_italian.dat"/>
+        <None Remove="Data\Dat\EaW\it\mastertextfile_italian.dat"/>
+        <None Remove="Data\Dat\FoC\de\creditstext_german.dat"/>
+        <None Remove="Data\Dat\FoC\de\mastertextfile_german.dat"/>
+        <None Remove="Data\Dat\FoC\en\creditstext_english.dat"/>
+        <None Remove="Data\Dat\FoC\en\mastertextfile_english.dat"/>
+        <None Remove="Data\Dat\FoC\es\creditstext_spanish.dat"/>
+        <None Remove="Data\Dat\FoC\es\mastertextfile_spanish.dat"/>
+        <None Remove="Data\Dat\FoC\fr\creditstext_french.dat"/>
+        <None Remove="Data\Dat\FoC\fr\mastertextfile_french.dat"/>
+        <None Remove="Data\Dat\FoC\it\creditstext_italian.dat"/>
+        <None Remove="Data\Dat\FoC\it\mastertextfile_italian.dat"/>
+        <None Remove="Old\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\de\creditstext_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\de\mastertextfile_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\en\creditstext_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\en\mastertextfile_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\es\creditstext_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\es\mastertextfile_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\fr\creditstext_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\fr\mastertextfile_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\it\creditstext_italian.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\it\mastertextfile_italian.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\de\creditstext_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\de\mastertextfile_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\en\creditstext_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\en\mastertextfile_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\es\creditstext_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\es\mastertextfile_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\fr\creditstext_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\fr\mastertextfile_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\it\creditstext_italian.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\it\mastertextfile_italian.dat"/>
+        <EmbeddedResource Remove="Old\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Old\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
+    </ItemGroup>
 </Project>

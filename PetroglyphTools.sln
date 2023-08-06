@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.Xml.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Testing", "PG.Testing\PG.Testing.csproj", "{1B3F42F5-0BEE-4138-9222-DE7559CB9435}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisation", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.csproj", "{8CFF5CC4-7BB0-4792-BAE6-2DD14DDC2C36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisation.Test", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test\PG.StarWarsGame.Localisation.Test.csproj", "{FC294DB6-67F8-4C89-8F00-7AA7ECAD695E}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Benchmarks", "PG.Benchmarks\PG.Benchmarks.csproj", "{469BAFA4-7C54-4736-B349-3D6E84AB33FA}"
 EndProject
 Global
@@ -67,6 +71,14 @@ Global
 		{1B3F42F5-0BEE-4138-9222-DE7559CB9435}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B3F42F5-0BEE-4138-9222-DE7559CB9435}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B3F42F5-0BEE-4138-9222-DE7559CB9435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CFF5CC4-7BB0-4792-BAE6-2DD14DDC2C36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CFF5CC4-7BB0-4792-BAE6-2DD14DDC2C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CFF5CC4-7BB0-4792-BAE6-2DD14DDC2C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CFF5CC4-7BB0-4792-BAE6-2DD14DDC2C36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC294DB6-67F8-4C89-8F00-7AA7ECAD695E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC294DB6-67F8-4C89-8F00-7AA7ECAD695E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC294DB6-67F8-4C89-8F00-7AA7ECAD695E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC294DB6-67F8-4C89-8F00-7AA7ECAD695E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{469BAFA4-7C54-4736-B349-3D6E84AB33FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{469BAFA4-7C54-4736-B349-3D6E84AB33FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{469BAFA4-7C54-4736-B349-3D6E84AB33FA}.Release|Any CPU.ActiveCfg = Release|Any CPU

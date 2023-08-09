@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
         <Product>PG.Commons</Product>
@@ -30,7 +30,7 @@
         </PackageReference>
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0-preview.6.23329.7"/>
         <PackageReference Include="System.IO.Abstractions" Version="19.2.51"/>
-        <PackageReference Include="System.IO.Hashing" Version="8.0.0-preview.6.23329.7"/>
+        <PackageReference Include="System.IO.Hashing" Version="8.0.0-preview.7.23375.6"/>
     </ItemGroup>
     <ItemGroup>
         <None Update="aet.png">

@@ -17,6 +17,9 @@ namespace PG.StarWarsGame.Localisation.Languages.Builtin;
 [OfficiallySupportedLanguage]
 public sealed class JapaneseAlamoLanguageDefinition : AlamoLanguageDefinitionBase
 {
+    /// <inheritdoc />
     protected override string ConfiguredLanguageIdentifier => "JAPANESE";
+
+    /// <inheritdoc />
     protected override CultureInfo ConfiguredCulture => CultureInfo.GetCultureInfo("ja");
 }

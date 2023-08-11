@@ -17,6 +17,9 @@ namespace PG.StarWarsGame.Localisation.Languages.Builtin;
 [OfficiallySupportedLanguage]
 public sealed class PolishAlamoLanguageDefinition : AlamoLanguageDefinitionBase
 {
+    /// <inheritdoc />
     protected override string ConfiguredLanguageIdentifier => "POLISH";
+
+    /// <inheritdoc />
     protected override CultureInfo ConfiguredCulture => CultureInfo.GetCultureInfo("pl");
 }

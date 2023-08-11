@@ -11,16 +11,17 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace PG.Testing;
 
 /// <summary>
-/// Constants that can be re-used in all test projects.
+///     Constants that can be re-used in all test projects.
 /// </summary>
 public class TestConstants
 {
     /// <summary>
-    /// The Linux platform name
+    ///     The Linux platform name
     /// </summary>
     public const string PLATFORM_LINUX = "LINUX";
+
     /// <summary>
-    /// The Windows platform name
+    ///     The Windows platform name
     /// </summary>
     public const string PLATFORM_WINDOWS = "WINDOWS";
 
@@ -43,14 +44,15 @@ public class TestConstants
         }
 
         var collection = new ServiceCollection();
+
         RegisterServicesInternal(collection);
-        
+
         s_serviceProvider = collection
             .BuildServiceProvider();
         return s_serviceProvider;
     }
 
-    private static void RegisterServicesInternal(ServiceCollection collection)
+    protected static void RegisterServicesInternal(ServiceCollection collection)
     {
         collection
             .AddSingleton<IFileSystem, MockFileSystem>()

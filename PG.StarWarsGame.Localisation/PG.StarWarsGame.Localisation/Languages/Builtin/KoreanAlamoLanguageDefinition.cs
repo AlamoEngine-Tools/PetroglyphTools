@@ -17,6 +17,9 @@ namespace PG.StarWarsGame.Localisation.Languages.Builtin;
 [OfficiallySupportedLanguage]
 public sealed class KoreanAlamoLanguageDefinition : AlamoLanguageDefinitionBase
 {
+    /// <inheritdoc />
     protected override string ConfiguredLanguageIdentifier => "KOREAN";
+
+    /// <inheritdoc />
     protected override CultureInfo ConfiguredCulture => CultureInfo.GetCultureInfo("ko");
 }

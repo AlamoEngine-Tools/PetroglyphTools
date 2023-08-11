@@ -20,7 +20,6 @@ public static class AttributeExtensions
     /// <param name="valueSelector">The function to retrieve the value.</param>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
     /// <typeparam name="TValue">The return type.</typeparam>
-    /// <returns>The <see cref="TValue" /></returns>
     public static TValue? GetAttributeValueOrDefault<TAttribute, TValue>(this Type type,
         Func<TAttribute, TValue> valueSelector) where TAttribute : Attribute
     {

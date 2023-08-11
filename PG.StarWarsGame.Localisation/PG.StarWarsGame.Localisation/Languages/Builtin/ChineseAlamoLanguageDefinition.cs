@@ -17,6 +17,9 @@ namespace PG.StarWarsGame.Localisation.Languages.Builtin;
 [OfficiallySupportedLanguage]
 public sealed class ChineseAlamoLanguageDefinition : AlamoLanguageDefinitionBase
 {
+    /// <inheritdoc />
     protected override string ConfiguredLanguageIdentifier => "CHINESE";
+
+    /// <inheritdoc />
     protected override CultureInfo ConfiguredCulture => CultureInfo.GetCultureInfo("zh-CN");
 }

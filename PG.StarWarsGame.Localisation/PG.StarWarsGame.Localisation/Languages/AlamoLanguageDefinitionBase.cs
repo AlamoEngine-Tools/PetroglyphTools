@@ -1,7 +1,6 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using System.Globalization;
 using FluentValidation;
 using FluentValidation.Results;
@@ -9,7 +8,10 @@ using PG.Commons.Validation;
 
 namespace PG.StarWarsGame.Localisation.Languages;
 
-public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IComparable, IValidatable
+/// <summary>
+///     Base definition for an <see cref="IAlamoLanguageDefinition" /> implementation.
+/// </summary>
+public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IValidatable
 {
     /// <summary>
     ///     A string that is being used to identify the language of the *.DAT file, e.g. a language identifier
@@ -23,25 +25,11 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IC
     /// </summary>
     protected abstract CultureInfo ConfiguredCulture { get; }
 
+    /// <inheritdoc />
     public string LanguageIdentifier => ConfiguredLanguageIdentifier;
-    public CultureInfo Culture => ConfiguredCulture;
 
-    /// <summary>
-    ///     Compares the current instance with another object of the same type and returns an integer that indicates
-    ///     whether the current instance precedes, follows, or occurs in the same position in the sort order as the
-    ///     other object.
-    /// </summary>
-    /// <remarks>
-    ///     The <see cref="IAlamoLanguageDefinition" /> specific override differs in its sort order in such a way,
-    ///     that all elements are ordered by their <see cref="CultureInfo.TwoLetterISOLanguageName" />t.
-    /// </remarks>
-    /// <param name="other"></param>
-    /// <returns></returns>
-    protected virtual int CompareToInternal(IAlamoLanguageDefinition other)
-    {
-        return string.Compare(Culture.TwoLetterISOLanguageName, other.Culture.TwoLetterISOLanguageName,
-            StringComparison.Ordinal);
-    }
+    /// <inheritdoc />
+    public CultureInfo Culture => ConfiguredCulture;
 
     /// <summary>
     ///     Determines whether the specified object is equal to the current object.
@@ -50,7 +38,7 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IC
     /// <returns></returns>
     protected virtual bool EqualsInternal(IAlamoLanguageDefinition other)
     {
-        return CompareTo(other) == 0;
+        return GetHashCodeInternal().CompareTo(other.GetHashCode()) == 0;
     }
 
     /// <summary>
@@ -69,6 +57,7 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IC
         }
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
         if (obj is null)
@@ -84,46 +73,50 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IC
         return obj is IAlamoLanguageDefinition alamoLanguageDefinition && EqualsInternal(alamoLanguageDefinition);
     }
 
-    public int CompareTo(object obj)
-    {
-        if (obj is not IAlamoLanguageDefinition other)
-        {
-            throw new ArgumentException(
-                $"The type of {obj.GetType()} is not assignable to {typeof(IAlamoLanguageDefinition)}. The two objects cannot be compared.");
-        }
-
-        return CompareToInternal(other);
-    }
-
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         return GetHashCodeInternal();
     }
 
+    /// <inheritdoc />
     public ValidationResult Validate()
     {
         return ValidateInternal();
     }
 
+    /// <summary>
+    ///     Base <see cref="Validate" /> implementation.
+    /// </summary>
     protected virtual ValidationResult ValidateInternal()
     {
         AlamoLanguageDefinitionValidatorBase v = new();
         return v.Validate(this);
     }
 
+    /// <inheritdoc />
     public void ValidateAndThrow()
     {
         ValidateAndThrowInternal();
     }
 
+    /// <summary>
+    ///     Base <see cref="ValidateAndThrow" /> implementation.
+    /// </summary>
     protected virtual void ValidateAndThrowInternal()
     {
         AlamoLanguageDefinitionValidatorBase v = new();
         v.ValidateAndThrow(this);
     }
 
+    /// <summary>
+    ///     Base class for <see cref="IAlamoLanguageDefinition" /> validations.
+    /// </summary>
     protected class AlamoLanguageDefinitionValidatorBase : AbstractValidator<AlamoLanguageDefinitionBase>
     {
+        /// <summary>
+        ///     .ctor
+        /// </summary>
         public AlamoLanguageDefinitionValidatorBase()
         {
             RuleFor(languageDefinition => languageDefinition.ConfiguredCulture).NotNull();

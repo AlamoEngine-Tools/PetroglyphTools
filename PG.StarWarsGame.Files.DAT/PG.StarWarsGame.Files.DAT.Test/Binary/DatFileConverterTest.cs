@@ -38,8 +38,7 @@ public class DatFileConverterTest : ServiceTestBase
 
     private DatFileConverter GetService()
     {
-        var svc = GetServiceInstance();
-        return (DatFileConverter)svc;
+        return GetServiceInstance<DatFileConverter>();
     }
 
     [TestMethod]

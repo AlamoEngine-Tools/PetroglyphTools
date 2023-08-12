@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Services;
 
-namespace PG.StarWarsGame.Files.DAT;
+namespace PG.StarWarsGame.Files.DAT.Domain;
 
 /// <summary>
 ///     Provides methods to initialize this library.

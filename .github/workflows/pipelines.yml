@@ -1,4 +1,4 @@
-name: .NET Core - Build, Test and Coverage
+name: .NET Core - Build & Test
 
 on:
   workflow_call:
@@ -43,38 +43,3 @@ jobs:
           dotnet test PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation.csproj
         env:
           Configuration: ${{ matrix.configuration }}
-  code-coverage:
-    name: Code Coverage
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test_project: [ PG.Commons, PG.StarWarsGame.Files.DAT, PG.StarWarsGame.Files.MEG, PG.StarWarsGame.Components.Localisation ]
-      fail-fast: false
-    continue-on-error: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 7.x
-      - name: Generate Code Coverage Report
-        run: dotnet test ${{ matrix.test_project }}/${{ matrix.test_project }}.Test/${{ matrix.test_project }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
-      - name: Publish Coverage Report
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.test_project }}
-          path-to-lcov: ./${{ matrix.test_project }}/${{ matrix.test_project }}.Test/TestResults/coverage.info
-          parallel: true
-  finish:
-    needs: code-coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finish
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true

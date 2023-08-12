@@ -1,6 +1,8 @@
 name: Petroglyph Tools .NET Core Build & Test
 
 on:
+  workflow_call:
+  workflow_dispatch:
   push:
     branches: [ develop ]
   pull_request:

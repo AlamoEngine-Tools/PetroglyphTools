@@ -2,7 +2,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <TargetFrameworks>net8.0</TargetFrameworks>
-        <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
+        <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">net7.0;netstandard2.0;netstandard2.1</TargetFrameworks>
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Localisation.Test</PackageId>
         <Version>0.1.0-alpha.1</Version>
         <AssemblyVersion>0.1.0-alpha.1</AssemblyVersion>
@@ -13,8 +13,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.6.23329.7"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23371-04"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.0"/>
         <PackageReference Include="MSTest.TestAdapter" Version="3.1.1"/>
         <PackageReference Include="MSTest.TestFramework" Version="3.1.1"/>
         <PackageReference Include="coverlet.collector" Version="6.0.0">

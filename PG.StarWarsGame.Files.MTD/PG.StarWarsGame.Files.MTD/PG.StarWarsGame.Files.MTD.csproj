@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
         <Title>PG.StarWarsGame.Files.MTD</Title>
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MTD</PackageId>
         <Product>PG.StarWarsGame.Files.MTD</Product>

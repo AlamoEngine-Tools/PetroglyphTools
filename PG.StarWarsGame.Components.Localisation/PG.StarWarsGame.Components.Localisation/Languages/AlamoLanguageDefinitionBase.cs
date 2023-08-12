@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.Globalization;
 using FluentValidation;
 using FluentValidation.Results;
@@ -51,10 +52,7 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IV
     /// <returns></returns>
     protected virtual int GetHashCodeInternal()
     {
-        unchecked
-        {
-            return (ConfiguredLanguageIdentifier.GetHashCode() * 397) ^ Culture.GetHashCode();
-        }
+        return HashCode.Combine(LanguageIdentifier.ToUpper().GetHashCode(), Culture.GetHashCode());
     }
 
     /// <inheritdoc />

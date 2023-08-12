@@ -4,7 +4,7 @@
 using PG.Commons.Repository;
 using PG.StarWarsGame.Components.Localisation.Languages;
 
-namespace PG.StarWarsGame.Components.Localisation.Repository;
+namespace PG.StarWarsGame.Components.Localisation.Repository.Translation;
 
 /// <summary>
 ///     A repository to hold <see cref="ITranslationItem" />s.

@@ -3,7 +3,7 @@
 
 using PG.Commons.Repository;
 
-namespace PG.StarWarsGame.Components.Localisation.Repository;
+namespace PG.StarWarsGame.Components.Localisation.Repository.Translation;
 
 /// <summary>
 ///     Repository for sorted localisations.

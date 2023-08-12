@@ -27,13 +27,8 @@ public sealed class TranslationItem : ITranslationItem
             throw new ArgumentNullException(nameof(key));
         }
 
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
         Key = key ?? throw new ArgumentNullException(nameof(key));
-        Value = value ?? throw new ArgumentNullException(nameof(value));
+        Value = value;
     }
 
 
@@ -61,7 +56,7 @@ public sealed class TranslationItem : ITranslationItem
         internal TranslationItemValidator()
         {
             RuleFor(i => i.Key).NotNull().NotEmpty();
-            RuleFor(i => i.Value).NotNull().NotEmpty();
+            RuleFor(i => i.Value).NotNull();
         }
     }
 }

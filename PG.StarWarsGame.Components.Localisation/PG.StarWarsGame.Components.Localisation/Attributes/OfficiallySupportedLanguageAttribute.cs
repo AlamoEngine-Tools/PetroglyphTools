@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Components.Localisation.Attributes;
 /// <summary>
 ///     An <see cref="Attribute" /> that marks a language as officially supported.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
 [ExcludeFromCodeCoverage]
 public sealed class OfficiallySupportedLanguageAttribute : Attribute
 {

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using PG.StarWarsGame.Components.Localisation.Languages;
 
 namespace PG.StarWarsGame.Components.Localisation.Attributes;
@@ -10,6 +11,8 @@ namespace PG.StarWarsGame.Components.Localisation.Attributes;
 ///     <see cref="Attribute" /> that can be used to mark a <see cref="IAlamoLanguageDefinition" /> as the default
 ///     language.
 /// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
+[ExcludeFromCodeCoverage]
 public sealed class DefaultLanguageAttribute : Attribute
 {
     /// <summary>

@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Localisation.Attributes;
 ///     <see cref="Attribute" /> that can be used to mark a <see cref="IAlamoLanguageDefinition" /> as the default
 ///     language.
 /// </summary>
-public class DefaultLanguageAttribute : Attribute
+public sealed class DefaultLanguageAttribute : Attribute
 {
     /// <summary>
     ///     Is set to true, if the language is a default.

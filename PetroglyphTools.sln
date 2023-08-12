@@ -25,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.Xml.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Testing", "PG.Testing\PG.Testing.csproj", "{1B3F42F5-0BEE-4138-9222-DE7559CB9435}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisation", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.csproj", "{8CFF5CC4-7BB0-4792-BAE6-2DD14DDC2C36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Components.Localisation", "PG.StarWarsGame.Components.Localisation\PG.StarWarsGame.Components.Localisation\PG.StarWarsGame.Components.Localisation.csproj", "{8CFF5CC4-7BB0-4792-BAE6-2DD14DDC2C36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Localisation.Test", "PG.StarWarsGame.Localisation\PG.StarWarsGame.Localisation.Test\PG.StarWarsGame.Localisation.Test.csproj", "{FC294DB6-67F8-4C89-8F00-7AA7ECAD695E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Components.Localisation.Test", "PG.StarWarsGame.Components.Localisation\PG.StarWarsGame.Components.Localisation.Test\PG.StarWarsGame.Components.Localisation.Test.csproj", "{FC294DB6-67F8-4C89-8F00-7AA7ECAD695E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.Benchmarks", "PG.Benchmarks\PG.Benchmarks.csproj", "{469BAFA4-7C54-4736-B349-3D6E84AB33FA}"
 EndProject

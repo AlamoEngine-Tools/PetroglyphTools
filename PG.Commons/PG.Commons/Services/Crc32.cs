@@ -61,9 +61,9 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// Returns the CRC32 checksum as a byte array.
     /// </summary>
     /// <returns>The CRC32 checksum as a byte array.</returns>
-    public byte[] GetBytes()
+    public unsafe byte[] GetBytes()
     {
-        var bytes = new byte[sizeof(uint)];
+        var bytes = new byte[sizeof(Crc32)];
         GetBytes(bytes);
         return bytes;
     }

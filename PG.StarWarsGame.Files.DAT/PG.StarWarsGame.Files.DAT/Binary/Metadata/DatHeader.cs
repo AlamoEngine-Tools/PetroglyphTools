@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Buffers.Binary;
 using PG.Commons.Binary;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -18,7 +19,15 @@ internal readonly struct DatHeader : IBinary
         RecordCount = recordCount;
     }
 
-    public byte[] Bytes => BitConverter.GetBytes(RecordCount);
+    public byte[] Bytes
+    {
+        get
+        {
+            Span<byte> data = stackalloc byte[Size];
+            BinaryPrimitives.WriteUInt32LittleEndian(data, RecordCount);
+            return data.ToArray();
+        }
+    }
 
     public int Size => sizeof(uint);
 }

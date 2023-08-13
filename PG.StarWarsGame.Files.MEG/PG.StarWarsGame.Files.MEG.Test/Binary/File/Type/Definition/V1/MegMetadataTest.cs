@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1;
@@ -15,22 +14,34 @@ public class MegMetadataTest
 {
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentNullException()
+    { 
+        Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, null!, new MegFileTable(new List<MegFileContentTableRecord>())));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, new MegFileNameTable(new List<MegFileNameTableRecord>()), null!));
+    }
+
+    [TestMethod]
+    public void Ctor_Test__ThrowsArgumentException()
     {
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>
-            { new(default, 0, 0, 0, 0) });
-        Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, null!, fileTable));
+        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(
+            new MegHeader(1, 1),
+            new MegFileNameTable(new List<MegFileNameTableRecord>()),
+            new MegFileTable(new List<MegFileContentTableRecord>())));
 
+        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(
+            new MegHeader(1, 1),
+            new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII)}),
+            new MegFileTable(new List<MegFileContentTableRecord>())));
 
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
-            { new("123", Encoding.ASCII) });
-        Assert.ThrowsException<ArgumentNullException>(() =>
-            new MegMetadata(default, fileNameTable, null!));
+        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(
+            new MegHeader(1, 1),
+            new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII) }),
+            new MegFileTable(new List<MegFileContentTableRecord> { default, default })));
     }
 
     [TestMethod]
     public void Ctor_Test__Correct()
     {
-        new MegMetadata(
+        var _ = new MegMetadata(
             new MegHeader(1, 1),
             new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII) }),
             new MegFileTable(new List<MegFileContentTableRecord> { default }));

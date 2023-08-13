@@ -11,5 +11,5 @@ public sealed record MegFileHolderParam : FileHolderParamBase
     /// <summary>
     ///     <see cref="MegFileHolder.FileVersion" />
     /// </summary>
-    public MegFileVersion? FileVersion { get; set; }
+    public MegFileVersion FileVersion { get; set; }
 }

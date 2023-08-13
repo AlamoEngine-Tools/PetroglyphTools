@@ -15,8 +15,7 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 ///     This class does not hold all files that are packaged in a *.MEG file,
 ///     but all necessary meta-information to extract a given file on-demand.
 /// </remarks>
-public sealed class
-    MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnlyList<MegFileDataEntry>, MegAlamoFileType>, IMegFile
+public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnlyList<MegFileDataEntry>, MegAlamoFileType>, IMegFile
 {
     private byte[]? _keyValue;
     private byte[]? _ivValue;
@@ -138,11 +137,5 @@ public sealed class
     internal MegFileHolder(IReadOnlyList<MegFileDataEntry> model, MegFileHolderParam param,
         IServiceProvider serviceProvider) : base(model, param, serviceProvider)
     {
-    }
-
-    /// <inheritdoc />
-    protected override void ConstructHook(MegFileHolderParam param)
-    {
-        FileVersion = param.FileVersion ?? throw new ArgumentNullException(nameof(param.FileVersion));
     }
 }

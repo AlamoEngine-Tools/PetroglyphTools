@@ -2,12 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for detailsem.Collections;
 
 using System;
-using System.Buffers.Binary;
 using System.Text;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 internal readonly struct MegFileNameTableRecord : IBinary
 {
@@ -23,16 +22,18 @@ internal readonly struct MegFileNameTableRecord : IBinary
         get
         {
 
-            var bytes = new byte[Size];
-            BinaryPrimitives.WriteUInt16LittleEndian(bytes, _fileNameLength);
-            
 #if NETCOREAPP2_1_OR_GREATER
+            var bytes = new byte[Size];
+            BitConverter.TryWriteBytes(bytes, _fileNameLength);
             var fileNameArea = bytes.AsSpan(sizeof(ushort));
             _encoding.GetBytes(FileName, fileNameArea);
-#else
-            _encoding.GetBytes(FileName, 0, FileName.Length, bytes, sizeof(ushort));
-#endif
             return bytes;
+#else
+            var bytes = new byte[Size];
+            Buffer.BlockCopy(BitConverter.GetBytes(_fileNameLength), 0, bytes, 0, sizeof(ushort));
+            Buffer.BlockCopy(_encoding.GetBytes(FileName), 0, bytes, sizeof(ushort) * 1, _fileNameLength);
+            return bytes;
+#endif
         }
     }
 

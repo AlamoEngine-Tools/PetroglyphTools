@@ -14,6 +14,7 @@ public class MegHeaderTest
     public void Ctor_Test__ThrowsArgumentOORException()
     {
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegHeader((uint)int.MaxValue + 1, (uint)int.MaxValue + 1));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegHeader(0, 0));
     }
 
     [TestMethod]
@@ -25,8 +26,8 @@ public class MegHeaderTest
     [TestMethod]
     public void Ctor_Test__Correct()
     {
-        var _ = new MegHeader(1, 1);
-        var __ = new MegHeader(int.MaxValue, int.MaxValue);
+        new MegHeader(1, 1);
+        new MegHeader(int.MaxValue, int.MaxValue);
         Assert.IsTrue(true);
     }
 
@@ -34,5 +35,13 @@ public class MegHeaderTest
     public void Test_Size()
     {
         Assert.AreEqual(8, default(MegHeader).Size);
+    }
+
+    [TestMethod]
+    public void Test_Bytes()
+    {
+        var header = new MegHeader(2, 2);
+        var expectedBytes = new byte[] { 0x2, 0x0, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0 };
+        CollectionAssert.AreEqual(expectedBytes, header.Bytes);
     }
 }

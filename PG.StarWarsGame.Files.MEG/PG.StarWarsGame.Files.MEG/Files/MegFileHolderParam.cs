@@ -8,6 +8,8 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 ///<inheritdoc />
 public sealed record MegFileHolderParam : FileHolderParamBase
 {
-    /// <inheritdoc cref="MegFileHolder.FileVersion" />
-    public MegFileVersion FileVersion { get; init; }
+    /// <summary>
+    ///     <see cref="MegFileHolder.FileVersion" />
+    /// </summary>
+    public MegFileVersion FileVersion { get; set; }
 }

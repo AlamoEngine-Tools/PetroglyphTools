@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace PG.Commons.Utilities;
 
@@ -24,52 +23,18 @@ public static class FileNameUtilities
     };
 
     /// <summary>
-    /// Checks that a given filename, when converted to bytes, is not longer than the max value of an UInt16.
-    /// Throws an <see cref="OverflowException"/> is the filename is longer
-    /// </summary>
-    /// <remarks>The encoding is necessary information.<br/>
-    ///     For example consider the string "🤔":<br/>
-    ///          .NET string length (# of characters): 2.<br/>
-    ///          ASCII required bytes (each char is 1 byte): 2<br/>
-    ///          Unicode required bytes (each char is 2 bytes): 4.<br/>
-    ///     Many PG binary files use size information for processing strings. So if we wanted to use Unicode encoding,
-    ///     we need the actual byte size, and not what .NET thinks. 
-    /// </remarks>
-    /// <param name="filename">The filename to validate.</param>
-    /// <param name="encoding">The encoding that shall be used to get the string length.</param>
-    /// <returns>The actual length of the filename in bytes.</returns>
-    /// <exception cref="OverflowException">When the file name was too long.</exception>
-    public static ushort ValidateFileNameByteSizeUInt16(string filename, Encoding encoding)
-    {
-        if (filename == null) 
-            throw new ArgumentNullException(nameof(filename));
-        if (encoding == null) 
-            throw new ArgumentNullException(nameof(encoding));
-
-        var length = encoding.GetByteCount(filename);
-        try
-        {
-            return Convert.ToUInt16(length);
-        }
-        catch (OverflowException)
-        {
-            throw new OverflowException($"The filename {filename} is longer that the expected {ushort.MaxValue} characters.");
-        }
-    }
-
-    /// <summary>
-    /// Checks whether a given filename is can be used for a Petroglyph Star Wars game.
+    /// Checks whether a given value is can be used for a Petroglyph Star Wars game.
     /// </summary>
     /// <remarks>
-    /// A filename is considered to be invalid under the following conditions: <br/>
-    ///     a) The filename is <see langword="null"/>,<br/>
-    ///     b) The filename is empty or only contains whitespace,<br/>
-    ///     c) The filename contains a non ASCII (> 0xFF) character,<br/>
-    ///     d) The filename contains a character that is illegal for Windows file names, such as TAB, or path separators, etc.
+    /// A value is considered to be invalid under the following conditions: <br/>
+    ///     a) The value is <see langword="null"/>,<br/>
+    ///     b) The value is empty or only contains whitespace,<br/>
+    ///     c) The value contains a non ASCII (> 0xFF) character,<br/>
+    ///     d) The value contains a character that is illegal for Windows file names, such as TAB, or path separators, etc.
     /// </remarks>
-    /// <param name="filename">The filename to check.</param>
+    /// <param name="filename">The value to check.</param>
     /// <param name="reason">A reason message why the check failed or <see langword="null"/> if the check passed.</param>
-    /// <returns><see langword="true"/> when the filename is valid; <see langword="false"/> otherwise.</returns>
+    /// <returns><see langword="true"/> when the value is valid; <see langword="false"/> otherwise.</returns>
     public static bool IsValidFileName(string? filename, [NotNullWhen(false)] out string? reason)
     {
         reason = null;

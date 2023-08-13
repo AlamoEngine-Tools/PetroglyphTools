@@ -6,9 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PG.Commons.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
+namespace PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 
 internal class MegFileNameTable : BinaryBase, IFileNameTable, IEnumerable<MegFileNameTableRecord>
 {
@@ -22,6 +21,8 @@ internal class MegFileNameTable : BinaryBase, IFileNameTable, IEnumerable<MegFil
     {
         if (megFileNameTableRecords is null)
             throw new ArgumentNullException(nameof(megFileNameTableRecords));
+        if (megFileNameTableRecords.Count == 0)
+            throw new ArgumentException("FileNameTable must not be empty.");
         _megFileNameTableRecords = megFileNameTableRecords.ToList();
     }
 

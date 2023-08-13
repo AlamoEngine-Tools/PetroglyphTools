@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1;
@@ -42,7 +41,7 @@ public class MegMetadataTest
     [TestMethod]
     public void Ctor_Test__Correct()
     {
-        new MegMetadata(
+        var _ = new MegMetadata(
             new MegHeader(1, 1),
             new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII) }),
             new MegFileTable(new List<MegFileContentTableRecord> { default }));

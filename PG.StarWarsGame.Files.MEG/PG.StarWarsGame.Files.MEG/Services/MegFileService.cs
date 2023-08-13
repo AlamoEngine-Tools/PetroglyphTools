@@ -233,10 +233,10 @@ public class MegFileService : ServiceBase, IMegFileService
             }
 
             // known start of the FileTable
-            uint fileTableOffset = dataStart - (numFiles * 20);
+            uint fileTableOffset = dataStart - numFiles * 20;
 
 
-            if (fileTableOffset != (24 + filenamesSize))
+            if (fileTableOffset != 24 + filenamesSize)
             {
                 return MegFileVersion.V2;
             }

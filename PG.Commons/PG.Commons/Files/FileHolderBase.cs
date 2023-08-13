@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.IO;
 using System.IO.Abstractions;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;

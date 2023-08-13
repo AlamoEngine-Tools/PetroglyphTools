@@ -9,5 +9,5 @@ namespace PG.StarWarsGame.Files.DAT.Files;
 public sealed record DatFileHolderParam : FileHolderParamBase
 {
     /// <inheritdoc cref="DatFileHolder.Order" />
-    public DatFileType? Order { get; set; }
+    public DatFileType? Order { get; init; }
 }

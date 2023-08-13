@@ -8,8 +8,6 @@ namespace PG.Commons.Files;
 /// </summary>
 public abstract record FileHolderParamBase : ParamBase, IFileHolderParam
 {
-    /// <summary>
-    ///     <inheritdoc cref="FileHolderBase{TParam,TModel,TFileType}.FilePath" />
-    /// </summary>
-    public string? FilePath { get; set; }
+    /// <inheritdoc cref="FileHolderBase{TParam,TModel,TFileType}.FilePath" />
+    public string? FilePath { get; init; }
 }

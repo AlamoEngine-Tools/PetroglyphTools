@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for detailsem.Collections;
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
@@ -16,14 +15,25 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
     internal string FileName { get; }
 
+    internal string OriginalFileName { get; }
+
     public byte[] Bytes
     {
         get
         {
-            var b = new List<byte>();
-            b.AddRange(BitConverter.GetBytes(_fileNameLength));
-            b.AddRange(_encoding.GetBytes(FileName));
-            return b.ToArray();
+
+#if NETCOREAPP2_1_OR_GREATER
+            var bytes = new byte[Size];
+            BitConverter.TryWriteBytes(bytes, _fileNameLength);
+            var fileNameArea = bytes.AsSpan(sizeof(ushort));
+            _encoding.GetBytes(FileName, fileNameArea);
+            return bytes;
+#else
+            var bytes = new byte[Size];
+            Buffer.BlockCopy(BitConverter.GetBytes(_fileNameLength), 0, bytes, 0, sizeof(ushort));
+            Buffer.BlockCopy(_encoding.GetBytes(FileName), 0, bytes, sizeof(ushort) * 1, _fileNameLength);
+            return bytes;
+#endif
         }
     }
 
@@ -38,7 +48,8 @@ internal readonly struct MegFileNameTableRecord : IBinary
             throw new NotSupportedException(".MEG files are required to use a single-byte encoding for string.");
 
         _encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
-        FileName = fileName;
-        _fileNameLength = FileNameUtilities.ValidateFileNameByteSizeUInt16(fileName, _encoding);
+        OriginalFileName = fileName;
+        _fileNameLength = StringUtilities.ValidateFileNameByteSizeUInt16(fileName, _encoding);
+        FileName = StringUtilities.EncodeString(fileName, _fileNameLength, encoding);
     }
 }

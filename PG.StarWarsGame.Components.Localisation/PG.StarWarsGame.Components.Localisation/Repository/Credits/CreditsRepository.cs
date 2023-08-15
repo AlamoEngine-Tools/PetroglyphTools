@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Components.Localisation.Repository.Credits;
 
 /// <summary>
 ///     The credits repository is _not_ a normal repository, as the credit files are abusing
-///     the keys as formatting information.
+///     the keys as formatting information for the credits text crawl.
 /// </summary>
 internal sealed class CreditsRepository : ICreditsRepository, IList<ITranslationItem>
 {

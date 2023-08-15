@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System.Collections.Generic;
 using PG.Commons.Validation;
 
 namespace PG.Commons.Repository;
@@ -8,10 +9,27 @@ namespace PG.Commons.Repository;
 /// <summary>
 ///     Base contract for a object storage repository.
 /// </summary>
+public interface IRepository
+{
+}
+
+/// <summary>
+///     Base contract for a object storage repository.
+/// </summary>
 /// <typeparam name="TKey">The key to access values.</typeparam>
 /// <typeparam name="TValue">The value.</typeparam>
-public interface IRepository<in TKey, TValue> : IValidatable where TValue : IValidatable
+public interface IRepository<TKey, TValue> : IRepository, IValidatable where TValue : IValidatable
 {
+    /// <summary>
+    ///     Gets a collection containing the keys in the repository.
+    /// </summary>
+    IReadOnlyCollection<TKey> Keys { get; }
+
+    /// <summary>
+    ///     Gets a collection containing the values in the repository.
+    /// </summary>
+    IReadOnlyCollection<TValue> Values { get; }
+
     /// <summary>
     ///     Tries to insert an object into the repository.
     /// </summary>

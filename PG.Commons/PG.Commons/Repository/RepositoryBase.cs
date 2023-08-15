@@ -27,6 +27,14 @@ public abstract class RepositoryBase<TKey, TValue> : IRepository<TKey, TValue>
         Logger = services.GetService<ILoggerFactory>()?.CreateLogger(GetType()) ?? NullLogger.Instance;
     }
 
+
+    /// <inheritdoc />
+    public IReadOnlyCollection<TKey> Keys => InternalRepository.Keys;
+
+
+    /// <inheritdoc />
+    public IReadOnlyCollection<TValue> Values => InternalRepository.Values;
+
     /// <summary>
     ///     The internal Dictionary.
     /// </summary>

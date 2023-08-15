@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Buffers.Binary;
 using PG.Commons.Services;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -24,11 +25,16 @@ internal sealed class IndexTableRecord : IDatRecordDescriptor, IComparable<Index
     {
         get
         {
-            var bytes = new byte[Size];
-            Buffer.BlockCopy(Crc32.GetBytes(), 0, bytes, 0, sizeof(uint));
-            Buffer.BlockCopy(BitConverter.GetBytes(ValueLength), 0, bytes, sizeof(uint) * 1, sizeof(uint));
-            Buffer.BlockCopy(BitConverter.GetBytes(KeyLength), 0, bytes, sizeof(uint) * 2, sizeof(uint));
-            return bytes;
+            var data = new byte[Size];
+            var dataSpan = data.AsSpan();
+            Crc32.GetBytes(dataSpan);
+            var valueArea = dataSpan.Slice(sizeof(uint) * 1);
+            BinaryPrimitives.WriteUInt32LittleEndian(valueArea, ValueLength);
+
+            var keyArea = dataSpan.Slice(sizeof(uint) * 2);
+            BinaryPrimitives.WriteUInt32LittleEndian(keyArea, KeyLength);
+
+            return data;
         }
     }
 

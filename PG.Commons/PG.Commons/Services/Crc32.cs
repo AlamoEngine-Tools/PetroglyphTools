@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Buffers.Binary;
 
 namespace PG.Commons.Services;
 
@@ -10,6 +11,8 @@ namespace PG.Commons.Services;
 /// </summary>
 public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
 {
+    // Important: By design, this must be the only field of this struct!
+    // This way we can assure that sizeof(CRC32) == sizeof(uint)
     private readonly uint _checksum;
 
     /// <summary>
@@ -58,9 +61,19 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// Returns the CRC32 checksum as a byte array.
     /// </summary>
     /// <returns>The CRC32 checksum as a byte array.</returns>
-    public byte[] GetBytes()
+    public unsafe byte[] GetBytes()
     {
-        return BitConverter.GetBytes(_checksum);
+        var bytes = new byte[sizeof(Crc32)];
+        GetBytes(bytes);
+        return bytes;
+    }
+
+    /// <summary>
+    /// Writes the CRC32 checksum into a span of bytes in little endian.
+    /// </summary>
+    public void GetBytes(Span<byte> destination)
+    {
+        BinaryPrimitives.WriteUInt32LittleEndian(destination, _checksum);
     }
 
     /// <summary>

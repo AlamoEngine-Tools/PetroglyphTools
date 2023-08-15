@@ -23,9 +23,9 @@ internal readonly struct DatHeader : IBinary
     {
         get
         {
-            Span<byte> data = stackalloc byte[Size];
+            var data = new byte[Size];
             BinaryPrimitives.WriteUInt32LittleEndian(data, RecordCount);
-            return data.ToArray();
+            return data;
         }
     }
 

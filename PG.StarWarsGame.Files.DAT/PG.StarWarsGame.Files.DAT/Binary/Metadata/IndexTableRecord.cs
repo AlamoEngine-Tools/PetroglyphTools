@@ -25,15 +25,16 @@ internal sealed class IndexTableRecord : IDatRecordDescriptor, IComparable<Index
     {
         get
         {
-            Span<byte> data = stackalloc byte[Size];
-            Crc32.GetBytes(data);
-            var valueArea = data.Slice(sizeof(uint) * 1);
+            var data = new byte[Size];
+            var dataSpan = data.AsSpan();
+            Crc32.GetBytes(dataSpan);
+            var valueArea = dataSpan.Slice(sizeof(uint) * 1);
             BinaryPrimitives.WriteUInt32LittleEndian(valueArea, ValueLength);
 
-            var keyArea = data.Slice(sizeof(uint) * 2);
+            var keyArea = dataSpan.Slice(sizeof(uint) * 2);
             BinaryPrimitives.WriteUInt32LittleEndian(keyArea, KeyLength);
 
-            return data.ToArray();
+            return data;
         }
     }
 

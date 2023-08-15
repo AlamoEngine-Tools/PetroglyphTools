@@ -74,7 +74,7 @@ public sealed class
                 return false;
             }
 
-            return (Key != null) && (IV != null);
+            return Key != null && IV != null;
         }
     }
 
@@ -138,11 +138,5 @@ public sealed class
     internal MegFileHolder(IReadOnlyList<MegFileDataEntry> model, MegFileHolderParam param,
         IServiceProvider serviceProvider) : base(model, param, serviceProvider)
     {
-    }
-
-    /// <inheritdoc />
-    protected override void ConstructHook(MegFileHolderParam param)
-    {
-        FileVersion = param.FileVersion ?? throw new ArgumentNullException(nameof(param.FileVersion));
     }
 }

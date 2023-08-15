@@ -28,8 +28,8 @@ internal class DatFileConverter : ServiceBase, IDatFileConverter
         var isSorted = true;
         for (var i = 0; i < holder.Content.Count; i++)
         {
-            string value = (string.IsNullOrWhiteSpace(holder.Content[i].Value) ? "" : holder.Content[i].Value) ?? "";
-            string key = holder.Content[i].Key.Replace("\0", string.Empty);
+            var value = (string.IsNullOrWhiteSpace(holder.Content[i].Value) ? "" : holder.Content[i].Value) ?? "";
+            var key = holder.Content[i].Key.Replace("\0", string.Empty);
 
             var valueRecord = new ValueTableRecord(value);
             var keyRecord = new KeyTableRecord(key);
@@ -80,7 +80,7 @@ internal class DatFileConverter : ServiceBase, IDatFileConverter
         }
 
         var isSorted = true;
-        Crc32 currentCrc = model.IndexTable[0].Crc32;
+        var currentCrc = model.IndexTable[0].Crc32;
         for (var i = 1; i < model.RecordNumber; i++)
         {
             if (model.IndexTable[i].Crc32 > currentCrc)
@@ -101,8 +101,9 @@ internal class DatFileConverter : ServiceBase, IDatFileConverter
             datFileContent.Add(new DatFileEntry(model.KeyTable[i], model.ValueTable[i]));
         }
 
-        param0.Order ??= isSorted ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered;
+        var o = param0.Order ?? (isSorted ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered);
+        var p = param0 with { Order = o };
 
-        return new DatFileHolder(datFileContent.AsReadOnly(), param0, Services);
+        return new DatFileHolder(datFileContent.AsReadOnly(), p, Services);
     }
 }

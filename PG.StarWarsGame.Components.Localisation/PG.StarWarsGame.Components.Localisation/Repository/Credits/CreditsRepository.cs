@@ -49,19 +49,16 @@ internal sealed class CreditsRepository : ICreditsRepository, IList<ITranslation
         return ((IEnumerable)_internalRepository).GetEnumerator();
     }
 
-    /// <inheritdoc />
     public void Add(ITranslationItem item)
     {
         _internalRepository.Add(item);
     }
 
-    /// <inheritdoc />
     public void Clear()
     {
         _internalRepository.Clear();
     }
 
-    /// <inheritdoc />
     public bool Contains(ITranslationItem item)
     {
         return _internalRepository.Contains(item);
@@ -73,7 +70,6 @@ internal sealed class CreditsRepository : ICreditsRepository, IList<ITranslation
         _internalRepository.CopyTo(array, arrayIndex);
     }
 
-    /// <inheritdoc />
     public bool Remove(ITranslationItem item)
     {
         return _internalRepository.Remove(item);

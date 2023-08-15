@@ -16,8 +16,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="IsExternalInit" Version="1.0.3">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 	    <PackageReference Include="Required" Version="1.0.0">
 		    <PrivateAssets>all</PrivateAssets>
@@ -34,6 +34,6 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
     </ItemGroup>
 </Project>

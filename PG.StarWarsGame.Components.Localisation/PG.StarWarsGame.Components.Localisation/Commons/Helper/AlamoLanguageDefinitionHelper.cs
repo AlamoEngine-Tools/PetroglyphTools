@@ -25,7 +25,7 @@ internal class AlamoLanguageDefinitionHelper : ServiceBase, IAlamoLanguageDefini
         LanguageDefinitionCache = d.ToImmutableDictionary();
     }
 
-    private void InitCache(IDictionary<Type, IAlamoLanguageDefinition> definitions)
+    private static void InitCache(IDictionary<Type, IAlamoLanguageDefinition> definitions)
     {
         var registeredLanguages = GetRegisteredTypes();
         foreach (var language in registeredLanguages)
@@ -44,8 +44,7 @@ internal class AlamoLanguageDefinitionHelper : ServiceBase, IAlamoLanguageDefini
                 typeof(IAlamoLanguageDefinition).IsAssignableFrom(p) &&
                 typeof(AlamoLanguageDefinitionBase).IsAssignableFrom(p) &&
                 p.IsClass &&
-                !p.IsAbstract &&
-                !p.IsInterface
+                p is { IsAbstract: false, IsInterface: false }
             ).ToList();
     }
 

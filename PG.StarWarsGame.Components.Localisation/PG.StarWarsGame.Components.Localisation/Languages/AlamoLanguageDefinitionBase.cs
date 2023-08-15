@@ -39,7 +39,7 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IV
     /// <returns></returns>
     protected virtual bool EqualsInternal(IAlamoLanguageDefinition other)
     {
-        return GetHashCodeInternal().CompareTo(other.GetHashCode()) == 0;
+        return GetHashCodeInternal().Equals(other.GetHashCode());
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IV
     /// <returns></returns>
     protected virtual int GetHashCodeInternal()
     {
-        return HashCode.Combine(LanguageIdentifier.ToUpper().GetHashCode(), Culture.GetHashCode());
+        return HashCode.Combine(LanguageIdentifier.ToUpper(), Culture);
     }
 
     /// <inheritdoc />

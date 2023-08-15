@@ -14,20 +14,20 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.6.23329.7"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23371-04"/>
-        <PackageReference Include="MSTest.TestAdapter" Version="3.1.1"/>
-        <PackageReference Include="MSTest.TestFramework" Version="3.1.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.6.23329.7" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23371-04" />
+        <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
         <PackageReference Include="coverlet.collector" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.IO.Abstractions" Version="19.2.51"/>
-        <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.51"/>
-        <PackageReference Include="System.IO.Hashing" Version="8.0.0-preview.6.23329.7"/>
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
+        <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.51" />
+        <PackageReference Include="System.IO.Hashing" Version="8.0.0-preview.6.23329.7" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\PG.Commons\PG.Commons.csproj"/>
+        <ProjectReference Include="..\PG.Commons\PG.Commons.csproj" />
     </ItemGroup>
     <ItemGroup>
       <None Update="aet.png">

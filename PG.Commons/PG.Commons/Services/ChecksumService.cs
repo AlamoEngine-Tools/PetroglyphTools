@@ -28,7 +28,7 @@ public class ChecksumService : IChecksumService
 
         if (s.Length > 256)
         {
-#if NET
+#if NETSTANDARD2_1_OR_GREATER || NET
             var stringSpan = s.AsSpan();
             var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
 

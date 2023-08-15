@@ -23,6 +23,18 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     {
         _checksum = checksum;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Crc32"/> struct with the specified checksum value.
+    /// </summary>
+    /// <param name="checksum">The CRC32 checksum value.</param>
+    public Crc32(int checksum)
+    {
+        unchecked
+        {
+            _checksum = (uint)checksum;
+        }
+    }
     
     internal Crc32(Span<byte> checksum)
     {
@@ -140,5 +152,23 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     public static bool operator <=(Crc32 a, Crc32 b)
     {
         return !(a == b);
+    }
+
+    /// <summary>
+    /// Defines an implicit conversion of an CRC32 checksum to an <see cref="uint"/>.
+    /// </summary>
+    /// <param name="crc">The checksum data.</param>
+    public static implicit operator uint(Crc32 crc) => crc._checksum;
+
+    /// <summary>
+    /// Defines an implicit conversion of an CRC32 checksum to an <see cref="int"/>, which might be negative.
+    /// </summary>
+    /// <param name="crc">The checksum data.</param>
+    public static implicit operator int(Crc32 crc)
+    {
+        unchecked
+        {
+            return (int)crc._checksum;
+        }
     }
 }

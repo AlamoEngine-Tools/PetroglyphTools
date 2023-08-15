@@ -35,14 +35,14 @@ public class GetStringCrc32
     [Benchmark]
     public unsafe Crc32 Current()
     {
-        var stringSpan = _s1.AsSpan();
-        var maxByteSize = _encoding.GetMaxByteCount(stringSpan.Length);
-
         Span<byte> buffer;
 
-        if (maxByteSize > 256)
+        if (_s1.Length > 256)
         {
 #if NET
+            var stringSpan = _s1.AsSpan();
+            var maxByteSize = _encoding.GetMaxByteCount(stringSpan.Length);
+
             var b = new byte[maxByteSize].AsSpan();
             var nb = _encoding.GetBytes(stringSpan, b);
             buffer = b.Slice(0, nb);
@@ -50,11 +50,13 @@ public class GetStringCrc32
             buffer = _encoding.GetBytes(_s1).AsSpan();
 #endif
         }
-
         else
         {
+            var stringSpan = _s1.AsSpan();
+            var maxByteSize = _encoding.GetMaxByteCount(stringSpan.Length);
+
             var buff = stackalloc byte[maxByteSize];
-            fixed (char* sp = _s1)
+            fixed (char* sp = &stringSpan.GetPinnableReference())
             {
                 var a = _encoding.GetBytes(sp, _s1.Length, buff, maxByteSize);
                 buffer = new Span<byte>(buff, a);

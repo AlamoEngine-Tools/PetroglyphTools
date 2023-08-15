@@ -24,32 +24,31 @@ public class ChecksumService : IChecksumService
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
 
-        var stringSpan = s.AsSpan();
-        var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
-        
         Span<byte> buffer;
 
-        // This threshold is somewhat arbitrary. It should be <= 1MB though. 
-        if (maxByteSize > 256)
+        if (s.Length > 256)
         {
-#if NETSTANDARD2_1_OR_GREATER || NET
-            // This is actually slightly faster than using encoding.GetBytes(s)
-            // Using array pool is significant slower but might safe some allocations. 
+#if NET
+            var stringSpan = s.AsSpan();
+            var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
+
             var b = new byte[maxByteSize].AsSpan();
-            var bytesRead = encoding.GetBytes(stringSpan, b);
-            buffer = b.Slice(0, bytesRead);
+            var nb = encoding.GetBytes(stringSpan, b);
+            buffer = b.Slice(0, nb);
 #else
-            // I'm afraid this is the best performing we can get for long string in NET Framework.
             buffer = encoding.GetBytes(s).AsSpan();
 #endif
         }
         else
         {
+            var stringSpan = s.AsSpan();
+            var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
+
             var buff = stackalloc byte[maxByteSize];
-            fixed (char* sp = s)
+            fixed (char* sp = &stringSpan.GetPinnableReference())
             {
-                var bytesRead = encoding.GetBytes(sp, s.Length, buff, maxByteSize);
-                buffer = new Span<byte>(buff, bytesRead);
+                var a = encoding.GetBytes(sp, s.Length, buff, maxByteSize);
+                buffer = new Span<byte>(buff, a);
             }
         }
 

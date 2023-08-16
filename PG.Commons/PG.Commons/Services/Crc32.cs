@@ -3,12 +3,16 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Buffers.Binary;
+using System.Diagnostics;
+using System.Text;
 
 namespace PG.Commons.Services;
 
 /// <summary>
 /// Represents a 32-bit Cyclic Redundancy Check (CRC32) checksum.
 /// </summary>
+[DebuggerDisplay("CRC: {_checksum}")]
 public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
 {
     // Important: By design, this must be the only field of this struct!
@@ -35,14 +39,32 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
             _checksum = (uint)checksum;
         }
     }
-    
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Crc32"/> struct with the specified checksum data.
+    /// </summary>
+    /// <param name="checksum">Checksum data in little endian format.</param>
     internal Crc32(Span<byte> checksum)
     {
-#if NETSTANDARD2_0
-        _checksum = BitConverter.ToUInt32(checksum.ToArray(), 0);
-#else
-        _checksum = BitConverter.ToUInt32(checksum);
-#endif
+        _checksum = BinaryPrimitives.ReadUInt32LittleEndian(checksum);
+    }
+
+    /// <inheritdoc cref="Object.ToString()"/>
+    public override string ToString()
+    {
+        return ToString(false);
+    }
+
+    /// <inheritdoc cref="Object.ToString()"/>
+    /// <param name="asSignedInteger">When <see langword="true"/>, this checksum shall be represented by a signed integer; unsigned otherwise.</param>
+    public string ToString(bool asSignedInteger)
+    {
+        var sb = new StringBuilder("CRC: ");
+        if (asSignedInteger)
+            sb.Append((int)_checksum);
+        else 
+            sb.Append(_checksum);
+        return sb.ToString();
     }
 
     /// <inheritdoc cref="IComparable{T}"/>
@@ -75,9 +97,9 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <returns>The CRC32 checksum as a byte array.</returns>
     public unsafe byte[] GetBytes()
     {
-        var bytes = new byte[sizeof(Crc32)];
-        GetBytes(bytes);
-        return bytes;
+        Span<byte> data = stackalloc byte[sizeof(Crc32)];
+        GetBytes(data);
+        return data.ToArray();
     }
 
     /// <summary>

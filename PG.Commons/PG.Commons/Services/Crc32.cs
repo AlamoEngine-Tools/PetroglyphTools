@@ -180,13 +180,13 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// Defines an implicit conversion of an CRC32 checksum to an <see cref="uint"/>.
     /// </summary>
     /// <param name="crc">The checksum data.</param>
-    public static implicit operator uint(Crc32 crc) => crc._checksum;
+    public static explicit operator uint(Crc32 crc) => crc._checksum;
 
     /// <summary>
     /// Defines an implicit conversion of an CRC32 checksum to an <see cref="int"/>, which might be negative.
     /// </summary>
     /// <param name="crc">The checksum data.</param>
-    public static implicit operator int(Crc32 crc)
+    public static explicit operator int(Crc32 crc)
     {
         unchecked
         {

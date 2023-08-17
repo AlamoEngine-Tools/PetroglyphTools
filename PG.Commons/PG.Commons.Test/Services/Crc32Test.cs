@@ -20,8 +20,10 @@ public class Crc32Test
         Assert.IsTrue(crcEmpty == crcDefault);
         Assert.IsTrue(crcEmpty.Equals(crcDefault));
 
-        Assert.IsTrue(crcEmpty == 0);
-        Assert.IsTrue(crcEmpty == 0U);
+        Assert.IsFalse(crcEmpty.Equals(0));
+
+        Assert.IsTrue((int)crcEmpty == 0);
+        Assert.IsTrue((uint)crcEmpty == 0U);
 
         Assert.AreEqual(crcEmpty.GetHashCode(), crcDefault.GetHashCode());
 
@@ -33,10 +35,10 @@ public class Crc32Test
     public void Test_Construction()
     {
         var crc1u = new Crc32(1U);
-        Assert.AreEqual(1, crc1u);
+        Assert.AreEqual(1, (int)crc1u);
 
         var crc1i = new Crc32(1);
-        Assert.AreEqual(1, crc1i);
+        Assert.AreEqual(1, (int)crc1i);
 
         Assert.AreEqual(crc1i, crc1u);
 
@@ -44,15 +46,15 @@ public class Crc32Test
         BinaryPrimitives.WriteInt32LittleEndian(data, 1);
         var crcFromSpan = new Crc32(data);
 
-        Assert.AreEqual(1, crcFromSpan);
+        Assert.AreEqual(1u, (uint)crcFromSpan);
     }
 
     [TestMethod]
     public void Test_Construction_Negative()
     {
         var crcM1 = new Crc32(-1);
-        Assert.AreEqual(-1, crcM1);
-        Assert.AreEqual(uint.MaxValue, crcM1);
+        Assert.AreEqual(-1, (int)crcM1);
+        Assert.AreEqual(uint.MaxValue, (uint)crcM1);
     }
 
     [TestMethod]
@@ -62,7 +64,7 @@ public class Crc32Test
         BinaryPrimitives.WriteInt32BigEndian(data, 1);
         var crcFromSpan = new Crc32(data);
 
-        Assert.AreNotEqual(1, crcFromSpan);
+        Assert.AreNotEqual(1, (int)crcFromSpan);
     }
 
     [TestMethod]
@@ -77,7 +79,7 @@ public class Crc32Test
         Assert.IsTrue(crc2 != crc1);
 
         Assert.IsTrue(crcM1 > crc2);
-        Assert.IsFalse((int)crcM1 > crc2);
+        Assert.IsFalse((int)crcM1 > (int) crc2);
     }
 
     [TestMethod]
@@ -97,7 +99,7 @@ public class Crc32Test
     {
         var crcM1 = new Crc32(-1);
         var crcMax = new Crc32(uint.MaxValue);
-        Assert.AreEqual(-1, crcM1);
+        Assert.AreEqual(-1, (int)crcM1);
 
         var expected = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
         CollectionAssert.AreEqual(expected, crcM1.GetBytes());
@@ -106,6 +108,5 @@ public class Crc32Test
         var data = new byte[sizeof(uint)];
         crcM1.GetBytes(data);
         CollectionAssert.AreEqual(expected, data.ToArray());
-
     }
 }

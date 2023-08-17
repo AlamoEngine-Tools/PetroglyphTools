@@ -101,7 +101,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
         GetBytes(data);
         return data.ToArray();
     }
-
+    
     /// <summary>
     /// Writes the CRC32 checksum into a span of bytes in little endian.
     /// </summary>

@@ -19,7 +19,7 @@ public class ChecksumServiceTest
     public void Test_Correct_Checksums(string value, long expectedChecksum)
     {
         var crc = ChecksumService.Instance.GetChecksum(value, Encoding.ASCII);
-        Assert.AreEqual((int)expectedChecksum, crc);
-        Assert.AreEqual((uint)expectedChecksum, crc);
+        Assert.AreEqual((int)expectedChecksum, (int)crc);
+        Assert.AreEqual((uint)expectedChecksum, (uint)crc);
     }
 }

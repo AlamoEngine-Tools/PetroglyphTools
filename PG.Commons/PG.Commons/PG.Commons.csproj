@@ -4,13 +4,9 @@
         <Product>PG.Commons</Product>
         <Title>PG.Commons</Title>
         <PackageId>AlamoEngineTools.PG.Commons</PackageId>
-        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/main/LICENSE</PackageLicenseUrl>
-        <PackageTags>alamo,petroglyph,glyphx</PackageTags>
-        <AssemblyVersion>0.1.0-alpha.1</AssemblyVersion>
-        <FileVersion>0.1.0-alpha.1</FileVersion>
-        <NeutralLanguage>en</NeutralLanguage>
-        <Version>0.1.0-alpha.1</Version>
-        <PackageIcon>aet.png</PackageIcon>
+	    <PackageTags>alamo,petroglyph,glyphx</PackageTags>
+	    <NeutralLanguage>en</NeutralLanguage>
+	    <PackageIcon>aet.png</PackageIcon>
     </PropertyGroup>
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

@@ -6,7 +6,6 @@
         <PackageId>AlamoEngineTools.PG.Commons</PackageId>
 	    <PackageTags>alamo,petroglyph,glyphx</PackageTags>
 	    <NeutralLanguage>en</NeutralLanguage>
-	    <PackageIcon>aet.png</PackageIcon>
     </PropertyGroup>
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -32,11 +31,5 @@
         <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
         <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
         <PackageReference Include="System.IO.Hashing" Version="7.0.0" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="aet.png">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
     </ItemGroup>
 </Project>

@@ -4,7 +4,6 @@
         <Title>PG.StarWarsGame.Files.MEG</Title>
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MEG</PackageId>
         <Product>PG.StarWarsGame.Files.MEG</Product>
-	    <PackageIcon>aet.png</PackageIcon>
     </PropertyGroup>
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -32,11 +31,5 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Update="aet.png">
-        <Pack>True</Pack>
-        <PackagePath></PackagePath>
-      </None>
     </ItemGroup>
 </Project>

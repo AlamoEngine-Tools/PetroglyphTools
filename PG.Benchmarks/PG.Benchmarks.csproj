@@ -8,7 +8,6 @@
 		<PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>
 		<PackageTags>alamo,petroglyph,glyphx</PackageTags>
 		<NeutralLanguage>en</NeutralLanguage>
-		<PackageIcon>aet.png</PackageIcon>
 	</PropertyGroup>
 
 	<PropertyGroup>

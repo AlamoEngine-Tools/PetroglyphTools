@@ -3,12 +3,15 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Diagnostics;
+using System.Text;
 
 namespace PG.Commons.Services;
 
 /// <summary>
 /// Represents a 32-bit Cyclic Redundancy Check (CRC32) checksum.
 /// </summary>
+[DebuggerDisplay("CRC: {_checksum}")]
 public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
 {
     // Important: By design, this must be the only field of this struct!
@@ -23,14 +26,44 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     {
         _checksum = checksum;
     }
-    
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Crc32"/> struct with the specified checksum value.
+    /// </summary>
+    /// <param name="checksum">The CRC32 checksum value.</param>
+    public Crc32(int checksum)
+    {
+        unchecked
+        {
+            _checksum = (uint)checksum;
+        }
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Crc32"/> struct with the specified checksum data.
+    /// </summary>
+    /// <param name="checksum">Checksum data in little endian format.</param>
     internal Crc32(Span<byte> checksum)
     {
-#if NETSTANDARD2_0
-        _checksum = BitConverter.ToUInt32(checksum.ToArray(), 0);
-#else
-        _checksum = BitConverter.ToUInt32(checksum);
-#endif
+        _checksum = BinaryPrimitives.ReadUInt32LittleEndian(checksum);
+    }
+
+    /// <inheritdoc cref="Object.ToString()"/>
+    public override string ToString()
+    {
+        return ToString(false);
+    }
+
+    /// <inheritdoc cref="Object.ToString()"/>
+    /// <param name="asSignedInteger">When <see langword="true"/>, this checksum shall be represented by a signed integer; unsigned otherwise.</param>
+    public string ToString(bool asSignedInteger)
+    {
+        var sb = new StringBuilder("CRC: ");
+        if (asSignedInteger)
+            sb.Append((int)_checksum);
+        else 
+            sb.Append(_checksum);
+        return sb.ToString();
     }
 
     /// <inheritdoc cref="IComparable{T}"/>
@@ -63,11 +96,11 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <returns>The CRC32 checksum as a byte array.</returns>
     public unsafe byte[] GetBytes()
     {
-        var bytes = new byte[sizeof(Crc32)];
-        GetBytes(bytes);
-        return bytes;
+        Span<byte> data = stackalloc byte[sizeof(Crc32)];
+        GetBytes(data);
+        return data.ToArray();
     }
-
+    
     /// <summary>
     /// Writes the CRC32 checksum into a span of bytes in little endian.
     /// </summary>
@@ -140,5 +173,23 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     public static bool operator <=(Crc32 a, Crc32 b)
     {
         return !(a == b);
+    }
+
+    /// <summary>
+    /// Defines an implicit conversion of an CRC32 checksum to an <see cref="uint"/>.
+    /// </summary>
+    /// <param name="crc">The checksum data.</param>
+    public static explicit operator uint(Crc32 crc) => crc._checksum;
+
+    /// <summary>
+    /// Defines an implicit conversion of an CRC32 checksum to an <see cref="int"/>, which might be negative.
+    /// </summary>
+    /// <param name="crc">The checksum data.</param>
+    public static explicit operator int(Crc32 crc)
+    {
+        unchecked
+        {
+            return (int)crc._checksum;
+        }
     }
 }

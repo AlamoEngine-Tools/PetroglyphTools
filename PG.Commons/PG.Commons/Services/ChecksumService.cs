@@ -25,7 +25,7 @@ public class ChecksumService : IChecksumService
             throw new ArgumentNullException(nameof(encoding));
 
         Span<byte> buffer;
-
+        
         if (s.Length > 256)
         {
 #if NETSTANDARD2_1_OR_GREATER || NET
@@ -44,11 +44,16 @@ public class ChecksumService : IChecksumService
             var stringSpan = s.AsSpan();
             var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
 
-            var buff = stackalloc byte[maxByteSize];
-            fixed (char* sp = &stringSpan.GetPinnableReference())
+            if (stringSpan.IsEmpty) 
+                buffer = Span<byte>.Empty;
+            else
             {
-                var a = encoding.GetBytes(sp, s.Length, buff, maxByteSize);
-                buffer = new Span<byte>(buff, a);
+                var buff = stackalloc byte[maxByteSize];
+                fixed (char* sp = &stringSpan.GetPinnableReference())
+                {
+                    var a = encoding.GetBytes(sp, s.Length, buff, maxByteSize);
+                    buffer = new Span<byte>(buff, a);
+                }
             }
         }
 

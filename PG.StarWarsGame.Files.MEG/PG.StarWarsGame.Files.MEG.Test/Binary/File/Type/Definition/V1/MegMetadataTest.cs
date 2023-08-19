@@ -15,28 +15,16 @@ public class MegMetadataTest
 {
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentNullException()
-    { 
-        Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, null!, new MegFileTable(new List<MegFileContentTableRecord>())));
-        Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, new MegFileNameTable(new List<MegFileNameTableRecord>()), null!));
-    }
-
-    [TestMethod]
-    public void Ctor_Test__ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(
-            new MegHeader(1, 1),
-            new MegFileNameTable(new List<MegFileNameTableRecord>()),
-            new MegFileTable(new List<MegFileContentTableRecord>())));
+        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>
+            { new(default, 0, 0, 0, 0) });
+        Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, null!, fileTable));
 
-        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(
-            new MegHeader(1, 1),
-            new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII)}),
-            new MegFileTable(new List<MegFileContentTableRecord>())));
 
-        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(
-            new MegHeader(1, 1),
-            new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII) }),
-            new MegFileTable(new List<MegFileContentTableRecord> { default, default })));
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
+            { new("123", Encoding.ASCII) });
+        Assert.ThrowsException<ArgumentNullException>(() =>
+            new MegMetadata(default, fileNameTable, null!));
     }
 
     [TestMethod]

@@ -22,6 +22,8 @@ internal class MegFileTable : BinaryBase, IFileTable, IEnumerable<MegFileContent
     {
         if (megFileContentTableRecords is null)
             throw new ArgumentNullException(nameof(megFileContentTableRecords));
+        if (megFileContentTableRecords.Count == 0)
+            throw new ArgumentException("FileTable must not be empty.");
         _megFileContentTableRecords = megFileContentTableRecords.ToList();
     }
 

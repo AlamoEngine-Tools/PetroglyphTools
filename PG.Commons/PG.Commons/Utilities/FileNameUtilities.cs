@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace PG.Commons.Utilities;
 
@@ -15,47 +14,13 @@ public static class FileNameUtilities
 {
     // From .NET Path.Windows.cs
     // Disabled all chars [0-31] cause we checked for them already when this is used.
-    private static readonly char[] _invalidFileNameChars = {
+    private static readonly char[] InvalidFileNameChars = {
         '\"', '<', '>', '|', ':', '*', '?', '\\', '/', '\0'
         //(char)1, (char)2, (char)3, (char)4, (char)5, (char)6, (char)7, (char)8, (char)9, (char)10,
         //(char)11, (char)12, (char)13, (char)14, (char)15, (char)16, (char)17, (char)18, (char)19, (char)20,
         //(char)21, (char)22, (char)23, (char)24, (char)25, (char)26, (char)27, (char)28, (char)29, (char)30,
         //(char)31,
     };
-
-    /// <summary>
-    /// Checks that a given filename, when converted to bytes, is not longer than the max value of an UInt16.
-    /// Throws an <see cref="OverflowException"/> is the filename is longer
-    /// </summary>
-    /// <remarks>The encoding is necessary information.<br/>
-    ///     For example consider the string "🤔":<br/>
-    ///          .NET string length (# of characters): 2.<br/>
-    ///          ASCII required bytes (each char is 1 byte): 2<br/>
-    ///          Unicode required bytes (each char is 2 bytes): 4.<br/>
-    ///     Many PG binary files use size information for processing strings. So if we wanted to use Unicode encoding,
-    ///     we need the actual byte size, and not what .NET thinks. 
-    /// </remarks>
-    /// <param name="filename">The filename to validate.</param>
-    /// <param name="encoding">The encoding that shall be used to get the string length.</param>
-    /// <returns>The actual length of the filename in bytes.</returns>
-    /// <exception cref="OverflowException">When the file name was too long.</exception>
-    public static ushort ValidateFileNameByteSizeUInt16(string filename, Encoding encoding)
-    {
-        if (filename == null) 
-            throw new ArgumentNullException(nameof(filename));
-        if (encoding == null) 
-            throw new ArgumentNullException(nameof(encoding));
-
-        var length = encoding.GetByteCount(filename);
-        try
-        {
-            return Convert.ToUInt16(length);
-        }
-        catch (OverflowException)
-        {
-            throw new OverflowException($"The filename {filename} is longer that the expected {ushort.MaxValue} characters.");
-        }
-    }
 
     /// <summary>
     /// Checks whether a given filename is can be used for a Petroglyph Star Wars game.
@@ -121,7 +86,7 @@ public static class FileNameUtilities
             return true;
 
         // Additional check for invalid Windows file name characters
-        if (_invalidFileNameChars.Contains(c))
+        if (InvalidFileNameChars.Contains(c))
             return true;
 
         return false;

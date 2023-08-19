@@ -39,6 +39,6 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
         _encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
         FileName = fileName;
-        _fileNameLength = FileNameUtilities.ValidateFileNameByteSizeUInt16(fileName, _encoding);
+        _fileNameLength = StringUtilities.ValidateStringByteSizeUInt16(fileName, _encoding);
     }
 }

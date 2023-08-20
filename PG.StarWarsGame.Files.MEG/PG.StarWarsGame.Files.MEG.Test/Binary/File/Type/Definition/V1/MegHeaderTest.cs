@@ -43,7 +43,7 @@ public class MegHeaderTest
         var header = new MegHeader(2, 2);
         var expectedBytes = new byte[]
         {
-            0x2, 0x0, 0x0, 0x0, 
+            0x2, 0x0, 0x0, 0x0,
             0x2, 0x0, 0x0, 0x0
         };
         CollectionAssert.AreEqual(expectedBytes, header.Bytes);

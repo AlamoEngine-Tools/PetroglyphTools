@@ -32,8 +32,12 @@ public class MegFileContentTableRecordTest
     [TestMethod]
     public void Ctor_Test__Correct()
     {
-        new MegFileContentTableRecord(new Crc32(0), 0, 0, 0, 0);
-        new MegFileContentTableRecord(new Crc32(1), 1, 1, 1, 1);
+        var record = new MegFileContentTableRecord(new Crc32(0), 1, 2, 3, 4);
+        Assert.AreEqual(0, (int)record.Crc32);
+        Assert.AreEqual(1, (int)record.FileTableRecordIndex);
+        Assert.AreEqual(2, (int)record.FileSize);
+        Assert.AreEqual(3, (int)record.FileOffset);
+        Assert.AreEqual(4, (int)record.FileNameIndex);
     }
 
     [TestMethod]

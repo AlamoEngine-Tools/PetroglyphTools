@@ -4,32 +4,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1;
 
 [TestClass]
-public class MegFileNameTableTest
+public class MegFileTableTest
 {
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileNameTable(null!));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegFileTable(null!));
     }
 
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTable(new List<MegFileNameTableRecord>()));
+        Assert.ThrowsException<ArgumentException>(() => new MegFileTable(new List<MegFileContentTableRecord>()));
     }
 
     [TestMethod]
     public void Test_Size()
     {
-        MegFileNameTableRecord entry = new("abc", Encoding.ASCII);
-        var table = new MegFileNameTable(new List<MegFileNameTableRecord>
+        MegFileContentTableRecord entry = new(default, 0, default, default, default);
+        var table = new MegFileTable(new List<MegFileContentTableRecord>
         {
             entry,
             entry
@@ -40,9 +40,9 @@ public class MegFileNameTableTest
     [TestMethod]
     public void IFileNameTable_Test_Index()
     {
-        MegFileNameTableRecord entry1 = new("123", Encoding.ASCII);
-        MegFileNameTableRecord entry2 = new("456", Encoding.ASCII);
-        var table = new MegFileNameTable(new List<MegFileNameTableRecord>
+        MegFileContentTableRecord entry1 = new(default, 0, default, default, default);
+        MegFileContentTableRecord entry2 = new(default, 1, default, default, default);
+        var table = new MegFileTable(new List<MegFileContentTableRecord>
         {
             entry1,
             entry2
@@ -53,46 +53,46 @@ public class MegFileNameTableTest
         Assert.AreEqual(entry2, table[1]);
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => table[2]);
 
-        IFileNameTable ifaceTable = table;
+        IFileTable ifaceTable = table;
         Assert.AreEqual(2, ifaceTable.Count);
-        Assert.AreEqual("123", ifaceTable[0]);
-        Assert.AreEqual("456", ifaceTable[1]);
+        Assert.AreEqual(entry1, ifaceTable[0]);
+        Assert.AreEqual(entry2, ifaceTable[1]);
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => ifaceTable[2]);
     }
 
     [TestMethod]
     public void IFileNameTable_Test_Enumerate()
     {
-        MegFileNameTableRecord entry1 = new("123", Encoding.ASCII);
-        MegFileNameTableRecord entry2 = new("456", Encoding.ASCII);
+        MegFileContentTableRecord entry1 = new(default, 0, default, default, default);
+        MegFileContentTableRecord entry2 = new(default, 1, default, default, default);
 
-        var recordList = new List<MegFileNameTableRecord>
+        var recordList = new List<MegFileContentTableRecord>
         {
             entry1,
             entry2
         };
 
-        var table = new MegFileNameTable(recordList);
+        var table = new MegFileTable(recordList);
 
-        var list = new List<MegFileNameTableRecord>();
+        var list = new List<MegFileContentTableRecord>();
         foreach (var record in table)
             list.Add(record);
         CollectionAssert.AreEqual(recordList, list);
 
-        var names = new List<string>();
-        IFileNameTable ifaceTable = table;
+        var names = new List<IMegFileDescriptor>();
+        IFileTable ifaceTable = table;
         foreach (var name in ifaceTable)
             names.Add(name);
-        CollectionAssert.AreEqual(recordList.Select(r => r.FileName).ToList(), names);
+        CollectionAssert.AreEqual(recordList.ToList(), names);
 
     }
 
     [TestMethod]
     public void Test_Bytes()
     {
-        MegFileNameTableRecord entry1 = new("a", Encoding.ASCII);
-        MegFileNameTableRecord entry2 = new("b", Encoding.ASCII);
-        var table = new MegFileNameTable(new List<MegFileNameTableRecord>
+        MegFileContentTableRecord entry1 = new(default, 0, default, default, default);
+        MegFileContentTableRecord entry2 = new(default, 1, default, default, default);
+        var table = new MegFileTable(new List<MegFileContentTableRecord>
         {
             entry1,
             entry2

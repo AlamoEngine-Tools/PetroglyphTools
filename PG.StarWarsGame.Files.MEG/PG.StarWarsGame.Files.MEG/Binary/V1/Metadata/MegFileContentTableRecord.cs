@@ -4,6 +4,7 @@
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 using System;
+using System.Buffers.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
@@ -21,17 +22,23 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
 
     int IMegFileDescriptor.FileNameIndex => (int)FileNameIndex;
 
-    public byte[] Bytes
+    public unsafe byte[] Bytes
     {
         get
         {
-            var bytes = new byte[Size];
-            Buffer.BlockCopy(Crc32.GetBytes(), 0, bytes, 0, sizeof(uint));
-            Buffer.BlockCopy(BitConverter.GetBytes(FileTableRecordIndex), 0, bytes, sizeof(uint) * 1, sizeof(uint));
-            Buffer.BlockCopy(BitConverter.GetBytes(FileSize), 0, bytes, sizeof(uint) * 2, sizeof(uint));
-            Buffer.BlockCopy(BitConverter.GetBytes(FileOffset), 0, bytes, sizeof(uint) * 3, sizeof(uint));
-            Buffer.BlockCopy(BitConverter.GetBytes(FileNameIndex), 0, bytes, sizeof(uint) * 4, sizeof(uint));
-            return bytes;
+            var data = new byte[Size];
+            var dataSpan = data.AsSpan();
+            var crcArea = dataSpan.Slice(0);
+            Crc32.GetBytes(crcArea);
+            var indexArea = dataSpan.Slice(sizeof(Crc32));
+            BinaryPrimitives.WriteUInt32LittleEndian(indexArea, FileTableRecordIndex);
+            var sizeArea = dataSpan.Slice(sizeof(Crc32) + sizeof(uint));
+            BinaryPrimitives.WriteUInt32LittleEndian(sizeArea, FileSize);
+            var startArea = dataSpan.Slice(sizeof(Crc32) + sizeof(uint) + sizeof(uint));
+            BinaryPrimitives.WriteUInt32LittleEndian(startArea, FileOffset);
+            var nameArea = dataSpan.Slice(sizeof(Crc32) + sizeof(uint) + sizeof(uint) + sizeof(uint));
+            BinaryPrimitives.WriteUInt32LittleEndian(nameArea, FileNameIndex);
+            return data;
         }
     }
 
@@ -63,5 +70,49 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
     int IComparable<IMegFileDescriptor>.CompareTo(IMegFileDescriptor? other)
     {
         return other is null ? 1 : Crc32.CompareTo(other.Crc32);
+    }
+
+    /// <summary>
+    /// Determines whether one record is greater than another by its checksum.
+    /// </summary>
+    /// <param name="a">The first record to compare.</param>
+    /// <param name="b">The second record to compare.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is greater than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool operator >(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    {
+        return a.Crc32 > b.Crc32;
+    }
+
+    /// <summary>
+    /// Determines whether one record is less than another by its checksum.
+    /// </summary>
+    /// <param name="a">The first record to compare.</param>
+    /// <param name="b">The second record to compare.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is less than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool operator <(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    {
+        return a.Crc32 < b.Crc32;
+    }
+
+    /// <summary>
+    /// Determines whether one record is greater than or equal to another  by its checksum.
+    /// </summary>
+    /// <param name="a">The first record to compare.</param>
+    /// <param name="b">The second record to compare.</param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is greater than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool operator >=(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    {
+        return a.Crc32 >= b.Crc32;
+    }
+
+    /// <summary>
+    /// Determines whether one record is less than or equal to another  by its checksum.
+    /// </summary>
+    /// <param name="a">The first record checksum to compare.</param>
+    /// <param name="b">The second record to </param>
+    /// <returns><see langword="true"/> if <paramref name="a"/> is less than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool operator <=(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    {
+        return a.Crc32 <= b.Crc32;
     }
 }

@@ -27,14 +27,22 @@ internal class MegMetadata : BinaryBase, IMegFileMetadata
 
     public MegMetadata(MegHeader header, MegFileNameTable fileNameTable, MegFileTable fileContentTable)
     {
+        if (fileNameTable == null) 
+            throw new ArgumentNullException(nameof(fileNameTable));
+        if (fileContentTable == null) 
+            throw new ArgumentNullException(nameof(fileContentTable));
+        if (fileNameTable.Count != fileContentTable.Count)
+            throw new ArgumentException("The FileNameTable and FileTable have do not have the same number of entries.");
+        if (fileNameTable.Count != header.NumFileNames)
+            throw new ArgumentException("MEG Header and tables do not have the same number of entries.");
         Header = header;
-        FileNameTable = fileNameTable ?? throw new ArgumentNullException(nameof(fileNameTable));
-        FileTable = fileContentTable ?? throw new ArgumentNullException(nameof(fileContentTable));
+        FileNameTable = fileNameTable;
+        FileTable = fileContentTable;
     }
 
     protected override int GetSizeCore()
     {
-        return Header.Size + FileTable.Size + FileTable.Size;
+        return Header.Size + FileNameTable.Size + FileTable.Size;
     }
 
     protected override byte[] ToBytesCore()

@@ -75,7 +75,9 @@ public class Crc32Test
         var crcM1 = new Crc32(-1);
 
         Assert.IsTrue(crc1 < crc2);
+        Assert.IsFalse(crc1 > crc2);
         Assert.IsTrue(crc2 > crc1);
+        Assert.IsFalse(crc2 < crc1);
         Assert.IsTrue(crc2 != crc1);
 
         Assert.IsTrue(crcM1 > crc2);

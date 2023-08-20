@@ -139,7 +139,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <returns><see langword="true"/> if <paramref name="a"/> is greater than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >(Crc32 a, Crc32 b)
     {
-        return !(a == b);
+        return a._checksum > b._checksum;
     }
 
     /// <summary>
@@ -150,7 +150,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <returns><see langword="true"/> if <paramref name="a"/> is less than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <(Crc32 a, Crc32 b)
     {
-        return !(a == b);
+        return a._checksum < b._checksum;
     }
 
     /// <summary>
@@ -161,7 +161,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <returns><see langword="true"/> if <paramref name="a"/> is greater than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator >=(Crc32 a, Crc32 b)
     {
-        return !(a == b);
+        return a._checksum >= b._checksum;
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <returns><see langword="true"/> if <paramref name="a"/> is less than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <=(Crc32 a, Crc32 b)
     {
-        return !(a == b);
+        return a._checksum <= b._checksum;
     }
 
     /// <summary>

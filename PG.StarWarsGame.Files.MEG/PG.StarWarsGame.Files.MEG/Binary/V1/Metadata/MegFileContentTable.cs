@@ -16,7 +16,9 @@ internal class MegFileTable : BinaryBase, IFileTable, IEnumerable<MegFileContent
 
     public MegFileContentTableRecord this[int i] => _megFileContentTableRecords[i];
 
-    IMegFileDescriptor IFileTable.this[int i] => this[i];
+    IMegFileDescriptor IBinaryTable<IMegFileDescriptor>.this[int i] => this[i];
+
+    public int Count => _megFileContentTableRecords.Count;
 
     public MegFileTable(IList<MegFileContentTableRecord> megFileContentTableRecords)
     {

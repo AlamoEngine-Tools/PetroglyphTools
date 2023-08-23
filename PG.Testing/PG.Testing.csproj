@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <TargetFrameworks>net8.0</TargetFrameworks>
@@ -12,7 +12,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.6.23329.7"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-preview.6.23329.7"/>
         <PackageReference Include="MSTest.TestFramework" Version="3.1.1"/>
-        <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="19.2.51"/>
+        <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" Version="19.2.64"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23371-04"/>
     </ItemGroup>
     <ItemGroup>

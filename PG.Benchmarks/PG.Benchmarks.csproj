@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<TargetFrameworks>net48;net8.0</TargetFrameworks>
+		<TargetFrameworks>net48;net7.0</TargetFrameworks>
 		<Product>PG.Benchmarks</Product>
 		<Title>PG.Benchmarks</Title>
 		<PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>

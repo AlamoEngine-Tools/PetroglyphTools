@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <Title>PG.StarWarsGame.Files.MEG</Title>
@@ -27,7 +27,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
         <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
         <PackageReference Include="System.Composition.AttributedModel" Version="7.0.0" />
-        <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.67" />
         <PackageReference Include="Nullable" Version="1.3.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

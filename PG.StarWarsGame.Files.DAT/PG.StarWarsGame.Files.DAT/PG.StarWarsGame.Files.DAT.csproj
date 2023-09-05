@@ -4,12 +4,7 @@
         <Title>PG.StarWarsGame.Files.DAT</Title>
         <Product>PG.StarWarsGame.Files.DAT</Product>
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.DAT</PackageId>
-        <Version>0.1.0-alpha.1</Version>
-        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/main/LICENSE</PackageLicenseUrl>
-        <PackageIcon>aet.png</PackageIcon>
-        <PackageTags>alamo,petroglyph,glyphx</PackageTags>
-        <AssemblyVersion>0.1.0-alpha.1</AssemblyVersion>
-        <FileVersion>0.1.0-alpha.1</FileVersion>
+	    <PackageTags>alamo,petroglyph,glyphx</PackageTags>
     </PropertyGroup>
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

@@ -15,7 +15,7 @@ public abstract class FormatterBase<TProcessingInstructions, TRepository> : Serv
     where TRepository : IRepository
     where TProcessingInstructions : ILocalisationFormatterProcessingInstructionsParam
 {
-    private TProcessingInstructions _param = default;
+    private TProcessingInstructions _param = default!;
 
     /// <inheritdoc />
     public TProcessingInstructions Param

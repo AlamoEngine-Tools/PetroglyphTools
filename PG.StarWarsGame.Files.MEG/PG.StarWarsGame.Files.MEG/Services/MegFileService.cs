@@ -48,9 +48,9 @@ public class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public IMegFile Load(string filePath)
     {
-        using FileSystemStream fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
+        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
 
-        MegFileVersion megVersion = GetMegFileVersion(fs, out bool encrypted);
+        var megVersion = GetMegFileVersion(fs, out var encrypted);
 
         if (encrypted)
         {
@@ -68,9 +68,9 @@ public class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public IMegFile Load(string filePath, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
     {
-        using FileSystemStream fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
+        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
 
-        MegFileVersion version = GetMegFileVersion(fs, out bool encrypted);
+        var version = GetMegFileVersion(fs, out var encrypted);
 
         if (!encrypted)
         {
@@ -88,7 +88,7 @@ public class MegFileService : ServiceBase, IMegFileService
     private IMegFile CreateHolderFromMetadata(IBinaryFileReader<IMegFileMetadata> binaryBuilder, Stream fileStream,
         string filePath, MegFileVersion version)
     {
-        IMegFileMetadata megMetadata = binaryBuilder.ReadBinary(fileStream);
+        var megMetadata = binaryBuilder.ReadBinary(fileStream);
 
         if (megMetadata.FileNumber == 0)
         {
@@ -107,12 +107,12 @@ public class MegFileService : ServiceBase, IMegFileService
         // Since an IMegFile expects a List<>, not a Collection<>, we have to preserve the order of the FileTable
         for (var i = 0; i < megMetadata.FileNumber; i++)
         {
-            IMegFileDescriptor fileDescriptor = megMetadata.FileTable[i];
-            Crc32 crc = fileDescriptor.Crc32;
-            uint fileOffset = fileDescriptor.FileOffset;
-            uint fileSize = fileDescriptor.FileSize;
-            int fileNameIndex = fileDescriptor.FileNameIndex;
-            string fileName = megMetadata.FileNameTable[fileNameIndex];
+            var fileDescriptor = megMetadata.FileTable[i];
+            var crc = fileDescriptor.Crc32;
+            var fileOffset = fileDescriptor.FileOffset;
+            var fileSize = fileDescriptor.FileSize;
+            var fileNameIndex = fileDescriptor.FileNameIndex;
+            var fileName = megMetadata.FileNameTable[fileNameIndex];
             files.Add(new MegFileDataEntry(crc, fileName, fileOffset, fileSize));
         }
 
@@ -128,7 +128,7 @@ public class MegFileService : ServiceBase, IMegFileService
             throw new ArgumentNullException(nameof(file));
         }
 
-        using FileSystemStream fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         return GetMegFileVersion(fs, out encrypted);
     }
 
@@ -149,8 +149,8 @@ public class MegFileService : ServiceBase, IMegFileService
 
         using var reader = new BinaryReader(stream, Encoding.UTF8, true);
 
-        uint flags = reader.ReadUInt32();
-        uint id = reader.ReadUInt32();
+        var flags = reader.ReadUInt32();
+        var id = reader.ReadUInt32();
 
 
         // In V2 and V3 id and flags are never equal, where they are in V1.
@@ -181,9 +181,9 @@ public class MegFileService : ServiceBase, IMegFileService
         }
 
 
-        uint dataStart = reader.ReadUInt32();
-        uint numFilenames = reader.ReadUInt32();
-        uint numFiles = reader.ReadUInt32();
+        var dataStart = reader.ReadUInt32();
+        var numFilenames = reader.ReadUInt32();
+        var numFiles = reader.ReadUInt32();
 
         Debug.Assert(numFiles == numFilenames);
 
@@ -233,7 +233,7 @@ public class MegFileService : ServiceBase, IMegFileService
             }
 
             // known start of the FileTable
-            uint fileTableOffset = dataStart - numFiles * 20;
+            var fileTableOffset = dataStart - numFiles * 20;
 
 
             if (fileTableOffset != 24 + filenamesSize)
@@ -255,9 +255,9 @@ public class MegFileService : ServiceBase, IMegFileService
                 return MegFileVersion.V3;
             }
 
-            uint lastFileRecordPosition = dataStart - 20;
+            var lastFileRecordPosition = dataStart - 20;
             reader.BaseStream.Position = lastFileRecordPosition;
-            uint lastFileTableIndex = numFiles - 1;
+            var lastFileTableIndex = numFiles - 1;
 
             return FileRecordIsV3(reader, lastFileTableIndex) ? MegFileVersion.V3 : MegFileVersion.V2;
         }
@@ -269,14 +269,14 @@ public class MegFileService : ServiceBase, IMegFileService
     {
         try
         {
-            ushort flag = reader.ReadUInt16();
+            var flag = reader.ReadUInt16();
             if (flag != 0)
             {
                 return false;
             }
 
             reader.ReadUInt32(); // CRC
-            uint index = reader.ReadUInt32();
+            var index = reader.ReadUInt32();
             return index == expectedIndex;
         }
         catch

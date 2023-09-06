@@ -127,7 +127,7 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnly
 
     private static void ValidateEncryptionLength(ReadOnlySpan<byte> data)
     {
-        long bitLength = data.Length * 8L;
+        var bitLength = data.Length * 8L;
         if (bitLength != 128)
         {
             throw new ArgumentException("Specified data is not a valid size for MEG encryption.", nameof(data));

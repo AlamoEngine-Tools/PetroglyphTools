@@ -30,17 +30,17 @@ internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFi
 
         using var binaryReader = new BinaryReader(byteStream, MegFileConstants.MegContentFileNameEncoding, true);
 
-        MegHeader header = BuildMegHeaderInternal(binaryReader);
-        MegFileNameTable fileNameTable = BuildFileNameTableInternal(binaryReader, (int)header.NumFiles);
-        MegFileTable fileTable = BuildFileContentTableInternal(binaryReader, (int)header.NumFiles);
+        var header = BuildMegHeaderInternal(binaryReader);
+        var fileNameTable = BuildFileNameTableInternal(binaryReader, (int)header.NumFiles);
+        var fileTable = BuildFileContentTableInternal(binaryReader, (int)header.NumFiles);
 
         return new MegMetadata(header, fileNameTable, fileTable);
     }
 
     private MegHeader BuildMegHeaderInternal(BinaryReader reader)
     {
-        uint numFileNames = reader.ReadUInt32();
-        uint numFiles = reader.ReadUInt32();
+        var numFileNames = reader.ReadUInt32();
+        var numFiles = reader.ReadUInt32();
 
         if (numFiles != numFileNames)
         {
@@ -60,11 +60,11 @@ internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFi
     private MegFileNameTable BuildFileNameTableInternal(BinaryReader reader, int fileNumber)
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
-        Encoding encoding = MegFileConstants.MegContentFileNameEncoding;
+        var encoding = MegFileConstants.MegContentFileNameEncoding;
         for (uint i = 0; i < fileNumber; i++)
         {
-            ushort fileNameLength = reader.ReadUInt16();
-            string fileName = GetString(reader, fileNameLength, encoding);
+            var fileNameLength = reader.ReadUInt16();
+            var fileName = GetString(reader, fileNameLength, encoding);
             fileNameTable.Add(new MegFileNameTableRecord(fileName, encoding));
         }
 
@@ -75,7 +75,7 @@ internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFi
     {
         byte[]? rentedFromPool = null;
 
-        Span<byte> buffer =
+        var buffer =
 #if NETSTANDARD2_0
             rentedFromPool = ArrayPool<byte>.Shared.Rent(length);
 #else
@@ -84,13 +84,13 @@ internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFi
                 : stackalloc byte[length];
 #endif
 
-        int bytesRead = reader.Read();
+        var bytesRead = reader.Read();
         if (bytesRead != length)
         {
             throw new BinaryCorruptedException($"Unable to read string value of given length '{length}'.");
         }
 
-        string @string = encoding.GetString(buffer.ToArray());
+        var @string = encoding.GetString(buffer.ToArray());
 
         if (rentedFromPool is not null)
         {
@@ -107,7 +107,7 @@ internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFi
         for (var i = 0; i < fileNumber; i++)
         {
             var crc32 = new Crc32(reader.ReadUInt32());
-            uint fileTableRecordIndex = reader.ReadUInt32();
+            var fileTableRecordIndex = reader.ReadUInt32();
 
             if (fileTableRecordIndex > int.MaxValue)
             {
@@ -117,10 +117,10 @@ internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFi
 
             Debug.Assert(fileTableRecordIndex == i);
 
-            uint fileSizeInBytes = reader.ReadUInt32();
-            uint fileStartOffsetInBytes = reader.ReadUInt32();
+            var fileSizeInBytes = reader.ReadUInt32();
+            var fileStartOffsetInBytes = reader.ReadUInt32();
 
-            uint fileNameTableIndex = reader.ReadUInt32();
+            var fileNameTableIndex = reader.ReadUInt32();
             if (fileNameTableIndex > int.MaxValue)
             {
                 throw new NotSupportedException(
@@ -196,7 +196,7 @@ internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFi
 
     public MegMetadata FromHolder(IMegFile holder)
     {
-        return FromHolder(holder, out IList<string> _);
+        return FromHolder(holder, out var _);
     }
 
     public IMegFile ToHolder(MegFileHolderParam param, MegMetadata model)

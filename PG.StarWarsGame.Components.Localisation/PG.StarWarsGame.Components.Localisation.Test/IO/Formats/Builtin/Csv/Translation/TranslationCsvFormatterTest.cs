@@ -82,9 +82,12 @@ public class TranslationCsvFormatterTest
     public void Test_CreateCsvFiles__ValidOutput()
     {
         Debug.Assert(Directory != null, nameof(Directory) + " != null");
-        var param = CreateCsvFormatterProcessingInstructionsParam.WithDirectory(Directory.FullName)
-            .WithFileName("testfile").WithCsvExtension().WithSeparator('=').withoutKeyWrapper().withoutValueWrapper()
-            .AlphabetizeKeys();
+        var param = new CsvFormatterProcessingInstructionsParam()
+        {
+            Directory = Directory.FullName, 
+            FileName = "testfile", 
+            Separator= '='
+        };
         Debug.Assert(Formatter != null, nameof(Formatter) + " != null");
         Formatter.WithProcessingInstructions(param);
         Formatter.ValidateAndThrow();

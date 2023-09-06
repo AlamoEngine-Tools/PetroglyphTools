@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ public class TranslationCsvFormatter : CsvFormatterBase<ITranslationRepository>
     {
         Param.ValidateAndThrow();
         Debug.Assert(Param.Directory != null, "Param.Directory != null");
-        var dirPath = Param.Directory.ToString() ?? throw new ArgumentNullException(nameof(Param.Directory));
+        var dirPath = Param.Directory?.ToString() ?? throw new ArgumentNullException(nameof(Param.Directory));
         if (!FileSystem.Directory.Exists(dirPath))
         {
             FileSystem.Directory.CreateDirectory(dirPath);

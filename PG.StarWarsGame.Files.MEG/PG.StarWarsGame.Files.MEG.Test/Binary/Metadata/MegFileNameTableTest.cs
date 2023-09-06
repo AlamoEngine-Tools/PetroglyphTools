@@ -53,7 +53,7 @@ public class MegFileNameTableTest
         Assert.AreEqual(entry2, table[1]);
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => table[2]);
 
-        IFileNameTable ifaceTable = table;
+        IMegFileNameTable ifaceTable = table;
         Assert.AreEqual(2, ifaceTable.Count);
         Assert.AreEqual("123", ifaceTable[0]);
         Assert.AreEqual("456", ifaceTable[1]);
@@ -80,7 +80,7 @@ public class MegFileNameTableTest
         CollectionAssert.AreEqual(recordList, list);
 
         var names = new List<string>();
-        IFileNameTable ifaceTable = table;
+        IMegFileNameTable ifaceTable = table;
         foreach (var name in ifaceTable)
             names.Add(name);
         CollectionAssert.AreEqual(recordList.Select(r => r.FileName).ToList(), names);

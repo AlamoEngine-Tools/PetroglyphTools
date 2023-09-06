@@ -3,15 +3,17 @@
 
 using System;
 using System.Buffers.Binary;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
-internal readonly struct MegHeader : IBinary
+internal readonly struct MegHeader : IMegHeader
 {
     internal uint NumFileNames { get; }
 
     internal uint NumFiles { get; }
+
+    public int FileNumber => (int) NumFileNames;
 
     public byte[] Bytes
     {

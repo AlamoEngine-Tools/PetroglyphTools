@@ -9,7 +9,7 @@ using PG.Commons.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
-internal class MegFileNameTable : BinaryBase, IFileNameTable, IEnumerable<MegFileNameTableRecord>
+internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<MegFileNameTableRecord>
 {
     private readonly IReadOnlyList<MegFileNameTableRecord> _megFileNameTableRecords;
 

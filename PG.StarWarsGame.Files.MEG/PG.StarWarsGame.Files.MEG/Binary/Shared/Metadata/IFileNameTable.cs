@@ -1,7 +1,9 @@
-﻿using PG.Commons.Binary;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.Commons.Binary;
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
-internal interface IFileNameTable : IBinaryTable<string>
+internal interface IMegFileNameTable : IBinaryTable<string>
 {
 }

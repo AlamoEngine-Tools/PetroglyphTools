@@ -12,32 +12,30 @@ namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 /// Meg archive representation WITHOUT content data.
 /// </summary>
 internal class MegMetadata : BinaryBase, IMegFileMetadata
-{
-    public int FileNumber => (int) Header.NumFiles;
-
-    internal MegHeader Header { get; }
+{ 
+    public IMegHeader Header { get; }
 
     internal MegFileNameTable FileNameTable { get; }
 
     public MegFileTable FileTable { get; }
 
-    IFileNameTable IMegFileMetadata.FileNameTable => FileNameTable;
+    IMegFileNameTable IMegFileMetadata.FileNameTable => FileNameTable;
 
-    IFileTable IMegFileMetadata.FileTable => FileTable;
+    IMegFileTable IMegFileMetadata.FileTable => FileTable;
 
-    public MegMetadata(MegHeader header, MegFileNameTable fileNameTable, MegFileTable fileContentTable)
+    public MegMetadata(MegHeader header, MegFileNameTable fileNameTable, MegFileTable fileTable)
     {
         if (fileNameTable == null) 
             throw new ArgumentNullException(nameof(fileNameTable));
-        if (fileContentTable == null) 
-            throw new ArgumentNullException(nameof(fileContentTable));
-        if (fileNameTable.Count != fileContentTable.Count)
+        if (fileTable == null) 
+            throw new ArgumentNullException(nameof(fileTable));
+        if (fileNameTable.Count != fileTable.Count)
             throw new ArgumentException("The FileNameTable and FileTable have do not have the same number of entries.");
         if (fileNameTable.Count != header.NumFileNames)
             throw new ArgumentException("MEG Header and tables do not have the same number of entries.");
         Header = header;
         FileNameTable = fileNameTable;
-        FileTable = fileContentTable;
+        FileTable = fileTable;
     }
 
     protected override int GetSizeCore()

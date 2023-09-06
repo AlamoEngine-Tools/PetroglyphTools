@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
@@ -29,6 +31,13 @@ public class MegHeaderTest
         new MegHeader(1, 1);
         new MegHeader(int.MaxValue, int.MaxValue);
         Assert.IsTrue(true);
+    }
+
+    [TestMethod]
+    public void Ctor_Test__FileNumber()
+    {
+        IMegHeader header = new MegHeader(1, 1);
+        Assert.AreEqual(1, header.FileNumber);
     }
 
     [TestMethod]

@@ -1,15 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <Title>PG.StarWarsGame.Files.DAT</Title>
         <Product>PG.StarWarsGame.Files.DAT</Product>
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.DAT</PackageId>
-        <Version>0.1.0-alpha.1</Version>
-        <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/main/LICENSE</PackageLicenseUrl>
-        <PackageIcon>aet.png</PackageIcon>
-        <PackageTags>alamo,petroglyph,glyphx</PackageTags>
-        <AssemblyVersion>0.1.0-alpha.1</AssemblyVersion>
-        <FileVersion>0.1.0-alpha.1</FileVersion>
+	    <PackageTags>alamo,petroglyph,glyphx</PackageTags>
     </PropertyGroup>
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -21,9 +16,9 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Remove="Old\**"/>
-        <EmbeddedResource Remove="Old\**"/>
-        <None Remove="Old\**"/>
+        <Compile Remove="Old\**" />
+        <EmbeddedResource Remove="Old\**" />
+        <None Remove="Old\**" />
         <None Update="aet.png">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
@@ -34,11 +29,11 @@
 		    <PrivateAssets>all</PrivateAssets>
 		    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	    </PackageReference>
-		<PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.6.23329.7"/>
-        <PackageReference Include="System.IO.Abstractions" Version="19.2.51"/>
+		<PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
     </ItemGroup>
 </Project>

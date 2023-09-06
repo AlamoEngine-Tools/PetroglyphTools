@@ -25,9 +25,23 @@ jobs:
     - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-    - name: Build & Test in Release Mode
-      run: dotnet test --configuration Release
+    - name: Build
+      run: |
+        dotnet build PG.Commons/PG.Commons/PG.Commons.csproj
+        dotnet build PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.csproj
+        dotnet build PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj
+        dotnet build PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation.csproj
+    - name: Unit Test
+      run: |
+        dotnet test PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj
+        dotnet test PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj
+        dotnet test PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj
+        dotnet test PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation.csproj
 
     - name: Build & Test .NET Framework
       if: matrix.os == 'windows-latest'
-      run: dotnet test --configuration Release -f net48
+      run: |
+        dotnet test -f net48 PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj
+        dotnet test -f net48 PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj
+        dotnet test -f net48 PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj
+        dotnet test -f net48 PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation.csproj

@@ -3,7 +3,7 @@ using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Files;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal interface IMegFileDescriptor : IBinary, IComparable<IMegFileDescriptor>
 {

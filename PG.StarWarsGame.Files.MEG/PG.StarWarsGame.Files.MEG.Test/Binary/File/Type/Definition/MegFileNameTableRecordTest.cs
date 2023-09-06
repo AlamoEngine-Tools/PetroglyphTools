@@ -4,7 +4,7 @@
 using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition;

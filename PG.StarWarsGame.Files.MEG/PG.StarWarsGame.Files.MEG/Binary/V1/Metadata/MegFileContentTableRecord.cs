@@ -2,9 +2,9 @@
 // license. See LICENSE file in the project root for details.
 
 using PG.Commons.Services;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 using System;
 using System.Buffers.Binary;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 

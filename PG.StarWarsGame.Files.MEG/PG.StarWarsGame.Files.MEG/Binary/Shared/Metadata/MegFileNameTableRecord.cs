@@ -7,7 +7,7 @@ using System.Text;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal readonly struct MegFileNameTableRecord : IBinary
 {

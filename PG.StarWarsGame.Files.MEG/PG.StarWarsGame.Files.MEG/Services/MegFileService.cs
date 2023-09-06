@@ -5,14 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Abstractions;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 

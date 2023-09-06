@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.Binary.File;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
@@ -13,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 /// </summary>
 internal interface IMegBinaryServiceFactory
 {
-    IBinaryFileReader<IMegFileMetadata> GetReader(MegFileVersion megVersion);
+    IMegFileBinaryReader GetReader(MegFileVersion megVersion);
 
-    IBinaryFileReader<IMegFileMetadata> GetReader(ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
+    IMegFileBinaryReader GetReader(ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
 }

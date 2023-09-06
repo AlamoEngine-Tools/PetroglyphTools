@@ -129,7 +129,7 @@ internal class UnsignedList<T> : IUnsignedList<T>
 
     public bool Remove(T item)
     {
-        bool removed = _lowerIndices.Remove(item);
+        var removed = _lowerIndices.Remove(item);
         if (!removed && _upperIndices != null)
             removed = _upperIndices.Remove(item);
 
@@ -171,14 +171,14 @@ internal class UnsignedList<T> : IUnsignedList<T>
 
     public bool TryGetIndex(T item, out uint? index)
     {
-        int lowerIndex = _lowerIndices.IndexOf(item);
+        var lowerIndex = _lowerIndices.IndexOf(item);
         if (lowerIndex != -1)
         {
             index = (uint)lowerIndex;
             return true;
         }
 
-        int upperIndex = _upperIndices?.IndexOf(item) ?? -1;
+        var upperIndex = _upperIndices?.IndexOf(item) ?? -1;
         if (upperIndex != -1)
         {
             index = (uint)(_lowerIndices.Count + upperIndex);

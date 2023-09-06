@@ -89,12 +89,12 @@ public class MegFileService : ServiceBase, IMegFileService
     {
         var megMetadata = binaryBuilder.ReadBinary(fileStream);
 
-        if (megMetadata.FileNumber == 0)
+        if (megMetadata.Header.FileNumber == 0)
         {
             throw new NotSupportedException("Empty .MEG archives are not supported.");
         }
 
-        var files = new List<MegFileDataEntry>(megMetadata.FileNumber);
+        var files = new List<MegFileDataEntry>(megMetadata.Header.FileNumber);
 
         // According to the specification: 
         //  - The Meg's FileTable is sorted by CRC32.
@@ -104,7 +104,7 @@ public class MegFileService : ServiceBase, IMegFileService
         //                  the game should use the last file.
         // 
         // Since an IMegFile expects a List<>, not a Collection<>, we have to preserve the order of the FileTable
-        for (var i = 0; i < megMetadata.FileNumber; i++)
+        for (var i = 0; i < megMetadata.Header.FileNumber; i++)
         {
             var fileDescriptor = megMetadata.FileTable[i];
             var crc = fileDescriptor.Crc32;

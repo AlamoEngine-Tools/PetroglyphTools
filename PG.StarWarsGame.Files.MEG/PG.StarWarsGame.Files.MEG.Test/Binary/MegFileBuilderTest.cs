@@ -6,17 +6,17 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Builder;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary;
 
 [TestClass]
 public class MegFileBuilderTest
 {
-    private IFileSystem m_fileSystem;
+    private IFileSystem _fileSystem;
 
     [TestInitialize]
     public void SetUp()
     {
-        m_fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+        _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
         {
             {
                 MegTestConstants.GetGameObjectFilesPath(),

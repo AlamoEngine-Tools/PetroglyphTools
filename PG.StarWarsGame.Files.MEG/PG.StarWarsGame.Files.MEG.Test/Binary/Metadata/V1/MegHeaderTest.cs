@@ -5,7 +5,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
 [TestClass]
 public class MegHeaderTest

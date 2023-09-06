@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
 [TestClass]
 public class MegFileContentTableRecordTest
@@ -15,10 +15,10 @@ public class MegFileContentTableRecordTest
     public void Ctor_Test__ThrowsArgumentOutOfRangeException()
     {
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegFileContentTableRecord(
-                new Crc32(0), 
-                int.MaxValue + 1u, 
-                0, 
-                0, 
+                new Crc32(0),
+                int.MaxValue + 1u,
+                0,
+                0,
                 0));
 
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegFileContentTableRecord(

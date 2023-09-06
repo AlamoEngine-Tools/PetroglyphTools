@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.Testing;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
 [TestClass]
 public class MegFileNameTableRecordTest

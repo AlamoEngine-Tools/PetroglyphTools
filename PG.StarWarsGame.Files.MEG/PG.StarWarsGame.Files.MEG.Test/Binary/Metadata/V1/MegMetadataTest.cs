@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
 [TestClass]
 public class MegMetadataTest
@@ -35,10 +35,10 @@ public class MegMetadataTest
         var header2 = new MegHeader(2, 2);
         var fileTable1 = new MegFileTable(new List<MegFileContentTableRecord>
             { new(default, 0, 0, 0, 0) });
-       var fileNameTable1 = new MegFileNameTable(new List<MegFileNameTableRecord>
+        var fileNameTable1 = new MegFileNameTable(new List<MegFileNameTableRecord>
             { new("123", Encoding.ASCII) });
-       var fileNameTable2 = new MegFileNameTable(new List<MegFileNameTableRecord>
-           { 
+        var fileNameTable2 = new MegFileNameTable(new List<MegFileNameTableRecord>
+           {
                new("123", Encoding.ASCII),
                new("456", Encoding.ASCII)
            });

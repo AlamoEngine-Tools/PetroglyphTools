@@ -65,7 +65,11 @@ jobs:
           # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
           # queries: security-extended,security-and-quality
       - name: Build
-        run: dotnet build --configuration Release
+        run: |
+          dotnet build PG.Commons/PG.Commons/PG.Commons.csproj
+          dotnet build PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.csproj
+          dotnet build PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj
+          dotnet build PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation.csproj
       
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

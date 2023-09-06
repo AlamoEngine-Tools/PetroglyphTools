@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PG.Commons.Binary;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal class MegFileNameTable : BinaryBase, IFileNameTable, IEnumerable<MegFileNameTableRecord>
 {

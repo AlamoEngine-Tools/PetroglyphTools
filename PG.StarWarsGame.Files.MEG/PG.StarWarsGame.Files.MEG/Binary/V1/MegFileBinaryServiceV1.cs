@@ -9,17 +9,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using PG.Commons.Binary;
-using PG.Commons.Binary.File;
 using PG.Commons.Services;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
-internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFile, MegFileHolderParam>,
-    IBinaryFileReader<IMegFileMetadata>
+internal class MegFileBinaryServiceV1 : DisposableObject, IMegFileBinaryService
 {
     public IMegFileMetadata ReadBinary(Stream byteStream)
     {

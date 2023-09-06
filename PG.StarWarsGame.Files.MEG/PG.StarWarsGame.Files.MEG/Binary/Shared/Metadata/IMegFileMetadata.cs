@@ -1,6 +1,6 @@
 ﻿using PG.Commons.Binary.File;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal interface IMegFileMetadata : IBinaryFile
 {

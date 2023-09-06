@@ -4,8 +4,8 @@
         <Product>PG.Commons</Product>
         <Title>PG.Commons</Title>
         <PackageId>AlamoEngineTools.PG.Commons</PackageId>
-	    <PackageTags>alamo,petroglyph,glyphx</PackageTags>
-	    <NeutralLanguage>en</NeutralLanguage>
+        <PackageTags>alamo,petroglyph,glyphx</PackageTags>
+        <NeutralLanguage>en</NeutralLanguage>
     </PropertyGroup>
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -19,10 +19,9 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="IsExternalInit" Version="1.0.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FluentValidation" Version="11.6.0"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
         <PackageReference Include="Nullable" Version="1.3.1">

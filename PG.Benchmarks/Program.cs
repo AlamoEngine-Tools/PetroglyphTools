@@ -1,4 +1,6 @@
-﻿namespace PG.Benchmarks;
+﻿using BenchmarkDotNet.Running;
+
+namespace PG.Benchmarks;
 
 class Benchmark
 {
@@ -7,5 +9,6 @@ class Benchmark
         //BenchmarkRunner.Run<GetStringCrc32>();
         //BenchmarkRunner.Run<GetBytesBenchmark>();
         //BenchmarkRunner.Run<GetStringFromBinary>();
+        BenchmarkRunner.Run<EncodeString>();
     }
 }

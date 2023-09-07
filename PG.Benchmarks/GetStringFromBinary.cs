@@ -14,7 +14,7 @@ public class GetStringFromBinary
 {
     private static readonly Random Random = new();
 
-    [Params(267)]
+    [Params(267, 10)]
     public int N;
 
     private readonly Encoding _encoding = Encoding.ASCII;

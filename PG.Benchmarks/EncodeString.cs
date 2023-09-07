@@ -39,41 +39,24 @@ public class EncodeString
     [Benchmark]
     public unsafe string New()
     {
+        var count = _byteCount;
+        var encoding = _encoding;
+        var value = StringValue.AsSpan();
+
+        var buffer = count <= 256 ? stackalloc byte[count] : new byte[count];
 
 #if NET
-        if (_byteCount <= 256)
+        var bytesWritten = encoding.GetBytes(value, buffer);
+        return encoding.GetString(buffer.Slice(0, bytesWritten));
+#else
+
+        fixed (char* pFileName = value)
+        fixed (byte* pBuffer = buffer)
         {
-            Span<byte> buffer = stackalloc byte[_byteCount];
-            var bytesWritten = _encoding.GetBytes(StringValue.AsSpan(), buffer);
-            return _encoding.GetString(buffer.Slice(0, bytesWritten));
+            var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, count);
+            Debug.Assert(bytesWritten <= count);
+            return encoding.GetString(pBuffer, bytesWritten);
         }
 #endif
-
-        var bytes = new byte[_byteCount];
-        fixed (char* pFileName = StringValue)
-        fixed (byte* pBuffer = bytes)
-        {
-            var bytesWritten = _encoding.GetBytes(pFileName, StringValue.Length, pBuffer, _byteCount);
-            Debug.Assert(bytesWritten <= _byteCount);
-            return _encoding.GetString(pBuffer, bytesWritten);
-        }
-    }
-
-    [Benchmark]
-    public unsafe string New2()
-    {
-
-#if NET
-        if (_byteCount <= 256)
-        {
-            Span<byte> buffer = stackalloc byte[_byteCount];
-            var bytesWritten = _encoding.GetBytes(StringValue.AsSpan(), buffer);
-            return _encoding.GetString(buffer.Slice(0, bytesWritten));
-        }
-#endif
-
-        var bytes = _encoding.GetBytes(StringValue);
-        fixed (byte* pBuffer = bytes)
-            return _encoding.GetString(pBuffer, bytes.Length);
     }
 }

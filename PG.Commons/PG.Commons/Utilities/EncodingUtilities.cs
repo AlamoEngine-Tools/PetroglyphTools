@@ -104,22 +104,19 @@ public static class EncodingUtilities
         if (value is null)
             throw new ArgumentNullException(nameof(value));
 
-#if NETSTANDARD2_1_OR_GREATER
-        if (byteCount <= 256)
-        {
-            Span<byte> buffer = stackalloc byte[byteCount];
-            var bytesWritten = encoding.GetBytes(value.AsSpan(), buffer);
-            return encoding.GetString(buffer.Slice(0, bytesWritten));
-        }
-#endif
+        var buffer = byteCount <= 256 ? stackalloc byte[byteCount] : new byte[byteCount];
 
-        var bytes = new byte[byteCount];
+#if NETSTANDARD2_1_OR_GREATER
+        var bytesWritten = encoding.GetBytes(value.AsSpan(), buffer);
+        return encoding.GetString(buffer.Slice(0, bytesWritten));
+#else
         fixed (char* pFileName = value)
-        fixed (byte* pBuffer = bytes)
+        fixed (byte* pBuffer = buffer)
         {
             var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, byteCount);
             Debug.Assert(bytesWritten <= byteCount);
             return encoding.GetString(pBuffer, bytesWritten);
         }
+#endif
     }
 }

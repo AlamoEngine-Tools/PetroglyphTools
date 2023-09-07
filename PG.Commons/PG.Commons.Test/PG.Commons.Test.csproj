@@ -1,22 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
-        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFrameworks>net7.0</TargetFrameworks>
         <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
         <PackageId>AlamoEngineTools.PG.Commons.Test</PackageId>
-        <Version>0.1.0-alpha.1</Version>
-        <AssemblyVersion>0.1.0-alpha.1</AssemblyVersion>
-        <FileVersion>0.1.0-alpha.1</FileVersion>
-        <PackageIcon>aet.png</PackageIcon>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.6.23329.7" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23371-04" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
         <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
         <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
         <PackageReference Include="coverlet.collector" Version="6.0.0">
@@ -25,15 +21,9 @@
         </PackageReference>
         <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
         <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.51" />
-        <PackageReference Include="System.IO.Hashing" Version="8.0.0-preview.6.23329.7" />
+        <PackageReference Include="System.IO.Hashing" Version="7.0.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\PG.Commons\PG.Commons.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Update="aet.png">
-        <Pack>True</Pack>
-        <PackagePath></PackagePath>
-      </None>
     </ItemGroup>
 </Project>

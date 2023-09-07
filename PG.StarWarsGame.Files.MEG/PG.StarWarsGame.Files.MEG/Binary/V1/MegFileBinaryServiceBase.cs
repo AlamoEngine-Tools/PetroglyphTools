@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
@@ -46,8 +45,8 @@ internal abstract class MegFileBinaryServiceBase<TMegMetadata, TMegHeader, TMegF
         for (uint i = 0; i < header.FileNumber; i++)
         {
             var fileNameLength = binaryReader.ReadUInt16();
-            var fileName = GetString(binaryReader, fileNameLength, encoding);
-            fileNameTable.Add(new MegFileNameTableRecord(fileName, encoding));
+            var fileName = binaryReader.ReadString(fileNameLength, encoding);
+            fileNameTable.Add(new MegFileNameTableRecord(fileName));
         }
 
         return new MegFileNameTable(fileNameTable);
@@ -56,29 +55,5 @@ internal abstract class MegFileBinaryServiceBase<TMegMetadata, TMegHeader, TMegF
     public override string ToString()
     {
         return GetType().Name;
-    }
-
-    private static string GetString(BinaryReader reader, ushort length, Encoding encoding)
-    {
-        if (length == 0)
-            return string.Empty;
-
-#if NETSTANDARD2_1_OR_GREATER
-       
-        // This is the only perf optimization i could get
-        if (length <= 256)
-        {
-            Span<byte> buffer = stackalloc byte[length];
-            var br = reader.Read(buffer);
-            if (br != length)
-                throw new Exception();
-            return encoding.GetString(buffer);
-        }
-#endif
-
-        var bytes = reader.ReadBytes(length);
-        if (bytes.Length != length)
-            throw new Exception();
-        return encoding.GetString(bytes);
     }
 }

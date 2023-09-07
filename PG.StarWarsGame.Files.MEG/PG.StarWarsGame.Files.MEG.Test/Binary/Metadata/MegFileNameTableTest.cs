@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
@@ -28,7 +27,7 @@ public class MegFileNameTableTest
     [TestMethod]
     public void Test_Size()
     {
-        MegFileNameTableRecord entry = new("abc", Encoding.ASCII);
+        MegFileNameTableRecord entry = new("abc");
         var table = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
             entry,
@@ -40,8 +39,8 @@ public class MegFileNameTableTest
     [TestMethod]
     public void IFileNameTable_Test_Index()
     {
-        MegFileNameTableRecord entry1 = new("123", Encoding.ASCII);
-        MegFileNameTableRecord entry2 = new("456", Encoding.ASCII);
+        MegFileNameTableRecord entry1 = new("123");
+        MegFileNameTableRecord entry2 = new("456");
         var table = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
             entry1,
@@ -63,8 +62,8 @@ public class MegFileNameTableTest
     [TestMethod]
     public void IFileNameTable_Test_Enumerate()
     {
-        MegFileNameTableRecord entry1 = new("123", Encoding.ASCII);
-        MegFileNameTableRecord entry2 = new("456", Encoding.ASCII);
+        MegFileNameTableRecord entry1 = new("123");
+        MegFileNameTableRecord entry2 = new("456");
 
         var recordList = new List<MegFileNameTableRecord>
         {
@@ -90,8 +89,8 @@ public class MegFileNameTableTest
     [TestMethod]
     public void Test_Bytes()
     {
-        MegFileNameTableRecord entry1 = new("a", Encoding.ASCII);
-        MegFileNameTableRecord entry2 = new("b", Encoding.ASCII);
+        MegFileNameTableRecord entry1 = new("a");
+        MegFileNameTableRecord entry2 = new("b");
         var table = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
             entry1,

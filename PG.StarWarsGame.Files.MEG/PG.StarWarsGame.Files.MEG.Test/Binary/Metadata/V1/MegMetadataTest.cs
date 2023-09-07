@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
@@ -23,7 +22,7 @@ public class MegMetadataTest
 
 
         var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
-            { new("123", Encoding.ASCII) });
+            { new("123") });
         Assert.ThrowsException<ArgumentNullException>(() =>
             new MegMetadata(default, fileNameTable, null!));
     }
@@ -36,11 +35,11 @@ public class MegMetadataTest
         var fileTable1 = new MegFileTable(new List<MegFileContentTableRecord>
             { new(default, 0, 0, 0, 0) });
         var fileNameTable1 = new MegFileNameTable(new List<MegFileNameTableRecord>
-            { new("123", Encoding.ASCII) });
+            { new("123") });
         var fileNameTable2 = new MegFileNameTable(new List<MegFileNameTableRecord>
            {
-               new("123", Encoding.ASCII),
-               new("456", Encoding.ASCII)
+               new("123"),
+               new("456")
            });
 
         Assert.ThrowsException<ArgumentException>(() => new MegMetadata(header2, fileNameTable1, fileTable1));
@@ -53,7 +52,7 @@ public class MegMetadataTest
     {
         new MegMetadata(
             new MegHeader(1, 1),
-            new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII) }),
+            new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") }),
             new MegFileTable(new List<MegFileContentTableRecord> { default }));
 
         Assert.IsTrue(true);
@@ -63,7 +62,7 @@ public class MegMetadataTest
     public void Test_Size()
     {
         var header = new MegHeader(1, 1);
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII) });
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") });
         var fileTable = new MegFileTable(new List<MegFileContentTableRecord> { default });
 
         var metadata = new MegMetadata(header, fileNameTable, fileTable);
@@ -75,7 +74,7 @@ public class MegMetadataTest
     public void Test_Bytes()
     {
         var header = new MegHeader(1, 1);
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123", Encoding.ASCII) });
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") });
         var fileTable = new MegFileTable(new List<MegFileContentTableRecord> { default });
 
         var metadata = new MegMetadata(header, fileNameTable, fileTable);

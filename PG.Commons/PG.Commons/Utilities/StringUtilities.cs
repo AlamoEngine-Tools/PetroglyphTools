@@ -35,7 +35,29 @@ public static class StringUtilities
         }
         catch (OverflowException)
         {
-            throw new OverflowException($"The value {value} is longer that the expected {ushort.MaxValue} characters.");
+            throw new OverflowException($"The value '{value}' is longer that the expected {ushort.MaxValue} characters.");
+        }
+    }
+
+    /// <summary>
+    /// Checks whether a given string has no more characters than the max value of an <see cref="ushort"/>.
+    /// Throws an <see cref="OverflowException"/> if the string is longer.
+    /// </summary>
+    /// <param name="value">The string to validate.</param>
+    /// <returns>The actual length of the value in characters.</returns>
+    /// <exception cref="OverflowException">When the string was too long.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ushort ValidateStringCharLengthUInt16(string value)
+    {
+        if (value == null)
+            throw new ArgumentNullException(nameof(value));
+        try
+        {
+            return Convert.ToUInt16(value.Length);
+        }
+        catch (OverflowException)
+        {
+            throw new OverflowException($"The value '{value}' is longer that the expected {ushort.MaxValue} characters.");
         }
     }
 }

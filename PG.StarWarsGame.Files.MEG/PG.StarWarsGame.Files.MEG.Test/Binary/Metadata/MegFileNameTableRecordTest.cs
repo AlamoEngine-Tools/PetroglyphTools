@@ -2,10 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
@@ -15,26 +13,16 @@ public class MegFileNameTableRecordTest
     [TestMethod]
     [DataRow(null)]
     [DataRow("")]
-    [ExpectedException(typeof(ArgumentException))]
     public void Ctor_Test__ThrowsArgumentException(string fileName)
     {
-        new MegFileNameTableRecord(fileName, Encoding.ASCII);
+        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fileName));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(OverflowException))]
     public void Ctor_Test__ThrowsOverflowException()
     {
-        var fn = TestUtility.GetRandomStringOfLength(ushort.MaxValue + 1);
-        new MegFileNameTableRecord(fn, Encoding.ASCII);
-    }
-
-    [TestMethod]
-    public void Ctor_Test__ThrowsNotSupportedException_Encoding()
-    {
-        Assert.ThrowsException<NotSupportedException>(() => new MegFileNameTableRecord("someName", Encoding.Unicode));
-        Assert.ThrowsException<NotSupportedException>(() => new MegFileNameTableRecord("someName", Encoding.UTF32));
-        Assert.ThrowsException<NotSupportedException>(() => new MegFileNameTableRecord("someName", Encoding.UTF8));
+        var fn = new string('a', ushort.MaxValue + 1);
+        Assert.ThrowsException<OverflowException>(() => new MegFileNameTableRecord(fn));
     }
 
     [TestMethod]
@@ -46,7 +34,7 @@ public class MegFileNameTableRecordTest
     [DataRow("❓", 2 + 1)] // Short byte emojii
     public void Ctor_Test_Size(string fileName, int expectedSize)
     {
-        var record = new MegFileNameTableRecord(fileName, Encoding.ASCII);
+        var record = new MegFileNameTableRecord(fileName);
         Assert.AreEqual(expectedSize, record.Size);
     }
 
@@ -61,7 +49,7 @@ public class MegFileNameTableRecordTest
     [DataRow("a\u0160", "a?")] // ALT+0160
     public void Test_FileNameGetEncoded(string fileName, string expectedName)
     {
-        var record = new MegFileNameTableRecord(fileName, Encoding.ASCII);
+        var record = new MegFileNameTableRecord(fileName);
         Assert.AreEqual(expectedName, record.FileName);
         Assert.AreEqual(fileName, record.OriginalFileName);
     }
@@ -73,7 +61,7 @@ public class MegFileNameTableRecordTest
     [DataRow("aß", new byte[] { 0x2, 0x0, 0x61, 0x3F })]
     public void Test_GetBytes(string fileName, byte[] expectedBytes)
     {
-        var record = new MegFileNameTableRecord(fileName, Encoding.ASCII);
+        var record = new MegFileNameTableRecord(fileName);
         CollectionAssert.AreEqual(expectedBytes, record.Bytes);
     }
 }

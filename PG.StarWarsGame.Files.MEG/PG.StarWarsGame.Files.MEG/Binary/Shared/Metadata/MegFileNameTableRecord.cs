@@ -1,9 +1,8 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for detailsem.Collections;
+// Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
 using System.Buffers.Binary;
-using System.Text;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
 
@@ -11,7 +10,6 @@ namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal readonly struct MegFileNameTableRecord : IBinary
 {
-    private readonly Encoding _encoding;
     private readonly ushort _fileNameLength;
 
     internal string FileName { get; }
@@ -29,7 +27,7 @@ internal readonly struct MegFileNameTableRecord : IBinary
             var fileNameArea = bytes.AsSpan(sizeof(ushort));
             _encoding.GetBytes(FileName, fileNameArea);
 #else
-            _encoding.GetBytes(FileName, 0, FileName.Length, bytes, sizeof(ushort));
+            MegFileConstants.MegContentFileNameEncoding.GetBytes(FileName, 0, FileName.Length, bytes, sizeof(ushort));
 #endif
             return bytes;
         }
@@ -37,17 +35,19 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
     public int Size => sizeof(ushort) + _fileNameLength;
 
-    public MegFileNameTableRecord(string fileName, Encoding encoding)
+    public MegFileNameTableRecord(string fileName)
     {
         if (string.IsNullOrWhiteSpace(fileName))
             throw new ArgumentException($"{nameof(fileName)} must not be null or empty");
 
-        if (!encoding.IsSingleByte)
-            throw new NotSupportedException(".MEG files are required to use a single-byte encoding for string.");
-
-        _encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
+        var encoding = MegFileConstants.MegContentFileNameEncoding;
         OriginalFileName = fileName;
-        _fileNameLength = StringUtilities.ValidateStringByteSizeUInt16(fileName, _encoding);
-        FileName = StringUtilities.EncodeString(fileName, _fileNameLength, encoding);
+
+        var charCount = StringUtilities.ValidateStringCharLengthUInt16(fileName);
+        _fileNameLength = charCount;
+
+        var byteCount = encoding.GetByteCountPG(charCount);
+        FileName = encoding.EncodeString(fileName, byteCount);
     }
+    
 }

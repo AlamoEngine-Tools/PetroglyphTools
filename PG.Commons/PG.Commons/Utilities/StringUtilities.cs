@@ -1,5 +1,5 @@
-﻿// // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// // Licensed under the MIT license. See LICENSE file in the project root for details.
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
 using System.Buffers;
@@ -14,8 +14,8 @@ namespace PG.Commons.Utilities;
 public static class StringUtilities
 {
     /// <summary>
-    /// Checks that a given string, when converted to bytes, is not longer than the max value of an UInt16.
-    /// Throws an <see cref="OverflowException"/> if the string is longer
+    /// Checks that a given string, when converted to bytes, is not longer than the max value of an <see cref="ushort"/>.
+    /// Throws an <see cref="OverflowException"/> if the string is longer.
     /// </summary>
     /// <remarks>
     /// The encoding is necessary information.<br/>
@@ -25,8 +25,6 @@ public static class StringUtilities
     ///     Unicode required bytes (each char is 2 bytes): 4.<br/>
     /// Many PG binaries use size information for processing strings. So if we wanted to use Unicode encoding,
     /// we need the actual byte size, and not what .NET thinks.
-    /// <b>However: The games usually use ASCII, or at least one-byte encoding, internally,
-    /// which makes makes using Unicode problematic.</b>
     /// </remarks>
     /// <param name="value">The string to validate.</param>
     /// <param name="encoding">The encoding that shall be used to get the string length.</param>

@@ -3,6 +3,8 @@ using System.Buffers.Binary;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 
+namespace PG.Benchmarks;
+
 [SimpleJob(RuntimeMoniker.Net481)]
 [SimpleJob(RuntimeMoniker.Net80)]
 [MemoryDiagnoser]

@@ -41,7 +41,7 @@ public static class FileNameUtilities
 
         if (filename is null)
         {
-            reason = "File name must not be null";
+            reason = "File name must not be null.";
             return false;
         }
 
@@ -50,13 +50,13 @@ public static class FileNameUtilities
         // This also covers empty strings
         if (IsNullOrWhiteSpaceFast(filenameSpan))
         {
-            reason = "File name must not be null or empty or only contains space characters";
+            reason = "File name must not be null or empty or only contains space characters.";
             return false;
         }
 
         if (ContainsInvalidChars(filenameSpan, out var invalidChar))
         {
-            reason = $"File name contains invalid characters: '{invalidChar}'";
+            reason = $"File name contains invalid characters: '{invalidChar}'.";
             return false;
         }
 

@@ -5,6 +5,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using PG.Commons.Services;
 
+namespace PG.Benchmarks;
 
 [SimpleJob(RuntimeMoniker.Net481)]
 [SimpleJob(RuntimeMoniker.Net80)]

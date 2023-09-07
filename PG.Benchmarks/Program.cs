@@ -1,6 +1,11 @@
-﻿using BenchmarkDotNet.Running;
-using PG.Benchmarks;
+﻿namespace PG.Benchmarks;
 
-//BenchmarkRunner.Run<GetStringCrc32>();
-//BenchmarkRunner.Run<GetBytesBenchmark>();
-//BenchmarkRunner.Run<GetStringFromBinary>();
+class Benchmark
+{
+    private static void Main()
+    {
+        //BenchmarkRunner.Run<GetStringCrc32>();
+        //BenchmarkRunner.Run<GetBytesBenchmark>();
+        //BenchmarkRunner.Run<GetStringFromBinary>();
+    }
+}

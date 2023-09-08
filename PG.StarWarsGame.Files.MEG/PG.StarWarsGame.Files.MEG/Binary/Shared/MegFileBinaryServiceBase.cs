@@ -4,25 +4,31 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.V1;
+namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal abstract class MegFileBinaryServiceBase<TMegMetadata, TMegHeader, TMegFileTable> : DisposableObject, IMegFileBinaryService 
+internal abstract class MegFileBinaryServiceBase<TMegMetadata, TMegHeader, TMegFileTable> : ServiceBase, IMegFileBinaryService
     where TMegMetadata : IMegFileMetadata
     where TMegHeader : IMegHeader
     where TMegFileTable : IMegFileTable
 {
+    protected MegFileBinaryServiceBase(IServiceProvider services) : base(services)
+    {
+    }
+
+
     public IMegFileMetadata ReadBinary(Stream byteStream)
     {
-        if (byteStream == null) 
+        if (byteStream == null)
             throw new ArgumentNullException(nameof(byteStream));
         if (byteStream.Length == 0)
             throw new ArgumentException("MEG data stream must not be empty.");
         if (IsDisposed)
             throw new ObjectDisposedException(ToString());
-       
+
         using var binaryReader = new BinaryReader(byteStream, MegFileConstants.MegContentFileNameEncoding, true);
 
         var header = BuildMegHeader(binaryReader);

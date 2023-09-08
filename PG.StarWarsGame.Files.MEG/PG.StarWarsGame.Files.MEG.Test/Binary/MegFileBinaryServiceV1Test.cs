@@ -11,6 +11,12 @@ using PG.StarWarsGame.Files.MEG.Binary.V1;
 namespace PG.StarWarsGame.Files.MEG.Test.Binary;
 
 [TestClass]
+public class MegFileBinaryServiceBaseTest
+{
+
+}
+
+[TestClass]
 public class MegFileBinaryServiceV1Test
 {
     private IFileSystem _fileSystem;

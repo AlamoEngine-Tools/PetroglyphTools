@@ -2,8 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace PG.Commons.Utilities;
 
@@ -12,6 +13,40 @@ namespace PG.Commons.Utilities;
 /// </summary>
 public static class FileNameUtilities
 {
+    /// <summary>
+    /// Indicates the status of a file name validation according to the rules used by <see cref="FileNameUtilities.IsValidFileName"/>.
+    /// </summary>
+    public enum FileNameValidationResult
+    {
+        /// <summary>
+        /// The file name is valid.
+        /// </summary>
+        Success,
+        /// <summary>
+        /// The file name is either <see langword="null"/> or empty.
+        /// </summary>
+        NullOrEmpty,
+        /// <summary>
+        /// The file name contains an illegal character.
+        /// </summary>
+        InvalidCharacter,
+        /// <summary>
+        /// The file name starts or ends with a white space (\u0020) character.
+        /// </summary>
+        LeadingOrTrailingWhiteSpace,
+        /// <summary>
+        /// The file name ends with a period ('.') character.
+        /// </summary>
+        TrailingPeriod,
+        /// <summary>
+        /// The file name is reserved by windows (such as 'CON') and thus cannot be used.
+        /// </summary>
+        WindowsReserved
+    }
+
+    private static readonly Regex RegexInvalidName =
+        new("^(COM\\d|CLOCK\\$|LPT\\d|AUX|NUL|CON|PRN|)$", RegexOptions.IgnoreCase);
+
     // From .NET Path.Windows.cs
     // Disabled all chars [0-31] cause we checked for them already when this is used.
     private static readonly char[] InvalidFileNameChars = {
@@ -30,55 +65,63 @@ public static class FileNameUtilities
     ///     a) The filename is <see langword="null"/>,<br/>
     ///     b) The filename is empty or only contains whitespace,<br/>
     ///     c) The filename contains a non ASCII (> 0xFF) character,<br/>
-    ///     d) The filename contains a character that is illegal for Windows file names, such as TAB, or path separators, etc.
+    ///     d) The filename contains a character that is illegal for Windows file names (<see href="https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file">see here</see>),
+    ///        such as TAB, or path separators, etc.
     /// </remarks>
     /// <param name="filename">The filename to check.</param>
-    /// <param name="reason">A reason message why the check failed or <see langword="null"/> if the check passed.</param>
+    /// <param name="result">Detailed information status. Can be used for error message reporting.</param>
     /// <returns><see langword="true"/> when the filename is valid; <see langword="false"/> otherwise.</returns>
-    public static bool IsValidFileName(string? filename, [NotNullWhen(false)] out string? reason)
+    public static bool IsValidFileName(string? filename, out FileNameValidationResult result)
     {
-        reason = null;
+        result = FileNameValidationResult.Success;
 
         if (filename is null)
         {
-            reason = "File name must not be null.";
+            result = FileNameValidationResult.NullOrEmpty;
             return false;
         }
 
         var filenameSpan = filename.AsSpan();
 
-        // This also covers empty strings
-        if (IsNullOrWhiteSpaceFast(filenameSpan))
+        if (filenameSpan.IsEmpty)
         {
-            reason = "File name must not be null or empty or only contains space characters.";
+            result = FileNameValidationResult.NullOrEmpty;
             return false;
         }
 
-        if (ContainsInvalidChars(filenameSpan, out var invalidChar))
+        // This also already handles whitespace-only names
+        if (!EdgesValid(filenameSpan, out var whiteSpaceError))
         {
-            reason = $"File name contains invalid characters: '{invalidChar}'.";
+            result = whiteSpaceError ? FileNameValidationResult.LeadingOrTrailingWhiteSpace : FileNameValidationResult.TrailingPeriod;
+            return false;
+        }
+        
+        if (ContainsInvalidChars(filenameSpan))
+        {
+            result = FileNameValidationResult.InvalidCharacter;
+            return false;
+        }
+
+        if (RegexInvalidName.IsMatch(filename))
+        {
+            result = FileNameValidationResult.WindowsReserved;
             return false;
         }
 
         return true;
     }
 
-    private static bool ContainsInvalidChars(ReadOnlySpan<char> value, out char invalidChar)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool ContainsInvalidChars(ReadOnlySpan<char> value)
     {
-        invalidChar = default;
-
         foreach (var t in value)
-        {
             if (IsInvalidFileCharacter(t))
-            {
-                invalidChar = t;
                 return true;
-            }
-        }
 
         return false;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsInvalidFileCharacter(char c)
     {
         // Check if character is in bounds [32-126] in general
@@ -92,17 +135,32 @@ public static class FileNameUtilities
         return false;
     }
 
-
-    private static bool IsNullOrWhiteSpaceFast(ReadOnlySpan<char> value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool EdgesValid(ReadOnlySpan<char> value, out bool whiteSpace)
     {
-        foreach (var t in value)
+        whiteSpace = false;
+
+        if (value[0] is '\x0020')
         {
-            // We can skip any other space like characters, such as TAB, \u00A0, etc.
-            // only because they are illegal characters for Petroglyph file name anyway and we check for them at some other point.
-            // Thus we only check for ASCII char 0x20 which is the plain SPACE char.
-            if (t != ' ')
-                return false;
+            whiteSpace = true;
+            return false;
         }
+
+
+#if NETSTANDARD2_1_OR_GREATER
+        var lastChar = value[^1];
+#else
+        var lastChar = value[value.Length - 1];
+#endif
+        if (lastChar is '\x0020')
+        {
+            whiteSpace = true;
+            return false;
+        }
+
+        if (lastChar is '.')
+            return false;
+
         return true;
     }
 }

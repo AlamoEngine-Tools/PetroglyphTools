@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,21 +22,26 @@ public class ServiceBaseTest
     [TestMethod]
     public void Test__Ctor_SetupProperties()
     {
+        var fs = new MockFileSystem();
         var loggerMock = new Mock<ILogger>();
         var loggerFactoryMock = new Mock<ILoggerFactory>();
         loggerFactoryMock.Setup(l => l.CreateLogger(It.IsAny<string>())).Returns(loggerMock.Object);
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(ILoggerFactory))).Returns(loggerFactoryMock.Object);
+        spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
         
         var service = new MyService(spMock.Object);
         Assert.AreEqual(spMock.Object, service.Services);
         Assert.AreEqual(loggerMock.Object, service.Logger);
+        Assert.AreEqual(fs, service.FileSystem);
     }
 
     [TestMethod]
     public void Test__Ctor_NullLogger()
     {
+        var fs = new MockFileSystem();
         var spMock = new Mock<IServiceProvider>();
+        spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
         var service = new MyService(spMock.Object);
         Assert.AreEqual(NullLogger.Instance, service.Logger);
     }

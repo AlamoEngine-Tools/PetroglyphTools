@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -22,11 +21,6 @@ public abstract class ServiceBase : DisposableObject, IService
     protected internal ILogger Logger { get; }
 
     /// <summary>
-    /// The file system implementation to be used.
-    /// </summary>
-    protected internal IFileSystem FileSystem { get; }
-
-    /// <summary>
     /// The service provider.
     /// </summary>
     protected internal IServiceProvider Services { get; }
@@ -37,7 +31,9 @@ public abstract class ServiceBase : DisposableObject, IService
     /// <param name="services">The service provider for this instance.</param>
     protected ServiceBase(IServiceProvider services)
     {
-        FileSystem = services.GetRequiredService<IFileSystem>();
+        if (services == null) 
+            throw new ArgumentNullException(nameof(services));
+
         Logger = services.GetService<ILoggerFactory>()?.CreateLogger(GetType())?? NullLogger.Instance;
         Services = services;
     }

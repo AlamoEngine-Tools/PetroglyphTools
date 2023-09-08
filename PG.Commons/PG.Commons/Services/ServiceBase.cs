@@ -37,8 +37,11 @@ public abstract class ServiceBase : DisposableObject, IService
     /// <param name="services">The service provider for this instance.</param>
     protected ServiceBase(IServiceProvider services)
     {
-        FileSystem = services.GetRequiredService<IFileSystem>();
+        if (services == null) 
+            throw new ArgumentNullException(nameof(services));
+
         Logger = services.GetService<ILoggerFactory>()?.CreateLogger(GetType())?? NullLogger.Instance;
+        FileSystem = services.GetRequiredService<IFileSystem>();
         Services = services;
     }
 }

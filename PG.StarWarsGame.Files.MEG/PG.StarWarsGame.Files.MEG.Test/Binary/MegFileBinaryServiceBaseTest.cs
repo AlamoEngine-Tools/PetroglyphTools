@@ -77,6 +77,46 @@ public class MegFileBinaryServiceBaseTest
         serviceMock.Protected().Verify("BuildFileNameTable", Times.Once(), ItExpr.IsAny<BinaryReader>(), megHeader.Object);
     }
 
+
+    [TestMethod]
+    public void Test__ReadBinary_ThrowOnNullObjects()
+    {
+        var serviceMock = new Mock<MegFileBinaryServiceBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
+        {
+            CallBase = true
+        };
+
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("A") });
+        var megHeader = new Mock<IMegHeader>();
+        var fileTable = new Mock<IMegFileTable>();
+
+        serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
+            .Returns((IMegHeader) null!);
+        serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+            .Returns(fileNameTable);
+        serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+            .Returns(fileTable.Object);
+
+        Assert.ThrowsException<InvalidOperationException>(() => serviceMock.Object.ReadBinary(new MemoryStream(new byte[] { 0 })));
+
+        serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
+            .Returns(megHeader.Object);
+        serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+            .Returns((MegFileNameTable)null!);
+        serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+            .Returns(fileTable.Object);
+
+        Assert.ThrowsException<InvalidOperationException>(() => serviceMock.Object.ReadBinary(new MemoryStream(new byte[] { 0 })));
+
+        serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
+            .Returns(megHeader.Object);
+        serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+            .Returns(fileNameTable);
+        serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+            .Returns((IMegFileTable)null!);
+    }
+
+
     [DataTestMethod]
     [DynamicData(nameof(FileTableTestData), DynamicDataSourceType.Method)]
     public void Test__ReadBinary_BuildFileNameTable(int fileNumber, byte[] data, string[] expectedValues)

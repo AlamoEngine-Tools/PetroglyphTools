@@ -24,18 +24,22 @@ internal class MegFileTable : BinaryBase, IMegFileTable, IEnumerable<MegFileCont
     {
         if (megFileContentTableRecords is null)
             throw new ArgumentNullException(nameof(megFileContentTableRecords));
-        if (megFileContentTableRecords.Count == 0)
-            throw new ArgumentException("FileTable must not be empty.");
         _megFileContentTableRecords = megFileContentTableRecords.ToList();
     }
 
     protected override int GetSizeCore()
     {
+        if (_megFileContentTableRecords.Count == 0)
+            return 0;
+        if (_megFileContentTableRecords.Count == 1)
+            return _megFileContentTableRecords[0].Size;
         return _megFileContentTableRecords.Sum(megFileNameTableRecord => megFileNameTableRecord.Size);
     }
 
     protected override byte[] ToBytesCore()
     {
+        if (Size == 0)
+            return Array.Empty<byte>();
         var bytes = new List<byte>(Size);
         foreach (var megFileContentTableRecord in _megFileContentTableRecords)
             bytes.AddRange(megFileContentTableRecord.Bytes);

@@ -15,7 +15,6 @@ public class MegHeaderTest
     public void Ctor_Test__ThrowsArgumentOORException()
     {
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegHeader((uint)int.MaxValue + 1, (uint)int.MaxValue + 1));
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegHeader(0, 0));
     }
 
     [TestMethod]
@@ -27,6 +26,7 @@ public class MegHeaderTest
     [TestMethod]
     public void Ctor_Test__Correct()
     {
+        new MegHeader(0, 0);
         new MegHeader(1, 1);
         new MegHeader(int.MaxValue, int.MaxValue);
         Assert.IsTrue(true);

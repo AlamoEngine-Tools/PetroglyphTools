@@ -107,7 +107,7 @@ public class MegFileBinaryServiceBaseTest
             .Returns(fileTable.Object);
 
         Assert.ThrowsException<InvalidOperationException>(() => serviceMock.Object.ReadBinary(new MemoryStream(new byte[] { 0 })));
-
+        
         serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
             .Returns(megHeader.Object);
         serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
@@ -177,7 +177,7 @@ public class MegFileBinaryServiceBaseTest
             // This case occurs when reading .MEGs from Mike's tool, since it uses Latin1, instead of ASCII.
             new object[] { 1, new byte[]
             {
-                1, 0, (byte)'ä'
+                1, 0, unchecked((byte)'ä')
             }, new[] { "?" } }
         };
     }

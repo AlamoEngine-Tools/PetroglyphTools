@@ -11,12 +11,6 @@ using PG.StarWarsGame.Files.MEG.Binary.V1;
 namespace PG.StarWarsGame.Files.MEG.Test.Binary;
 
 [TestClass]
-public class MegFileBinaryServiceBaseTest
-{
-
-}
-
-[TestClass]
 public class MegFileBinaryServiceV1Test
 {
     private IFileSystem _fileSystem;
@@ -26,7 +20,7 @@ public class MegFileBinaryServiceV1Test
     [TestInitialize]
     public void SetUp()
     {
-        _binaryService = new MegFileBinaryServiceV1();
+        _binaryService = new MegFileBinaryServiceV1(null);
 
         _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
         {

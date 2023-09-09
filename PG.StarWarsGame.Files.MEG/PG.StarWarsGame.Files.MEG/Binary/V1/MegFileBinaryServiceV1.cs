@@ -15,12 +15,16 @@ namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
 internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, MegHeader, MegFileTable>
 {
-    protected override MegMetadata CreateMegMetadata(MegHeader header, MegFileNameTable fileNameTable, MegFileTable fileTable)
+    public MegFileBinaryServiceV1(IServiceProvider services) : base(services)
+    {
+    }
+
+    protected internal override MegMetadata CreateMegMetadata(MegHeader header, MegFileNameTable fileNameTable, MegFileTable fileTable)
     {
         return new MegMetadata(header, fileNameTable, fileTable);
     }
 
-    protected override MegHeader BuildMegHeader(BinaryReader binaryReader)
+    protected internal override MegHeader BuildMegHeader(BinaryReader binaryReader)
     {
         var numFileNames = binaryReader.ReadUInt32();
         var numFiles = binaryReader.ReadUInt32();
@@ -40,7 +44,7 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
         return new MegHeader(numFileNames, numFiles);
     }
 
-    protected override MegFileTable BuildFileTable(BinaryReader binaryReader, MegHeader header)
+    protected internal override MegFileTable BuildFileTable(BinaryReader binaryReader, MegHeader header)
     {
         var fileNumber = header.FileNumber;
         var megFileContentTableRecords = new List<MegFileContentTableRecord>(fileNumber);

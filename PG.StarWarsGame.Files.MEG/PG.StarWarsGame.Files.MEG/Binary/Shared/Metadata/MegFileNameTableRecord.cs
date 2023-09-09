@@ -23,9 +23,9 @@ internal readonly struct MegFileNameTableRecord : IBinary
             var bytes = new byte[Size];
             BinaryPrimitives.WriteUInt16LittleEndian(bytes, _fileNameLength);
 
-#if NETCOREAPP2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER
             var fileNameArea = bytes.AsSpan(sizeof(ushort));
-            _encoding.GetBytes(FileName, fileNameArea);
+            MegFileConstants.MegContentFileNameEncoding.GetBytes(FileName, fileNameArea);
 #else
             MegFileConstants.MegContentFileNameEncoding.GetBytes(FileName, 0, FileName.Length, bytes, sizeof(ushort));
 #endif

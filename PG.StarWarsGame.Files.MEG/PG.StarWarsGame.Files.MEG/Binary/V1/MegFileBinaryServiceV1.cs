@@ -48,39 +48,44 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
     {
         var fileNumber = header.FileNumber;
         var megFileContentTableRecords = new List<MegFileContentTableRecord>(fileNumber);
-
+        
         for (var i = 0; i < fileNumber; i++)
         {
-            var crc32 = new Crc32(binaryReader.ReadUInt32());
-            var fileTableRecordIndex = binaryReader.ReadUInt32();
-
-            if (fileTableRecordIndex > int.MaxValue)
-            {
-                throw new NotSupportedException(
-                    ".MEG files with a file number greater than int32.MaxValue are not supported.");
-            }
-
-            Debug.Assert(fileTableRecordIndex == i);
-
-            var fileSizeInBytes = binaryReader.ReadUInt32();
-            var fileStartOffsetInBytes = binaryReader.ReadUInt32();
-
-            var fileNameTableIndex = binaryReader.ReadUInt32();
-            if (fileNameTableIndex > int.MaxValue)
-            {
-                throw new NotSupportedException(
-                    ".MEG files with a file number greater than int32.MaxValue are not supported.");
-            }
-
-            megFileContentTableRecords.Add(new MegFileContentTableRecord(
-                crc32,
-                fileTableRecordIndex,
-                fileSizeInBytes,
-                fileStartOffsetInBytes,
-                fileNameTableIndex));
+            var record = BuildFileTableRecord(binaryReader);
+            Debug.Assert(record.FileTableRecordIndex == i);
+            megFileContentTableRecords.Add(record);
         }
 
         return new MegFileTable(megFileContentTableRecords);
+    }
+
+    private static MegFileContentTableRecord BuildFileTableRecord(BinaryReader binaryReader)
+    {
+        var crc32 = new Crc32(binaryReader.ReadUInt32());
+        var fileTableRecordIndex = binaryReader.ReadUInt32();
+
+        if (fileTableRecordIndex > int.MaxValue)
+        {
+            throw new NotSupportedException(
+                ".MEG files with a file number greater than int32.MaxValue are not supported.");
+        }
+
+        var fileSizeInBytes = binaryReader.ReadUInt32();
+        var fileStartOffsetInBytes = binaryReader.ReadUInt32();
+
+        var fileNameTableIndex = binaryReader.ReadUInt32();
+        if (fileNameTableIndex > int.MaxValue)
+        {
+            throw new NotSupportedException(
+                ".MEG files with a file number greater than int32.MaxValue are not supported.");
+        }
+
+        return new MegFileContentTableRecord(
+            crc32,
+            fileTableRecordIndex,
+            fileSizeInBytes,
+            fileStartOffsetInBytes,
+            fileNameTableIndex);
     }
 
 

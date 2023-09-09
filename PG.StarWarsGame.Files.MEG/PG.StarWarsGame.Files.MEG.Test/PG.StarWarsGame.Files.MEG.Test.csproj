@@ -6,6 +6,12 @@
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MEG.Test</PackageId>
     </PropertyGroup>
     <ItemGroup>
+      <None Remove="Resources\Files\v1_1_file_data.meg" />
+      <None Remove="Resources\Files\v1_2_files_empty.meg" />
+      <None Remove="Resources\Files\v1_2_files_with_extended_ascii_name.meg" />
+      <None Remove="Resources\Files\v1_empty.meg" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,5 +31,11 @@
         <ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
         <ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
         <ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Files\v1_1_file_data.meg" />
+      <EmbeddedResource Include="Resources\Files\v1_2_files_empty.meg" />
+      <EmbeddedResource Include="Resources\Files\v1_2_files_with_extended_ascii_name.meg" />
+      <EmbeddedResource Include="Resources\Files\v1_empty.meg" />
     </ItemGroup>
 </Project>

@@ -47,6 +47,10 @@ internal readonly struct MegFileNameTableRecord : IBinary
         _fileNameLength = charCount;
 
         var byteCount = encoding.GetByteCountPG(charCount);
+
+        // Encoding the string as ASCII has the potential of creating PG/Windows
+        // illegal file names due to the replacement character '?'. 
+        // At this stage we don't check for sanity in order to read .MEG files created by other tools, such as Mike's MEG Editor.
         FileName = encoding.EncodeString(fileName, byteCount);
     }
     

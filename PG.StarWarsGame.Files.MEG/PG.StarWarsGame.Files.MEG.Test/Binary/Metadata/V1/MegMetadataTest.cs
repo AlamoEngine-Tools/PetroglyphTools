@@ -59,19 +59,7 @@ public class MegMetadataTest
     }
 
     [TestMethod]
-    public void Test_Size()
-    {
-        var header = new MegHeader(1, 1);
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") });
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord> { default });
-
-        var metadata = new MegMetadata(header, fileNameTable, fileTable);
-
-        Assert.AreEqual(header.Size + fileNameTable.Size + fileTable.Size, metadata.Size);
-    }
-
-    [TestMethod]
-    public void Test_Bytes()
+    public void Test_SizeBytes_WithContent()
     {
         var header = new MegHeader(1, 1);
         var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") });
@@ -84,6 +72,23 @@ public class MegMetadataTest
             .Concat(fileTable.Bytes)
             .ToArray();
 
+
+        Assert.AreEqual(header.Size + fileNameTable.Size + fileTable.Size, metadata.Size);
+        CollectionAssert.AreEqual(expectedBytes, metadata.Bytes);
+    }
+
+    [TestMethod]
+    public void Test_SizeBytes_Empty()
+    {
+        var header = new MegHeader(0, 0);
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord>());
+        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>());
+
+        var metadata = new MegMetadata(header, fileNameTable, fileTable);
+
+        var expectedBytes = header.Bytes.ToArray();
+
+        Assert.AreEqual(header.Size, metadata.Size);
         CollectionAssert.AreEqual(expectedBytes, metadata.Bytes);
     }
 }

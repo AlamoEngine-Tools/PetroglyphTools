@@ -20,13 +20,27 @@ public class MegFileTableTest
     }
 
     [TestMethod]
-    public void Ctor_Test__ThrowsArgumentException()
+    public void Test__EmptyTable()
     {
-        Assert.ThrowsException<ArgumentException>(() => new MegFileTable(new List<MegFileContentTableRecord>()));
+        var table = new MegFileTable(new List<MegFileContentTableRecord>(0));
+        Assert.AreEqual(0, table.Count);
+        Assert.AreEqual(0, table.Size);
+        CollectionAssert.AreEqual(new byte[] { }, table.Bytes);
     }
 
     [TestMethod]
-    public void Test_Size()
+    public void Test_Size_1_Entry()
+    {
+        MegFileContentTableRecord entry = new(default, 0, default, default, default);
+        var table = new MegFileTable(new List<MegFileContentTableRecord>
+        {
+            entry
+        });
+        Assert.AreEqual(entry.Size, table.Size);
+    }
+
+    [TestMethod]
+    public void Test_Size_2_Entries()
     {
         MegFileContentTableRecord entry = new(default, 0, default, default, default);
         var table = new MegFileTable(new List<MegFileContentTableRecord>

@@ -28,22 +28,11 @@ public class MegFileBinaryServiceV1Test
         _serviceProviderMock = sp;
 
         _binaryService = new MegFileBinaryServiceV1(sp.Object);
+    }
 
-        _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-        {
-            {
-                MegTestConstants.GetGameObjectFilesPath(),
-                new MockFileData(MegTestConstants.CONTENT_GAMEOBJECTFILES)
-            },
-            {
-                MegTestConstants.GetCampaignFilesPath(),
-                new MockFileData(MegTestConstants.CONTENT_CAMPAIGNFILES)
-            },
-            {
-                MegTestConstants.GetMegFilePath(),
-                new MockFileData(MegTestConstants.CONTENT_MEG_FILE)
-            }
-        });
+    public void Test__CreateMegMetadata()
+    {
+
     }
 
     //[TestMethod]

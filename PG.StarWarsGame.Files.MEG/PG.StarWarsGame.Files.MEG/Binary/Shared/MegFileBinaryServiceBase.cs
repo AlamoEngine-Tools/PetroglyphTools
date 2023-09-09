@@ -31,9 +31,9 @@ internal abstract class MegFileBinaryServiceBase<TMegMetadata, TMegHeader, TMegF
 
         using var binaryReader = new BinaryReader(byteStream, MegFileConstants.MegContentFileNameEncoding, true);
 
-        var header = BuildMegHeader(binaryReader);
-        var fileNameTable = BuildFileNameTable(binaryReader, header);
-        var fileTable = BuildFileTable(binaryReader, header);
+        var header = BuildMegHeader(binaryReader) ?? throw new InvalidOperationException("MEG header must not be null.");
+        var fileNameTable = BuildFileNameTable(binaryReader, header) ?? throw new InvalidOperationException("MEG file name table must not be null.");
+        var fileTable = BuildFileTable(binaryReader, header) ?? throw new InvalidOperationException("MEG file table must not be null."); ;
 
         return CreateMegMetadata(header, fileNameTable, fileTable);
     }

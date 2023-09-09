@@ -1,11 +1,12 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary;
@@ -16,11 +17,17 @@ public class MegFileBinaryServiceV1Test
     private IFileSystem _fileSystem;
 
     private MegFileBinaryServiceV1 _binaryService;
+    private Mock<IServiceProvider> _serviceProviderMock;
 
     [TestInitialize]
     public void SetUp()
     {
-        _binaryService = new MegFileBinaryServiceV1(null);
+        _fileSystem = new MockFileSystem();
+        var sp = new Mock<IServiceProvider>();
+        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(_fileSystem);
+        _serviceProviderMock = sp;
+
+        _binaryService = new MegFileBinaryServiceV1(sp.Object);
 
         _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
         {
@@ -37,18 +44,6 @@ public class MegFileBinaryServiceV1Test
                 new MockFileData(MegTestConstants.CONTENT_MEG_FILE)
             }
         });
-    }
-
-    [TestMethod]
-    public void Test__EmptyMegNotSupported()
-    {
-        var emptyMegBinary = new byte[]
-        {
-
-        };
-
-        var emptyMegStream = new MemoryStream(emptyMegBinary);
-        _binaryService.ReadBinary(emptyMegStream);
     }
 
     //[TestMethod]

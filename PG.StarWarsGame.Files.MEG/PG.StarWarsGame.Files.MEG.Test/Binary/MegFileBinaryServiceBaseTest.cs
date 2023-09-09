@@ -44,6 +44,7 @@ public class MegFileBinaryServiceBaseTest
 
         Assert.ThrowsException<ArgumentNullException>(() => serviceMock.Object.ReadBinary(null!));
         Assert.ThrowsException<ArgumentException>(() => serviceMock.Object.ReadBinary(new MemoryStream()));
+        Assert.ThrowsException<ArgumentException>(() => serviceMock.Object.ReadBinary(new MemoryStream(Array.Empty<byte>())));
         serviceMock.Object.Dispose();
         Assert.ThrowsException<ObjectDisposedException>(() => serviceMock.Object.ReadBinary(new MemoryStream(new byte[]{0})));
     }

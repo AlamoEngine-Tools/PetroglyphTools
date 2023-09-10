@@ -320,7 +320,7 @@ public class MegFileProcessServiceTest : ServiceTestBase
     //        },
     //        {
     //            MegTestConstants.GetMegFilePath(),
-    //            new MockFileData(MegTestConstants.CONTENT_MEG_FILE)
+    //            new MockFileData(MegTestConstants.CONTENT_MEG_FILE_V1)
     //        }
     //    })
     //    {

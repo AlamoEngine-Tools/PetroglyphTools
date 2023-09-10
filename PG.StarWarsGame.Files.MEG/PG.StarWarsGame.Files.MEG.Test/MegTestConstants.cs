@@ -133,7 +133,7 @@ internal sealed class MegTestConstants : TestConstants
         throw new NotSupportedException("The current operating system is not supported.");
     }
 
-    internal static readonly byte[] CONTENT_MEG_FILE =
+    internal static readonly byte[] CONTENT_MEG_FILE_V1 =
     {
         2, 0, 0, 0, 2, 0, 0, 0, 28, 0, 68, 65, 84, 65, 47, 88, 77, 76, 47, 71, 65, 77, 69, 79, 66, 74, 69, 67, 84,
         70, 73, 76, 69, 83, 46, 88, 77, 76, 26, 0, 68, 65, 84, 65, 47, 88, 77, 76, 47, 67, 65, 77, 80, 65, 73, 71,

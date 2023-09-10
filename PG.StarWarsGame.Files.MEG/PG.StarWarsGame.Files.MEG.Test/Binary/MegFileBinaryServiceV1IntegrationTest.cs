@@ -44,6 +44,9 @@ public class MegFileBinaryServiceV1IntegrationTest
 
         var fileSizes = megMetadata.FileTable.Select(x => x.FileSize).Sum(x => x);
         Assert.AreEqual(3, fileSizes);
+
+        Assert.AreEqual("TEST.TXT", megMetadata.FileNameTable[0]);
+        Assert.AreEqual(3u, megMetadata.FileTable[0].FileSize);
     }
 
     [TestMethod]
@@ -67,12 +70,21 @@ public class MegFileBinaryServiceV1IntegrationTest
         Assert.AreEqual(2, megMetadata.FileNameTable.Count);
         Assert.AreEqual(2, megMetadata.FileTable.Count);
         Assert.AreEqual(2, megMetadata.Header.FileNumber);
+
+        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[0]);
+        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[1]);
+
+        // Not equal, cause MIKE uses Latin1 and thus CRC32 is calculated on the original file name, 
+        Assert.AreNotEqual(megMetadata.FileTable[0].Crc32, megMetadata.FileTable[1].Crc32);
     }
 
     [TestMethod]
     public void Test__ReadBinary_TwoFiles2()
     {
-        var megMetadata = _binaryService.ReadBinary(new MemoryStream(MegTestConstants.CONTENT_MEG_FILE));
+        var megMetadata = _binaryService.ReadBinary(new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1));
+
+        Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0]);
+        Assert.AreEqual("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1]);
     }
 
     private static Stream GetEmbeddedResource(string path)

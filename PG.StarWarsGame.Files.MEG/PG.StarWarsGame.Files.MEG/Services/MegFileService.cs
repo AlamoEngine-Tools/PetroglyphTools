@@ -59,7 +59,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(megVersion);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return CreateHolderFromMetadata(reader, fs, filePath, megVersion, false);
+        return Load(reader, fs, filePath, megVersion, false);
     }
 
     /// <inheritdoc />
@@ -78,31 +78,38 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(key, iv);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return CreateHolderFromMetadata(reader, fs, filePath, version, true);
+        return Load(reader, fs, filePath, version, true);
     }
 
-    private IMegFile CreateHolderFromMetadata(IMegFileBinaryReader binaryBuilder, Stream fileStream,
-        string filePath, MegFileVersion version, bool encrypted)
+    private IMegFile Load(IMegFileBinaryReader binaryBuilder, Stream fileStream, string filePath, MegFileVersion version, bool encrypted)
     {
-        var startPosition = fileStream.Position;
-        long endPosition;
         IMegFileMetadata megMetadata;
-        
         try
         {
+            var startPosition = fileStream.Position;
             megMetadata = binaryBuilder.ReadBinary(fileStream);
-            endPosition = fileStream.Position;
+            var endPosition = fileStream.Position;
+
+            var bytesRead = endPosition - startPosition;
+
+            // These is no reason to validate the archive's size if we cannot access the whole stream size. 
+            // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
+            if (fileStream.CanSeek)
+            {
+                var actualMegSize = fileStream.Length - startPosition;
+                var validator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetSizeValidator(version, encrypted);
+                if (!validator.Validate(bytesRead, actualMegSize, megMetadata))
+                    throw new BinaryCorruptedException("Unable to read .MEG archive: Read bytes do not match expected size.");
+            }
+        }
+        catch (BinaryCorruptedException)
+        {
+            throw;
         }
         catch (Exception e)
         {
             throw new BinaryCorruptedException($"Unable to read .MEG archive: {e.Message}", e);
         }
-
-        var bytesRead = endPosition - startPosition;
-
-        var validator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetSizeValidator(version, encrypted);
-        if (!validator.Validate(bytesRead, megMetadata))
-            throw new BinaryCorruptedException("Unable to read .MEG archive: Read bytes do not match expected size.");
 
         var files = new List<MegFileDataEntry>(megMetadata.Header.FileNumber);
 

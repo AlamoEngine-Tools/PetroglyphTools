@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test;
@@ -381,7 +380,7 @@ internal sealed class MegTestConstants : TestConstants
         10, 60, 47, 67, 97, 109, 112, 97, 105, 103, 110, 95, 70, 105, 108, 101, 115, 62,
     };
 
-    internal static readonly byte[] CONTENT_MEG_FILE_HEADER =
+    internal static readonly byte[] CONTENT_MEG_FILE_HEADER_V1 =
     {
         2, 0, 0, 0, 2, 0, 0, 0, 28, 0, 68, 65, 84, 65, 47, 88, 77, 76, 47, 71, 65, 77, 69, 79, 66, 74, 69, 67, 84,
         70, 73, 76, 69, 83, 46, 88, 77, 76, 26, 0, 68, 65, 84, 65, 47, 88, 77, 76, 47, 67, 65, 77, 80, 65, 73, 71,

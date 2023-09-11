@@ -14,7 +14,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.V1;
 
 [TestClass]
 public class MegFileBinaryServiceV1Test
@@ -86,7 +86,7 @@ public class MegFileBinaryServiceV1Test
         return new[]
         {
             new object[] { new byte[]
-            { 
+            {
                 0,0,0,0,
                 0,0,0,0
             }, 0u, 0u },
@@ -112,9 +112,9 @@ public class MegFileBinaryServiceV1Test
     [DataTestMethod]
     [DynamicData(nameof(FileTableIntegrationTestData), DynamicDataSourceType.Method)]
     public void Test__BuildFileTable_Integration(
-        uint numberEntries, 
-        byte[] data, 
-        int dataToInspect, 
+        uint numberEntries,
+        byte[] data,
+        int dataToInspect,
         Crc32 crc32,
         uint fIndex,
         uint fSize,

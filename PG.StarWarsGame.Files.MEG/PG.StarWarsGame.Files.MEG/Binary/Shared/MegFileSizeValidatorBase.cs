@@ -13,12 +13,20 @@ internal abstract class MegFileSizeValidatorBase<T> : ServiceBase, IMegFileSizeV
     {
     }
 
-    public bool Validate(long bytesRead, IMegFileMetadata metadata)
+    public bool Validate(long bytesRead, long archiveSize, IMegFileMetadata metadata)
     {
+        if (metadata is null) 
+            throw new ArgumentNullException(nameof(metadata));
         if (metadata is not T tMetadata)
             throw new InvalidCastException($"Metadata is not of the expected type '{typeof(T)}'.");
-        return ValidateCore(bytesRead, tMetadata);
+        if (bytesRead < 0)
+            return false;
+        if (archiveSize < 0)
+            return false;
+        if (archiveSize < bytesRead)
+            return false;
+        return ValidateCore(bytesRead, archiveSize, tMetadata);
     }
 
-    protected abstract bool ValidateCore(long bytesRead, T metadata);
+    protected internal abstract bool ValidateCore(long bytesRead, long archiveSize, T metadata);
 }

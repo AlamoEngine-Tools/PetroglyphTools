@@ -7,5 +7,5 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal interface IMegFileSizeValidator
 {
-    bool Validate(long bytesRead, IMegFileMetadata metadata);
+    bool Validate(long bytesRead, long archiveSize, IMegFileMetadata metadata);
 }

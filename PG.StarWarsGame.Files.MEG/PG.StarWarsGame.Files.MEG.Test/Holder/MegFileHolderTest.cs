@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Holder;
 

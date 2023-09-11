@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
-using PG.Commons.Binary.File;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
@@ -18,7 +17,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <inheritdoc cref="IMegFileService" />
-public class MegFileService : ServiceBase, IMegFileService
+public sealed class MegFileService : ServiceBase, IMegFileService
 {
     /// <summary>
     ///     Initializes a new <see cref="MegFileService" /> class.
@@ -57,11 +56,10 @@ public class MegFileService : ServiceBase, IMegFileService
                                             "Use Load(string, ReadOnlySpan<byte>, ReadOnlySpan<byte>) instead.");
         }
 
-        IBinaryFileReader<IMegFileMetadata> reader = Services.GetRequiredService<IMegBinaryServiceFactory>()
-            .GetReader(megVersion);
+        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(megVersion);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return CreateHolderFromMetadata(reader, fs, filePath, megVersion);
+        return CreateHolderFromMetadata(reader, fs, filePath, megVersion, false);
     }
 
     /// <inheritdoc />
@@ -77,22 +75,34 @@ public class MegFileService : ServiceBase, IMegFileService
                                             "Use Load(string) instead.");
         }
 
-        IBinaryFileReader<IMegFileMetadata> reader = Services.GetRequiredService<IMegBinaryServiceFactory>()
-            .GetReader(key, iv);
+        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(key, iv);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return CreateHolderFromMetadata(reader, fs, filePath, version);
+        return CreateHolderFromMetadata(reader, fs, filePath, version, true);
     }
 
-    private IMegFile CreateHolderFromMetadata(IBinaryFileReader<IMegFileMetadata> binaryBuilder, Stream fileStream,
-        string filePath, MegFileVersion version)
+    private IMegFile CreateHolderFromMetadata(IMegFileBinaryReader binaryBuilder, Stream fileStream,
+        string filePath, MegFileVersion version, bool encrypted)
     {
-        var megMetadata = binaryBuilder.ReadBinary(fileStream);
-
-        if (megMetadata.Header.FileNumber == 0)
+        var startPosition = fileStream.Position;
+        long endPosition;
+        IMegFileMetadata megMetadata;
+        
+        try
         {
-            throw new NotSupportedException("Empty .MEG archives are not supported.");
+            megMetadata = binaryBuilder.ReadBinary(fileStream);
+            endPosition = fileStream.Position;
         }
+        catch (Exception e)
+        {
+            throw new BinaryCorruptedException($"Unable to read .MEG archive: {e.Message}", e);
+        }
+
+        var bytesRead = endPosition - startPosition;
+
+        var validator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetSizeValidator(version, encrypted);
+        if (!validator.Validate(bytesRead, megMetadata))
+            throw new BinaryCorruptedException("Unable to read .MEG archive: Read bytes do not match expected size.");
 
         var files = new List<MegFileDataEntry>(megMetadata.Header.FileNumber);
 

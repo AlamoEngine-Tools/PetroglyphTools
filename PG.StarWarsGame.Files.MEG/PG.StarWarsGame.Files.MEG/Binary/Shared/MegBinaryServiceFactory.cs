@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Net.Http.Headers;
+using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
@@ -19,6 +21,25 @@ internal class MegBinaryServiceFactory : IMegBinaryServiceFactory
     {
         if (megVersion == MegFileVersion.V1)
             return new V1.MegFileBinaryServiceV1(_serviceProvider);
+        throw new NotImplementedException();
+    }
+
+    public IMegFileSizeValidator GetSizeValidator(MegFileVersion fileVersion, bool encrypted)
+    {
+        if (encrypted) 
+            throw new NotImplementedException();
+        switch (fileVersion)
+        {
+            case MegFileVersion.V1:
+                return new MegFileSizeValidatorV1(_serviceProvider);
+            case MegFileVersion.V2:
+                break;
+            case MegFileVersion.V3:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(fileVersion), fileVersion, null);
+        }
+
         throw new NotImplementedException();
     }
 

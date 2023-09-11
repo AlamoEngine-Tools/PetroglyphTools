@@ -8,7 +8,6 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-interface IMegFileBinaryConverter : IBinaryFileConverter<IMegFileMetadata, IMegFile, MegFileHolderParam>, IDisposable
+internal interface IMegFileBinaryConverter : IBinaryFileConverter<IMegFileMetadata, IMegFile, MegFileHolderParam>, IDisposable
 {
-
 }

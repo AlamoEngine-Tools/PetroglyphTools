@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PG.Testing;
@@ -31,5 +32,11 @@ public static class TestUtility
         }
 
         return new string(chars);
+    }
+
+    public static Stream GetEmbeddedResource(Type type, string path)
+    {
+        var currentAssembly = type.Assembly;
+        return currentAssembly.GetManifestResourceStream($"{currentAssembly.GetName().Name}.Resources.{path}")!;
     }
 }

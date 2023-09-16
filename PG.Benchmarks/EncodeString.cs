@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 
 namespace PG.Benchmarks;
 
+[ExcludeFromCodeCoverage]
 [SimpleJob(RuntimeMoniker.Net481)]
 [SimpleJob(RuntimeMoniker.Net80)]
 [MemoryDiagnoser]

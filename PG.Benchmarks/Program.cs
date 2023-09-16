@@ -1,4 +1,10 @@
-﻿using BenchmarkDotNet.Running;
+﻿using System.Diagnostics.CodeAnalysis;
+using BenchmarkDotNet.Running;
+
+#if NET
+[assembly: ExcludeFromCodeCoverage]
+#endif
+
 
 namespace PG.Benchmarks;
 

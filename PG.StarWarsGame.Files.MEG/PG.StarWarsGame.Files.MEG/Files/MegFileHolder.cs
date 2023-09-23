@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -23,7 +24,10 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnly
     /// <summary>
     ///     Gets the file version of the MEG file.
     /// </summary>
-    public MegFileVersion FileVersion { get; private set; }
+    public MegFileVersion FileVersion { get; }
+
+    /// <inheritdoc/>
+    public int Count => Content.Count;
 
     /// <summary>
     ///     Gets a copy of the initialization vector (IV) used for encryption. <see langword="null" /> if the file is not
@@ -75,6 +79,10 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnly
 
             return Key != null && IV != null;
         }
+    }
+
+    internal MegFileHolder(IReadOnlyList<MegFileDataEntry> model, MegFileHolderParam param, IServiceProvider serviceProvider) : base(model, param, serviceProvider)
+    {
     }
 
     /// <inheritdoc />
@@ -134,8 +142,14 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnly
         }
     }
 
-    internal MegFileHolder(IReadOnlyList<MegFileDataEntry> model, MegFileHolderParam param,
-        IServiceProvider serviceProvider) : base(model, param, serviceProvider)
+    /// <inheritdoc/>
+    public IEnumerator<MegFileDataEntry> GetEnumerator()
     {
+        throw new NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

@@ -18,6 +18,6 @@ public static class MegDomain
     public static void RegisterServices(IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
-        serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier());
+        serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
     }
 }

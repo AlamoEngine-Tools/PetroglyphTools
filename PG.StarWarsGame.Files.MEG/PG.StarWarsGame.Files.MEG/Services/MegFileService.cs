@@ -3,10 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -121,10 +120,15 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         //                  the game should use the last file.
         // 
         // Since an IMegFile expects a List<>, not a Collection<>, we have to preserve the order of the FileTable
+        var lastCrc = default(Crc32);
         for (var i = 0; i < megMetadata.Header.FileNumber; i++)
         {
             var fileDescriptor = megMetadata.FileTable[i];
             var crc = fileDescriptor.Crc32;
+
+            if (lastCrc > crc) 
+                Logger.LogWarning($"The MEG's file table is not sorted correctly by CRC32. MEG file path: '{filePath}'");
+
             var fileOffset = fileDescriptor.FileOffset;
             var fileSize = fileDescriptor.FileSize;
             var fileNameIndex = fileDescriptor.FileNameIndex;

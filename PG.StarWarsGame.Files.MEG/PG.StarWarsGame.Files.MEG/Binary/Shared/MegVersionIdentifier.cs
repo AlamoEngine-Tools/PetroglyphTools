@@ -5,13 +5,19 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using PG.Commons.Binary;
+using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal class MegVersionIdentifier : IMegVersionIdentifier
+internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
 {
+    public MegVersionIdentifier(IServiceProvider services) : base(services)
+    {
+    }
+
     /// <summary>
     /// This method is optimized in a way to retrieve the MEGs file version as efficient as possible.
     /// If an invalid MEG archive is detected a <see cref="BinaryCorruptedException"/> is thrown.
@@ -51,6 +57,7 @@ internal class MegVersionIdentifier : IMegVersionIdentifier
             if (flags == id)
                 return MegFileVersion.V1;
 
+            Logger.LogTrace("Checking MEG version: Must be V2 or V3.");
 
             if (id != MegFileConstants.MegFileMagicNumber)
                 throw new BinaryCorruptedException("Unrecognized .MEG archive version");
@@ -58,6 +65,7 @@ internal class MegVersionIdentifier : IMegVersionIdentifier
             // This file is encrypted, thus it can only be V3
             if (flags == MegFileConstants.MegFileEncryptedFlag)
             {
+                Logger.LogTrace("Checking MEG version: MEG has encrypted flag. Version is V3.");
                 encrypted = true;
                 return MegFileVersion.V3;
             }
@@ -146,11 +154,13 @@ internal class MegVersionIdentifier : IMegVersionIdentifier
                 
                 if (fileTableOffset == 24 + filenamesSize)
                 {
+                    Logger.LogTrace("Checking MEG version: Checking V3 case...");
                     versionToCheck = MegFileVersion.V3;
                     method = &FileRecordIsV3;
                 }
                 else
                 {
+                    Logger.LogTrace("Checking MEG version: Checking V2 case...");
                     versionToCheck = MegFileVersion.V2;
                     method = &FileRecordIsV2;
                 }
@@ -163,6 +173,7 @@ internal class MegVersionIdentifier : IMegVersionIdentifier
                 if (versionToCheck == MegFileVersion.V2)
                     throw new BinaryCorruptedException("Unrecognized .MEG file version.");
 
+                Logger.LogTrace("Checking MEG version: Checking V2 case, cause the V3 case did not pass...");
 
                 // The V3 check failed.
                 // There is a chance > 0% (as explained above) the archive looked like V3 but actually is V2.

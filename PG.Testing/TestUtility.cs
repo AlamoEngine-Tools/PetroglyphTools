@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PG.Testing;
@@ -31,5 +32,37 @@ public static class TestUtility
         }
 
         return new string(chars);
+    }
+
+    public static void Assert_CtorException<T>(Action action) where T : Exception
+    {
+        Assert_CtorException(typeof(T), action);
+    }
+
+    public static void Assert_CtorException(Type type, Action action)
+    {
+        Assert_CtorException(type, () => action);
+    }
+
+    public static void Assert_CtorException<T>(Func<object?> action) where T : Exception
+    {
+        Assert_CtorException(typeof(T), action);
+    }
+
+    public static void Assert_CtorException(Type expectedException, Func<object?> action)
+    {
+        if (expectedException.IsAssignableFrom(typeof(Exception)))
+            throw new ArgumentException("Type argument must be assignable from System.Exception", nameof(expectedException));
+        try
+        {
+            action();
+        }
+        catch (TargetInvocationException e)
+        {
+            if (e.InnerException?.GetType() != expectedException)
+                Assert.Fail();
+            return;
+        }
+        Assert.Fail();
     }
 }

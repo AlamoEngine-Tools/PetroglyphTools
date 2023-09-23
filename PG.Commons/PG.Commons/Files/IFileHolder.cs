@@ -13,6 +13,9 @@ public interface IFileHolder : IDisposable
     /// <summary>
     ///     The path to the directory that holds the file on disc.
     /// </summary>
+    /// <remarks>
+    ///     This path may represent a relative location.
+    /// </remarks>
     string Directory { get; }
 
     /// <summary>
@@ -42,5 +45,8 @@ public interface IFileHolder<out TModel, out TAlamoFileType> : IFileHolder
     /// <summary>
     ///     The file name including the full path, eg. "c:/my/path/myfile.txt"
     /// </summary>
+    /// <remarks>
+    ///     This path may represent a relative location.
+    /// </remarks>
     string FilePath { get; }
 }

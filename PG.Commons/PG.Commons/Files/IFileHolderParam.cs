@@ -8,4 +8,6 @@ namespace PG.Commons.Files;
 /// </summary>
 public interface IFileHolderParam : IParam
 {
+    /// <inheritdoc cref="FileHolderBase{TParam,TModel,TFileType}.FilePath" />
+    public string FilePath { get; }
 }

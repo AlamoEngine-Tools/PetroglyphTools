@@ -25,6 +25,7 @@
         <PackageReference Include="System.IO.Hashing" Version="7.0.0" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
         <ProjectReference Include="..\PG.Commons\PG.Commons.csproj" />
     </ItemGroup>
 </Project>

@@ -6,8 +6,8 @@ namespace PG.Commons.Files;
 /// <summary>
 ///     Base parameter class for use with file holders.
 /// </summary>
-public abstract record FileHolderParamBase : ParamBase, IFileHolderParam
+public abstract record FileHolderParamBase : IFileHolderParam
 {
     /// <inheritdoc cref="FileHolderBase{TParam,TModel,TFileType}.FilePath" />
-    public string? FilePath { get; init; }
+    public required string FilePath { get; init; }
 }

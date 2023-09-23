@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -71,7 +72,7 @@ public static class FileNameUtilities
     /// <param name="filename">The filename to check.</param>
     /// <param name="result">Detailed information status. Can be used for error message reporting.</param>
     /// <returns><see langword="true"/> when the filename is valid; <see langword="false"/> otherwise.</returns>
-    public static bool IsValidFileName(string? filename, out FileNameValidationResult result)
+    public static bool IsValidFileName([NotNullWhen(true)] string? filename, out FileNameValidationResult result)
     {
         result = FileNameValidationResult.Success;
 

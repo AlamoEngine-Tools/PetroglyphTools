@@ -16,16 +16,11 @@ public sealed class DatFileHolder : FileHolderBase<DatFileHolderParam, IReadOnly
     IDatFile
 {
     /// <inheritdoc />
-    public DatFileType Order { get; private set; }
+    public DatFileType Order { get; }
 
     /// <inheritdoc />
     public DatFileHolder(IReadOnlyList<DatFileEntry> model, DatFileHolderParam param, IServiceProvider serviceProvider)
         : base(model, param, serviceProvider)
-    {
-    }
-
-    /// <inheritdoc />
-    protected override void ConstructHook(DatFileHolderParam param)
     {
         Order = param.Order ?? throw new ArgumentException(nameof(param.Order));
     }

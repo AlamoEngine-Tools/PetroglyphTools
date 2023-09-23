@@ -21,7 +21,7 @@ public class MegFileNameTableRecordTest
     [ExpectedException(typeof(ArgumentException))]
     public void Ctor_Test__ThrowsArgumentException(string fileName)
     {
-        var _ = new MegFileNameTableRecord(fileName, Encoding.ASCII);
+        _ = new MegFileNameTableRecord(fileName, Encoding.ASCII);
     }
 
     [TestMethod]
@@ -29,6 +29,6 @@ public class MegFileNameTableRecordTest
     public void Ctor_Test__ThrowsOverflowException()
     {
         var fn = TestUtility.GetRandomStringOfLength(ushort.MaxValue + 5);
-        var _ = new MegFileNameTableRecord(fn, Encoding.ASCII);
+        _ = new MegFileNameTableRecord(fn, Encoding.ASCII);
     }
 }

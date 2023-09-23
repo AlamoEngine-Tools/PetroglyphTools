@@ -77,7 +77,7 @@ public class FileHolderBaseTest
     [TestMethod]
     [DataRow("", typeof(ArgumentException))]
     [DataRow(null!, typeof(ArgumentException))]
-    [DataRow("     ", typeof(InvalidOperationException))]
+    [DataRow("     ", typeof(ArgumentException))]
     public void Test__Ctor_InvalidPath(string path, Type type)
     {
         var fs = new MockFileSystem();

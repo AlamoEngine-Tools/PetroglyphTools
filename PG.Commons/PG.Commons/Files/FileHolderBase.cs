@@ -76,7 +76,7 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
         // We let concrete holders or other services the opportunity to do validation.
         // This of course allows invalid file names (such as ".", "..", "\\", "/") to be used here, but the assumption is,
         // that reading or writing such a file will cause an exception anyway. 
-        if (string.IsNullOrEmpty(filePath))
+        if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path of param is empty.", nameof(param));
 
 
@@ -87,7 +87,6 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
         FileName = FileSystem.Path.GetFileNameWithoutExtension(filePath);
 
         // Remember: For a file path "myfile.txt" the path is empty but not null.
-        // Also throws, if filePath is whitespace only.
         Directory = FileSystem.Path.GetDirectoryName(filePath) ??
                     throw new InvalidOperationException($"No directory found for file '{filePath}'");
     }

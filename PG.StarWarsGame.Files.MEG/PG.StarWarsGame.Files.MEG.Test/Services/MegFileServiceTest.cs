@@ -97,14 +97,72 @@ public class MegFileServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(BinaryCorruptedException))]
-    public void Test_Load__()
+    public void Test_Load__BinaryReaderThrows()
+    {
+        var fileData = "some random data";
+        bool encrypted = false;
+        var version = MegFileVersion.V2;
+
+        _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
+
+        _sizeValidator.Setup(v => v.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()))
+            .Returns(true);
+
+        _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
+        _binaryServiceFactory.Setup(f => f.GetSizeValidator(version, encrypted)).Returns(_sizeValidator.Object);
+
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
+
+        _megBinaryReader.Setup(r => r.ReadBinary(It.IsAny<Stream>())).Throws<InvalidOperationException>();
+
+        _fileSystem.AddFile("test.meg", new MockFileData(fileData));
+
+        var e1 = Assert.ThrowsException<BinaryCorruptedException>(() => _megFileService.Load("test.meg"));
+        Assert.IsInstanceOfType<InvalidOperationException>(e1.InnerException);
+
+
+        _megBinaryReader.Setup(r => r.ReadBinary(It.IsAny<Stream>())).Throws<BinaryCorruptedException>();
+
+        var e2 = Assert.ThrowsException<BinaryCorruptedException>(() => _megFileService.Load("test.meg"));
+        Assert.IsNull(e2.InnerException);
+    }
+
+    [TestMethod]
+    public void Test_Load__InvalidSize()
     {
         var fileData = "some random data";
         bool encrypted = false;
         var version = MegFileVersion.V2;
 
         var metadata = new Mock<IMegFileMetadata>();
+
+        _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
+
+        _sizeValidator.Setup(v => v.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()))
+            .Returns(false);
+
+        _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
+        _binaryServiceFactory.Setup(f => f.GetSizeValidator(version, encrypted)).Returns(_sizeValidator.Object);
+
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
+
+        _megBinaryReader.Setup(r => r.ReadBinary(It.IsAny<Stream>())).Returns(metadata.Object);
+
+        _fileSystem.AddFile("test.meg", new MockFileData(fileData));
+        
+        Assert.ThrowsException<BinaryCorruptedException>(() => _megFileService.Load("test.meg"));
+    }
+
+    [TestMethod]
+    public void Test_Load__EmptyMeg()
+    {
+        var fileData = "some random data";
+        bool encrypted = false;
+        var version = MegFileVersion.V2;
+
+        var header = new Mock<IMegHeader>();
+        var metadata = new Mock<IMegFileMetadata>();
+        metadata.SetupGet(m => m.Header).Returns(header.Object);
 
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted))
             .Callback((Stream s, out bool e) => 
@@ -128,12 +186,14 @@ public class MegFileServiceTest
 
         _fileSystem.AddFile("test.meg", new MockFileData(fileData));
 
-
-        _megFileService.Load("test.meg");
-
+        var megFile = _megFileService.Load("test.meg");
 
         _versionIdentifier.Verify(r => r.GetMegFileVersion(It.IsAny<Stream>(), out encrypted), Times.Once);
         _megBinaryReader.Verify(r => r.ReadBinary(It.IsAny<Stream>()), Times.Once);
         _sizeValidator.Verify(r => r.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()), Times.Once);
+
+        //Assert.AreEqual(megFile.FileVersion, version);
+        //Assert.IsFalse(megFile.HasEncryption);
+        //Assert.AreEqual("test.meg", megFile.FileName);
     }
 }

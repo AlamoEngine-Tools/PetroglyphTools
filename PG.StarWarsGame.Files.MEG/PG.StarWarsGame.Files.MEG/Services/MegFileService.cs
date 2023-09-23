@@ -93,13 +93,13 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
             // These is no reason to validate the archive's size if we cannot access the whole stream size. 
             // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
-            if (fileStream.CanSeek)
-            {
-                var actualMegSize = fileStream.Length - startPosition;
-                var validator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetSizeValidator(version, encrypted);
-                if (!validator.Validate(bytesRead, actualMegSize, megMetadata))
-                    throw new BinaryCorruptedException("Unable to read .MEG archive: Read bytes do not match expected size.");
-            }
+            if (!fileStream.CanSeek)
+                throw new NotSupportedException("Non-seekable streams are currently not supported.");
+
+            var actualMegSize = fileStream.Length - startPosition;
+            var validator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetSizeValidator(version, encrypted);
+            if (!validator.Validate(bytesRead, actualMegSize, megMetadata))
+                throw new BinaryCorruptedException("Unable to read .MEG archive: Read bytes do not match expected size.");
         }
         catch (BinaryCorruptedException)
         {

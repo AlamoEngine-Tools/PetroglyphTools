@@ -19,26 +19,7 @@ internal class MegBinaryServiceFactory : IMegBinaryServiceFactory
     public IMegFileBinaryReader GetReader(MegFileVersion megVersion)
     {
         if (megVersion == MegFileVersion.V1)
-            return new V1.MegFileBinaryServiceV1(_serviceProvider);
-        throw new NotImplementedException();
-    }
-
-    public IMegFileSizeValidator GetSizeValidator(MegFileVersion fileVersion, bool encrypted)
-    {
-        if (encrypted) 
-            throw new NotImplementedException();
-        switch (fileVersion)
-        {
-            case MegFileVersion.V1:
-                return new MegFileSizeValidatorV1(_serviceProvider);
-            case MegFileVersion.V2:
-                break;
-            case MegFileVersion.V3:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(fileVersion), fileVersion, null);
-        }
-
+            return new MegFileBinaryServiceV1(_serviceProvider);
         throw new NotImplementedException();
     }
 

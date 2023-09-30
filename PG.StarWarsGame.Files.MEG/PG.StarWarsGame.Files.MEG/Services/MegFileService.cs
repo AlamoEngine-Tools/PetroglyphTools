@@ -10,6 +10,7 @@ using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 
@@ -105,9 +106,17 @@ public sealed class MegFileService : ServiceBase, IMegFileService
                 throw new NotSupportedException("Non-seekable streams are currently not supported.");
 
             var actualMegSize = fileStream.Length - startPosition;
-            var validator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetSizeValidator(version, encrypted);
-            if (!validator.Validate(bytesRead, actualMegSize, megMetadata))
-                throw new BinaryCorruptedException("Unable to read .MEG archive: Read bytes do not match expected size.");
+            var validator = Services.GetRequiredService<MegFileSizeValidator>();
+
+            var validationResult = validator.Validate(new MegSizeValidationInformation<IMegFileMetadata>
+            {
+                Metadata = megMetadata,
+                ArchiveSize = actualMegSize,
+                BytesRead = bytesRead
+            });
+
+            if (!validationResult.IsValid)
+                throw new BinaryCorruptedException($"Unable to read .MEG archive: Read bytes do not match expected size: {validationResult}");
         }
         catch (BinaryCorruptedException)
         {

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Binary;
@@ -12,6 +13,8 @@ using PG.StarWarsGame.Files.MEG.Services;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
+// Note: It's not possible to use Span<T> with Moq. Thus we cannot test encrypted meg files using it.
+// This needs to be tested by integration tests.     
 [TestClass]
 public class MegFileServiceTest
 {
@@ -192,8 +195,12 @@ public class MegFileServiceTest
         _megBinaryReader.Verify(r => r.ReadBinary(It.IsAny<Stream>()), Times.Once);
         _sizeValidator.Verify(r => r.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()), Times.Once);
 
-        //Assert.AreEqual(megFile.FileVersion, version);
-        //Assert.IsFalse(megFile.HasEncryption);
-        //Assert.AreEqual("test.meg", megFile.FileName);
+        Assert.AreEqual(megFile.FileVersion, version);
+        Assert.IsFalse(megFile.HasEncryption);
+        Assert.AreEqual("test", megFile.FileName);
+        Assert.AreEqual("test.meg", megFile.FilePath);
+        Assert.AreEqual("", megFile.Directory);
+
+        Assert.AreEqual(0, megFile.Content.Count);
     }
 }

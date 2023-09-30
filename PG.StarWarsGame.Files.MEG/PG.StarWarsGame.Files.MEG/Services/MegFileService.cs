@@ -58,7 +58,11 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(megVersion);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return Load(reader, fs, filePath, megVersion, false);
+
+        var archive = Load(reader, fs, filePath, megVersion, false);
+
+        return new MegFileHolder(archive, new MegFileHolderParam { FilePath = filePath, FileVersion = megVersion },
+            Services);
     }
 
     /// <inheritdoc />
@@ -66,7 +70,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     {
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
 
-        var version = GetMegFileVersion(fs, out var encrypted);
+        var megVersion = GetMegFileVersion(fs, out var encrypted);
 
         if (!encrypted)
         {
@@ -77,10 +81,14 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(key, iv);
 
         fs.Seek(0, SeekOrigin.Begin);
-        return Load(reader, fs, filePath, version, true);
+        
+        var archive = Load(reader, fs, filePath, megVersion, true);
+
+        return new MegFileHolder(archive, new MegFileHolderParam { FilePath = filePath, FileVersion = megVersion },
+            Services);
     }
 
-    private IMegFile Load(IMegFileBinaryReader binaryBuilder, Stream fileStream, string filePath, MegFileVersion version, bool encrypted)
+    private IMegArchive Load(IMegFileBinaryReader binaryBuilder, Stream fileStream, string filePath, MegFileVersion version, bool encrypted)
     {
         IMegFileMetadata megMetadata;
         try
@@ -136,8 +144,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
             files.Add(new MegFileDataEntry(crc, fileName, fileOffset, fileSize));
         }
 
-        return new MegFileHolder(files, new MegFileHolderParam { FilePath = filePath, FileVersion = version },
-            Services);
+        return new MegArchive(files);
     }
 
     /// <inheritdoc />

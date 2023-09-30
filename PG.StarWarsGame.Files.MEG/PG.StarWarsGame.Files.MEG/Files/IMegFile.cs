@@ -1,7 +1,6 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.Collections.Generic;
 using PG.Commons.Files;
 using PG.StarWarsGame.Files.MEG.Data;
 
@@ -12,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 ///     <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG files</a>.
 ///     *.MEG or Mega files are a proprietary archive type bundling files together in a RAM friendly way.
 /// </summary>
-public interface IMegFile : IFileHolder<IReadOnlyList<MegFileDataEntry>, MegAlamoFileType>, IReadOnlyCollection<MegFileDataEntry>
+public interface IMegFile : IFileHolder<IMegArchive, MegAlamoFileType>
 {
     /// <summary>
     /// Gets the file version of the MEG file.
@@ -34,20 +33,4 @@ public interface IMegFile : IFileHolder<IReadOnlyList<MegFileDataEntry>, MegAlam
     /// Gets a value indicating whether the MEG file is encrypted.
     /// </summary>
     bool HasEncryption { get; }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="entry"></param>
-    /// <returns></returns>
-    public bool Contains(MegFileDataEntry entry);
-    
-    /// <summary>
-    /// Tries to find any <see cref="MegFileDataEntry"/> by matching the provided filename.
-    /// </summary>
-    /// <param name="fileName"></param>
-    /// <param name="megFileDataEntries"></param>
-    /// <returns></returns>
-    bool TryGetAllEntriesWithMatchingPattern(string fileName, out IReadOnlyList<MegFileDataEntry> megFileDataEntries);
 }

@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using System.Security.Cryptography;
+using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 
@@ -31,6 +33,7 @@ public class MegFileServiceTest
     {
         _serviceProvider.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(_fileSystem);
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegBinaryServiceFactory))).Returns(_binaryServiceFactory.Object);
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegFileSizeValidator))).Returns(_sizeValidator.Object);
         _megFileService = new MegFileService(_serviceProvider.Object);
     }
 
@@ -90,7 +93,6 @@ public class MegFileServiceTest
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
-        _binaryServiceFactory.Setup(f => f.GetSizeValidator(version, encrypted)).Returns(_sizeValidator.Object);
 
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
@@ -108,11 +110,10 @@ public class MegFileServiceTest
 
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
 
-        _sizeValidator.Setup(v => v.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()))
-            .Returns(true);
+        _sizeValidator.Setup(v => v.Validate(It.IsAny<IMegSizeValidationInformation>()))
+            .Returns(new ValidationResult());
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
-        _binaryServiceFactory.Setup(f => f.GetSizeValidator(version, encrypted)).Returns(_sizeValidator.Object);
 
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
@@ -141,11 +142,10 @@ public class MegFileServiceTest
 
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
 
-        _sizeValidator.Setup(v => v.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()))
-            .Returns(false);
+        _sizeValidator.Setup(v => v.Validate(It.IsAny<IMegSizeValidationInformation>()))
+            .Returns(new ValidationResult(new List<ValidationFailure>{ new("name", "error") }));
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
-        _binaryServiceFactory.Setup(f => f.GetSizeValidator(version, encrypted)).Returns(_sizeValidator.Object);
 
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
@@ -154,6 +154,8 @@ public class MegFileServiceTest
         _fileSystem.AddFile("test.meg", new MockFileData(fileData));
         
         Assert.ThrowsException<BinaryCorruptedException>(() => _megFileService.Load("test.meg"));
+
+        _sizeValidator.Verify(r => r.Validate(It.IsAny<IMegSizeValidationInformation>()), Times.Once);
     }
 
     [TestMethod]
@@ -174,11 +176,10 @@ public class MegFileServiceTest
                 Assert.AreEqual(0, s.Position);
             }).Returns(version);
 
-        _sizeValidator.Setup(v => v.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()))
-            .Returns(true);
+        _sizeValidator.Setup(v => v.Validate(It.IsAny<IMegSizeValidationInformation>()))
+            .Returns(new ValidationResult());
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
-        _binaryServiceFactory.Setup(f => f.GetSizeValidator(version, encrypted)).Returns(_sizeValidator.Object);
 
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
@@ -193,7 +194,7 @@ public class MegFileServiceTest
 
         _versionIdentifier.Verify(r => r.GetMegFileVersion(It.IsAny<Stream>(), out encrypted), Times.Once);
         _megBinaryReader.Verify(r => r.ReadBinary(It.IsAny<Stream>()), Times.Once);
-        _sizeValidator.Verify(r => r.Validate(It.IsAny<long>(), It.IsAny<long>(), It.IsAny<IMegFileMetadata>()), Times.Once);
+        _sizeValidator.Verify(r => r.Validate(It.IsAny<IMegSizeValidationInformation>()), Times.Once);
 
         Assert.AreEqual(megFile.FileVersion, version);
         Assert.IsFalse(megFile.HasEncryption);

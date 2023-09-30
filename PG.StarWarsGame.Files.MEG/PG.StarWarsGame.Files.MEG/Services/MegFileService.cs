@@ -106,9 +106,9 @@ public sealed class MegFileService : ServiceBase, IMegFileService
                 throw new NotSupportedException("Non-seekable streams are currently not supported.");
 
             var actualMegSize = fileStream.Length - startPosition;
-            var validator = Services.GetRequiredService<MegFileSizeValidator>();
+            var validator = Services.GetRequiredService<IMegFileSizeValidator>();
 
-            var validationResult = validator.Validate(new MegSizeValidationInformation<IMegFileMetadata>
+            var validationResult = validator.Validate(new MegSizeValidationInformation
             {
                 Metadata = megMetadata,
                 ArchiveSize = actualMegSize,

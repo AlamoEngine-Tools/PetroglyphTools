@@ -10,6 +10,9 @@ public sealed class MegArchive : IMegArchive
     private readonly IReadOnlyList<MegFileDataEntry> _files;
 
     /// <inheritdoc />
+    public MegFileDataEntry this[int index] => _files[index];
+
+    /// <inheritdoc />
     public int Count => _files.Count;
 
     /// <summary>

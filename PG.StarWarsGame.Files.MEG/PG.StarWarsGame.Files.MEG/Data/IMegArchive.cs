@@ -5,7 +5,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Data model to represent a PG MEG archive.
 /// </summary>
-public interface IMegArchive : IReadOnlyCollection<MegFileDataEntry>
+public interface IMegArchive : IReadOnlyList<MegFileDataEntry>
 {
     /// <summary>
     /// 

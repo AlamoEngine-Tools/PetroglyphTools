@@ -4,6 +4,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
+using PG.StarWarsGame.Files.MEG.Services;
 
 namespace PG.StarWarsGame.Files.MEG;
 
@@ -18,6 +19,7 @@ public static class MegDomain
     /// <param name="serviceCollection">The service collection to populate.</param>
     public static void RegisterServices(IServiceCollection serviceCollection)
     {
+        serviceCollection.AddSingleton<IMegFileService>(sp => new MegFileService(sp));
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
         serviceCollection.AddTransient<IMegFileSizeValidator>(_ => new MegFileSizeValidator());

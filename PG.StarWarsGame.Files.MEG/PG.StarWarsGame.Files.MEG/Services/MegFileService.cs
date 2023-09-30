@@ -60,7 +60,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         fs.Seek(0, SeekOrigin.Begin);
 
-        var archive = Load(reader, fs, filePath, megVersion, false);
+        var archive = Load(reader, fs, filePath);
 
         return new MegFileHolder(archive, new MegFileHolderParam { FilePath = filePath, FileVersion = megVersion },
             Services);
@@ -83,13 +83,13 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         fs.Seek(0, SeekOrigin.Begin);
         
-        var archive = Load(reader, fs, filePath, megVersion, true);
+        var archive = Load(reader, fs, filePath);
 
         return new MegFileHolder(archive, new MegFileHolderParam { FilePath = filePath, FileVersion = megVersion },
             Services);
     }
 
-    private IMegArchive Load(IMegFileBinaryReader binaryBuilder, Stream fileStream, string filePath, MegFileVersion version, bool encrypted)
+    private IMegArchive Load(IMegFileBinaryReader binaryBuilder, Stream fileStream, string filePath)
     {
         IMegFileMetadata megMetadata;
         try

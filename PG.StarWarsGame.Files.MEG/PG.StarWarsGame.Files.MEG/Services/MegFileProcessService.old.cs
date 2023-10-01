@@ -102,7 +102,7 @@
 //        using var readStream = GetBinaryReaderForFileHolder(holder);
 //        foreach (var megFileDataEntry in holder.Content)
 //        {
-//            var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
+//            var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.FilePath);
 //            var path = FileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
 //            CreateTargetDirectoryIfNotExists(path);
 //            ExtractFileFromMegArchive(readStream, megFileDataEntry, filePath);
@@ -221,7 +221,7 @@
 //    private void UnpackMegFilePreservingDirectoryHierarchy(MegFileHolder holder, string targetDirectory,
 //        MegFileDataEntry megFileDataEntry)
 //    {
-//        var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
+//        var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.FilePath);
 //        var path = FileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
 //        CreateTargetDirectoryIfNotExists(path);
 //        using var reader = GetBinaryReaderForFileHolder(holder);
@@ -231,7 +231,7 @@
 //    private void UnpackMegFileFlatDirectoryHierarchy(MegFileHolder holder, string targetDirectory,
 //        MegFileDataEntry megFileDataEntry)
 //    {
-//        var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.RelativeFilePath);
+//        var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.FilePath);
 //        filePath = FileSystem.Path.Combine(targetDirectory, FileSystem.Path.GetFileName(filePath));
 //        using var reader = GetBinaryReaderForFileHolder(holder);
 //        ExtractFileFromMegArchive(reader, megFileDataEntry, filePath);

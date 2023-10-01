@@ -136,7 +136,7 @@ public class MegFileProcessServiceTest : ServiceTestBase
     //    const string expectedBasePath = "DATA/XML/";
     //    foreach (var megFileDataEntry in megFileHolder.Content)
     //    {
-    //        if (megFileDataEntry.RelativeFilePath.Equals(
+    //        if (megFileDataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_GAMEOBJECTFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {
@@ -146,7 +146,7 @@ public class MegFileProcessServiceTest : ServiceTestBase
     //            Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
     //        }
 
-    //        if (megFileDataEntry.RelativeFilePath.Equals(
+    //        if (megFileDataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_CAMPAIGNFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {
@@ -174,7 +174,7 @@ public class MegFileProcessServiceTest : ServiceTestBase
     //    const string expectedBasePath = "DATA/XML/";
     //    foreach (var megFileDataEntry in megFileHolder.Content)
     //    {
-    //        if (megFileDataEntry.RelativeFilePath.Equals(
+    //        if (megFileDataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_GAMEOBJECTFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {
@@ -184,7 +184,7 @@ public class MegFileProcessServiceTest : ServiceTestBase
     //            Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
     //        }
 
-    //        if (megFileDataEntry.RelativeFilePath.Equals(
+    //        if (megFileDataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_CAMPAIGNFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {

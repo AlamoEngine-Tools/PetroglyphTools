@@ -91,7 +91,7 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
 
     public MegMetadata FromHolder(IMegFile holder, out IList<string> filesToStream)
     {
-        //var files = holder.Content.Select(megFileDataEntry => megFileDataEntry.RelativeFilePath).ToList();
+        //var files = holder.Content.Select(megFileDataEntry => megFileDataEntry.FilePath).ToList();
         //var megFileNameTableRecords =
         //    files.Select(file => new MegFileNameTableRecord(file)).ToList();
         //megFileNameTableRecords.Sort();
@@ -140,7 +140,7 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
     //{
     //    return holder.Content.Where(megFileDataEntry =>
     //        megFileNameTableRecord.FileName.Equals(
-    //            megFileDataEntry.RelativeFilePath.Replace("\\", "/").Replace("\0", string.Empty),
+    //            megFileDataEntry.FilePath.Replace("\\", "/").Replace("\0", string.Empty),
     //            StringComparison.InvariantCultureIgnoreCase));
     //}
 

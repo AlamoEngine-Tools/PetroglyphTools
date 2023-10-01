@@ -1,13 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <inheritdoc cref="IMegArchive"/>
 public sealed class MegArchive : IMegArchive
 {
-    private readonly IReadOnlyList<MegFileDataEntry> _files;
+    private readonly ReadOnlyCollection<MegFileDataEntry> _files;
 
     /// <inheritdoc />
     public MegFileDataEntry this[int index] => _files[index];
@@ -24,13 +26,19 @@ public sealed class MegArchive : IMegArchive
     {
         if (files == null) 
             throw new ArgumentNullException(nameof(files));
-        _files = new List<MegFileDataEntry>(files);
+        _files = new ReadOnlyCollection<MegFileDataEntry>(files.ToList());
     }
 
     /// <inheritdoc />
     public bool Contains(MegFileDataEntry entry)
     {
-        throw new NotImplementedException();
+        return _files.Contains(entry);
+    }
+
+    /// <inheritdoc />
+    public int IndexOf(MegFileDataEntry entry)
+    {
+        return _files.IndexOf(entry);
     }
 
     /// <inheritdoc />
@@ -44,7 +52,7 @@ public sealed class MegArchive : IMegArchive
         //    return false;
         //}
 
-        //megFileDataEntries = Content.Where(dataEntry => ContainsPathIgnoreCase(dataEntry.RelativeFilePath, fileName))
+        //megFileDataEntries = Content.Where(dataEntry => ContainsPathIgnoreCase(dataEntry.FilePath, fileName))
         //    .ToList();
         //return megFileDataEntries.Any();
     }

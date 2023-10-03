@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using DotNet.Globbing;
+using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
@@ -45,6 +47,13 @@ public sealed class MegArchive : IMegArchive
     public bool TryGetAllEntriesWithMatchingPattern(string fileName,
         out IReadOnlyList<MegFileDataEntry> megFileDataEntries)
     {
+        Matcher m = new Matcher();
+
+        Glob g = new Glob();
+
+
+        var r = m.Execute(new InMemoryDirectoryInfo("", _files.Select(x => x.FilePath)));
+
         throw new NotImplementedException();
         //if (string.IsNullOrWhiteSpace(fileName))
         //{

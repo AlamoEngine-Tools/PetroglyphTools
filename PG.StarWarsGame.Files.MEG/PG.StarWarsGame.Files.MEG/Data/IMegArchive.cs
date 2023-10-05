@@ -22,8 +22,16 @@ public interface IMegArchive : IReadOnlyList<MegFileDataEntry>
     int IndexOf(MegFileDataEntry entry);
 
     /// <summary>
-    /// Tries to find any <see cref="MegFileDataEntry"/> by matching the provided filename.
+    /// Tries to find any <see cref="MegFileDataEntry"/> by matching the provided search pattern.
     /// </summary>
+    /// <remarks>
+    /// The search pattern supports globbing. So **/*.xml is a valid query.
+    /// <br/>
+    /// <br/>
+    /// <b>NOTE:</b>
+    /// File names in a MEG archive may absolute or relative. They also can be non-canonical (e.g., "/../data/./config.meg").
+    /// The search pattern might produce false-positive and false negatives, since we cannot 
+    /// </remarks>
     /// <param name="fileName"></param>
     /// <param name="megFileDataEntries"></param>
     /// <returns></returns>

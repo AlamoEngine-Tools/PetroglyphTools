@@ -11,8 +11,6 @@ public class MegArchiveTest
     [TestMethod]
     public void Test_Match()
     {
-       
-
         Glob g = Glob.Parse("new/**/test.txt", new GlobOptions{ Evaluation = new EvaluationOptions {CaseInsensitive = true}});
 
         var r = g.IsMatch("New/../Test.txt");

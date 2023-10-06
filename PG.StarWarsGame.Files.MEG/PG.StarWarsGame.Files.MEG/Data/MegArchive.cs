@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using DotNet.Globbing;
 using Microsoft.Extensions.FileSystemGlobbing;
@@ -12,6 +13,8 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 public sealed class MegArchive : IMegArchive
 {
     private readonly ReadOnlyCollection<MegFileDataEntry> _files;
+
+    private readonly ReadOnlyCollection<string> _fileNames;
 
     /// <inheritdoc />
     public MegFileDataEntry this[int index] => _files[index];
@@ -28,7 +31,9 @@ public sealed class MegArchive : IMegArchive
     {
         if (files == null) 
             throw new ArgumentNullException(nameof(files));
+
         _files = new ReadOnlyCollection<MegFileDataEntry>(files.ToList());
+        _fileNames = new ReadOnlyCollection<string>(_files.Select(x => x.FilePath).ToList());
     }
 
     /// <inheritdoc />
@@ -44,26 +49,25 @@ public sealed class MegArchive : IMegArchive
     }
 
     /// <inheritdoc />
-    public bool TryGetAllEntriesWithMatchingPattern(string fileName,
-        out IReadOnlyList<MegFileDataEntry> megFileDataEntries)
+    public IReadOnlyList<MegFileDataEntry> FindAllEntries(string searchPattern)
     {
-        Matcher m = new Matcher();
+        Debug.Assert(_fileNames.Count == _files.Count);
 
-        Glob g = new Glob();
+        if (_files.Count == 0)
+            return Array.Empty<MegFileDataEntry>();
 
+        var glob = Glob.Parse(searchPattern,
+            new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = true } });
 
-        var r = m.Execute(new InMemoryDirectoryInfo("", _files.Select(x => x.FilePath)));
+        var foundMatches = new List<MegFileDataEntry>();
+        
+        for (var i = 0; i < _fileNames.Count; i++)
+        {
+            if (glob.IsMatch(_fileNames[i])) 
+                foundMatches.Add(_files[i]);
+        }
 
-        throw new NotImplementedException();
-        //if (string.IsNullOrWhiteSpace(fileName))
-        //{
-        //    megFileDataEntries = Array.Empty<MegFileDataEntry>();
-        //    return false;
-        //}
-
-        //megFileDataEntries = Content.Where(dataEntry => ContainsPathIgnoreCase(dataEntry.FilePath, fileName))
-        //    .ToList();
-        //return megFileDataEntries.Any();
+        return foundMatches;
     }
 
     /// <inheritdoc />
@@ -75,15 +79,5 @@ public sealed class MegArchive : IMegArchive
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
-    }
-
-
-    private static bool ContainsPathIgnoreCase(string relativePath, string partFileName)
-    {
-#if NETSTANDARD2_1_OR_GREATER
-        return relativePath.Contains(partFileName, StringComparison.CurrentCultureIgnoreCase);
-#else
-        return relativePath.IndexOf(partFileName, StringComparison.CurrentCultureIgnoreCase) >= 0;
-#endif
     }
 }

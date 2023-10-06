@@ -23,17 +23,18 @@ public interface IMegArchive : IReadOnlyList<MegFileDataEntry>
 
     /// <summary>
     /// Tries to find any <see cref="MegFileDataEntry"/> by matching the provided search pattern.
+    /// <br/>
+    /// The resulting list is ordered by CRC32 of the file name, just are a MEG archive is ordered. The list is empty, if no matches are found. 
     /// </summary>
     /// <remarks>
     /// The search pattern supports globbing. So **/*.xml is a valid query.
     /// <br/>
     /// <br/>
     /// <b>NOTE:</b>
-    /// File names in a MEG archive may absolute or relative. They also can be non-canonical (e.g., "/../data/./config.meg").
-    /// The search pattern might produce false-positive and false negatives, since we cannot 
+    /// File names in a MEG archive may be absolute or relative. They also can be non-canonical (e.g., "/../data/./config.meg").
+    /// The search pattern might produce false-positive and false negatives, since this method is <b>not</b> designed to resolve paths.
     /// </remarks>
-    /// <param name="fileName"></param>
-    /// <param name="megFileDataEntries"></param>
+    /// <param name="searchPattern">The globbing pattern.</param>
     /// <returns></returns>
-    bool TryGetAllEntriesWithMatchingPattern(string fileName, out IReadOnlyList<MegFileDataEntry> megFileDataEntries);
+    IReadOnlyList<MegFileDataEntry> FindAllEntries(string searchPattern);
 }

@@ -42,12 +42,15 @@ public interface IMegFileService
         IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
         ReadOnlySpan<byte> key,
         ReadOnlySpan<byte> iv);
-    
+
     /// <summary>
     /// Loads a *.MEG file's metadata into a <see cref="MegFileHolder" />.
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns>The specified *.MEG file's metadata.</returns>
+    /// <exception cref="NotSupportedException">When trying to load an encrypted MEG archive.</exception>
+    /// <exception cref="BinaryCorruptedException">When <paramref name="filePath"/> could not be read as a MEG archive.</exception>
+    /// <exception cref="FileNotFoundException">When <paramref name="filePath"/> was not found.</exception>
     IMegFile Load(string filePath);
 
     /// <summary>
@@ -57,6 +60,9 @@ public interface IMegFileService
     /// <param name="key"></param>
     /// <param name="iv"></param>
     /// <returns>The specified *.MEG file's metadata.</returns>
+    /// <exception cref="NotSupportedException">When trying to load a non-encrypted MEG archive.</exception>
+    /// <exception cref="BinaryCorruptedException">When <paramref name="filePath"/> could not be read as a MEG archive.</exception>
+    /// <exception cref="FileNotFoundException">When <paramref name="filePath"/> was not found.</exception>
     IMegFile Load(string filePath, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
 
     /// <summary>
@@ -66,6 +72,7 @@ public interface IMegFileService
     /// <param name="encrypted">Indicates whether the .MEG archive is encrypted or not.</param>
     /// <returns>The version of the .MEG archive.</returns>
     /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid .MEG archive.</exception>
+    /// <exception cref="FileNotFoundException">When <paramref name="file"/> was not found.</exception>
     MegFileVersion GetMegFileVersion(string file, out bool encrypted);
 
     /// <summary>

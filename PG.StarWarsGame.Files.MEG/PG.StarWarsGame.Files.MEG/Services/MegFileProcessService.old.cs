@@ -258,7 +258,7 @@
 //        }
 
 //        headerSize += currentOffset;
-//        var megContentTableRecordSize = Convert.ToUInt32(new MegFileContentTableRecord(0, 0, 0, 0, 0).Size);
+//        var megContentTableRecordSize = Convert.ToUInt32(new MegFileTableRecord(0, 0, 0, 0, 0).Size);
 //        headerSize += megContentTableRecordSize * containedFiles;
 //        return headerSize;
 //    }

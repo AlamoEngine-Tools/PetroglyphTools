@@ -9,19 +9,19 @@ using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
 [TestClass]
-public class MegFileContentTableRecordTest
+public class MegFileTableRecordTest
 {
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentOutOfRangeException()
     {
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegFileContentTableRecord(
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegFileTableRecord(
                 new Crc32(0),
                 int.MaxValue + 1u,
                 0,
                 0,
                 0));
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegFileContentTableRecord(
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegFileTableRecord(
             new Crc32(0),
             0,
             0,
@@ -32,7 +32,7 @@ public class MegFileContentTableRecordTest
     [TestMethod]
     public void Ctor_Test__Correct()
     {
-        var record = new MegFileContentTableRecord(new Crc32(0), 1, 2, 3, 4);
+        var record = new MegFileTableRecord(new Crc32(0), 1, 2, 3, 4);
         Assert.AreEqual(0, (int)record.Crc32);
         Assert.AreEqual(1, (int)record.FileTableRecordIndex);
         Assert.AreEqual(2, (int)record.FileSize);
@@ -43,8 +43,8 @@ public class MegFileContentTableRecordTest
     [TestMethod]
     public void Ctor_Test__Compare()
     {
-        var r0 = new MegFileContentTableRecord(new Crc32(0), 1, 1, 1, 1);
-        var r1 = new MegFileContentTableRecord(new Crc32(1), 0, 0, 0, 0);
+        var r0 = new MegFileTableRecord(new Crc32(0), 1, 1, 1, 1);
+        var r1 = new MegFileTableRecord(new Crc32(1), 0, 0, 0, 0);
 
         Assert.IsTrue(r0 < r1);
         Assert.IsFalse(r0 > r1);
@@ -58,7 +58,7 @@ public class MegFileContentTableRecordTest
     [TestMethod]
     public void Ctor_Test__Bytes()
     {
-        var record = new MegFileContentTableRecord(new Crc32(1), 2, 3, 4, 5);
+        var record = new MegFileTableRecord(new Crc32(1), 2, 3, 4, 5);
 
         var bytes = new byte[]
         {

@@ -12,6 +12,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
+using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
@@ -203,5 +204,52 @@ public class MegFileServiceTest
         Assert.AreEqual("", megFile.Directory);
 
         Assert.AreEqual(0, megFile.Content.Count);
+    }
+
+    [TestMethod]
+    public void Test_GetMegFileVersion_Throws()
+    {
+        _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
+
+       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((string)null, out _));
+       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion("", out _));
+       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion("   ", out _));
+       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((Stream)null, out _));
+    }
+
+    [TestMethod]
+    public void Test_GetMegFileVersion_FromStream()
+    {
+        _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
+
+        var data = new MemoryStream();
+        var encrypted = true;
+        _versionIdentifier.Setup(v => v.GetMegFileVersion(data, out encrypted)).Returns(MegFileVersion.V3);
+
+        var megVersion = _megFileService.GetMegFileVersion(data, out var isEncrypted);
+        Assert.IsTrue(isEncrypted);
+        Assert.AreEqual(MegFileVersion.V3, megVersion);
+        
+        // Check stream does not get disposed
+        Assert.IsTrue(data.CanRead);
+    }
+
+    [TestMethod]
+    public void Test_GetMegFileVersion_FromFile()
+    {
+        _fileSystem.AddFile("test.meg", new MockFileData("Some Data..."));
+        _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
+        var encrypted = true;
+        _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(MegFileVersion.V3);
+        var megVersion = _megFileService.GetMegFileVersion("test.meg", out var isEncrypted);
+        Assert.IsTrue(isEncrypted);
+        Assert.AreEqual(MegFileVersion.V3, megVersion);
+    }
+
+    [TestMethod]
+    public void Test_GetMegFileVersion_Throws_FileNotFound()
+    {
+        _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
+        Assert.ThrowsException<FileNotFoundException>(() => _megFileService.GetMegFileVersion("test.meg", out _));
     }
 }

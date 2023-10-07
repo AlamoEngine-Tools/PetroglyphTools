@@ -15,6 +15,8 @@ public interface IMegFileExtractor
 {
     /// <summary>
     /// Builds the absolute file path for a <see cref="MegFileDataEntry"/> and a given base directory.
+    /// <br/>
+    /// If <paramref name="rootPath"/> is relative, the environment's <see cref="Environment.CurrentDirectory"/> will be prepended.
     /// </summary>
     /// <remarks>
     /// The following rules are applied for building the returned path:
@@ -23,7 +25,7 @@ public interface IMegFileExtractor
     ///
     /// If <paramref name="preserveDirectoryHierarchy"/> is <see langword="false"/>,
     /// <code>
-    ///     result :=  <paramref name="targetDirectory"/> + filename(<paramref name="dataEntry"/>).
+    ///     result :=  <paramref name="rootPath"/> + filename(<paramref name="dataEntry"/>).
     /// </code>
     /// <br/>
     /// <br/>
@@ -33,7 +35,7 @@ public interface IMegFileExtractor
     /// a) if <paramref name="dataEntry"/> has a relative file path
     /// <br/>
     /// <code>
-    ///     result := <paramref name="targetDirectory"/> + path(<paramref name="dataEntry"/>).
+    ///     result := <paramref name="rootPath"/> + path(<paramref name="dataEntry"/>).
     /// </code>
     /// 
     /// <br/>
@@ -43,11 +45,10 @@ public interface IMegFileExtractor
     /// </code> 
     /// </remarks>
     /// <param name="dataEntry">The file to get the path from.</param>
-    /// <param name="targetDirectory">Base directory of the built file path.</param>
+    /// <param name="rootPath">Base directory of the built file path.</param>
     /// <param name="preserveDirectoryHierarchy">option to preserve the directory hierarchy of the <paramref name="dataEntry"/> file name.</param>
-    /// <param name="absoluteEntry">Indicates whether <paramref name="dataEntry"/> has an absolute file name.</param>
     /// <returns>The absolute file path.</returns>
-    string GetAbsoluteFilePath(MegFileDataEntry dataEntry, string targetDirectory, bool preserveDirectoryHierarchy, out bool absoluteEntry);
+    string GetAbsoluteFilePath(MegFileDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy);
 
 
     /// <summary>
@@ -56,7 +57,7 @@ public interface IMegFileExtractor
     /// <param name="megFile"></param>
     /// <param name="dataEntry"></param>
     /// <returns></returns>
-    Stream ExtractFile(IMegFile megFile, MegFileDataEntry dataEntry);
+    Stream GetFileData(IMegFile megFile, MegFileDataEntry dataEntry);
 
 
     /// <summary>
@@ -69,12 +70,14 @@ public interface IMegFileExtractor
     /// <param name="preserveDirectoryHierarchy">
     /// If set to <see langword="false"/>, any directory structure within the meg file will be disregarded.
     /// </param>
+    /// <param name="overwrite"></param>
+    /// <returns></returns>
     /// <exception cref="FileNotInMegException">When <paramref name="dataEntry"/> is not in the .MEG file.</exception>
     /// <exception cref="InvalidOperationException">
     /// If <paramref name="dataEntry"/> has an absolute path and <paramref name="preserveDirectoryHierarchy"/>
     /// is set to <see langowrd="true"/>.
     /// </exception>
-    void ExtractFile(IMegFile megFile, MegFileDataEntry dataEntry, string targetDirectory, bool preserveDirectoryHierarchy = true);
+    bool ExtractFile(IMegFile megFile, MegFileDataEntry dataEntry, string targetDirectory, bool preserveDirectoryHierarchy, bool overwrite);
 
 
     /// <summary>
@@ -90,5 +93,7 @@ public interface IMegFileExtractor
     /// <param name="preserveDirectoryHierarchy">
     /// If set to <see langword="false"/>, any directory structure within the meg file will be disregarded.
     /// </param>
-    void ExtractAllFiles(IMegFile megFile, string targetDirectory, bool preserveDirectoryHierarchy = true);
+    /// <param name="overwrite"></param>
+    /// <returns></returns>
+    bool ExtractAllFiles(IMegFile megFile, string targetDirectory, bool preserveDirectoryHierarchy, bool overwrite);
 }

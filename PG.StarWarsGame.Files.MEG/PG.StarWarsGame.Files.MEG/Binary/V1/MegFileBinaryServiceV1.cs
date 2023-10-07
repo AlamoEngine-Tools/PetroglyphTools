@@ -47,7 +47,7 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
     protected internal override MegFileTable BuildFileTable(BinaryReader binaryReader, MegHeader header)
     {
         var fileNumber = header.FileNumber;
-        var megFileContentTableRecords = new List<MegFileContentTableRecord>(fileNumber);
+        var megFileContentTableRecords = new List<MegFileTableRecord>(fileNumber);
         
         for (var i = 0; i < fileNumber; i++)
         {
@@ -59,7 +59,7 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
         return new MegFileTable(megFileContentTableRecords);
     }
 
-    private static MegFileContentTableRecord BuildFileTableRecord(BinaryReader binaryReader)
+    private static MegFileTableRecord BuildFileTableRecord(BinaryReader binaryReader)
     {
         var crc32 = new Crc32(binaryReader.ReadUInt32());
         var fileTableRecordIndex = binaryReader.ReadUInt32();
@@ -80,7 +80,7 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
                 ".MEG files with a file number greater than int32.MaxValue are not supported.");
         }
 
-        return new MegFileContentTableRecord(
+        return new MegFileTableRecord(
             crc32,
             fileTableRecordIndex,
             fileSizeInBytes,
@@ -105,14 +105,14 @@ internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, Me
         //    }
         //}
 
-        //var megFileContentTableRecords = new List<MegFileContentTableRecord>();
+        //var megFileContentTableRecords = new List<MegFileTableRecord>();
         //for (var i = 0; i < megFileNameTableRecords.Count; i++)
         //{
         //    var crc32 = ChecksumService.GetChecksum(megFileNameTableRecords[i].FileName);
         //    var fileTableRecordIndex = Convert.ToUInt32(i);
         //    var fileSizeInBytes = Convert.ToUInt32(m_fileSystem.FileInfo.FromFileName(filesToStream[i]).Length);
         //    var fileNameTableIndex = Convert.ToUInt32(i);
-        //    megFileContentTableRecords.Add(new MegFileContentTableRecord(crc32, fileTableRecordIndex,
+        //    megFileContentTableRecords.Add(new MegFileTableRecord(crc32, fileTableRecordIndex,
         //        fileSizeInBytes, 0, fileNameTableIndex));
         //}
 

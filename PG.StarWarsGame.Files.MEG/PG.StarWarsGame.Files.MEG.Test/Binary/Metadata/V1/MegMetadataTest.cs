@@ -16,7 +16,7 @@ public class MegMetadataTest
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentNullException()
     {
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>
+        var fileTable = new MegFileTable(new List<MegFileTableRecord>
             { new(default, 0, 0, 0, 0) });
         Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, null!, fileTable));
 
@@ -32,7 +32,7 @@ public class MegMetadataTest
     {
         var header1 = new MegHeader(1, 1);
         var header2 = new MegHeader(2, 2);
-        var fileTable1 = new MegFileTable(new List<MegFileContentTableRecord>
+        var fileTable1 = new MegFileTable(new List<MegFileTableRecord>
             { new(default, 0, 0, 0, 0) });
         var fileNameTable1 = new MegFileNameTable(new List<MegFileNameTableRecord>
             { new("123") });
@@ -53,7 +53,7 @@ public class MegMetadataTest
         new MegMetadata(
             new MegHeader(1, 1),
             new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") }),
-            new MegFileTable(new List<MegFileContentTableRecord> { default }));
+            new MegFileTable(new List<MegFileTableRecord> { default }));
 
         Assert.IsTrue(true);
     }
@@ -63,7 +63,7 @@ public class MegMetadataTest
     {
         var header = new MegHeader(1, 1);
         var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") });
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord> { default });
+        var fileTable = new MegFileTable(new List<MegFileTableRecord> { default });
 
         var metadata = new MegMetadata(header, fileNameTable, fileTable);
 
@@ -82,7 +82,7 @@ public class MegMetadataTest
     {
         var header = new MegHeader(0, 0);
         var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord>());
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>());
+        var fileTable = new MegFileTable(new List<MegFileTableRecord>());
 
         var metadata = new MegMetadata(header, fileNameTable, fileTable);
 

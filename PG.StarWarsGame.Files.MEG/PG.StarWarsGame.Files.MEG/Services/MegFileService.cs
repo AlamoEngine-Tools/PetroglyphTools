@@ -169,6 +169,8 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted)
     {
+        if (stream is null)
+            throw new ArgumentNullException(nameof(stream));
         return Services.GetRequiredService<IMegVersionIdentifier>().GetMegFileVersion(stream, out encrypted);
     }
 }

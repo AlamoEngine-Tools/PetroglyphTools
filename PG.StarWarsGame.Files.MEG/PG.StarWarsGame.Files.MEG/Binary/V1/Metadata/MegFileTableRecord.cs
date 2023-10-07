@@ -8,7 +8,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
-internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, IComparable<MegFileContentTableRecord>
+internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<MegFileTableRecord>
 {
     public Crc32 Crc32 { get; }
 
@@ -44,7 +44,7 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
 
     public int Size => sizeof(uint) * 5;
 
-    public MegFileContentTableRecord(
+    public MegFileTableRecord(
         Crc32 crc32,
         uint fileTableRecordIndex,
         uint fileSizeInBytes,
@@ -62,13 +62,15 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
         FileNameIndex = fileNameTableIndex;
     }
 
-    public int CompareTo(MegFileContentTableRecord other)
+    public int CompareTo(MegFileTableRecord other)
     {
+        // Note: Changing the logic here also requires to update MegFileDataEntry.cs
         return Crc32.CompareTo(other.Crc32);
     }
 
     int IComparable<IMegFileDescriptor>.CompareTo(IMegFileDescriptor? other)
     {
+        // Note: Changing the logic here also requires to update MegFileDataEntry.cs
         return other is null ? 1 : Crc32.CompareTo(other.Crc32);
     }
 
@@ -78,7 +80,7 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
     /// <param name="a">The first record to compare.</param>
     /// <param name="b">The second record to compare.</param>
     /// <returns><see langword="true"/> if <paramref name="a"/> is greater than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool operator >(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    public static bool operator >(MegFileTableRecord a, MegFileTableRecord b)
     {
         return a.Crc32 > b.Crc32;
     }
@@ -89,7 +91,7 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
     /// <param name="a">The first record to compare.</param>
     /// <param name="b">The second record to compare.</param>
     /// <returns><see langword="true"/> if <paramref name="a"/> is less than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool operator <(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    public static bool operator <(MegFileTableRecord a, MegFileTableRecord b)
     {
         return a.Crc32 < b.Crc32;
     }
@@ -100,7 +102,7 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
     /// <param name="a">The first record to compare.</param>
     /// <param name="b">The second record to compare.</param>
     /// <returns><see langword="true"/> if <paramref name="a"/> is greater than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool operator >=(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    public static bool operator >=(MegFileTableRecord a, MegFileTableRecord b)
     {
         return a.Crc32 >= b.Crc32;
     }
@@ -111,7 +113,7 @@ internal readonly struct MegFileContentTableRecord : IMegFileDescriptor, ICompar
     /// <param name="a">The first record checksum to compare.</param>
     /// <param name="b">The second record to </param>
     /// <returns><see langword="true"/> if <paramref name="a"/> is less than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool operator <=(MegFileContentTableRecord a, MegFileContentTableRecord b)
+    public static bool operator <=(MegFileTableRecord a, MegFileTableRecord b)
     {
         return a.Crc32 <= b.Crc32;
     }

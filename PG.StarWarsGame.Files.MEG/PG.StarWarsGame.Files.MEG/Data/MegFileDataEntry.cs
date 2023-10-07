@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Reflection.Emit;
 using PG.Commons.Services;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
@@ -9,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Represents a file packaged in a *.MEG file.
 /// </summary>
-public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>
+public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>, IComparable<MegFileDataEntry>
 {
     /// <summary>
     /// Gets the relative file path as defined in the *.MEG file.<br />
@@ -54,13 +55,19 @@ public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>
     }
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// <b>Note:</b>
+    /// In contrast to comparison, equality is checked on all properties. Path equality is ordinal and case-sensitive
+    /// </remarks>
     public bool Equals(MegFileDataEntry? other)
     {
         if (ReferenceEquals(null, other)) 
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return FileNameCrc32.Equals(other.FileNameCrc32) && Offset == other.Offset && Size == other.Size;
+
+        // Equality for path needs to binary and case sensitive, cause CRC32 is a checksum of the path and thus changes if any bit is different.
+        return FileNameCrc32 == other.FileNameCrc32 && FilePath.Equals(other.FilePath, StringComparison.Ordinal) && Offset == other.Offset && Size == other.Size;
     }
 
     /// <inheritdoc/>
@@ -72,6 +79,21 @@ public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        return HashCode.Combine(FileNameCrc32, Offset, Size);
+        return HashCode.Combine(FileNameCrc32, FilePath, Offset, Size);
+    }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// <b>Note:</b>
+    /// In contrast to equality, comparison is only based on the <see cref="FileNameCrc32"/> checksum.
+    /// </remarks>
+    public int CompareTo(MegFileDataEntry? other)
+    {
+        // Note: Changing the logic here also requires to update the binary models!
+        if (ReferenceEquals(this, other)) 
+            return 0;
+        if (ReferenceEquals(null, other)) 
+            return 1;
+        return FileNameCrc32.CompareTo(other.FileNameCrc32);
     }
 }

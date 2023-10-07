@@ -35,7 +35,7 @@ public class MegFileBinaryServiceV1Test
     {
         var header = (MegHeader)default;
         var nameTable = new Mock<MegFileNameTable>(Array.Empty<MegFileNameTableRecord>());
-        var fileTable = new Mock<MegFileTable>(Array.Empty<MegFileContentTableRecord>());
+        var fileTable = new Mock<MegFileTable>(Array.Empty<MegFileTableRecord>());
 
         var metadata = _binaryService.CreateMegMetadata(header, nameTable.Object, fileTable.Object);
 

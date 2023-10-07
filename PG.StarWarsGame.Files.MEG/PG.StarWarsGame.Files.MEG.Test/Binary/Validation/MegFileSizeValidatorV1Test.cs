@@ -16,7 +16,7 @@ public class MegFileSizeValidatorV1Test
     {
         var header = new MegHeader(0, 0);
         var nameTable = new MegFileNameTable(new List<MegFileNameTableRecord>());
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>());
+        var fileTable = new MegFileTable(new List<MegFileTableRecord>());
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
         var sizeInfo = new Mock<IMegSizeValidationInformation>();
@@ -46,7 +46,7 @@ public class MegFileSizeValidatorV1Test
         {
             new("A")
         });
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>
+        var fileTable = new MegFileTable(new List<MegFileTableRecord>
         {
             new(new Crc32(0), 0, 0, 0, 0 )
         });
@@ -74,7 +74,7 @@ public class MegFileSizeValidatorV1Test
             new("A"),
             new("B")
         });
-        var fileTable = new MegFileTable(new List<MegFileContentTableRecord>
+        var fileTable = new MegFileTable(new List<MegFileTableRecord>
         {
             new(new Crc32(0), 0, 3, 0, 0 ),
             new(new Crc32(0), 0, 5, 0, 0 )

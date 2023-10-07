@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using DotNet.Globbing;
-using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 

@@ -10,17 +10,17 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
-internal class MegFileTable : BinaryBase, IMegFileTable, IEnumerable<MegFileContentTableRecord>
+internal class MegFileTable : BinaryBase, IMegFileTable, IEnumerable<MegFileTableRecord>
 {
-    private readonly IReadOnlyList<MegFileContentTableRecord> _megFileContentTableRecords;
+    private readonly IReadOnlyList<MegFileTableRecord> _megFileContentTableRecords;
 
-    public MegFileContentTableRecord this[int i] => _megFileContentTableRecords[i];
+    public MegFileTableRecord this[int i] => _megFileContentTableRecords[i];
 
     IMegFileDescriptor IBinaryTable<IMegFileDescriptor>.this[int i] => this[i];
 
     public int Count => _megFileContentTableRecords.Count;
 
-    public MegFileTable(IList<MegFileContentTableRecord> megFileContentTableRecords)
+    public MegFileTable(IList<MegFileTableRecord> megFileContentTableRecords)
     {
         if (megFileContentTableRecords is null)
             throw new ArgumentNullException(nameof(megFileContentTableRecords));
@@ -51,7 +51,7 @@ internal class MegFileTable : BinaryBase, IMegFileTable, IEnumerable<MegFileCont
         return _megFileContentTableRecords.Cast<IMegFileDescriptor>().GetEnumerator();
     }
 
-    public IEnumerator<MegFileContentTableRecord> GetEnumerator()
+    public IEnumerator<MegFileTableRecord> GetEnumerator()
     {
         return _megFileContentTableRecords.GetEnumerator();
     }

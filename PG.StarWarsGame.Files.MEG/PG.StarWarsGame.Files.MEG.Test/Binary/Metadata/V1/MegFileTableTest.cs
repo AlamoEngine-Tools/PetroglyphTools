@@ -22,7 +22,7 @@ public class MegFileTableTest
     [TestMethod]
     public void Test__EmptyTable()
     {
-        var table = new MegFileTable(new List<MegFileContentTableRecord>(0));
+        var table = new MegFileTable(new List<MegFileTableRecord>(0));
         Assert.AreEqual(0, table.Count);
         Assert.AreEqual(0, table.Size);
         CollectionAssert.AreEqual(new byte[] { }, table.Bytes);
@@ -31,8 +31,8 @@ public class MegFileTableTest
     [TestMethod]
     public void Test_Size_1_Entry()
     {
-        MegFileContentTableRecord entry = new(default, 0, default, default, default);
-        var table = new MegFileTable(new List<MegFileContentTableRecord>
+        MegFileTableRecord entry = new(default, 0, default, default, default);
+        var table = new MegFileTable(new List<MegFileTableRecord>
         {
             entry
         });
@@ -42,8 +42,8 @@ public class MegFileTableTest
     [TestMethod]
     public void Test_Size_2_Entries()
     {
-        MegFileContentTableRecord entry = new(default, 0, default, default, default);
-        var table = new MegFileTable(new List<MegFileContentTableRecord>
+        MegFileTableRecord entry = new(default, 0, default, default, default);
+        var table = new MegFileTable(new List<MegFileTableRecord>
         {
             entry,
             entry
@@ -54,9 +54,9 @@ public class MegFileTableTest
     [TestMethod]
     public void IFileNameTable_Test_Index()
     {
-        MegFileContentTableRecord entry1 = new(default, 0, default, default, default);
-        MegFileContentTableRecord entry2 = new(default, 1, default, default, default);
-        var table = new MegFileTable(new List<MegFileContentTableRecord>
+        MegFileTableRecord entry1 = new(default, 0, default, default, default);
+        MegFileTableRecord entry2 = new(default, 1, default, default, default);
+        var table = new MegFileTable(new List<MegFileTableRecord>
         {
             entry1,
             entry2
@@ -77,10 +77,10 @@ public class MegFileTableTest
     [TestMethod]
     public void IFileNameTable_Test_Enumerate()
     {
-        MegFileContentTableRecord entry1 = new(default, 0, default, default, default);
-        MegFileContentTableRecord entry2 = new(default, 1, default, default, default);
+        MegFileTableRecord entry1 = new(default, 0, default, default, default);
+        MegFileTableRecord entry2 = new(default, 1, default, default, default);
 
-        var recordList = new List<MegFileContentTableRecord>
+        var recordList = new List<MegFileTableRecord>
         {
             entry1,
             entry2
@@ -88,7 +88,7 @@ public class MegFileTableTest
 
         var table = new MegFileTable(recordList);
 
-        var list = new List<MegFileContentTableRecord>();
+        var list = new List<MegFileTableRecord>();
         foreach (var record in table)
             list.Add(record);
         CollectionAssert.AreEqual(recordList, list);
@@ -104,9 +104,9 @@ public class MegFileTableTest
     [TestMethod]
     public void Test_Bytes()
     {
-        MegFileContentTableRecord entry1 = new(default, 0, default, default, default);
-        MegFileContentTableRecord entry2 = new(default, 1, default, default, default);
-        var table = new MegFileTable(new List<MegFileContentTableRecord>
+        MegFileTableRecord entry1 = new(default, 0, default, default, default);
+        MegFileTableRecord entry2 = new(default, 1, default, default, default);
+        var table = new MegFileTable(new List<MegFileTableRecord>
         {
             entry1,
             entry2

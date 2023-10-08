@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Container with file information for building .MEG files.
 /// </summary>
-public class MegFileDataEntryInfo
+public sealed class MegFileDataEntryInfo
 {
     /// <summary>
     /// Gets file information from a an existing .MEG file

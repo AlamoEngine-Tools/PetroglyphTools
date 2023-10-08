@@ -12,7 +12,6 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
-using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 

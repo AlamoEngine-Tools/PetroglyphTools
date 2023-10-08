@@ -5,6 +5,8 @@
         <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
         <PackageId>AlamoEngineTools.PG.Commons.Test</PackageId>
 	    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+	    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">

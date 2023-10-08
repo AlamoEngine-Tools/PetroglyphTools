@@ -4,6 +4,7 @@
         <TargetFrameworks>net7.0</TargetFrameworks>
         <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MEG.Test</PackageId>
+        <IsTestProject>true</IsTestProject>
     </PropertyGroup>
     <ItemGroup>
       <None Remove="Resources\Files\v1_1_file_data.meg" />

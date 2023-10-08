@@ -2,7 +2,8 @@
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<TargetFrameworks>net48;net7.0</TargetFrameworks>
+		<TargetFrameworks>net7.0</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
 		<Product>PG.Benchmarks</Product>
 		<Title>PG.Benchmarks</Title>
 		<PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>
@@ -18,11 +19,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="BenchmarkDotNet" Version="0.13.7" />
+		<PackageReference Include="BenchmarkDotNet" Version="0.13.7" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Represents the location information of a file to be packed inside a MEG file.
 /// </summary>
-public class MegFileDataEntryLocation
+public sealed class MegFileDataEntryLocation
 {
     /// <summary>
     /// Gets the relative file path as defined in the *.MEG file.<br />

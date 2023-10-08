@@ -68,7 +68,6 @@ public interface IMegFileExtractor
     /// <exception cref="ArgumentNullException"><paramref name="megFile"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
     /// <exception cref="FileNotInMegException">When <paramref name="dataEntry"/> is not in the .MEG file.</exception>
     /// <exception cref="FileNotFoundException">When <paramref name="megFile"/> is not found.</exception>
-    /// <exception cref="IOException">When the extraction failed due to an IO error.</exception>
     /// <exception cref="UnauthorizedAccessException">When the operation is not permitted by the operating system for the specified <paramref name="megFile"/>.</exception>
     Stream GetFileData(IMegFile megFile, MegFileDataEntry dataEntry);
 

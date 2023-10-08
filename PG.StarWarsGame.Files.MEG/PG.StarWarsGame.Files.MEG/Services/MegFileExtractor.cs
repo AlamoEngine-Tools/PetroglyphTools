@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
+using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -32,7 +32,6 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (string.IsNullOrWhiteSpace(rootPath))
             throw new ArgumentException(nameof(rootPath));
 
-
         var entryPath = dataEntry.FilePath;
         var absoluteRootPath = FileSystem.Path.GetFullPath(rootPath);
 
@@ -58,19 +57,40 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     /// <inheritdoc/>
     public Stream GetFileData(IMegFile megFile, MegFileDataEntry dataEntry)
     {
-        throw new NotImplementedException();
-    }
+        if (megFile is null) 
+            throw new ArgumentNullException(nameof(megFile));
+        if (dataEntry is null) 
+            throw new ArgumentNullException(nameof(dataEntry));
 
-    /// <inheritdoc/>
-    public bool ExtractFile(IMegFile megFile, MegFileDataEntry dataEntry, string targetDirectory, bool preserveDirectoryHierarchy,
-        bool overwrite)
-    {
-        throw new NotImplementedException();
+        if (!megFile.Content.Contains(dataEntry))
+            throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);
+
+        return Services.GetRequiredService<IMegDataStreamFactory>()
+            .CreateDataStream(megFile.FilePath, dataEntry.Offset, dataEntry.Size);
     }
 
     /// <inheritdoc/>
     public bool ExtractFile(IMegFile megFile, MegFileDataEntry dataEntry, string filePath, bool overwrite)
     {
-        throw new NotImplementedException();
+        if (megFile is null)
+            throw new ArgumentNullException(nameof(megFile));
+        if (dataEntry is null)
+            throw new ArgumentNullException(nameof(dataEntry));
+
+        if (!megFile.Content.Contains(dataEntry))
+            throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);
+
+        if (FileSystem.File.Exists(filePath) && !overwrite)
+            return false;
+
+        // Not sure if this extra barrier is actually necessary. 
+        var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
+
+        using var destinationStream = FileSystem.FileStream.New(filePath, fileMode, FileAccess.Write, FileShare.None);
+
+        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>().CreateDataStream(megFile.FilePath, dataEntry.Offset, dataEntry.Size);
+        dataStream.CopyTo(destinationStream);
+
+        return true;
     }
 }

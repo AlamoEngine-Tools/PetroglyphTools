@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
 
@@ -15,13 +17,13 @@ public class MegFileExtractorTest
 {
     private MegFileExtractor _extractor = null!;
     private readonly MockFileSystem _fileSystem = new();
+    private readonly Mock<IServiceProvider> _serviceProvider = new();
 
     [TestInitialize]
     public void Init()
     {
-        var sp = new ServiceCollection();
-        sp.AddSingleton<IFileSystem>(_fileSystem);
-        _extractor = new MegFileExtractor(sp.BuildServiceProvider());
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(_fileSystem);
+        _extractor = new MegFileExtractor(_serviceProvider.Object);
     }
 
     [TestMethod]
@@ -86,6 +88,188 @@ public class MegFileExtractorTest
     {
         var entry = CreateFromFile("notAFile.txt/");
         _extractor.GetAbsoluteFilePath(entry, "someRoot", false);
+    }
+
+    [TestMethod]
+    public void Test_GetFileData_ThrowsArgumentsIncorrect()
+    {
+        var entry = CreateFromFile("file.txt");
+        Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetFileData(null!, entry));
+
+        var meg = new Mock<IMegFile>();
+        Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetFileData(meg.Object, null!));
+    }
+
+    [TestMethod]
+    public void Test_GetFileData_Throws_MegFileNotFound()
+    { 
+        var entry = CreateFromFile("file.txt");
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+
+        Assert.ThrowsException<FileNotFoundException>(() => _extractor.GetFileData(meg.Object, entry));
+    }
+
+    [TestMethod]
+    public void Test_GetFileData_Throws_FileNotInMeg()
+    {
+        _fileSystem.AddEmptyFile("a.meg");
+        var entry = CreateFromFile("file.txt");
+
+        var archive = new Mock<IMegArchive>();
+        archive.Setup(a => a.Contains(entry)).Returns(false);
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+        meg.SetupGet(m => m.Content).Returns(archive.Object);
+
+        Assert.ThrowsException<FileNotInMegException>(() => _extractor.GetFileData(meg.Object, entry));
+    }
+
+    [TestMethod]
+    public void Test_GetFileData()
+    {
+        var megFileDataStream = new MemoryStream(new byte[] { 1, 2, 3, 4 });
+        _fileSystem.AddEmptyFile("a.meg");
+        var entry = CreateFromFile("file.txt");
+
+        var archive = new Mock<IMegArchive>();
+        archive.Setup(a => a.Contains(entry)).Returns(true);
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+        meg.SetupGet(m => m.Content).Returns(archive.Object);
+
+
+        var streamFactory = new Mock<IMegDataStreamFactory>();
+        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), 0, 0)).Returns(megFileDataStream);
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegDataStreamFactory))).Returns(streamFactory.Object);
+
+
+        var stream = _extractor.GetFileData(meg.Object, entry);
+
+        Assert.AreSame(megFileDataStream, stream);
+    }
+
+
+    [TestMethod]
+    public void Test_ExtractFile_ThrowsArgumentsIncorrect()
+    {
+        var entry = CreateFromFile("file.txt");
+        Assert.ThrowsException<ArgumentNullException>(() => _extractor.ExtractFile(null!, entry, "file.txt", false));
+
+        var meg = new Mock<IMegFile>();
+        Assert.ThrowsException<ArgumentNullException>(() => _extractor.ExtractFile(meg.Object, null!, "file.txt", false));
+
+        Assert.ThrowsException<ArgumentNullException>(() => _extractor.ExtractFile(meg.Object, entry, null!, false));
+
+        Assert.ThrowsException<ArgumentException>(() => _extractor.ExtractFile(meg.Object, entry, "", false));
+        Assert.ThrowsException<ArgumentException>(() => _extractor.ExtractFile(meg.Object, entry, "    ", false));
+    }
+
+    [TestMethod]
+    public void Test_ExtractFile_Throws_MegFileNotFound()
+    {
+        var entry = CreateFromFile("file.txt");
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+
+        Assert.ThrowsException<FileNotFoundException>(() => _extractor.ExtractFile(meg.Object, entry, "file.txt", false));
+    }
+
+    [TestMethod]
+    public void Test_ExtractFile_Throws_FileNotInMeg()
+    {
+        _fileSystem.AddEmptyFile("a.meg");
+        var entry = CreateFromFile("file.txt");
+
+        var archive = new Mock<IMegArchive>();
+        archive.Setup(a => a.Contains(entry)).Returns(false);
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+        meg.SetupGet(m => m.Content).Returns(archive.Object);
+
+        Assert.ThrowsException<FileNotInMegException>(() => _extractor.ExtractFile(meg.Object, entry, "file.txt", false));
+    }
+
+    [TestMethod]
+    public void Test_ExtractData_NoOverwrite()
+    {
+        var megFileData = new byte[] { 1, 2, 3, 4 };
+        _fileSystem.AddEmptyFile("a.meg");
+        var entry = CreateFromFile("file.txt");
+
+        var archive = new Mock<IMegArchive>();
+        archive.Setup(a => a.Contains(entry)).Returns(true);
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+        meg.SetupGet(m => m.Content).Returns(archive.Object);
+
+
+        var streamFactory = new Mock<IMegDataStreamFactory>();
+        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), 0, 0)).Returns(new MemoryStream(megFileData));
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegDataStreamFactory))).Returns(streamFactory.Object);
+
+
+        Assert.IsFalse(_fileSystem.FileExists("file.txt"));
+
+        var extracted = _extractor.ExtractFile(meg.Object, entry, "file.txt", false);
+        Assert.IsTrue(extracted);
+
+        Assert.IsTrue(_fileSystem.FileExists("file.txt"));
+
+        var actualFileData = _fileSystem.File.ReadAllBytes("file.txt");
+        CollectionAssert.AreEqual(megFileData, actualFileData);
+
+
+        // Overwrite File with som other data;
+        var otherFileData = new byte[] { 4, 3, 2, 1 };
+        _fileSystem.File.WriteAllBytes("file.txt", otherFileData);
+
+        //Extract again
+        extracted = _extractor.ExtractFile(meg.Object, entry, "file.txt", false);
+        Assert.IsFalse(extracted);
+
+        actualFileData = _fileSystem.File.ReadAllBytes("file.txt"); 
+        CollectionAssert.AreEqual(otherFileData, actualFileData);
+    }
+
+    [TestMethod]
+    public void Test_ExtractData_Overwrite()
+    {
+        var megFileData = new byte[] { 1, 2, 3, 4 };
+
+        var existingFileData = new byte[] { 4, 3, 2, 1 };
+        _fileSystem.AddFile("file.txt", new MockFileData(existingFileData));
+
+        _fileSystem.AddEmptyFile("a.meg");
+
+        var entry = CreateFromFile("file.txt");
+
+        var archive = new Mock<IMegArchive>();
+        archive.Setup(a => a.Contains(entry)).Returns(true);
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+        meg.SetupGet(m => m.Content).Returns(archive.Object);
+
+
+        var streamFactory = new Mock<IMegDataStreamFactory>();
+        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), 0, 0)).Returns(new MemoryStream(megFileData));
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegDataStreamFactory))).Returns(streamFactory.Object);
+
+
+        CollectionAssert.AreEqual(existingFileData, _fileSystem.File.ReadAllBytes("file.txt"));
+
+        var extracted = _extractor.ExtractFile(meg.Object, entry, "file.txt", true);
+        Assert.IsTrue(extracted);
+
+        var actualFileData = _fileSystem.File.ReadAllBytes("file.txt");
+        CollectionAssert.AreEqual(megFileData, actualFileData);
     }
 
 

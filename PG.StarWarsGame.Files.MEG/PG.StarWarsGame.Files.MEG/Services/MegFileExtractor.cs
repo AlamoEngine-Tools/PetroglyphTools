@@ -1,5 +1,5 @@
-// // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// // Licensed under the MIT license. See LICENSE file in the project root for details.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
 using System.IO;
@@ -62,6 +62,9 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (dataEntry is null) 
             throw new ArgumentNullException(nameof(dataEntry));
 
+        if (!FileSystem.File.Exists(megFile.FilePath))
+            throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
+
         if (!megFile.Content.Contains(dataEntry))
             throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);
 
@@ -76,6 +79,13 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
             throw new ArgumentNullException(nameof(megFile));
         if (dataEntry is null)
             throw new ArgumentNullException(nameof(dataEntry));
+        if (filePath is null)
+            throw new ArgumentNullException(nameof(filePath));
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
+
+        if (!FileSystem.File.Exists(megFile.FilePath))
+            throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
 
         if (!megFile.Content.Contains(dataEntry))
             throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);

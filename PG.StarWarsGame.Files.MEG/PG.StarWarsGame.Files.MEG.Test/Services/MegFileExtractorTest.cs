@@ -57,7 +57,7 @@ public class MegFileExtractorTest
 
     public void Test_GetAbsoluteFilePath_Windows(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
-        var path = _extractor.GetAbsoluteFilePath(CreateFromFile(entryPath), rootDir, preserveHierarchy);
+        var path = _extractor.GetAbsoluteFilePath(Create(entryPath), rootDir, preserveHierarchy);
         Assert.AreEqual(expectedPath, path);
     }
 
@@ -78,7 +78,7 @@ public class MegFileExtractorTest
 
     public void Test_GetAbsoluteFilePath_Linux(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
-        var path = _extractor.GetAbsoluteFilePath(CreateFromFile(entryPath), rootDir, preserveHierarchy);
+        var path = _extractor.GetAbsoluteFilePath(Create(entryPath), rootDir, preserveHierarchy);
         Assert.AreEqual(expectedPath, path);
     }
 
@@ -86,14 +86,14 @@ public class MegFileExtractorTest
     [ExpectedException(typeof(InvalidOperationException))]
     public void Test_GetAbsoluteFilePath_ThrowsInvalidOperation()
     {
-        var entry = CreateFromFile("notAFile.txt/");
+        var entry = Create("notAFile.txt/");
         _extractor.GetAbsoluteFilePath(entry, "someRoot", false);
     }
 
     [TestMethod]
     public void Test_GetFileData_ThrowsArgumentsIncorrect()
     {
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
         Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetFileData(null!, entry));
 
         var meg = new Mock<IMegFile>();
@@ -103,7 +103,7 @@ public class MegFileExtractorTest
     [TestMethod]
     public void Test_GetFileData_Throws_MegFileNotFound()
     { 
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
 
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
@@ -115,7 +115,7 @@ public class MegFileExtractorTest
     public void Test_GetFileData_Throws_FileNotInMeg()
     {
         _fileSystem.AddEmptyFile("a.meg");
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
 
         var archive = new Mock<IMegArchive>();
         archive.Setup(a => a.Contains(entry)).Returns(false);
@@ -132,7 +132,7 @@ public class MegFileExtractorTest
     {
         var megFileDataStream = new MemoryStream(new byte[] { 1, 2, 3, 4 });
         _fileSystem.AddEmptyFile("a.meg");
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
 
         var archive = new Mock<IMegArchive>();
         archive.Setup(a => a.Contains(entry)).Returns(true);
@@ -143,7 +143,7 @@ public class MegFileExtractorTest
 
 
         var streamFactory = new Mock<IMegDataStreamFactory>();
-        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), 0, 0)).Returns(megFileDataStream);
+        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), entry.Offset, entry.Size)).Returns(megFileDataStream);
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegDataStreamFactory))).Returns(streamFactory.Object);
 
 
@@ -152,11 +152,10 @@ public class MegFileExtractorTest
         Assert.AreSame(megFileDataStream, stream);
     }
 
-
     [TestMethod]
     public void Test_ExtractFile_ThrowsArgumentsIncorrect()
     {
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
         Assert.ThrowsException<ArgumentNullException>(() => _extractor.ExtractFile(null!, entry, "file.txt", false));
 
         var meg = new Mock<IMegFile>();
@@ -171,7 +170,7 @@ public class MegFileExtractorTest
     [TestMethod]
     public void Test_ExtractFile_Throws_MegFileNotFound()
     {
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
 
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
@@ -183,7 +182,7 @@ public class MegFileExtractorTest
     public void Test_ExtractFile_Throws_FileNotInMeg()
     {
         _fileSystem.AddEmptyFile("a.meg");
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
 
         var archive = new Mock<IMegArchive>();
         archive.Setup(a => a.Contains(entry)).Returns(false);
@@ -200,7 +199,7 @@ public class MegFileExtractorTest
     {
         var megFileData = new byte[] { 1, 2, 3, 4 };
         _fileSystem.AddEmptyFile("a.meg");
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
 
         var archive = new Mock<IMegArchive>();
         archive.Setup(a => a.Contains(entry)).Returns(true);
@@ -211,7 +210,7 @@ public class MegFileExtractorTest
 
 
         var streamFactory = new Mock<IMegDataStreamFactory>();
-        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), 0, 0)).Returns(new MemoryStream(megFileData));
+        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), entry.Offset, entry.Size)).Returns(new MemoryStream(megFileData));
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegDataStreamFactory))).Returns(streamFactory.Object);
 
 
@@ -248,7 +247,7 @@ public class MegFileExtractorTest
 
         _fileSystem.AddEmptyFile("a.meg");
 
-        var entry = CreateFromFile("file.txt");
+        var entry = Create("file.txt");
 
         var archive = new Mock<IMegArchive>();
         archive.Setup(a => a.Contains(entry)).Returns(true);
@@ -259,7 +258,7 @@ public class MegFileExtractorTest
 
 
         var streamFactory = new Mock<IMegDataStreamFactory>();
-        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), 0, 0)).Returns(new MemoryStream(megFileData));
+        streamFactory.Setup(f => f.CreateDataStream(_fileSystem.Path.GetFullPath("a.meg"), entry.Offset, entry.Size)).Returns(new MemoryStream(megFileData));
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegDataStreamFactory))).Returns(streamFactory.Object);
 
 
@@ -273,8 +272,13 @@ public class MegFileExtractorTest
     }
 
 
-    private static MegFileDataEntry CreateFromFile(string path)
+    private static MegFileDataEntry Create(string path)
     {
-        return new(new Crc32(0), path, 0, 0);
+        return Create(path, 1);
+    }
+
+    private static MegFileDataEntry Create(string path, uint size)
+    {
+        return new(new Crc32(0), path, 0, size);
     }
 }

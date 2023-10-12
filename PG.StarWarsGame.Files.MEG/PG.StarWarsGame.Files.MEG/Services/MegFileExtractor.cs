@@ -98,7 +98,8 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
 
         using var destinationStream = FileSystem.FileStream.New(filePath, fileMode, FileAccess.Write, FileShare.None);
 
-        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>().CreateDataStream(megFile.FilePath, dataEntry.Offset, dataEntry.Size);
+        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>()
+            .CreateDataStream(megFile.FilePath, dataEntry.Offset, dataEntry.Size);
         dataStream.CopyTo(destinationStream);
 
         return true;

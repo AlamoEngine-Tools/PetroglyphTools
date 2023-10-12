@@ -79,7 +79,7 @@ public interface IMegFileExtractor
     /// All necessary folders will be created automatically.
     /// <br/>
     /// <br/>
-    /// <b>Note:</b> <paramref name="filePath"/> will be used as-is. File path information from <paramref name="dataEntry"/> will not be used.
+    /// <b>Note: </b><paramref name="filePath"/> will be resolved via <see cref="Path.GetFullPath(string)"/> and used as is. File path information from <paramref name="dataEntry"/> will not be used.
     /// <br/>
     /// Use <see cref="GetAbsoluteFilePath"/> to create a <see cref="MegFileDataEntry"/>-based absolute path.
     /// </remarks>

@@ -59,6 +59,5 @@ public class MegDataStreamFactoryTest
     { 
         var factory = new MegDataStreamFactory(_serviceProvider);
         factory.CreateDataStream("test.meg", 1, 2);
-
     }
 }

@@ -19,6 +19,8 @@ public class DatFileConverterTest : ServiceTestBase
 {
     private class TestParam : IFileHolderParam
     {
+        /// <inheritdoc />
+        public string FilePath { get; }
     }
 
     private class NullDatModel : IDatFileMetadata
@@ -38,8 +40,7 @@ public class DatFileConverterTest : ServiceTestBase
 
     private DatFileConverter GetService()
     {
-        var svc = GetServiceInstance();
-        return (DatFileConverter)svc;
+        return GetServiceInstance<DatFileConverter>();
     }
 
     [TestMethod]

@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<IsPackable>false</IsPackable>
-		<TargetFrameworks>net48;net7.0</TargetFrameworks>
-		<Product>PG.Benchmarks</Product>
-		<Title>PG.Benchmarks</Title>
-		<PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>
-		<PackageTags>alamo,petroglyph,glyphx</PackageTags>
-		<NeutralLanguage>en</NeutralLanguage>
-	</PropertyGroup>
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <TargetFrameworks>net48;net7.0</TargetFrameworks>
+        <Product>PG.Benchmarks</Product>
+        <Title>PG.Benchmarks</Title>
+        <PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>
+        <PackageTags>alamo,petroglyph,glyphx</PackageTags>
+        <NeutralLanguage>en</NeutralLanguage>
+    </PropertyGroup>
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="BenchmarkDotNet" Version="0.13.7" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.9"/>
+    </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
+    </ItemGroup>
 
 </Project>

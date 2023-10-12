@@ -4,7 +4,7 @@
         <TargetFrameworks>net7.0</TargetFrameworks>
         <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
         <PackageId>AlamoEngineTools.PG.Commons.Test</PackageId>
-	    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">

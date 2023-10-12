@@ -12,25 +12,26 @@ namespace PG.Testing;
 [TestCategory(TestConstants.TestCategories.SERVICE)]
 public abstract class ServiceTestBase
 {
-    private IFileSystem FileSystem { get; set; }
+    private IFileSystem FileSystem { get; set; } = null!;
 
     protected abstract Type GetServiceClass();
-    protected virtual IService GetServiceInstance()
+
+    protected virtual T GetServiceInstance<T>() where T : ServiceBase, IService
     {
-        return GetServiceInstance(GetServiceProviderInternal());
+        return GetServiceInstance<T>(GetServiceProviderInternal());
     }
 
-    protected virtual IService GetServiceInstance(IServiceProvider services)
+    protected virtual T GetServiceInstance<T>(IServiceProvider services) where T : ServiceBase, IService
     {
-        FileSystem = (IFileSystem) services.GetService(typeof(IFileSystem));
-        return (IService)Activator.CreateInstance(GetServiceClass(), services);
+        FileSystem = (IFileSystem)(services.GetService(typeof(IFileSystem)) ?? throw new InvalidOperationException());
+        return Activator.CreateInstance(GetServiceClass(), services) as T ?? throw new InvalidOperationException();
     }
 
     protected internal virtual IServiceProvider GetServiceProviderInternal()
     {
         return TestConstants.Services;
     }
-        
+
 
     [TestMethod]
     public void Test_ServiceBaseSetup__IsValid()
@@ -40,11 +41,11 @@ public abstract class ServiceTestBase
 
     private void TestBaseSetup()
     {
-        using var svc = GetServiceInstance();
+        var svc = GetServiceInstance<ServiceBase>();
         Assert.IsTrue(svc.GetType().IsSubclassOf(typeof(ServiceBase)));
-        var svc0 = (ServiceBase)svc;
-        Assert.IsNotNull(svc0.Logger);
-        Assert.IsNotNull(svc0.FileSystem);
+        Assert.IsNotNull(svc);
+        Assert.IsNotNull(svc.Logger);
+        Assert.IsNotNull(svc.FileSystem);
         TestBaseSetupInternal(svc);
     }
 

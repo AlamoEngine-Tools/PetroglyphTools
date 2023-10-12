@@ -25,7 +25,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1"/>
-        <PackageReference Include="System.IO.Abstractions" Version="19.2.51"/>
+        <PackageReference Include="System.IO.Abstractions" Version="19.2.69"/>
     </ItemGroup>
     <ItemGroup>
         <None Remove="Data\Dat\EaW\de\creditstext_german.dat"/>

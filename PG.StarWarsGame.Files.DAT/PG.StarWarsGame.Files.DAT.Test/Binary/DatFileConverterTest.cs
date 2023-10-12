@@ -19,6 +19,8 @@ public class DatFileConverterTest : ServiceTestBase
 {
     private class TestParam : IFileHolderParam
     {
+        /// <inheritdoc />
+        public string FilePath { get; }
     }
 
     private class NullDatModel : IDatFileMetadata

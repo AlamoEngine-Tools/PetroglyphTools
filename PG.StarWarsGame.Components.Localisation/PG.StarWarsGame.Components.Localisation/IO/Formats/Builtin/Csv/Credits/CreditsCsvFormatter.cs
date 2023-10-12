@@ -3,6 +3,9 @@
 
 namespace PG.StarWarsGame.Components.Localisation.IO.Formats.Builtin.Csv.Credits;
 
+/// <summary>
+///     TODO
+/// </summary>
 public class CreditsCsvFormatter
 {
 }

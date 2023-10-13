@@ -301,12 +301,12 @@ public class MegFileExtractorTest
         CollectionAssert.AreEqual(megFileData, actualFileData);
     }
 
-    [TestMethod]
+    [PlatformSpecificTestMethod(TestConstants.PLATFORM_WINDOWS)]
     [ExpectedException(typeof(ArgumentException))]
     [DataRow("c:/")]
     [DataRow("c:")]
     [DataRow(null)]
-    public void Test_ExtractData_Throws_IllegalPath(string path)
+    public void Test_ExtractData_Throws_IllegalPath_Windows(string path)
     {
         _fileSystem.AddEmptyFile("a.meg");
 
@@ -323,7 +323,28 @@ public class MegFileExtractorTest
 
         _extractor.ExtractFile(meg.Object, entry, filePathWhereToExtract, false);
     }
+    
+    [ExpectedException(typeof(ArgumentException))]
+    [PlatformSpecificTestMethod(TestConstants.PLATFORM_LINUX)]
+    [DataRow("/")]
+    [DataRow(null)]
+    public void Test_ExtractData_Throws_IllegalPath_Linux(string path)
+    {
+        _fileSystem.AddEmptyFile("a.meg");
 
+        var filePathWhereToExtract = path;
+
+        var entry = Create(filePathWhereToExtract);
+
+        var archive = new Mock<IMegArchive>();
+        archive.Setup(a => a.Contains(entry)).Returns(true);
+
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
+        meg.SetupGet(m => m.Content).Returns(archive.Object);
+
+        _extractor.ExtractFile(meg.Object, entry, filePathWhereToExtract, false);
+    }
 
 
     private static MegFileDataEntry Create(string path, uint size = 1)

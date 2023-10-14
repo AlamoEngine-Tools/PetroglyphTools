@@ -4,7 +4,6 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal interface IMegFileBinaryReader : IBinaryFileReader<IMegFileMetadata>,
-    IDisposable
+internal interface IMegFileBinaryReader : IBinaryFileReader<IMegFileMetadata>, IDisposable
 {
 }

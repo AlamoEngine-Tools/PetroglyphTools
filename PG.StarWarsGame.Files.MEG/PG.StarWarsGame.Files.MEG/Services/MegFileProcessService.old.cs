@@ -62,7 +62,7 @@
 //            megFileHolder.Content.Add(new MegFileDataEntry(entry.Key, entry.Value));
 //        }
 
-//        var builder = new MegFileBinaryServiceV1(FileSystem);
+//        var builder = new MegFileBinaryReaderV1(FileSystem);
 //        var megFile = builder.FromHolder(megFileHolder, out var filesToStream);
 //        var writePath = FileSystem.Path.Combine(megFileHolder.Directory, megFileHolder.FilePath);
 //        CreateTargetDirectoryIfNotExists(megFileHolder.Directory);
@@ -176,7 +176,7 @@
 //            reader.Read(megFileHeader, 0, megFileHeader.Length);
 //        }
 
-//        var builder = new MegFileBinaryServiceV1();
+//        var builder = new MegFileBinaryReaderV1();
 //        var megFile = builder.FromBytes(megFileHeader);
 //        var holder = new MegFileHolder(FileSystem.Path.GetDirectoryName(filePath),
 //            FileSystem.Path.GetFileNameWithoutExtension(filePath));

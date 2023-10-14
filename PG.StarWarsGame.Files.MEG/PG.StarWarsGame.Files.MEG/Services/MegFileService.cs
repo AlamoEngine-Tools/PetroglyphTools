@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -28,17 +28,13 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     }
 
     /// <inheritdoc />
-    public void CreateMegArchive(string megArchiveName, string targetDirectory,
-        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
-        MegFileVersion megFileVersion)
+    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryInfo> megDataInformation, MegFileVersion megFileVersion)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc />
-    public void CreateMegArchive(string megArchiveName, string targetDirectory,
-        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
-        ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
+    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryInfo> megDataInformation, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
     {
         throw new NotImplementedException();
     }
@@ -46,7 +42,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public IMegFile Load(string filePath)
     {
-        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
+        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         var megVersion = Services.GetRequiredService<IMegVersionIdentifier>().GetMegFileVersion(fs, out var encrypted);
 
@@ -56,56 +52,64 @@ public sealed class MegFileService : ServiceBase, IMegFileService
                                             "Use Load(string, ReadOnlySpan<byte>, ReadOnlySpan<byte>) instead.");
         }
 
-        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(megVersion);
-
         fs.Seek(0, SeekOrigin.Begin);
 
-        var archive = Load(reader, fs, filePath);
+        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(megVersion);
+        using var param = new MegFileHolderParam
+        {
+            FilePath = filePath,
+            FileVersion = megVersion,
+        };
 
-        return new MegFileHolder(archive, new MegFileHolderParam { FilePath = filePath, FileVersion = megVersion },
-            Services);
+        return Load(reader, fs, megVersion, param);
     }
 
     /// <inheritdoc />
     public IMegFile Load(string filePath, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
     {
-        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
+        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         var megVersion = GetMegFileVersion(fs, out var encrypted);
-
+        
         if (!encrypted)
         {
             throw new NotSupportedException("The given .MEG archive is not encrypted.\r\n" +
                                             "Use Load(string) instead.");
         }
 
-        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(key, iv);
+        Debug.Assert(megVersion == MegFileVersion.V3);
 
         fs.Seek(0, SeekOrigin.Begin);
-        
-        var archive = Load(reader, fs, filePath);
 
-        return new MegFileHolder(archive, new MegFileHolderParam { FilePath = filePath, FileVersion = megVersion },
-            Services);
+        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(key, iv);
+        using var param = new MegFileHolderParam
+        {
+            FilePath = filePath,
+            FileVersion = megVersion,
+            Key = key.ToArray(),
+            IV = iv.ToArray()
+        };
+        return Load(reader, fs, megVersion, param);
     }
 
-    private IMegArchive Load(IMegFileBinaryReader binaryBuilder, Stream fileStream, string filePath)
+    private IMegFile Load(IMegFileBinaryReader binaryReader, Stream megStream, MegFileVersion megVersion, MegFileHolderParam param)
     {
+
         IMegFileMetadata megMetadata;
         try
         {
-            var startPosition = fileStream.Position;
-            megMetadata = binaryBuilder.ReadBinary(fileStream);
-            var endPosition = fileStream.Position;
+            var startPosition = megStream.Position;
+            megMetadata = binaryReader.ReadBinary(megStream);
+            var endPosition = megStream.Position;
 
             var bytesRead = endPosition - startPosition;
 
             // These is no reason to validate the archive's size if we cannot access the whole stream size. 
             // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
-            if (!fileStream.CanSeek)
+            if (!megStream.CanSeek)
                 throw new NotSupportedException("Non-seekable streams are currently not supported.");
 
-            var actualMegSize = fileStream.Length - startPosition;
+            var actualMegSize = megStream.Length - startPosition;
             var validator = Services.GetRequiredService<IMegFileSizeValidator>();
 
             var validationResult = validator.Validate(new MegSizeValidationInformation
@@ -127,33 +131,8 @@ public sealed class MegFileService : ServiceBase, IMegFileService
             throw new BinaryCorruptedException($"Unable to read .MEG archive: {e.Message}", e);
         }
 
-        var files = new List<MegFileDataEntry>(megMetadata.Header.FileNumber);
-
-        // According to the specification: 
-        //  - The Meg's FileTable is sorted by CRC32.
-        //  - It's not specified how or whether the FileNameTable is sorted.
-        //  - The game merges FileTable entries (and takes the last entry for duplicates)
-        //  --> In theory:  For file entries with the same file name (and thus same CRC32),
-        //                  the game should use the last file.
-        // 
-        // Since an IMegFile expects a List<>, not a Collection<>, we have to preserve the order of the FileTable
-        var lastCrc = default(Crc32);
-        for (var i = 0; i < megMetadata.Header.FileNumber; i++)
-        {
-            var fileDescriptor = megMetadata.FileTable[i];
-            var crc = fileDescriptor.Crc32;
-
-            if (lastCrc > crc) 
-                Logger.LogWarning($"The MEG's file table is not sorted correctly by CRC32. MEG file path: '{filePath}'");
-
-            var fileOffset = fileDescriptor.FileOffset;
-            var fileSize = fileDescriptor.FileSize;
-            var fileNameIndex = fileDescriptor.FileNameIndex;
-            var fileName = megMetadata.FileNameTable[fileNameIndex];
-            files.Add(new MegFileDataEntry(crc, fileName, fileOffset, fileSize));
-        }
-
-        return new MegArchive(files);
+        var converter = Services.GetRequiredService<IMegBinaryServiceFactory>().GetConverter(megVersion);
+        return converter.ToHolder(param, megMetadata);
     }
 
     /// <inheritdoc />

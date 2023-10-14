@@ -10,15 +10,16 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal abstract class MegFileBinaryServiceBase<TMegMetadata, TMegHeader, TMegFileTable> : ServiceBase, IMegFileBinaryService
+internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFileTable> :
+    ServiceBase, 
+    IMegFileBinaryService
     where TMegMetadata : IMegFileMetadata
     where TMegHeader : IMegHeader
     where TMegFileTable : IMegFileTable 
 {
-    protected MegFileBinaryServiceBase(IServiceProvider services) : base(services)
+    protected MegFileBinaryReaderBase(IServiceProvider services) : base(services)
     {
     }
-
 
     public IMegFileMetadata ReadBinary(Stream byteStream)
     {

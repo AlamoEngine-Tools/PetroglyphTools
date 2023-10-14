@@ -19,11 +19,16 @@ internal class MegBinaryServiceFactory : IMegBinaryServiceFactory
     public IMegFileBinaryReader GetReader(MegFileVersion megVersion)
     {
         if (megVersion == MegFileVersion.V1)
-            return new MegFileBinaryServiceV1(_serviceProvider);
+            return new MegFileBinaryReaderV1(_serviceProvider);
         throw new NotImplementedException();
     }
 
     public IMegFileBinaryReader GetReader(ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IMegFileBinaryConverter GetConverter(MegFileVersion megVersion)
     {
         throw new NotImplementedException();
     }

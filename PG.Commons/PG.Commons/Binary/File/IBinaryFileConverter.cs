@@ -28,10 +28,10 @@ public interface IBinaryFileConverter<TBinaryModel, TFileHolder, in TFileHolderP
     TBinaryModel FromHolder(TFileHolder holder);
 
     /// <summary>
-    ///     Builds a <see cref="IFileHolder" /> from a given <see cref="IBinaryFile" />.
+    ///     Builds a <typeparamref name="TFileHolder"/> from a given <typeparamref name="TBinaryModel"/>.
     /// </summary>
     /// <param name="param">The <see cref="IFileHolder{TModel,TAlamoFileType}" />'s <see cref="IFileHolderParam" /></param>
     /// <param name="model">The <see cref="IBinaryFile" /> to convert.</param>
-    /// <returns>The <see cref="IFileHolder{TModel,TAlamoFileType}" /></returns>
+    /// <returns>The <typeparamref name="TFileHolder"/>.</returns>
     TFileHolder ToHolder(TFileHolderParam param, TBinaryModel model);
 }

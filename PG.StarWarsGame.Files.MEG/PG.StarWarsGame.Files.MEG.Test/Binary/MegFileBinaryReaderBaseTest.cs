@@ -13,7 +13,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 namespace PG.StarWarsGame.Files.MEG.Test.Binary;
 
 [TestClass]
-public class MegFileBinaryServiceBaseTest
+public class MegFileBinaryReaderBaseTest
 {
     private Mock<IServiceProvider> _serviceProviderMock = null!;
     private IFileSystem _fileSystem = null!;
@@ -31,13 +31,13 @@ public class MegFileBinaryServiceBaseTest
     [ExpectedException(typeof(ArgumentNullException))]
     public void Test__Ctor_ThrowsNullArg()
     {
-        _ = new TestMegFileBinaryService(null!);
+        _ = new TestMegFileBinaryReader(null!);
     }
 
     [TestMethod]
     public void Test__ReadBinary_ThrowsArgs()
     {
-        var serviceMock = new Mock<MegFileBinaryServiceBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };
@@ -52,7 +52,7 @@ public class MegFileBinaryServiceBaseTest
     [TestMethod]
     public void Test__ReadBinary_MethodChain()
     {
-        var serviceMock = new Mock<MegFileBinaryServiceBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };
@@ -81,7 +81,7 @@ public class MegFileBinaryServiceBaseTest
     [TestMethod]
     public void Test__ReadBinary_ThrowOnNullObjects()
     {
-        var serviceMock = new Mock<MegFileBinaryServiceBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };
@@ -121,7 +121,7 @@ public class MegFileBinaryServiceBaseTest
     [DynamicData(nameof(FileTableTestData), DynamicDataSourceType.Method)]
     public void Test__ReadBinary_BuildFileNameTable(int fileNumber, byte[] data, string[] expectedValues)
     {
-        var serviceMock = new Mock<MegFileBinaryServiceBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };
@@ -184,9 +184,9 @@ public class MegFileBinaryServiceBaseTest
 
 
 
-    private class TestMegFileBinaryService : MegFileBinaryServiceBase<IMegFileMetadata, IMegHeader, IMegFileTable>
+    private class TestMegFileBinaryReader : MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>
     {
-        public TestMegFileBinaryService(IServiceProvider services) : base(services)
+        public TestMegFileBinaryReader(IServiceProvider services) : base(services)
         {
         }
 

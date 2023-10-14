@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
 public class MegFileSizeValidatorV1IntegrationTest
 {
     private readonly MegFileSizeValidator _validator = new();
-    private MegFileBinaryServiceV1 _binaryService = null!;
+    private MegFileBinaryReaderV1 _binaryReader = null!;
 
 
     [TestInitialize]
@@ -23,14 +23,14 @@ public class MegFileSizeValidatorV1IntegrationTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        _binaryService = new MegFileBinaryServiceV1(sp.Object);
+        _binaryReader = new MegFileBinaryReaderV1(sp.Object);
     }
 
     [TestMethod]
     public void Test__ValidateCore_CorrectSize()
     {
         var data = new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1);
-        var metadata = _binaryService.ReadBinary(data);
+        var metadata = _binaryReader.ReadBinary(data);
 
         var sizeInfo = new MegSizeValidationInformation
         {
@@ -51,7 +51,7 @@ public class MegFileSizeValidatorV1IntegrationTest
     public void Test__ValidateCore_IncorrectSize(int offsetBytesRead, int offsetArchiveSize)
     {
         var data = new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1);
-        var metadata = _binaryService.ReadBinary(data);
+        var metadata = _binaryReader.ReadBinary(data);
 
         var sizeInfo = new MegSizeValidationInformation
         {

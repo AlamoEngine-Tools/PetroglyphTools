@@ -16,30 +16,32 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileService
 {
     /// <summary>
-    /// Packs a list of files as an unencrypted *.MEG archive in the given version.
+    /// Packs a list of files as an unencrypted *.MEG archive in the given <paramref name="megFileVersion"/>.
     /// </summary>
-    /// <param name="megArchiveName">The desired name of the archive.</param>
-    /// <param name="targetDirectory">The target directory to which the .MEG archive will be written.</param>
-    /// <param name="packedFileNameToAbsoluteFilePathsMap">A list of absolute file paths, identified by their name in the .MEG file.</param>
+    /// <remarks>
+    /// <paramref name="filePath"/> will first be resolved by <see cref="Path.GetFullPath(string)"/>.
+    /// </remarks>
+    /// <param name="filePath">The desired file path of the MEG archive.</param>
+    /// <param name="megDataInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
     /// <param name="megFileVersion">The file version of the .MEG file.</param>
     void CreateMegArchive(
-        string megArchiveName,
-        string targetDirectory, 
-        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap, 
+        string filePath,
+        IEnumerable<MegFileDataEntryInfo> megDataInformation, 
         MegFileVersion megFileVersion);
 
     /// <summary>
     /// Packs a list of files as an encrypted *.MEG V3 archive.
     /// </summary>
-    /// <param name="megArchiveName">The desired name of the archive.</param>
-    /// <param name="targetDirectory">The target directory to which the .MEG archive will be written.</param>
-    /// <param name="packedFileNameToAbsoluteFilePathsMap">A list of absolute file paths, identified by their name in the .MEG file.</param>
+    /// <remarks>
+    /// <paramref name="filePath"/> will first be resolved by <see cref="Path.GetFullPath(string)"/>.
+    /// </remarks>
+    /// <param name="filePath">The desired file path of the MEG archive.</param>
+    /// <param name="megDataInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
     /// <param name="key">The encryption key.</param>
     /// <param name="iv">The initialization vector used for encryption.</param>
     void CreateMegArchive(
-        string megArchiveName, 
-        string targetDirectory, 
-        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
+        string filePath,
+        IEnumerable<MegFileDataEntryInfo> megDataInformation,
         ReadOnlySpan<byte> key,
         ReadOnlySpan<byte> iv);
 

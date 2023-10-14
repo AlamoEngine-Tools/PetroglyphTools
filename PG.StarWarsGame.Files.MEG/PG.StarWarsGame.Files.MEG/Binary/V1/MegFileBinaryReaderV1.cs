@@ -13,9 +13,9 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
-internal class MegFileBinaryServiceV1 : MegFileBinaryServiceBase<MegMetadata, MegHeader, MegFileTable>
+internal class MegFileBinaryReaderV1 : MegFileBinaryReaderBase<MegMetadata, MegHeader, MegFileTable>
 {
-    public MegFileBinaryServiceV1(IServiceProvider services) : base(services)
+    public MegFileBinaryReaderV1(IServiceProvider services) : base(services)
     {
     }
 

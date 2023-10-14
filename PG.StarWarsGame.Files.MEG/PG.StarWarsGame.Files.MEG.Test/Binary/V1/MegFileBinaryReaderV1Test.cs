@@ -17,9 +17,9 @@ using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.V1;
 
 [TestClass]
-public class MegFileBinaryServiceV1Test
+public class MegFileBinaryReaderV1Test
 {
-    private MegFileBinaryServiceV1 _binaryService = null!;
+    private MegFileBinaryReaderV1 _binaryReader = null!;
 
     [TestInitialize]
     public void SetUp()
@@ -27,7 +27,7 @@ public class MegFileBinaryServiceV1Test
         var fs = new MockFileSystem();
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
-        _binaryService = new MegFileBinaryServiceV1(sp.Object);
+        _binaryReader = new MegFileBinaryReaderV1(sp.Object);
     }
 
     [TestMethod]
@@ -37,7 +37,7 @@ public class MegFileBinaryServiceV1Test
         var nameTable = new Mock<MegFileNameTable>(Array.Empty<MegFileNameTableRecord>());
         var fileTable = new Mock<MegFileTable>(Array.Empty<MegFileTableRecord>());
 
-        var metadata = _binaryService.CreateMegMetadata(header, nameTable.Object, fileTable.Object);
+        var metadata = _binaryReader.CreateMegMetadata(header, nameTable.Object, fileTable.Object);
 
         Assert.AreEqual(header, metadata.Header);
         Assert.AreEqual(nameTable.Object, metadata.FileNameTable);
@@ -54,7 +54,7 @@ public class MegFileBinaryServiceV1Test
         };
 
         var reader = new BinaryReader(new MemoryStream(data));
-        Assert.ThrowsException<NotSupportedException>(() => _binaryService.BuildMegHeader(reader));
+        Assert.ThrowsException<NotSupportedException>(() => _binaryReader.BuildMegHeader(reader));
     }
 
     [TestMethod]
@@ -67,7 +67,7 @@ public class MegFileBinaryServiceV1Test
         };
 
         var reader = new BinaryReader(new MemoryStream(data));
-        Assert.ThrowsException<BinaryCorruptedException>(() => _binaryService.BuildMegHeader(reader));
+        Assert.ThrowsException<BinaryCorruptedException>(() => _binaryReader.BuildMegHeader(reader));
     }
 
     [DataTestMethod]
@@ -75,7 +75,7 @@ public class MegFileBinaryServiceV1Test
     public void Test__BuildMegHeader_Correct(byte[] data, uint numFiles, uint numNames)
     {
         var reader = new BinaryReader(new MemoryStream(data));
-        var header = _binaryService.BuildMegHeader(reader);
+        var header = _binaryReader.BuildMegHeader(reader);
 
         Assert.AreEqual(numFiles, header.NumFiles);
         Assert.AreEqual(numNames, header.NumFileNames);
@@ -124,7 +124,7 @@ public class MegFileBinaryServiceV1Test
         var header = new MegHeader(numberEntries, numberEntries);
 
         var reader = new BinaryReader(new MemoryStream(data));
-        var fileTable = _binaryService.BuildFileTable(reader, header);
+        var fileTable = _binaryReader.BuildFileTable(reader, header);
 
         Assert.AreEqual((int)numberEntries, fileTable.Count);
 
@@ -187,7 +187,7 @@ public class MegFileBinaryServiceV1Test
     {
         var header = new MegHeader(numberEntries, numberEntries);
         var reader = new BinaryReader(new MemoryStream(data));
-        Assert.ThrowsException<NotSupportedException>(() => _binaryService.BuildFileTable(reader, header));
+        Assert.ThrowsException<NotSupportedException>(() => _binaryReader.BuildFileTable(reader, header));
     }
 
     private static IEnumerable<object[]> NotSupportedFileTableRecords()

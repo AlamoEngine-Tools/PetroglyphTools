@@ -24,7 +24,7 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
     public MegFileVersion FileVersion { get; }
 
     /// <summary>
-    ///     Gets a copy of the initialization vector (IV) used for encryption. <see langword="null" /> if the file is not
+    ///     Gets a copy of the 16 byte long initialization vector (IV) used for encryption or <see langword="null" /> if the file is not
     ///     encrypted.
     /// </summary>
     public byte[]? IV
@@ -39,7 +39,7 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
     }
 
     /// <summary>
-    ///     Gets a copy of the encryption key used for encryption. <see langword="null" /> if the file is not encrypted.
+    ///     Gets a copy of the AES-128 encryption key used for encryption or <see langword="null" /> if the file is not encrypted.
     /// </summary>
     public byte[]? Key
     {
@@ -59,31 +59,11 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
     public bool HasEncryption => Key != null && IV != null;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileHolder"/> class, representing an encrypted V3 MEG file. 
-    /// </summary>
-    /// <param name="model">The meg archive model.</param>
-    /// <param name="param">The initialization parameters.</param>
-    /// <param name="key">The encryption key.</param>
-    /// <param name="iv">The initialization vector.</param>
-    /// <param name="serviceProvider">The service provider for this instance.</param>
-    /// <exception cref="ArgumentException"></exception>
-    public MegFileHolder(IMegArchive model, MegFileHolderParam param, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, IServiceProvider serviceProvider)
-        : this(model, param, serviceProvider)
-    {
-        if (param.FileVersion != MegFileVersion.V3)
-            throw new ArgumentException("Encrypted MEG files must be of version V3");
-        if (!IsValidKeyOrIVSize(key))
-            throw new ArgumentException("Specified key is not a valid size for MEG encryption.", nameof(key));
-        if (!IsValidKeyOrIVSize(iv))
-            throw new ArgumentException("Specified IV is not a valid size for MEG encryption.", nameof(iv));
-
-        _keyValue = key.ToArray();
-        _ivValue = iv.ToArray();
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="MegFileHolder"/> class. 
     /// </summary>
+    /// <remarks>
+    /// It is safe to dispose the <paramref name="param"/> after an instance of this class has been created.
+    /// </remarks>
     /// <param name="model">The meg archive model.</param>
     /// <param name="param">The initialization parameters.</param>
     /// <param name="serviceProvider">The service provider for this instance.</param>
@@ -91,6 +71,20 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
         base(model, param, serviceProvider)
     {
         FileVersion = param.FileVersion;
+
+        if (param.HasEncryption && param.FileVersion != MegFileVersion.V3)
+            throw new ArgumentException("Encrypted MEG files must be of version V3");
+
+        var key = (byte[]?)param.Key?.Clone();
+        var iv = (byte[]?)param.IV?.Clone();
+
+        if (!IsValidKeyOrIVSize(key))
+            throw new ArgumentException("Specified key is not a valid size for MEG encryption.", nameof(key));
+        if (!IsValidKeyOrIVSize(iv))
+            throw new ArgumentException("Specified IV is not a valid size for MEG encryption.", nameof(iv));
+
+        _keyValue = key;
+        _ivValue = iv;
     }
 
     /// <inheritdoc />

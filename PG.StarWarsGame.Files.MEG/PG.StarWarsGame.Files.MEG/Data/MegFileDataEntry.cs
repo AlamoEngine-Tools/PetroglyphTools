@@ -37,6 +37,11 @@ public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>, IComparable
     public uint Size { get; }
 
     /// <summary>
+    /// Indicates whether the file is encrypted
+    /// </summary>
+    public bool Encrypted { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MegFileDataEntry"/> class.
     /// </summary>
     /// <param name="crc">The <see cref="Crc32"/> of the file name.</param>
@@ -88,7 +93,7 @@ public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>, IComparable
     /// </remarks>
     public int CompareTo(MegFileDataEntry? other)
     {
-        // Note: Changing the logic here also requires to update the binary models!
+        // IMPORTANT: Changing the logic here also requires to update the binary models!
         if (ReferenceEquals(this, other)) 
             return 0;
         if (ReferenceEquals(null, other)) 

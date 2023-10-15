@@ -2,6 +2,7 @@
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Security.Cryptography;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -30,15 +31,6 @@ public class MegFileHolderTest
         Assert.ThrowsException<ArgumentNullException>(() => new MegFileHolder(null!, param, _serviceProvider.Object));
         Assert.ThrowsException<ArgumentNullException>(() => new MegFileHolder(model.Object, null!, _serviceProvider.Object));
         Assert.ThrowsException<ArgumentNullException>(() => new MegFileHolder(model.Object, param, null!));
-
-        Assert.ThrowsException<ArgumentNullException>(() =>
-            new MegFileHolder(null!, param, ReadOnlySpan<byte>.Empty, ReadOnlySpan<byte>.Empty, _serviceProvider.Object));
-
-        Assert.ThrowsException<ArgumentNullException>(() =>
-            new MegFileHolder(model.Object, null!, ReadOnlySpan<byte>.Empty, ReadOnlySpan<byte>.Empty, _serviceProvider.Object));
-
-        Assert.ThrowsException<ArgumentNullException>(() =>
-            new MegFileHolder(model.Object, param, ReadOnlySpan<byte>.Empty, ReadOnlySpan<byte>.Empty, null!));
     }
 
     [TestMethod]
@@ -59,15 +51,15 @@ public class MegFileHolderTest
     [TestMethod]
     public void Test_Ctor_SetupProperties_Encrypted()
     {
-        var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3 };
-        var model = new Mock<IMegArchive>().Object;
-
         var key = new byte[16];
         var iv = new byte[16];
         RandomNumberGenerator.Create().GetNonZeroBytes(key);
         RandomNumberGenerator.Create().GetNonZeroBytes(iv);
 
-        var holder = new MegFileHolder(model, param, key, iv, _serviceProvider.Object);
+        var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3, Key = key, IV = iv};
+        var model = new Mock<IMegArchive>().Object;
+
+        var holder = new MegFileHolder(model, param, _serviceProvider.Object);
 
         Assert.AreSame(model, holder.Content);
         Assert.AreEqual(MegFileVersion.V3, holder.FileVersion);
@@ -79,13 +71,13 @@ public class MegFileHolderTest
     [TestMethod]
     public void Test_EncryptionKeyHandling()
     {
-        var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3 };
-        var model = new Mock<IMegArchive>().Object;
-
         var keyIv = new byte[16];
         RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
 
-        var holder = new MegFileHolder(model, param, keyIv, keyIv, _serviceProvider.Object);
+        var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3, IV = keyIv, Key = keyIv};
+        var model = new Mock<IMegArchive>().Object;
+
+        var holder = new MegFileHolder(model, param, _serviceProvider.Object);
 
         // Alter the array reference;
         keyIv[0] = 0;
@@ -114,22 +106,62 @@ public class MegFileHolderTest
     [TestMethod]
     public void Test_Ctor_Ctor_InvalidKeySizes()
     {
-        var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3 };
+        var baseParam = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3 };
         var model = new Mock<IMegArchive>().Object;
 
         var keyIv = new byte[4];
         RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
 
-        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param, keyIv, keyIv, _serviceProvider.Object));
+        var param1 = baseParam with { Key = keyIv, IV = keyIv };
+
+        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param1, _serviceProvider.Object));
 
         keyIv = new byte[18];
         RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
-        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param, keyIv, keyIv, _serviceProvider.Object));
+        var param2 = baseParam with { Key = keyIv, IV = keyIv };
+        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param2, _serviceProvider.Object));
 
 
-        param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V2 };
         keyIv = new byte[16];
         RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
-        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param, keyIv, keyIv, _serviceProvider.Object));
+        var param3 = baseParam with { Key = keyIv, IV = keyIv, FileVersion = MegFileVersion.V2};
+
+        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param3, _serviceProvider.Object));
+    }
+}
+
+[TestClass]
+public class MegFileHolderParamTest
+{
+    [TestMethod]
+    public void Test_KeyHandling()
+    {
+        var keyIv = new byte[16];
+        RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
+
+        var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3, IV = keyIv, Key = keyIv };
+       
+        // Alter the array reference;
+        keyIv[0] = 0;
+        keyIv[1] = 0;
+
+        CollectionAssert.AreNotEqual(keyIv, param.IV);
+        CollectionAssert.AreNotEqual(keyIv, param.Key);
+
+        var iv = param.IV;
+        iv[0] = 0;
+        iv[1] = 0;
+
+        var key = param.Key;
+        key[0] = 0;
+        key[1] = 0;
+
+        CollectionAssert.AreNotEqual(iv, param.IV);
+        CollectionAssert.AreNotEqual(key, param.Key);
+
+        param.Dispose();
+
+        Assert.IsNull(param.Key);
+        Assert.IsNull(param.IV);
     }
 }

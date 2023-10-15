@@ -94,7 +94,6 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
     private IMegFile Load(IMegFileBinaryReader binaryReader, Stream megStream, MegFileVersion megVersion, MegFileHolderParam param)
     {
-
         IMegFileMetadata megMetadata;
         try
         {
@@ -132,7 +131,8 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         }
 
         var converter = Services.GetRequiredService<IMegBinaryServiceFactory>().GetConverter(megVersion);
-        return converter.ToHolder(param, megMetadata);
+        var megArchive = converter.BinaryToModel(megMetadata);
+        return new MegFileHolder(megArchive, param, Services);
     }
 
     /// <inheritdoc />

@@ -3,13 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Files;
-using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
@@ -26,23 +24,19 @@ internal abstract class MegFileBinaryConverterBase<TMegMetadata> : ServiceBase, 
     {
     }
 
-    public IMegFileMetadata FromHolder(IMegFile holder)
-    {
-        using var param = holder.CreateParam();
-        var entries = holder.Content.Select(m => new MegFileDataEntryInfo(holder, m)).ToList();
-        return FromModel(entries, param);
-    }
-
     /// <inheritdoc/>
-    public IMegFileMetadata FromModel(IReadOnlyList<MegFileDataEntryInfo> dataEntries, MegFileHolderParam fileParam)
+    public IMegFileMetadata ModelToBinary(IMegArchive model)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    public IMegFile ToHolder(MegFileHolderParam param, IMegFileMetadata model)
+    public IMegArchive BinaryToModel(IMegFileMetadata binary)
     {
-        var files = new List<MegFileDataEntry>(model.Header.FileNumber);
+        if (binary == null)
+            throw new ArgumentNullException(nameof(binary));
+
+        var files = new List<MegFileDataEntry>(binary.Header.FileNumber);
 
         // According to the specification: 
         //  - The Meg's FileTable is sorted by CRC32.
@@ -52,17 +46,22 @@ internal abstract class MegFileBinaryConverterBase<TMegMetadata> : ServiceBase, 
         //                  the game should use the last file.
         // 
         // Since an IMegFile expects a List<>, not a Collection<>, we have to preserve the order of the FileTable
-        for (var i = 0; i < model.Header.FileNumber; i++)
+        var lastCrc = new Crc32(0);
+        for (var i = 0; i < binary.Header.FileNumber; i++)
         {
-            var fileDescriptor = model.FileTable[i];
+            var fileDescriptor = binary.FileTable[i];
             var crc = fileDescriptor.Crc32;
+
+            if (crc < lastCrc)
+                throw new BinaryCorruptedException("File Table is not sorted by CRC32.");
+            lastCrc = crc;
+
             var fileOffset = fileDescriptor.FileOffset;
             var fileSize = fileDescriptor.FileSize;
             var fileNameIndex = fileDescriptor.FileNameIndex;
-            var fileName = model.FileNameTable[fileNameIndex];
+            var fileName = binary.FileNameTable[fileNameIndex];
             files.Add(new MegFileDataEntry(crc, fileName, fileOffset, fileSize));
         }
-
-        return new MegFileHolder(new MegArchive(files), param, Services);
+        return new MegArchive(files);
     }
 }

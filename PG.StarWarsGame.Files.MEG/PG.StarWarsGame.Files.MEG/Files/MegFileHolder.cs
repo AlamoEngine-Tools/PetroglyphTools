@@ -10,8 +10,8 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 
 /// <inheritdoc cref="IMegFile" />
 /// <remarks>
-///     This class does not hold all files that are packaged in a *.MEG file,
-///     but all necessary meta-information to extract a given file on-demand.
+///     This class does not hold the actual data of the files packaged in a *.MEG file,
+///     but all necessary meta-information to extract a requested file on-demand.
 /// </remarks>
 public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchive, MegAlamoFileType>, IMegFile
 {
@@ -72,22 +72,25 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
     {
         FileVersion = param.FileVersion;
 
-        if (param.HasEncryption && param.FileVersion != MegFileVersion.V3)
-            throw new ArgumentException("Encrypted MEG files must be of version V3");
-
         var key = (byte[]?)param.Key?.Clone();
         var iv = (byte[]?)param.IV?.Clone();
 
-        if (!IsValidKeyOrIVSize(key))
-            throw new ArgumentException("Specified key is not a valid size for MEG encryption.", nameof(key));
-        if (!IsValidKeyOrIVSize(iv))
-            throw new ArgumentException("Specified IV is not a valid size for MEG encryption.", nameof(iv));
+        if (param.HasEncryption)
+        {
+            if (param.FileVersion != MegFileVersion.V3)
+                throw new ArgumentException("Encrypted MEG files must be of version V3");
+
+            if (!IsValidKeyOrIVSize(key))
+                throw new ArgumentException("Specified key is not a valid size for MEG encryption.", nameof(key));
+            if (!IsValidKeyOrIVSize(iv))
+                throw new ArgumentException("Specified IV is not a valid size for MEG encryption.", nameof(iv));
+        }
 
         _keyValue = key;
         _ivValue = iv;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     protected override void DisposeManagedResources()
     {
         base.DisposeManagedResources();

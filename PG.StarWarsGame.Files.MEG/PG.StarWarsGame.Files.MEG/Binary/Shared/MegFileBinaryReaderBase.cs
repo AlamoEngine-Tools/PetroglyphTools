@@ -27,8 +27,6 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
             throw new ArgumentNullException(nameof(byteStream));
         if (byteStream.Length == 0)
             throw new ArgumentException("MEG data stream must not be empty.");
-        if (IsDisposed)
-            throw new ObjectDisposedException(ToString());
 
         using var binaryReader = new BinaryReader(byteStream, MegFileConstants.MegContentFileNameEncoding, true);
 

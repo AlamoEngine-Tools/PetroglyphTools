@@ -18,7 +18,7 @@ internal class DatFileConverter : ServiceBase, IDatFileConverter
     {
     }
 
-    public IDatFileMetadata FromHolder(IDatFile holder)
+    public IDatFileMetadata FileToBinary(IDatFile holder)
     {
         var header = new DatHeader((uint)holder.Content.Count);
         var indexRecords = new List<IndexTableRecord>();

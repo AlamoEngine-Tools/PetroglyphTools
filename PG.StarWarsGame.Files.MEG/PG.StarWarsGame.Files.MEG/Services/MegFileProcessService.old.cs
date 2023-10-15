@@ -63,7 +63,7 @@
 //        }
 
 //        var builder = new MegFileBinaryReaderV1(FileSystem);
-//        var megFile = builder.FromHolder(megFileHolder, out var filesToStream);
+//        var megFile = builder.FileToBinary(megFileHolder, out var filesToStream);
 //        var writePath = FileSystem.Path.Combine(megFileHolder.Directory, megFileHolder.FilePath);
 //        CreateTargetDirectoryIfNotExists(megFileHolder.Directory);
 //        using (var writer =

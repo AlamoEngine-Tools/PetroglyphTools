@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using PG.Commons.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Files;
@@ -28,7 +29,13 @@ public sealed record MegFileHolderParam : FileHolderParamBase, IDisposable
     /// </remarks>
     public byte[]? Key
     {
-        get => _key;
+        [return: NotNullIfNotNull(nameof(_key))]
+        get
+        {
+            if (_key is null)
+                return null;
+            return (byte[])_key.Clone();
+        }
         init => _key = (byte[]?) value?.Clone();
     }
 
@@ -40,12 +47,18 @@ public sealed record MegFileHolderParam : FileHolderParamBase, IDisposable
     /// </remarks>
     public byte[]? IV
     {
-        get => _iv;
+        [return: NotNullIfNotNull(nameof(_iv))]
+        get
+        {
+            if (_iv is null)
+                return null;
+            return (byte[])_iv.Clone();
+        }
         init => _iv = (byte[]?)value?.Clone();
     }
 
     /// <summary>
-    /// 
+    /// <see langword="true"/> if this instance has an encryption key and an initialization vector; <see langword="false"/> otherwise.
     /// </summary>
     public bool HasEncryption => Key is not null && IV is not null;
 

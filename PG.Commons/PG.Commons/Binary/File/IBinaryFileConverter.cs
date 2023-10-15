@@ -21,17 +21,17 @@ public interface IBinaryFileConverter<TBinaryModel, TFileHolder, in TFileHolderP
     where TFileHolderParam : IFileHolderParam
 {
     /// <summary>
-    ///     Builds a <see cref="IBinaryFile" /> from a given <see cref="IFileHolder" />.
+    ///     Builds a <typeparamref name="TBinaryModel"/> from a given <typeparamref name="TFileHolder"/>.
     /// </summary>
-    /// <param name="holder">The holder of the binary file.</param>
+    /// <param name="holder">The model of the binary file.</param>
     /// <returns>The converted binary file.</returns>
-    TBinaryModel FromHolder(TFileHolder holder);
+    TBinaryModel FileToBinary(TFileHolder holder);
 
     /// <summary>
     ///     Builds a <typeparamref name="TFileHolder"/> from a given <typeparamref name="TBinaryModel"/>.
     /// </summary>
-    /// <param name="param">The <see cref="IFileHolder{TModel,TAlamoFileType}" />'s <see cref="IFileHolderParam" /></param>
     /// <param name="model">The <see cref="IBinaryFile" /> to convert.</param>
+    /// <param name="param">The <see cref="IFileHolder{TModel,TAlamoFileType}" />'s <see cref="IFileHolderParam" /></param>
     /// <returns>The <typeparamref name="TFileHolder"/>.</returns>
-    TFileHolder ToHolder(TFileHolderParam param, TBinaryModel model);
+    TFileHolder BinaryToFile(TBinaryModel model, TFileHolderParam param);
 }

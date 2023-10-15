@@ -10,6 +10,7 @@ using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 
@@ -25,6 +26,7 @@ public class MegFileServiceTest
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IMegBinaryServiceFactory> _binaryServiceFactory = new();
     private readonly Mock<IMegFileBinaryReader> _megBinaryReader = new();
+    private readonly Mock<IMegFileBinaryConverter> _megBinaryConverter = new();
     private readonly Mock<IMegFileSizeValidator> _sizeValidator = new();
     private readonly Mock<IMegVersionIdentifier> _versionIdentifier = new();
 
@@ -159,11 +161,12 @@ public class MegFileServiceTest
     }
 
     [TestMethod]
-    public void Test_Load__EmptyMeg()
+    public void Test_Load()
     {
-        var fileData = "some random data";
-        bool encrypted = false;
-        var version = MegFileVersion.V2;
+        const string fileData = "some random data";
+        const MegFileVersion version = MegFileVersion.V2;
+
+        var encrypted = false;
 
         var header = new Mock<IMegHeader>();
         var metadata = new Mock<IMegFileMetadata>();
@@ -180,6 +183,7 @@ public class MegFileServiceTest
             .Returns(new ValidationResult());
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
+        _binaryServiceFactory.Setup(f => f.GetConverter(version)).Returns(_megBinaryConverter.Object);
 
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
@@ -188,13 +192,16 @@ public class MegFileServiceTest
             Assert.AreEqual(0, s.Position);
         }).Returns(metadata.Object);
 
+
+        var megArchive = new Mock<IMegArchive>();
+        _megBinaryConverter.Setup(c => c.BinaryToModel(metadata.Object))
+            .Returns(megArchive.Object);
+
         _fileSystem.AddFile("test.meg", new MockFileData(fileData));
 
         var megFile = _megFileService.Load("test.meg");
 
-        _versionIdentifier.Verify(r => r.GetMegFileVersion(It.IsAny<Stream>(), out encrypted), Times.Once);
-        _megBinaryReader.Verify(r => r.ReadBinary(It.IsAny<Stream>()), Times.Once);
-        _sizeValidator.Verify(r => r.Validate(It.IsAny<IMegSizeValidationInformation>()), Times.Once);
+        Assert.AreSame(megArchive.Object, megFile.Content);
 
         Assert.AreEqual(megFile.FileVersion, version);
         Assert.IsFalse(megFile.HasEncryption);
@@ -202,7 +209,10 @@ public class MegFileServiceTest
         Assert.AreEqual("test.meg", megFile.FilePath);
         Assert.AreEqual("", megFile.Directory);
 
-        Assert.AreEqual(0, megFile.Content.Count);
+        _versionIdentifier.Verify(r => r.GetMegFileVersion(It.IsAny<Stream>(), out encrypted), Times.Once);
+        _megBinaryReader.Verify(r => r.ReadBinary(It.IsAny<Stream>()), Times.Once);
+        _sizeValidator.Verify(r => r.Validate(It.IsAny<IMegSizeValidationInformation>()), Times.Once);
+        _megBinaryConverter.Verify(r => r.BinaryToModel(It.IsAny<IMegFileMetadata>()), Times.Once);
     }
 
     [TestMethod]
@@ -210,10 +220,10 @@ public class MegFileServiceTest
     {
         _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
-       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((string)null, out _));
+       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((string)null!, out _));
        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion("", out _));
        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion("   ", out _));
-       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((Stream)null, out _));
+       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((Stream)null!, out _));
     }
 
     [TestMethod]

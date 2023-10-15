@@ -73,7 +73,7 @@ internal class DatFileService : ServiceBase, IDatFileService
         var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??
                                                  throw new LibraryInitialisationException(
                                                      $"No implementation could be found for {nameof(IDatFileConverter)}."));
-        factory.GetWriter().WriteBinary(absoluteFilePath, factory.GetConverter().FromHolder(datHolder));
+        factory.GetWriter().WriteBinary(absoluteFilePath, factory.GetConverter().FileToBinary(datHolder));
     }
 
     public IDatFile LoadDatFile(string filePath)
@@ -87,7 +87,7 @@ internal class DatFileService : ServiceBase, IDatFileService
                                                  throw new LibraryInitialisationException(
                                                      $"No implementation could be found for {nameof(IDatFileConverter)}."));
         return factory.GetConverter()
-            .ToHolder(new DatFileHolderParam() { FilePath = filePath },
+            .BinaryToFile(new DatFileHolderParam() { FilePath = filePath },
                 factory.GetReader().ReadBinary(FileSystem.FileStream.New(filePath, FileMode.Open)));
     }
 

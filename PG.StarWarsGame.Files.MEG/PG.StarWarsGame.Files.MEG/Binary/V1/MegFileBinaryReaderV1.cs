@@ -144,12 +144,12 @@ internal class MegFileBinaryReaderV1 : MegFileBinaryReaderBase<MegMetadata, MegH
     //            StringComparison.InvariantCultureIgnoreCase));
     //}
 
-    //public MegMetadata FromHolder(IMegFile holder)
+    //public MegMetadata FileToBinary(IMegFile holder)
     //{
-    //    return FromHolder(holder, out var _);
+    //    return FileToBinary(holder, out var _);
     //}
 
-    //public IMegFile ToHolder(MegFileHolderParam param, MegMetadata model)
+    //public IMegFile BinaryToFile(MegFileHolderParam param, MegMetadata model)
     //{
     //    throw new NotImplementedException();
     //}

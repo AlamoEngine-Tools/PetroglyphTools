@@ -21,6 +21,7 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
     internal uint FileTableRecordIndex { get; }
 
     int IMegFileDescriptor.FileNameIndex => (int)FileNameIndex;
+    int IMegFileDescriptor.Index => (int)FileTableRecordIndex;
 
     public unsafe byte[] Bytes
     {

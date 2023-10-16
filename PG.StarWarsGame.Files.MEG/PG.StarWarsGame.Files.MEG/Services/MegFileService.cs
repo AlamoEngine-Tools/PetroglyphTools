@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
 using PG.Commons.Services;
@@ -109,17 +110,17 @@ public sealed class MegFileService : ServiceBase, IMegFileService
                 throw new NotSupportedException("Non-seekable streams are currently not supported.");
 
             var actualMegSize = megStream.Length - startPosition;
-            var validator = Services.GetRequiredService<IMegFileSizeValidator>();
+            var validator = Services.GetRequiredService<IMegBinaryValidator>();
 
-            var validationResult = validator.Validate(new MegSizeValidationInformation
+            var validationResult = validator.Validate(new MegBinaryValidationInformation
             {
                 Metadata = megMetadata,
-                ArchiveSize = actualMegSize,
+                FileSize = actualMegSize,
                 BytesRead = bytesRead
             });
 
             if (!validationResult.IsValid)
-                throw new BinaryCorruptedException($"Unable to read .MEG archive: Read bytes do not match expected size: {validationResult}");
+                throw new BinaryCorruptedException($"Unable to read .MEG archive: {validationResult.Errors.First().ErrorMessage}");
         }
         catch (BinaryCorruptedException)
         {

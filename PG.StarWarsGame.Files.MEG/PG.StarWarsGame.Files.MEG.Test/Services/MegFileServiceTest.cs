@@ -27,7 +27,7 @@ public class MegFileServiceTest
     private readonly Mock<IMegBinaryServiceFactory> _binaryServiceFactory = new();
     private readonly Mock<IMegFileBinaryReader> _megBinaryReader = new();
     private readonly Mock<IMegFileBinaryConverter> _megBinaryConverter = new();
-    private readonly Mock<IMegFileSizeValidator> _sizeValidator = new();
+    private readonly Mock<IMegBinaryValidator> _binaryValidator = new();
     private readonly Mock<IMegVersionIdentifier> _versionIdentifier = new();
 
     [TestInitialize]
@@ -35,7 +35,7 @@ public class MegFileServiceTest
     {
         _serviceProvider.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(_fileSystem);
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegBinaryServiceFactory))).Returns(_binaryServiceFactory.Object);
-        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegFileSizeValidator))).Returns(_sizeValidator.Object);
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegBinaryValidator))).Returns(_binaryValidator.Object);
         _megFileService = new MegFileService(_serviceProvider.Object);
     }
 
@@ -106,13 +106,13 @@ public class MegFileServiceTest
     [TestMethod]
     public void Test_Load__BinaryReaderThrows()
     {
-        var fileData = "some random data";
-        bool encrypted = false;
-        var version = MegFileVersion.V2;
+        const string fileData = "some random data";
+        var encrypted = false;
+        const MegFileVersion version = MegFileVersion.V2;
 
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
 
-        _sizeValidator.Setup(v => v.Validate(It.IsAny<IMegSizeValidationInformation>()))
+        _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
             .Returns(new ValidationResult());
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
@@ -134,17 +134,17 @@ public class MegFileServiceTest
     }
 
     [TestMethod]
-    public void Test_Load__InvalidSize()
+    public void Test_Load__InvalidBinary()
     {
-        var fileData = "some random data";
-        bool encrypted = false;
-        var version = MegFileVersion.V2;
+        const string fileData = "some random data";
+        var encrypted = false;
+        const MegFileVersion version = MegFileVersion.V2;
 
         var metadata = new Mock<IMegFileMetadata>();
 
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
 
-        _sizeValidator.Setup(v => v.Validate(It.IsAny<IMegSizeValidationInformation>()))
+        _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
             .Returns(new ValidationResult(new List<ValidationFailure>{ new("name", "error") }));
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
@@ -157,7 +157,7 @@ public class MegFileServiceTest
         
         Assert.ThrowsException<BinaryCorruptedException>(() => _megFileService.Load("test.meg"));
 
-        _sizeValidator.Verify(r => r.Validate(It.IsAny<IMegSizeValidationInformation>()), Times.Once);
+        _binaryValidator.Verify(r => r.Validate(It.IsAny<IMegBinaryValidationInformation>()), Times.Once);
     }
 
     [TestMethod]
@@ -179,7 +179,7 @@ public class MegFileServiceTest
                 Assert.AreEqual(0, s.Position);
             }).Returns(version);
 
-        _sizeValidator.Setup(v => v.Validate(It.IsAny<IMegSizeValidationInformation>()))
+        _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
             .Returns(new ValidationResult());
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
@@ -211,7 +211,7 @@ public class MegFileServiceTest
 
         _versionIdentifier.Verify(r => r.GetMegFileVersion(It.IsAny<Stream>(), out encrypted), Times.Once);
         _megBinaryReader.Verify(r => r.ReadBinary(It.IsAny<Stream>()), Times.Once);
-        _sizeValidator.Verify(r => r.Validate(It.IsAny<IMegSizeValidationInformation>()), Times.Once);
+        _binaryValidator.Verify(r => r.Validate(It.IsAny<IMegBinaryValidationInformation>()), Times.Once);
         _megBinaryConverter.Verify(r => r.BinaryToModel(It.IsAny<IMegFileMetadata>()), Times.Once);
     }
 

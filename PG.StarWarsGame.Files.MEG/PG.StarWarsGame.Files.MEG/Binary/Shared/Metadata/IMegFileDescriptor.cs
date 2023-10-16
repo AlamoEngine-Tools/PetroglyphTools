@@ -21,4 +21,10 @@ internal interface IMegFileDescriptor : IBinary, IComparable<IMegFileDescriptor>
     /// When reading or writing a .MEG binary, assertions should be implemented to verify data validity.
     /// </remarks>
     public int FileNameIndex { get; }
+
+    /// <remarks>
+    /// The .MEG specification allows <see cref="uint"/>, however in .NET we are
+    /// limited to <see cref="int"/> for indexing native list-like structures.<br/>
+    /// </remarks>
+    public int Index { get; }
 }

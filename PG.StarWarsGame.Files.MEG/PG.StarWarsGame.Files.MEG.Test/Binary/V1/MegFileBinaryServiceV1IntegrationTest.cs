@@ -8,7 +8,7 @@ using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.Testing;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.V1;
 
 [TestClass]
 public class MegFileBinaryServiceV1IntegrationTest

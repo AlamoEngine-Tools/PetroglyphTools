@@ -7,7 +7,7 @@ using System.IO.Abstractions;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.V1;
 
 [TestClass]
 public class MegFileSizeValidatorV1IntegrationTest
@@ -32,10 +32,10 @@ public class MegFileSizeValidatorV1IntegrationTest
         var data = new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1);
         var metadata = _binaryReader.ReadBinary(data);
 
-        var sizeInfo = new MegSizeValidationInformation
+        var sizeInfo = new MegBinaryValidationInformation
         {
             BytesRead = data.Position,
-            ArchiveSize = data.Length,
+            FileSize = data.Length,
             Metadata = metadata
         };
 
@@ -53,10 +53,10 @@ public class MegFileSizeValidatorV1IntegrationTest
         var data = new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1);
         var metadata = _binaryReader.ReadBinary(data);
 
-        var sizeInfo = new MegSizeValidationInformation
+        var sizeInfo = new MegBinaryValidationInformation
         {
             BytesRead = data.Position + offsetBytesRead,
-            ArchiveSize = data.Length + offsetArchiveSize,
+            FileSize = data.Length + offsetArchiveSize,
             Metadata = metadata
         };
 

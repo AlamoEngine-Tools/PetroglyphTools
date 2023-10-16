@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using FluentValidation.TestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.V1.Validation;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.V1;
 
 [TestClass]
 public class MegFileSizeValidatorV1Test
@@ -19,23 +21,23 @@ public class MegFileSizeValidatorV1Test
         var fileTable = new MegFileTable(new List<MegFileTableRecord>());
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
-        var sizeInfo = new Mock<IMegSizeValidationInformation>();
-        sizeInfo.SetupGet(s => s.ArchiveSize).Returns(metadata.Size);
+        var sizeInfo = new Mock<IMegBinaryValidationInformation>();
+        sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
-        var validator = new MegFileSizeValidator();
-        Assert.IsTrue(validator.Validate(sizeInfo.Object).IsValid);
+        var validator = new V1SizeValidator();
+        Assert.IsTrue(validator.TestValidate(sizeInfo.Object).IsValid);
 
 
-        sizeInfo.SetupGet(s => s.ArchiveSize).Returns(metadata.Size + 1);
+        sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 1);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size);
-        Assert.IsFalse(validator.Validate(sizeInfo.Object).IsValid);
+        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
 
-        
-        sizeInfo.SetupGet(s => s.ArchiveSize).Returns(metadata.Size);
+
+        sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size - 1);
-        Assert.IsFalse(validator.Validate(sizeInfo.Object).IsValid);
+        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
     }
 
     [TestMethod]
@@ -52,17 +54,17 @@ public class MegFileSizeValidatorV1Test
         });
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
-        var sizeInfo = new Mock<IMegSizeValidationInformation>();
-        sizeInfo.SetupGet(s => s.ArchiveSize).Returns(metadata.Size);
+        var sizeInfo = new Mock<IMegBinaryValidationInformation>();
+        sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
-        var validator = new MegFileSizeValidator();
-        Assert.IsTrue(validator.Validate(sizeInfo.Object).IsValid);
+        var validator = new V1SizeValidator();
+        Assert.IsTrue(validator.TestValidate(sizeInfo.Object).IsValid);
 
 
-        sizeInfo.SetupGet(s => s.ArchiveSize).Returns(metadata.Size + 1);
-        Assert.IsFalse(validator.Validate(sizeInfo.Object).IsValid);
+        sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 1);
+        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
     }
 
     [TestMethod]
@@ -81,15 +83,15 @@ public class MegFileSizeValidatorV1Test
         });
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
-        var sizeInfo = new Mock<IMegSizeValidationInformation>();
-        sizeInfo.SetupGet(s => s.ArchiveSize).Returns(metadata.Size + 3 + 5);
+        var sizeInfo = new Mock<IMegBinaryValidationInformation>();
+        sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 3 + 5);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
-        var validator = new MegFileSizeValidator();
-        Assert.IsTrue(validator.Validate(sizeInfo.Object).IsValid);
+        var validator = new V1SizeValidator();
+        Assert.IsTrue(validator.TestValidate(sizeInfo.Object).IsValid);
 
-        sizeInfo.SetupGet(s => s.ArchiveSize).Returns(metadata.Size + 3 + 5 + 99);
-        Assert.IsFalse(validator.Validate(sizeInfo.Object).IsValid);
+        sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 3 + 5 + 99);
+        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
     }
 }

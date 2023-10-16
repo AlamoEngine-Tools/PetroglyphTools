@@ -23,6 +23,9 @@ public static class MegDomain
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
         serviceCollection.AddSingleton<IMegDataStreamFactory>(sp => new MegDataStreamFactory(sp));
+        
+        serviceCollection.AddTransient<IMegBinaryValidator>(sp => new MegBinaryValidator(sp));
+        serviceCollection.AddTransient<IFileTableValidator>(_ => new MegFileTableValidator());
         serviceCollection.AddTransient<IMegFileSizeValidator>(_ => new MegFileSizeValidator());
     }
 }

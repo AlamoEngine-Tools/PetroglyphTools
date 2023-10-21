@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Container with file information for building .MEG files.
 /// </summary>
-public sealed class MegFileDataEntryInfo
+public sealed class MegFileDataEntryBuilderInfo
 {
     /// <summary>
     /// Gets file information from a an existing .MEG file
@@ -23,12 +23,12 @@ public sealed class MegFileDataEntryInfo
     public MegFileDataEntryLocation? LocalFile { get; }
     
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileDataEntryInfo"/> class from an existing .MEG file.
+    /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from an existing .MEG file.
     /// </summary>
     /// <param name="megFile">The .MEG file holder instance</param>
     /// <param name="megFileDataEntry">The file information from the .MEG file.</param>
     /// <param name="overrideFileName">The new file name which shall be used. When <see langword="null"/> the original file name will be used.</param>
-    public MegFileDataEntryInfo(IMegFile megFile, MegFileDataEntry megFileDataEntry, string? overrideFileName = null)
+    public MegFileDataEntryBuilderInfo(IMegFile megFile, MegFileDataEntry megFileDataEntry, string? overrideFileName = null)
     {
         if (megFile == null)
             throw new ArgumentNullException(nameof(megFile));
@@ -38,10 +38,10 @@ public sealed class MegFileDataEntryInfo
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileDataEntryInfo"/> class from a given file.
+    /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a given file.
     /// </summary>
     /// <param name="localFileDataEntry"></param>
-    public MegFileDataEntryInfo(MegFileDataEntryLocation localFileDataEntry)
+    public MegFileDataEntryBuilderInfo(MegFileDataEntryLocation localFileDataEntry)
     {
         if (localFileDataEntry == null) 
             throw new ArgumentNullException(nameof(localFileDataEntry));

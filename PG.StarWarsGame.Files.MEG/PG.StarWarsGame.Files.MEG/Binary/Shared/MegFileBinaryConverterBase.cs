@@ -27,8 +27,10 @@ internal abstract class MegFileBinaryConverterBase<TMegMetadata> : ServiceBase, 
     /// <inheritdoc/>
     public IMegFileMetadata ModelToBinary(IMegArchive model)
     {
-        throw new NotImplementedException();
+        return ModelToBinaryCore(model);
     }
+
+    protected abstract TMegMetadata ModelToBinaryCore(IMegArchive model);
 
     /// <inheritdoc/>
     public IMegArchive BinaryToModel(IMegFileMetadata binary)

@@ -22,11 +22,11 @@ public interface IMegFileService
     /// <paramref name="filePath"/> will first be resolved by <see cref="Path.GetFullPath(string)"/>.
     /// </remarks>
     /// <param name="filePath">The desired file path of the MEG archive.</param>
-    /// <param name="megDataInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
+    /// <param name="builderInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
     /// <param name="megFileVersion">The file version of the .MEG file.</param>
     void CreateMegArchive(
         string filePath,
-        IEnumerable<MegFileDataEntryInfo> megDataInformation, 
+        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, 
         MegFileVersion megFileVersion);
 
     /// <summary>
@@ -36,12 +36,12 @@ public interface IMegFileService
     /// <paramref name="filePath"/> will first be resolved by <see cref="Path.GetFullPath(string)"/>.
     /// </remarks>
     /// <param name="filePath">The desired file path of the MEG archive.</param>
-    /// <param name="megDataInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
+    /// <param name="builderInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
     /// <param name="key">The encryption key.</param>
     /// <param name="iv">The initialization vector used for encryption.</param>
     void CreateMegArchive(
         string filePath,
-        IEnumerable<MegFileDataEntryInfo> megDataInformation,
+        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation,
         ReadOnlySpan<byte> key,
         ReadOnlySpan<byte> iv);
 

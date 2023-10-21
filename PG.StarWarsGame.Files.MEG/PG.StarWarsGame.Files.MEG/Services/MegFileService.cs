@@ -17,6 +17,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
+
 /// <inheritdoc cref="IMegFileService" />
 public sealed class MegFileService : ServiceBase, IMegFileService
 {
@@ -29,16 +30,38 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     }
 
     /// <inheritdoc />
-    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryInfo> megDataInformation, MegFileVersion megFileVersion)
+    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion)
     {
-        throw new NotImplementedException();
+        IVirtualMegArchive builderArchive = Services.GetRequiredService<IMegArchiveConverter>().ConvertMegArchive(builderInformation);
+
+        var metadata = Services.GetRequiredService<IMegFileBinaryConverter>().ModelToBinary(builderArchive);
+        var bytes = metadata.Bytes;
+
+        using var fs = FileSystem.FileStream.New(filePath, FileMode.Create, FileAccess.Write);
+
+        fs.Write(bytes, 0, bytes.Length);
+
+        foreach (var file in builderArchive.AllFileInformation)
+        {
+            file.GetStream(Services).CopyTo(fs);
+        }
     }
 
     /// <inheritdoc />
-    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryInfo> megDataInformation, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
-    {
+    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
+    { 
         throw new NotImplementedException();
     }
+
+
+    private IMegFileMetadata Foo()
+    {
+        IMegArchive megArchive = GetArchive();
+        var metadata = Services.GetRequiredService<IMegFileBinaryConverter>().ModelToBinary(megArchive);
+
+
+    }
+
 
     /// <inheritdoc />
     public IMegFile Load(string filePath)

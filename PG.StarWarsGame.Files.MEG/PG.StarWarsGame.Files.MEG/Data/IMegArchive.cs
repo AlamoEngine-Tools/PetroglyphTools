@@ -38,3 +38,15 @@ public interface IMegArchive : IReadOnlyList<MegFileDataEntry>
     /// <returns></returns>
     IReadOnlyList<MegFileDataEntry> FindAllEntries(string searchPattern);
 }
+
+
+/// <inheritdoc/>
+public interface IVirtualMegArchive : IMegArchive
+{
+    /// <summary>
+    /// Gets the entry information associated with the specified MEG data entry.
+    /// </summary>
+    /// <param name="entry">The entry whose value to get.</param>
+    /// <returns></returns>
+    MegFileDataEntryBuilderInfo? GetEntryInformation(MegFileDataEntry entry);
+}

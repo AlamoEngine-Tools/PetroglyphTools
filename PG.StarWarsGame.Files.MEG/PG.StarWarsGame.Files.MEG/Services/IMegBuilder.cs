@@ -16,7 +16,7 @@ public interface IMegBuilder
     /// <summary>
     /// Gets a list of all files of this builder instance which shall be packed to a .MEG file, sorted by their file names CRC32 value.
     /// </summary>
-    public IReadOnlyList<MegFileDataEntryInfo> Files { get; }
+    public IReadOnlyList<MegFileDataEntryBuilderInfo> Files { get; }
 
     /// <summary>
     /// The file name of the .MEG archive.
@@ -29,7 +29,7 @@ public interface IMegBuilder
     public string Destination { get; }
 
     /// <summary>
-    /// Adds a given <see cref="MegFileDataEntryInfo"/> to this instance
+    /// Adds a given <see cref="MegFileDataEntryBuilderInfo"/> to this instance
     /// </summary>
     /// <remarks>
     /// File names will be normalized by using:a    
@@ -41,9 +41,9 @@ public interface IMegBuilder
     /// <br/>
     /// When adding a file info with an already existing file name (by CRC32), the previous entry will be removed.
     /// </remarks>
-    /// <param name="dataEntryInfo">The file information to add</param>
+    /// <param name="dataEntryBuilderInfo">The file information to add</param>
     /// <returns>This instance.</returns>
-    IMegBuilder AddFile(MegFileDataEntryInfo dataEntryInfo);
+    IMegBuilder AddFile(MegFileDataEntryBuilderInfo dataEntryBuilderInfo);
 
     /// <summary>
     /// Build the .MEG file from this instance.

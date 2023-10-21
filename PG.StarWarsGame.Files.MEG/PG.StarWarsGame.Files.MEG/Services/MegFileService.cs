@@ -17,7 +17,6 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
-
 /// <inheritdoc cref="IMegFileService" />
 public sealed class MegFileService : ServiceBase, IMegFileService
 {
@@ -32,7 +31,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion)
     {
-        IVirtualMegArchive builderArchive = Services.GetRequiredService<IMegArchiveConverter>().ConvertMegArchive(builderInformation);
+        var builderArchive = Services.GetRequiredService<IVirtualMegArchiveBuilder>().Build(builderInformation);
 
         var metadata = Services.GetRequiredService<IMegFileBinaryConverter>().ModelToBinary(builderArchive);
         var bytes = metadata.Bytes;
@@ -41,9 +40,24 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         fs.Write(bytes, 0, bytes.Length);
 
-        foreach (var file in builderArchive.AllFileInformation)
+        foreach (var file in builderArchive)
         {
-            file.GetStream(Services).CopyTo(fs);
+            var location = builderArchive.GetOrigin(file);
+           
+            if (location is null)
+                throw new InvalidOperationException();
+
+            if (location.FilePath is not null)
+            {
+                using var dataStream = FileSystem.File.OpenRead(location.FilePath);
+                dataStream.CopyTo(fs);
+            }
+            else if (location.MegFileLocation is not null)
+            {
+                var extractor = Services.GetRequiredService<IMegFileExtractor>();
+                using var dataStream = extractor.GetFileData(location.MegFileLocation.MegFile, location.MegFileLocation.DataEntry);
+                dataStream.CopyTo(fs);
+            }
         }
     }
 
@@ -52,16 +66,6 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     { 
         throw new NotImplementedException();
     }
-
-
-    private IMegFileMetadata Foo()
-    {
-        IMegArchive megArchive = GetArchive();
-        var metadata = Services.GetRequiredService<IMegFileBinaryConverter>().ModelToBinary(megArchive);
-
-
-    }
-
 
     /// <inheritdoc />
     public IMegFile Load(string filePath)

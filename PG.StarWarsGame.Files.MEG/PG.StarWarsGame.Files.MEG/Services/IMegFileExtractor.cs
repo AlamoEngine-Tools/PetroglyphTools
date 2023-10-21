@@ -15,7 +15,7 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileExtractor
 {
     /// <summary>
-    /// Builds the absolute file path for a <see cref="MegFileDataEntry"/> and a given base directory.
+    /// Builds the absolute file path for a <see cref="MegDataEntry"/> and a given base directory.
     /// <br/>
     /// If <paramref name="rootPath"/> is relative, the environment's <see cref="Environment.CurrentDirectory"/> will be prepended.
     /// </summary>
@@ -56,7 +56,7 @@ public interface IMegFileExtractor
     /// <exception cref="ArgumentNullException"><paramref name="dataEntry"/> or <paramref name="rootPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="rootPath"/> is empty or contains only whitespace.</exception>
     /// <exception cref="InvalidOperationException">The absolute path could not be determined.</exception>
-    string GetAbsoluteFilePath(MegFileDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy);
+    string GetAbsoluteFilePath(MegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy);
 
 
     /// <summary>
@@ -69,7 +69,7 @@ public interface IMegFileExtractor
     /// <exception cref="FileNotInMegException">When <paramref name="dataEntry"/> is not in the .MEG file.</exception>
     /// <exception cref="FileNotFoundException">When <paramref name="megFile"/> is not found.</exception>
     /// <exception cref="UnauthorizedAccessException">When the operation is not permitted by the operating system for the specified <paramref name="megFile"/>.</exception>
-    Stream GetFileData(IMegFile megFile, MegFileDataEntry dataEntry);
+    Stream GetFileData(IMegFile megFile, MegDataEntry dataEntry);
 
 
     /// <summary>
@@ -81,7 +81,7 @@ public interface IMegFileExtractor
     /// <br/>
     /// <b>Note: </b><paramref name="filePath"/> will first be resolved by <see cref="Path.GetFullPath(string)"/>. File path information from <paramref name="dataEntry"/> will not be used.
     /// <br/>
-    /// Use <see cref="GetAbsoluteFilePath"/> to create a <see cref="MegFileDataEntry"/>-based absolute path.
+    /// Use <see cref="GetAbsoluteFilePath"/> to create a <see cref="MegDataEntry"/>-based absolute path.
     /// </remarks>
     /// <param name="megFile">The .MEG file.</param>
     /// <param name="dataEntry">The file to extract.</param>
@@ -93,5 +93,5 @@ public interface IMegFileExtractor
     /// <exception cref="FileNotInMegException">When <paramref name="dataEntry"/> is not in the .MEG file.</exception>
     /// <exception cref="IOException">When the extraction failed due to an IO error.</exception>
     /// <exception cref="UnauthorizedAccessException">When operation is not permitted by the operating system for the specified <paramref name="megFile"/> or <paramref name="filePath"/>.</exception>
-    bool ExtractFile(IMegFile megFile, MegFileDataEntry dataEntry, string filePath, bool overwrite);
+    bool ExtractFile(IMegFile megFile, MegDataEntry dataEntry, string filePath, bool overwrite);
 }

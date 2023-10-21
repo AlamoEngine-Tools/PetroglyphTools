@@ -16,8 +16,8 @@ public class MegFileHolderTest
     //public void SetUp()
     //{
     //    s_holder = new MegFileHolder("test", "test");
-    //    s_holder.Content.Add(new MegFileDataEntry(FILE_NAME_1, "C:/my_absolute/my_file.txt"));
-    //    s_holder.Content.Add(new MegFileDataEntry(FILE_NAME_2, "C:/my_absolute/another_file.txt"));
+    //    s_holder.Content.Add(new MegDataEntry(FILE_NAME_1, "C:/my_absolute/my_file.txt"));
+    //    s_holder.Content.Add(new MegDataEntry(FILE_NAME_2, "C:/my_absolute/another_file.txt"));
     //}
 
     //[TestMethod]

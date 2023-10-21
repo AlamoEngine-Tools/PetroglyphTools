@@ -11,12 +11,12 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <inheritdoc cref="IMegArchive"/>
 public sealed class MegArchive : IMegArchive
 {
-    private readonly ReadOnlyCollection<MegFileDataEntry> _files;
+    private readonly ReadOnlyCollection<MegDataEntry> _files;
 
     private readonly ReadOnlyCollection<string> _fileNames;
 
     /// <inheritdoc />
-    public MegFileDataEntry this[int index] => _files[index];
+    public MegDataEntry this[int index] => _files[index];
 
     /// <inheritdoc />
     public int Count => _files.Count;
@@ -26,39 +26,39 @@ public sealed class MegArchive : IMegArchive
     /// by coping all elements of the given <paramref name="files"/> list.
     /// </summary>
     /// <param name="files">The list of files in this archive.</param>
-    public MegArchive(IList<MegFileDataEntry> files)
+    public MegArchive(IList<MegDataEntry> files)
     {
         if (files == null) 
             throw new ArgumentNullException(nameof(files));
 
-        _files = new ReadOnlyCollection<MegFileDataEntry>(files.ToList());
+        _files = new ReadOnlyCollection<MegDataEntry>(files.ToList());
         _fileNames = new ReadOnlyCollection<string>(_files.Select(x => x.FilePath).ToList());
     }
 
     /// <inheritdoc />
-    public bool Contains(MegFileDataEntry entry)
+    public bool Contains(MegDataEntry entry)
     {
         return _files.Contains(entry);
     }
 
     /// <inheritdoc />
-    public int IndexOf(MegFileDataEntry entry)
+    public int IndexOf(MegDataEntry entry)
     {
         return _files.IndexOf(entry);
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<MegFileDataEntry> FindAllEntries(string searchPattern)
+    public IReadOnlyList<MegDataEntry> FindAllEntries(string searchPattern)
     {
         Debug.Assert(_fileNames.Count == _files.Count);
 
         if (_files.Count == 0)
-            return Array.Empty<MegFileDataEntry>();
+            return Array.Empty<MegDataEntry>();
 
         var glob = Glob.Parse(searchPattern,
             new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = true } });
 
-        var foundMatches = new List<MegFileDataEntry>();
+        var foundMatches = new List<MegDataEntry>();
         
         for (var i = 0; i < _fileNames.Count; i++)
         {
@@ -70,7 +70,7 @@ public sealed class MegArchive : IMegArchive
     }
 
     /// <inheritdoc />
-    public IEnumerator<MegFileDataEntry> GetEnumerator()
+    public IEnumerator<MegDataEntry> GetEnumerator()
     {
         return _files.GetEnumerator();
     }

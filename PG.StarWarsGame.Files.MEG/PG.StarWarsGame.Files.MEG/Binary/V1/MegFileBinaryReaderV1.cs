@@ -91,16 +91,16 @@ internal class MegFileBinaryReaderV1 : MegFileBinaryReaderBase<MegMetadata, MegH
 
     public MegMetadata FromHolder(IMegFile holder, out IList<string> filesToStream)
     {
-        //var files = holder.Content.Select(megFileDataEntry => megFileDataEntry.FilePath).ToList();
+        //var files = holder.Content.Select(dataEntry => dataEntry.FilePath).ToList();
         //var megFileNameTableRecords =
         //    files.Select(file => new MegFileNameTableRecord(file)).ToList();
         //megFileNameTableRecords.Sort();
         //filesToStream = new List<string>();
         //foreach (var megFileNameTableRecord in megFileNameTableRecords)
         //{
-        //    foreach (var megFileDataEntry in CollectSortedMegFileDataEntries(holder, megFileNameTableRecord))
+        //    foreach (var dataEntry in CollectSortedMegFileDataEntries(holder, megFileNameTableRecord))
         //    {
-        //        filesToStream.Add(megFileDataEntry.AbsoluteFilePath);
+        //        filesToStream.Add(dataEntry.AbsoluteFilePath);
         //        break;
         //    }
         //}
@@ -135,12 +135,12 @@ internal class MegFileBinaryReaderV1 : MegFileBinaryReaderBase<MegMetadata, MegH
         throw new NotImplementedException();
     }
 
-    //private IEnumerable<MegFileDataEntry> CollectSortedMegFileDataEntries(IMegFile holder,
+    //private IEnumerable<MegDataEntry> CollectSortedMegFileDataEntries(IMegFile holder,
     //    MegFileNameTableRecord megFileNameTableRecord)
     //{
-    //    return holder.Content.Where(megFileDataEntry =>
+    //    return holder.Content.Where(dataEntry =>
     //        megFileNameTableRecord.FileName.Equals(
-    //            megFileDataEntry.FilePath.Replace("\\", "/").Replace("\0", string.Empty),
+    //            dataEntry.FilePath.Replace("\\", "/").Replace("\0", string.Empty),
     //            StringComparison.InvariantCultureIgnoreCase));
     //}
 

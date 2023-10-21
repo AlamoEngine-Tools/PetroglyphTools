@@ -134,26 +134,26 @@ public class MegFileProcessServiceTest : ServiceTestBase
     //    Assert.IsTrue(expectedFilePath.Equals(megFileHolder.FilePath, StringComparison.InvariantCultureIgnoreCase));
     //    Assert.AreEqual(2, megFileHolder.Content.Count);
     //    const string expectedBasePath = "DATA/XML/";
-    //    foreach (var megFileDataEntry in megFileHolder.Content)
+    //    foreach (var dataEntry in megFileHolder.Content)
     //    {
-    //        if (megFileDataEntry.FilePath.Equals(
+    //        if (dataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_GAMEOBJECTFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {
     //            var expectedFileSize =
     //                (uint) services.GetRequiredService<IFileSystem>().File
     //                    .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
-    //            Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
+    //            Assert.AreEqual(expectedFileSize, dataEntry.Size);
     //        }
 
-    //        if (megFileDataEntry.FilePath.Equals(
+    //        if (dataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_CAMPAIGNFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {
     //            var expectedFileSize =
     //                (uint) services.GetRequiredService<IFileSystem>().File
     //                    .ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
-    //            Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
+    //            Assert.AreEqual(expectedFileSize, dataEntry.Size);
     //        }
     //    }
     //}
@@ -172,26 +172,26 @@ public class MegFileProcessServiceTest : ServiceTestBase
     //    Assert.IsTrue(expectedFilePath.Equals(megFileHolder.FilePath, StringComparison.InvariantCultureIgnoreCase));
     //    Assert.AreEqual(2, megFileHolder.Content.Count);
     //    const string expectedBasePath = "DATA/XML/";
-    //    foreach (var megFileDataEntry in megFileHolder.Content)
+    //    foreach (var dataEntry in megFileHolder.Content)
     //    {
-    //        if (megFileDataEntry.FilePath.Equals(
+    //        if (dataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_GAMEOBJECTFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {
     //            var expectedFileSize =
     //                (uint) services.GetRequiredService<IFileSystem>().File
     //                    .ReadAllBytes(MegTestConstants.GetGameObjectFilesPath()).Length;
-    //            Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
+    //            Assert.AreEqual(expectedFileSize, dataEntry.Size);
     //        }
 
-    //        if (megFileDataEntry.FilePath.Equals(
+    //        if (dataEntry.FilePath.Equals(
     //                expectedBasePath + MegTestConstants.FILE_NAME_CAMPAIGNFILES,
     //                StringComparison.InvariantCultureIgnoreCase))
     //        {
     //            var expectedFileSize =
     //                (uint) services.GetRequiredService<IFileSystem>().File
     //                    .ReadAllBytes(MegTestConstants.GetCampaignFilesPath()).Length;
-    //            Assert.AreEqual(expectedFileSize, megFileDataEntry.Size);
+    //            Assert.AreEqual(expectedFileSize, dataEntry.Size);
     //        }
     //    }
     //}

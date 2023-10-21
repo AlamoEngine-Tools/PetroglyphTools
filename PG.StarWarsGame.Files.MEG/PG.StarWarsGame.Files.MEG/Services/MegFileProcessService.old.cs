@@ -59,7 +59,7 @@
 //        var megFileHolder = new MegFileHolder(targetDirectory, actualName);
 //        foreach (var entry in packedFileNameToAbsoluteFilePathsMap)
 //        {
-//            megFileHolder.Content.Add(new MegFileDataEntry(entry.Key, entry.Value));
+//            megFileHolder.Content.Add(new MegDataEntry(entry.Key, entry.Value));
 //        }
 
 //        var builder = new MegFileBinaryReaderV1(FileSystem);
@@ -100,12 +100,12 @@
 //        CreateTargetDirectoryIfNotExists(targetDirectory);
 
 //        using var readStream = GetBinaryReaderForFileHolder(holder);
-//        foreach (var megFileDataEntry in holder.Content)
+//        foreach (var dataEntry in holder.Content)
 //        {
-//            var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.FilePath);
+//            var filePath = FileSystem.Path.Combine(targetDirectory, dataEntry.FilePath);
 //            var path = FileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
 //            CreateTargetDirectoryIfNotExists(path);
-//            ExtractFileFromMegArchive(readStream, megFileDataEntry, filePath);
+//            ExtractFileFromMegArchive(readStream, dataEntry, filePath);
 //        }
 //    }
 
@@ -185,21 +185,21 @@
 //            var fileName = megFile.FileNameTable[i].FileName;
 //            var fileOffset = megFile.FileTable[i].FileStartOffsetInBytes;
 //            var fileSize = megFile.FileTable[i].FileSizeInBytes;
-//            holder.Content.Add(new MegFileDataEntry(fileName, Convert.ToInt32(fileOffset), fileSize));
+//            holder.Content.Add(new MegDataEntry(fileName, Convert.ToInt32(fileOffset), fileSize));
 //        }
 
 //        return holder;
 //    }
 
-//    private void ExtractFileFromMegArchive(BinaryReader readStream, MegFileDataEntry megFileDataEntry,
+//    private void ExtractFileFromMegArchive(BinaryReader readStream, MegDataEntry dataEntry,
 //        string filePath)
 //    {
 //        var buffer = new byte[BUFFER_SIZE];
-//        readStream.BaseStream.Seek(megFileDataEntry.Offset, SeekOrigin.Begin);
+//        readStream.BaseStream.Seek(dataEntry.Offset, SeekOrigin.Begin);
 //        using var writeStream =
 //            FileSystem.FileStream.Create(filePath, FileMode.Append, FileAccess.Write, FileShare.None);
 //        int bytesRead;
-//        var bytesToWrite = Convert.ToInt32(megFileDataEntry.Size);
+//        var bytesToWrite = Convert.ToInt32(dataEntry.Size);
 //        while ((bytesRead = readStream.Read(buffer, 0, Math.Min(buffer.Length, bytesToWrite))) > 0)
 //        {
 //            bytesToWrite -= bytesRead;
@@ -219,22 +219,22 @@
 //    }
 
 //    private void UnpackMegFilePreservingDirectoryHierarchy(MegFileHolder holder, string targetDirectory,
-//        MegFileDataEntry megFileDataEntry)
+//        MegDataEntry dataEntry)
 //    {
-//        var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.FilePath);
+//        var filePath = FileSystem.Path.Combine(targetDirectory, dataEntry.FilePath);
 //        var path = FileSystem.FileInfo.FromFileName(filePath).Directory.FullName;
 //        CreateTargetDirectoryIfNotExists(path);
 //        using var reader = GetBinaryReaderForFileHolder(holder);
-//        ExtractFileFromMegArchive(reader, megFileDataEntry, filePath);
+//        ExtractFileFromMegArchive(reader, dataEntry, filePath);
 //    }
 
 //    private void UnpackMegFileFlatDirectoryHierarchy(MegFileHolder holder, string targetDirectory,
-//        MegFileDataEntry megFileDataEntry)
+//        MegDataEntry dataEntry)
 //    {
-//        var filePath = FileSystem.Path.Combine(targetDirectory, megFileDataEntry.FilePath);
+//        var filePath = FileSystem.Path.Combine(targetDirectory, dataEntry.FilePath);
 //        filePath = FileSystem.Path.Combine(targetDirectory, FileSystem.Path.GetFileName(filePath));
 //        using var reader = GetBinaryReaderForFileHolder(holder);
-//        ExtractFileFromMegArchive(reader, megFileDataEntry, filePath);
+//        ExtractFileFromMegArchive(reader, dataEntry, filePath);
 //    }
 
 //    private BinaryReader GetBinaryReaderForFileHolder(MegFileHolder holder)

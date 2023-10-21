@@ -2,10 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
-
 
 /// <summary>
 /// Container with file information for building .MEG files.
@@ -13,38 +11,39 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 public sealed class MegFileDataEntryBuilderInfo
 {
     /// <summary>
-    /// Gets file information from a an existing .MEG file
+    /// 
     /// </summary>
-    public (IMegFile MegFile, MegFileDataEntry DataEntry, string? OverrideFileName)? MegFileEntry { get; }
+    public MegDataEntryOriginInfo OriginInfo { get; }
 
     /// <summary>
-    /// Gets file information from a local file.
+    /// 
     /// </summary>
-    public MegFileDataEntryLocation? LocalFile { get; }
-    
+    public string? OverrideFileName { get; init; }
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from an existing .MEG file.
+    /// 
     /// </summary>
-    /// <param name="megFile">The .MEG file holder instance</param>
-    /// <param name="megFileDataEntry">The file information from the .MEG file.</param>
-    /// <param name="overrideFileName">The new file name which shall be used. When <see langword="null"/> the original file name will be used.</param>
-    public MegFileDataEntryBuilderInfo(IMegFile megFile, MegFileDataEntry megFileDataEntry, string? overrideFileName = null)
+    public bool? OverrideEncrypted { get; init; }
+
+    /// <summary>
+    ///  Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from an existing .MEG file.
+    /// </summary>
+    /// <param name="fileDataEntry"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public MegFileDataEntryBuilderInfo(MegFileDataEntry fileDataEntry)
     {
-        if (megFile == null)
-            throw new ArgumentNullException(nameof(megFile));
-        if (megFileDataEntry == null)
-            throw new ArgumentNullException(nameof(megFileDataEntry));
-        MegFileEntry = (megFile, megFileDataEntry, overrideFileName);
+        if (fileDataEntry == null) throw new ArgumentNullException(nameof(fileDataEntry));
+        OriginInfo = new MegDataEntryOriginInfo(fileDataEntry);
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a given file.
     /// </summary>
-    /// <param name="localFileDataEntry"></param>
-    public MegFileDataEntryBuilderInfo(MegFileDataEntryLocation localFileDataEntry)
+    /// <param name="filePath"></param>
+    public MegFileDataEntryBuilderInfo(string filePath)
     {
-        if (localFileDataEntry == null) 
-            throw new ArgumentNullException(nameof(localFileDataEntry));
-        LocalFile = localFileDataEntry ?? throw new ArgumentNullException(nameof(localFileDataEntry));
+        if (filePath == null) 
+            throw new ArgumentNullException(nameof(filePath));
+        OriginInfo = new MegDataEntryOriginInfo(filePath);
     }
 }

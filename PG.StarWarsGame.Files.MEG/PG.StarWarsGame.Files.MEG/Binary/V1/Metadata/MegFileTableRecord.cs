@@ -65,13 +65,13 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
 
     public int CompareTo(MegFileTableRecord other)
     {
-        // IMPORTANT: Changing the logic here also requires to update MegFileDataEntry.cs
+        // IMPORTANT: Changing the logic here also requires to update MegDataEntry.cs
         return Crc32.CompareTo(other.Crc32);
     }
 
     int IComparable<IMegFileDescriptor>.CompareTo(IMegFileDescriptor? other)
     {
-        // IMPORTANT: Changing the logic here also requires to update MegFileDataEntry.cs
+        // IMPORTANT: Changing the logic here also requires to update MegDataEntry.cs
         return other is null ? 1 : Crc32.CompareTo(other.Crc32);
     }
 

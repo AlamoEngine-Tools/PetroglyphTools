@@ -23,7 +23,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
 
 
     /// <inheritdoc/>
-    public string GetAbsoluteFilePath(MegFileDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy)
+    public string GetAbsoluteFilePath(MegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy)
     {
         if (dataEntry is null) 
             throw new ArgumentNullException(nameof(dataEntry));
@@ -55,7 +55,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     }
 
     /// <inheritdoc/>
-    public Stream GetFileData(IMegFile megFile, MegFileDataEntry dataEntry)
+    public Stream GetFileData(IMegFile megFile, MegDataEntry dataEntry)
     {
         if (megFile is null) 
             throw new ArgumentNullException(nameof(megFile));
@@ -73,7 +73,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     }
 
     /// <inheritdoc/>
-    public bool ExtractFile(IMegFile megFile, MegFileDataEntry dataEntry, string filePath, bool overwrite)
+    public bool ExtractFile(IMegFile megFile, MegDataEntry dataEntry, string filePath, bool overwrite)
     {
         if (megFile is null)
             throw new ArgumentNullException(nameof(megFile));

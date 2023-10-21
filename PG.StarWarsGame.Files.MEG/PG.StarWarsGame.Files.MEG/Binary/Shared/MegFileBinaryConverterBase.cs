@@ -16,6 +16,11 @@ internal sealed class MegFileBinaryConverterV1 : MegFileBinaryConverterBase<MegM
     public MegFileBinaryConverterV1(IServiceProvider services) : base(services)
     {
     }
+
+    protected override MegMetadata ModelToBinaryCore(IMegArchive model)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 internal abstract class MegFileBinaryConverterBase<TMegMetadata> : ServiceBase, IMegFileBinaryConverter where TMegMetadata : IMegFileMetadata
@@ -38,7 +43,7 @@ internal abstract class MegFileBinaryConverterBase<TMegMetadata> : ServiceBase, 
         if (binary == null)
             throw new ArgumentNullException(nameof(binary));
 
-        var files = new List<MegFileDataEntry>(binary.Header.FileNumber);
+        var files = new List<MegDataEntry>(binary.Header.FileNumber);
 
         // According to the specification: 
         //  - The Meg's FileTable is sorted by CRC32.
@@ -62,7 +67,7 @@ internal abstract class MegFileBinaryConverterBase<TMegMetadata> : ServiceBase, 
             var fileSize = fileDescriptor.FileSize;
             var fileNameIndex = fileDescriptor.FileNameIndex;
             var fileName = binary.FileNameTable[fileNameIndex];
-            files.Add(new MegFileDataEntry(crc, fileName, fileOffset, fileSize));
+            files.Add(new MegDataEntry(crc, fileName, fileOffset, fileSize));
         }
         return new MegArchive(files);
     }

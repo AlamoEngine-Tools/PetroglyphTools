@@ -5,24 +5,24 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Data model to represent a PG MEG archive.
 /// </summary>
-public interface IMegArchive : IReadOnlyList<MegFileDataEntry>
+public interface IMegArchive : IReadOnlyList<MegDataEntry>
 {
     /// <summary>
     /// Determines whether the <see cref="IMegArchive"/> contains a specific file entry.
     /// </summary>
     /// <param name="entry">The entry to locate in the <see cref="IMegArchive"/>.</param>
-    /// <returns><see langword="true"/> if the <see cref="MegFileDataEntry"/> is found in the archive; otherwise, <see langword="false"/>.</returns>
-    bool Contains(MegFileDataEntry entry);
+    /// <returns><see langword="true"/> if the <see cref="MegDataEntry"/> is found in the archive; otherwise, <see langword="false"/>.</returns>
+    bool Contains(MegDataEntry entry);
 
     /// <summary>
     /// Determines the index of a specific file entry in the <see cref="IMegArchive"/>.
     /// </summary>
     /// <param name="entry">The entry to locate in the <see cref="IMegArchive"/>.</param>
     /// <returns>The index of <paramref name="entry"/> if found in the list; otherwise, -1.</returns>
-    int IndexOf(MegFileDataEntry entry);
+    int IndexOf(MegDataEntry entry);
 
     /// <summary>
-    /// Tries to find any <see cref="MegFileDataEntry"/> by matching the provided search pattern.
+    /// Tries to find any <see cref="MegDataEntry"/> by matching the provided search pattern.
     /// <br/>
     /// The resulting list is ordered by CRC32 of the file name, just are a MEG archive is ordered. The list is empty, if no matches are found. 
     /// </summary>
@@ -36,17 +36,5 @@ public interface IMegArchive : IReadOnlyList<MegFileDataEntry>
     /// </remarks>
     /// <param name="searchPattern">The globbing pattern.</param>
     /// <returns></returns>
-    IReadOnlyList<MegFileDataEntry> FindAllEntries(string searchPattern);
-}
-
-
-/// <inheritdoc/>
-public interface IVirtualMegArchive : IMegArchive
-{
-    /// <summary>
-    /// Gets the entry information associated with the specified MEG data entry.
-    /// </summary>
-    /// <param name="entry">The entry whose value to get.</param>
-    /// <returns></returns>
-    MegFileDataEntryBuilderInfo? GetEntryInformation(MegFileDataEntry entry);
+    IReadOnlyList<MegDataEntry> FindAllEntries(string searchPattern);
 }

@@ -1,28 +1,51 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Services;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
-internal sealed class MegDataStreamFactory : IMegDataStreamFactory
+internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public MegDataStreamFactory(IServiceProvider serviceProvider)
+    public MegDataStreamFactory(IServiceProvider serviceProvider) : base(serviceProvider)
     {
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
-    public Stream CreateDataStream(string path, uint offset, uint size)
+    public Stream GetDataStream(MegDataEntryOriginInfo originInfo)
+    {
+        if (originInfo == null) 
+            throw new ArgumentNullException(nameof(originInfo));
+
+        if (originInfo.FilePath is not null)
+            return FileSystem.File.OpenRead(originInfo.FilePath);
+        if (originInfo.MegFileLocation is not null)
+        {
+            if (originInfo.MegFileLocation.DataEntry.Encrypted)
+            {
+                throw new NotImplementedException();
+            }
+
+            return CreateDataStream(originInfo.MegFileLocation.MegFile.FilePath,
+                originInfo.MegFileLocation.DataEntry.Offset, originInfo.MegFileLocation.DataEntry.Size);
+        }
+        
+        throw new ArgumentException("Origin info does not contain any data.", nameof(originInfo));
+    }
+
+    private Stream CreateDataStream(string path, uint offset, uint size)
     {
         // Cause MIKE.NL's tool uses the offset megFile[megSize + 1] for empty Files we would cause an ArgumentOutOfRangeException
         // when trying to access this index on a real file. Therefore we return the Null stream.
         if (size == 0)
             return Stream.Null;
 
-        var fs = _serviceProvider.GetRequiredService<IFileSystem>();
+        var fs = Services.GetRequiredService<IFileSystem>();
         return new MegFileDataStream(fs.FileStream.New(path, FileMode.Open, FileAccess.Read, FileShare.Read), offset, size);
     }
 }

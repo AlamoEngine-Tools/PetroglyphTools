@@ -14,4 +14,11 @@ public interface IVirtualMegArchiveBuilder
     /// <param name="dataEntries"></param>
     /// <returns></returns>
     IVirtualMegArchive Build(IEnumerable<MegFileDataEntryBuilderInfo> dataEntries);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="archive"></param>
+    /// <returns></returns>
+    IVirtualMegArchive Build(IMegArchive archive);
 }

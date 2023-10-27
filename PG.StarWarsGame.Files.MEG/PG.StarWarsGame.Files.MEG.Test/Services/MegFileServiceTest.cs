@@ -26,7 +26,7 @@ public class MegFileServiceTest
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IMegBinaryServiceFactory> _binaryServiceFactory = new();
     private readonly Mock<IMegFileBinaryReader> _megBinaryReader = new();
-    private readonly Mock<IMegFileBinaryConverter> _megBinaryConverter = new();
+    private readonly Mock<IMegBinaryConverter> _megBinaryConverter = new();
     private readonly Mock<IMegBinaryValidator> _binaryValidator = new();
     private readonly Mock<IMegVersionIdentifier> _versionIdentifier = new();
 

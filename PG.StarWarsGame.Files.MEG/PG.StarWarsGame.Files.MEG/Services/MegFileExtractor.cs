@@ -68,8 +68,10 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (!megFile.Content.Contains(dataEntry))
             throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);
 
+        var origin = new MegDataEntryOriginInfo(new MegFileDataEntry(megFile, dataEntry));
+
         return Services.GetRequiredService<IMegDataStreamFactory>()
-            .CreateDataStream(megFile.FilePath, dataEntry.Offset, dataEntry.Size);
+            .GetDataStream(origin);
     }
 
     /// <inheritdoc/>
@@ -103,10 +105,12 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         // Not sure if this extra barrier is actually necessary. 
         var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
+        var origin = new MegDataEntryOriginInfo(new MegFileDataEntry(megFile, dataEntry));
+
         using var destinationStream = FileSystem.FileStream.New(fullFilePath, fileMode, FileAccess.Write, FileShare.None);
 
         using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>()
-            .CreateDataStream(megFile.FilePath, dataEntry.Offset, dataEntry.Size);
+            .GetDataStream(origin);
         dataStream.CopyTo(destinationStream);
 
         return true;

@@ -11,9 +11,9 @@ using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal sealed class MegFileBinaryConverterV1 : MegFileBinaryConverterBase<MegMetadata>
+internal sealed class MegBinaryConverterV1 : MegBinaryConverterBase<MegMetadata>
 {
-    public MegFileBinaryConverterV1(IServiceProvider services) : base(services)
+    public MegBinaryConverterV1(IServiceProvider services) : base(services)
     {
     }
 
@@ -23,9 +23,9 @@ internal sealed class MegFileBinaryConverterV1 : MegFileBinaryConverterBase<MegM
     }
 }
 
-internal abstract class MegFileBinaryConverterBase<TMegMetadata> : ServiceBase, IMegFileBinaryConverter where TMegMetadata : IMegFileMetadata
+internal abstract class MegBinaryConverterBase<TMegMetadata> : ServiceBase, IMegBinaryConverter where TMegMetadata : IMegFileMetadata
 {
-    protected MegFileBinaryConverterBase(IServiceProvider services) : base(services)
+    protected MegBinaryConverterBase(IServiceProvider services) : base(services)
     {
     }
 

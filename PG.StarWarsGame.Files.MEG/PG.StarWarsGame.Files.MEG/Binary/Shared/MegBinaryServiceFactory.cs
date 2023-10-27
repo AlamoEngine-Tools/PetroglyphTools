@@ -29,10 +29,10 @@ internal class MegBinaryServiceFactory : IMegBinaryServiceFactory
         throw new NotImplementedException();
     }
 
-    public IMegFileBinaryConverter GetConverter(MegFileVersion megVersion)
+    public IMegBinaryConverter GetConverter(MegFileVersion megVersion)
     {
         if (megVersion == MegFileVersion.V1)
-            return new MegFileBinaryConverterV1(_serviceProvider);
+            return new MegBinaryConverterV1(_serviceProvider);
 
         throw new NotImplementedException();
     }

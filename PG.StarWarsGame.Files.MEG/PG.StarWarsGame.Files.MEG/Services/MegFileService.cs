@@ -33,31 +33,35 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     {
         var builderArchive = Services.GetRequiredService<IVirtualMegArchiveBuilder>().Build(builderInformation);
 
-        var metadata = Services.GetRequiredService<IMegFileBinaryConverter>().ModelToBinary(builderArchive);
+        var metadata = Services.GetRequiredService<IMegBinaryServiceFactory>()
+            .GetConverter(megFileVersion)
+            .ModelToBinary(builderArchive.Archive);
+
         var bytes = metadata.Bytes;
 
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Create, FileAccess.Write);
 
         fs.Write(bytes, 0, bytes.Length);
 
-        foreach (var file in builderArchive)
+        var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
+
+        foreach (var file in builderArchive.Archive)
         {
             var location = builderArchive.GetOrigin(file);
            
             if (location is null)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException(); // TODO: InvalidModelException
 
-            if (location.FilePath is not null)
-            {
-                using var dataStream = FileSystem.File.OpenRead(location.FilePath);
-                dataStream.CopyTo(fs);
-            }
-            else if (location.MegFileLocation is not null)
-            {
-                var extractor = Services.GetRequiredService<IMegFileExtractor>();
-                using var dataStream = extractor.GetFileData(location.MegFileLocation.MegFile, location.MegFileLocation.DataEntry);
-                dataStream.CopyTo(fs);
-            }
+            using var dataStream = streamFactory.GetDataStream(location);
+
+            // TODO: Test in encryption case
+            if (dataStream.Length != file.Size)
+                throw new InvalidOperationException(); // TODO: InvalidModelException
+
+            if (fs.Position != file.Offset)
+                throw new InvalidOperationException(); // TODO: InvalidModelException
+
+            dataStream.CopyTo(fs);
         }
     }
 

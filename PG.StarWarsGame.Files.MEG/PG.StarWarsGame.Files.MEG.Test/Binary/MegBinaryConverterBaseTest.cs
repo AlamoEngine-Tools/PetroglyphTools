@@ -11,7 +11,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 namespace PG.StarWarsGame.Files.MEG.Test.Binary;
 
 [TestClass]
-public class MegFileBinaryConverterBaseTest
+public class MegBinaryConverterBaseTest
 {
     private Mock<IServiceProvider> _serviceProviderMock = null!;
     private IFileSystem _fileSystem = null!;
@@ -28,7 +28,7 @@ public class MegFileBinaryConverterBaseTest
     [TestMethod]
     public void Test__BinaryToModel_ThrowsArgs()
     {
-        var serviceMock = new Mock<MegFileBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };
@@ -39,7 +39,7 @@ public class MegFileBinaryConverterBaseTest
     [TestMethod]
     public void Test__BinaryToModel_EmptyModel()
     {
-        var serviceMock = new Mock<MegFileBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };
@@ -57,7 +57,7 @@ public class MegFileBinaryConverterBaseTest
     [TestMethod]
     public void Test__BinaryToModel_ModelWithFiles()
     {
-        var serviceMock = new Mock<MegFileBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };
@@ -99,7 +99,7 @@ public class MegFileBinaryConverterBaseTest
     [ExpectedException(typeof(BinaryCorruptedException))]
     public void Test__BinaryToModel_ThrowsCrcNotSorted()
     {
-        var serviceMock = new Mock<MegFileBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
+        var serviceMock = new Mock<MegBinaryConverterBase<IMegFileMetadata>>(_serviceProviderMock.Object)
         {
             CallBase = true
         };

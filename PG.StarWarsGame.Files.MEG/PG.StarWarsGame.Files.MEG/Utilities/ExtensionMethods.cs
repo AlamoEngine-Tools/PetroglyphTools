@@ -1,4 +1,5 @@
 ﻿using System;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Utilities;
@@ -29,5 +30,16 @@ public static class ExtensionMethods
             Key = megFile.Key,
             IV = megFile.IV
         };
+    }
+
+
+    /// <summary>
+    /// Creates a new <see cref="MegFileDataEntryBuilderInfo"/> from a <see cref="MegDataEntryOriginInfo"/>.
+    /// </summary>
+    /// <param name="origin">The origin info.</param>
+    /// <returns>The created builder info.</returns>
+    public static MegFileDataEntryBuilderInfo ToBuilderInfo(this MegDataEntryOriginInfo origin)
+    {
+        return new MegFileDataEntryBuilderInfo(origin);
     }
 }

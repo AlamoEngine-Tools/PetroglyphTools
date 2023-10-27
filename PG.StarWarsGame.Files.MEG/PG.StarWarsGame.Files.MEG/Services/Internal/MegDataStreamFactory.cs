@@ -19,23 +19,20 @@ internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
 
     public Stream GetDataStream(MegDataEntryOriginInfo originInfo)
     {
-        if (originInfo == null) 
-            throw new ArgumentNullException(nameof(originInfo));
+        if (!originInfo.HasData)
+            throw new ArgumentException("Origin info does not contain any data.", nameof(originInfo));
 
         if (originInfo.FilePath is not null)
             return FileSystem.File.OpenRead(originInfo.FilePath);
-        if (originInfo.MegFileLocation is not null)
-        {
-            if (originInfo.MegFileLocation.DataEntry.Encrypted)
-            {
-                throw new NotImplementedException();
-            }
 
-            return CreateDataStream(originInfo.MegFileLocation.MegFile.FilePath,
-                originInfo.MegFileLocation.DataEntry.Offset, originInfo.MegFileLocation.DataEntry.Size);
+
+        if (originInfo.MegFileLocation!.DataEntry.Encrypted)
+        {
+            throw new NotImplementedException();
         }
-        
-        throw new ArgumentException("Origin info does not contain any data.", nameof(originInfo));
+
+        return CreateDataStream(originInfo.MegFileLocation.MegFile.FilePath,
+            originInfo.MegFileLocation.DataEntry.Offset, originInfo.MegFileLocation.DataEntry.Size);
     }
 
     private Stream CreateDataStream(string path, uint offset, uint size)

@@ -31,11 +31,11 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion)
     {
-        var builderArchive = Services.GetRequiredService<IVirtualMegArchiveBuilder>().Build(builderInformation);
+        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileVersion);
 
         var metadata = Services.GetRequiredService<IMegBinaryServiceFactory>()
             .GetConverter(megFileVersion)
-            .ModelToBinary(builderArchive.Archive);
+            .ModelToBinary(constructionArchive.Archive);
 
         var bytes = metadata.Bytes;
 
@@ -45,9 +45,9 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-        foreach (var file in builderArchive.Archive)
+        foreach (var file in constructionArchive.Archive)
         {
-            var location = builderArchive.GetOrigin(file);
+            var location = constructionArchive.GetOrigin(file);
            
             if (location is null)
                 throw new InvalidOperationException(); // TODO: InvalidModelException

@@ -7,7 +7,7 @@ using PG.Commons.Services;
 namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <summary>
-/// Represents a file packaged in a *.MEG file.
+/// Represents an archived file inside a MEG archive.
 /// </summary>
 public sealed class MegDataEntry : IEquatable<MegDataEntry>, IComparable<MegDataEntry>
 {
@@ -51,7 +51,7 @@ public sealed class MegDataEntry : IEquatable<MegDataEntry>, IComparable<MegData
     internal MegDataEntry(Crc32 crc, string filePath, uint offset, uint size)
     {
         if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("Meg packed file name must not be null or empty.", nameof(filePath));
+            throw new ArgumentException("Archived file name must not be null or empty.", nameof(filePath));
         FileNameCrc32 = crc;
         FilePath = filePath;
         Offset = offset;

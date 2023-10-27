@@ -1,37 +1,47 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <summary>
-/// 
+/// Contains information about the actual file location of an archived MEG data entry.
 /// </summary>
 public sealed class MegDataEntryOriginInfo
 {
     /// <summary>
-    /// 
+    /// Gets the MEG file's data entry. <see langeword="null"/> if not present.
     /// </summary>
     public MegFileDataEntry? MegFileLocation { get; }
 
     /// <summary>
-    /// 
+    /// Gets the file's path on the file system. <see langeword="null"/> if not present.
     /// </summary>
     public string? FilePath { get; }
 
     /// <summary>
-    /// 
+    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> structure to the specified file path.
     /// </summary>
-    /// <param name="filePath"></param>
+    /// <param name="filePath">The file path.</param>
+    /// <exception cref="ArgumentNullException">If <paramref name="filePath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">If <paramref name="filePath"/> is empty or only whitespace.</exception>
     public MegDataEntryOriginInfo(string filePath)
     {
-        FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        if (filePath == null) 
+            throw new ArgumentNullException(nameof(filePath));
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException(nameof(filePath));
+        FilePath = filePath;
     }
 
     /// <summary>
-    /// 
+    /// Initializes a new instance of the &lt;see cref="MegDataEntryOriginInfo"/&gt; structure to the specified MEG file's data entry.
     /// </summary>
-    /// <param name="megFileLocation"></param>
-    public MegDataEntryOriginInfo(MegFileDataEntry megFileLocation)
+    /// <param name="megFileDataEntry">The MEG file's data entry.</param>
+    /// <exception cref="ArgumentNullException">If <paramref name="megFileDataEntry"/> is <see langword="null"/>.</exception>
+    public MegDataEntryOriginInfo(MegFileDataEntry megFileDataEntry)
     {
-        MegFileLocation = megFileLocation ?? throw new ArgumentNullException(nameof(megFileLocation));
+        MegFileLocation = megFileDataEntry ?? throw new ArgumentNullException(nameof(megFileDataEntry));
     }
 }

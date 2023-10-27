@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
-using static System.Net.WebRequestMethods;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 

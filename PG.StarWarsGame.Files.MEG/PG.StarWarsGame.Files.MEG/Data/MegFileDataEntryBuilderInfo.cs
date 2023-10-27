@@ -11,39 +11,28 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 public sealed class MegFileDataEntryBuilderInfo
 {
     /// <summary>
-    /// 
+    /// The actual location of a MEG data entry file.
     /// </summary>
     public MegDataEntryOriginInfo OriginInfo { get; }
 
     /// <summary>
-    /// 
+    /// Gets the file name to be used instead of the original file name. <see langword="null"/> if no custom file name shall be used.
     /// </summary>
+    /// <exception cref="ArgumentException">If <paramref name="value"/>is empty or only whitespace.</exception>
     public string? OverrideFileName { get; init; }
 
     /// <summary>
-    /// 
+    /// Gets whether the data entry file shall be encrypted or not. <see langword="null"/> if the original data entry's encryption state shall be used.
     /// </summary>
     public bool? OverrideEncrypted { get; init; }
 
     /// <summary>
     ///  Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from an existing .MEG file.
     /// </summary>
-    /// <param name="fileDataEntry"></param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public MegFileDataEntryBuilderInfo(MegFileDataEntry fileDataEntry)
+    /// <param name="originInfo">The data entry's origin.</param>
+    /// <exception cref="ArgumentNullException">If <paramref name="originInfo"/> is <see langword="null"/>.</exception>
+    public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo)
     {
-        if (fileDataEntry == null) throw new ArgumentNullException(nameof(fileDataEntry));
-        OriginInfo = new MegDataEntryOriginInfo(fileDataEntry);
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a given file.
-    /// </summary>
-    /// <param name="filePath"></param>
-    public MegFileDataEntryBuilderInfo(string filePath)
-    {
-        if (filePath == null) 
-            throw new ArgumentNullException(nameof(filePath));
-        OriginInfo = new MegDataEntryOriginInfo(filePath);
+        OriginInfo = originInfo ?? throw new ArgumentNullException(nameof(originInfo));
     }
 }

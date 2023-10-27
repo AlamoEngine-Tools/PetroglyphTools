@@ -8,6 +8,8 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
+// TODO: This could be in a Package
+
 /// <summary>
 /// High-level builder service which takes certain restrictions form the PG games into account.
 /// </summary>

@@ -6,17 +6,13 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
-/// <summary>
-/// 
-/// </summary>
-/// <typeparam name="T"></typeparam>
 public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEntry
 {
     /// <summary>
     /// Determines whether the <see cref="IMegArchive"/> contains a specific file entry.
     /// </summary>
     /// <param name="entry">The entry to locate in the <see cref="IMegArchive"/>.</param>
-    /// <returns><see langword="true"/> if the <see cref="MegDataEntry"/> is found in the archive; otherwise, <see langword="false"/>.</returns>
+    /// <returns><see langword="true"/> if the <typeparamref name="T"/> is found in the archive; otherwise, <see langword="false"/>.</returns>
     bool Contains(T entry);
 
     /// <summary>
@@ -27,7 +23,7 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     int IndexOf(T entry);
 
     /// <summary>
-    /// Tries to find any <see cref="MegDataEntry"/> by matching the provided search pattern.
+    /// Tries to find any <typeparamref name="T"/> by matching the provided search pattern.
     /// <br/>
     /// The resulting list is ordered by CRC32 of the file name, just are a MEG archive is ordered. The list is empty, if no matches are found. 
     /// </summary>

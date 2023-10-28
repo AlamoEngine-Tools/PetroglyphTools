@@ -45,7 +45,7 @@ public class MegFileServiceIntegrationTest
 
         var service = sp.GetRequiredService<IMegFileService>();
 
-        using var megFileData = TestUtility.GetEmbeddedResource(GetType(), "Files.v1_2_files_with_extended_ascii_name.meg");
+        using var megFileData = TestUtility.GetEmbeddedResource(GetType(), "Entries.v1_2_files_with_extended_ascii_name.meg");
         using var ms = new MemoryStream();
         megFileData.CopyTo(ms);
 

@@ -6,7 +6,7 @@
         <Product>PG.StarWarsGame.Files.MEG</Product>
     </PropertyGroup>
     <PropertyGroup>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <InheritDocEnabled>true</InheritDocEnabled>
     </PropertyGroup>

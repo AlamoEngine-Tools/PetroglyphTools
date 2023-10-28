@@ -1,57 +1,47 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
+using PG.Commons.Services;
 using System;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
-/// <summary>
-/// MEG data entry with information of its owning MEG file.
-/// </summary>
-public sealed class MegFileDataEntry : IMegDataEntry, IEquatable<MegFileDataEntry>
+public sealed class MegFileDataEntry : MegDataEntryBase, IEquatable<MegFileDataEntry>
 {
-    /// <summary>
-    /// Gets the data entry.
-    /// </summary>
-    public MegDataEntry DataEntry { get; }
+    public override string FilePath { get; }
+
+    public override Crc32 FileNameCrc32 { get; }
+
+    public MegFileDataEntryLocation Location { get; }
 
     /// <summary>
-    /// Gets the meg file
+    /// Indicates whether the file is encrypted
     /// </summary>
-    public IMegFile MegFile { get; }
+    public bool Encrypted { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileDataEntry"/> class.
-    /// </summary>
-    /// <param name="megFile">The meg file.</param>
-    /// <param name="dataEntry">The data entry.</param>
-    /// <exception cref="ArgumentNullException">If <paramref name="megFile"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
-    public MegFileDataEntry(IMegFile megFile, MegDataEntry dataEntry)
+    internal MegFileDataEntry(string filePath, Crc32 crc32, MegFileDataEntryLocation location, bool encrypted)
     {
-        MegFile = megFile ?? throw new ArgumentNullException(nameof(megFile));
-        DataEntry = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException("Archived file name must not be null or empty.", nameof(filePath));
+        FilePath = filePath;
+        FileNameCrc32 = crc32;
+        Location = location;
+        Encrypted = encrypted;
     }
 
-    /// <inheritdoc/>
     public bool Equals(MegFileDataEntry? other)
     {
-        if (other is null)
+        if (ReferenceEquals(null, other)) 
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return DataEntry.Equals(other.DataEntry) && MegFile.Equals(other.MegFile);
+        return FilePath == other.FilePath && FileNameCrc32.Equals(other.FileNameCrc32) && Location.Equals(other.Location) && Encrypted == other.Encrypted;
     }
 
-    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
         return ReferenceEquals(this, obj) || obj is MegFileDataEntry other && Equals(other);
     }
 
-    /// <inheritdoc/>
     public override int GetHashCode()
     {
-        return HashCode.Combine(DataEntry, MegFile);
+        return HashCode.Combine(FilePath, FileNameCrc32, Location, Encrypted);
     }
 }

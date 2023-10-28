@@ -22,9 +22,9 @@ public class MegArchiveTest
     [TestMethod]
     public void Test_Ctor()
     {
-        var entry1 = new MegDataEntry(new Crc32(123), "path", 456, 789);
-        var entry2 = new MegDataEntry(new Crc32(987), "test", 123, 456);
-        var entries = new List<MegDataEntry>
+        var entry1 = new MegDataEntryIdentity(new Crc32(123), "path", 456, 789);
+        var entry2 = new MegDataEntryIdentity(new Crc32(987), "test", 123, 456);
+        var entries = new List<MegDataEntryIdentity>
         {
             entry1, entry2
         };
@@ -36,9 +36,9 @@ public class MegArchiveTest
         Assert.AreEqual(entry2, archive[1]);
 
 
-        var newEntries = new List<MegDataEntry>();
+        var newEntries = new List<MegDataEntryIdentity>();
         foreach (var entry in (IEnumerable)archive) 
-            newEntries.Add((MegDataEntry)entry);
+            newEntries.Add((MegDataEntryIdentity)entry);
 
         CollectionAssert.AreEqual(entries, newEntries);
     }
@@ -46,16 +46,16 @@ public class MegArchiveTest
     [TestMethod]
     public void Test_IndexOf_Contains()
     {
-        var entry1 = new MegDataEntry(new Crc32(123), "path", 456, 789);
-        var entry2 = new MegDataEntry(new Crc32(987), "test", 123, 456);
-        var entries = new List<MegDataEntry>
+        var entry1 = new MegDataEntryIdentity(new Crc32(123), "path", 456, 789);
+        var entry2 = new MegDataEntryIdentity(new Crc32(987), "test", 123, 456);
+        var entries = new List<MegDataEntryIdentity>
         {
             entry1, entry2
         };
 
         var archive = new MegArchive(entries);
 
-        var entry3 = new MegDataEntry(new Crc32(456), "new", 789, 123);
+        var entry3 = new MegDataEntryIdentity(new Crc32(456), "new", 789, 123);
 
         Assert.AreEqual(0, archive.IndexOf(entry1));
         Assert.AreEqual(1, archive.IndexOf(entry2));
@@ -95,7 +95,7 @@ public class MegArchiveTest
         CollectionAssert.AreEqual(expectedMatches, entries);
     }
 
-    private static MegDataEntry CreateFromFile(string path)
+    private static MegDataEntryIdentity CreateFromFile(string path)
     {
         return new(new Crc32(0), path, 0, 0);
     }

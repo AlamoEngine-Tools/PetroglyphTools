@@ -9,10 +9,9 @@ internal sealed class ConstructingMegArchive : MegDataEntryHolderBase<Constructi
 {
     public IMegArchive Archive { get; }
 
-
     internal ConstructingMegArchive(IList<ConstructingMegDataEntry> files) : base(files)
     {
-        var dataEntries = Files.Select(f => f.DataEntry).ToList();
+        var dataEntries = Entries.Select(f => f.FileEntry).ToList();
         Archive = new MegArchive(dataEntries);
     }
 }

@@ -27,7 +27,7 @@ public class MegFileBinaryServiceV1IntegrationTest
     [TestMethod]
     public void Test__ReadBinary_EmptyMeg()
     {
-        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Files.v1_empty.meg");
+        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Entries.v1_empty.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
         Assert.AreEqual(0, megMetadata.FileNameTable.Count);
         Assert.AreEqual(0, megMetadata.FileTable.Count);
@@ -37,7 +37,7 @@ public class MegFileBinaryServiceV1IntegrationTest
     [TestMethod]
     public void Test__ReadBinary_OneFile()
     {
-        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Files.v1_1_file_data.meg");
+        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Entries.v1_1_file_data.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
         Assert.AreEqual(1, megMetadata.FileNameTable.Count);
         Assert.AreEqual(1, megMetadata.FileTable.Count);
@@ -53,7 +53,7 @@ public class MegFileBinaryServiceV1IntegrationTest
     [TestMethod]
     public void Test__ReadBinary_TwoFiles()
     {
-        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Files.v1_2_files_empty.meg");
+        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Entries.v1_2_files_empty.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
         Assert.AreEqual(2, megMetadata.FileNameTable.Count);
         Assert.AreEqual(2, megMetadata.FileTable.Count);
@@ -66,7 +66,7 @@ public class MegFileBinaryServiceV1IntegrationTest
     [TestMethod]
     public void Test__ReadBinary_TwoFilesWithNonAsciiName()
     {
-        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Files.v1_2_files_with_extended_ascii_name.meg");
+        var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryServiceV1IntegrationTest), "Entries.v1_2_files_with_extended_ascii_name.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
         Assert.AreEqual(2, megMetadata.FileNameTable.Count);
         Assert.AreEqual(2, megMetadata.FileTable.Count);

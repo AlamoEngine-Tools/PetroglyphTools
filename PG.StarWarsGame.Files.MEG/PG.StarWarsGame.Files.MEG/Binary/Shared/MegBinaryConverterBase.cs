@@ -44,7 +44,7 @@ internal abstract class MegBinaryConverterBase<TMegMetadata> : ServiceBase, IMeg
         if (binary == null)
             throw new ArgumentNullException(nameof(binary));
 
-        var files = new List<MegDataEntry>(binary.Header.FileNumber);
+        var files = new List<MegFileDataEntry>(binary.Header.FileNumber);
 
         // According to the specification: 
         //  - The Meg's FileTable is sorted by CRC32.
@@ -68,7 +68,11 @@ internal abstract class MegBinaryConverterBase<TMegMetadata> : ServiceBase, IMeg
             var fileSize = fileDescriptor.FileSize;
             var fileNameIndex = fileDescriptor.FileNameIndex;
             var fileName = binary.FileNameTable[fileNameIndex];
-            files.Add(new MegDataEntry(crc, fileName, fileOffset, fileSize));
+
+            var location = new MegFileDataEntryLocation(fileOffset, fileSize);
+
+            // TODO: Set proper encryption flag
+            files.Add(new MegFileDataEntry(fileName, crc, location, false));
         }
         return new MegArchive(files);
     }

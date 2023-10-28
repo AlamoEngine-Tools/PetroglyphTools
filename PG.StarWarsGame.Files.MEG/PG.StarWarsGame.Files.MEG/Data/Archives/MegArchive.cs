@@ -7,14 +7,14 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
 /// <inheritdoc cref="IMegArchive"/>
-internal sealed class MegArchive : MegDataEntryHolderBase<MegDataEntry>, IMegArchive
+internal sealed class MegArchive : MegDataEntryHolderBase<MegFileDataEntry>, IMegArchive
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MegArchive"/> class
-    /// by coping all elements of the given <paramref name="files"/> list.
+    /// by coping all elements of the given <paramref name="entries"/> list.
     /// </summary>
-    /// <param name="files">The list of files in this archive.</param>
-    internal MegArchive(IList<MegDataEntry> files) : base(files)
+    /// <param name="entries">The list of entries in this archive.</param>
+    internal MegArchive(IList<MegFileDataEntry> entries) : base(entries)
     {
     }
 }

@@ -30,7 +30,7 @@ public class MegFileExtractorTest
     [TestMethod]
     public void Test_GetAbsoluteFilePath_Throws()
     {
-        var entry = new MegDataEntry(new Crc32(123), "path", 456, 789);
+        var entry = new MegDataEntryIdentity(new Crc32(123), "path", 456, 789);
         Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(null!, "path", false));
         Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(entry, null!, false));
         Assert.ThrowsException<ArgumentException>(() => _extractor.GetAbsoluteFilePath(entry, "", false));
@@ -348,7 +348,7 @@ public class MegFileExtractorTest
     }
 
 
-    private static MegDataEntry Create(string path, uint size = 1)
+    private static MegDataEntryIdentity Create(string path, uint size = 1)
     {
         return new(new Crc32(0), path, 0, size);
     }

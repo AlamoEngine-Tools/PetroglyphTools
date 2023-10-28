@@ -20,7 +20,7 @@ public interface IMegFileService
     /// Packs a list of files as an unencrypted *.MEG archive in the given <paramref name="megFileVersion"/>.
     /// </summary>
     /// <remarks>
-    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
+    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntryIdentity"/>, it will be decrypted first.
     /// </remarks>
     /// <param name="filePath">The desired file path of the MEG archive.</param>
     /// <param name="builderInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
@@ -34,7 +34,7 @@ public interface IMegFileService
     /// Packs a list of files as an encrypted *.MEG V3 archive.
     /// </summary>
     /// <remarks>
-    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
+    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntryIdentity"/>, it will be decrypted first.
     /// </remarks>
     /// <param name="filePath">The desired file path of the MEG archive.</param>
     /// <param name="builderInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>

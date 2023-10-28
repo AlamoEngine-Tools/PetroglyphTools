@@ -232,7 +232,7 @@ public class MegVersionIdentifierTest
     [TestMethod]
     public void Test__GetMegFileVersion_V2_2Files()
     {
-        var data = TestUtility.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v2_2_files_data.meg");
+        var data = TestUtility.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Entries.v2_2_files_data.meg");
         var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(data, out var encrypted);
 
         Assert.AreEqual(MegFileVersion.V2, version);
@@ -350,7 +350,7 @@ public class MegVersionIdentifierTest
     [TestMethod]
     public void Test__GetMegFileVersion_V3_2Files()
     {
-        var data = TestUtility.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v3n_2_files_data.meg");
+        var data = TestUtility.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Entries.v3n_2_files_data.meg");
         var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(data, out var encrypted);
 
         Assert.AreEqual(MegFileVersion.V3, version);

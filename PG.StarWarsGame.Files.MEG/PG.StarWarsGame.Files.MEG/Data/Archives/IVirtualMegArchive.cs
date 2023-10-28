@@ -14,6 +14,6 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 /// <remarks>
 /// Use the <see cref="IVirtualMegArchiveBuilder"/> service for creating this archive.
 /// </remarks>
-public interface IVirtualMegArchive : IMegDataEntryHolder<MegFileDataEntry>
+public interface IVirtualMegArchive : IMegDataEntryHolder<MegFileDataEntryReference>
 {
 }

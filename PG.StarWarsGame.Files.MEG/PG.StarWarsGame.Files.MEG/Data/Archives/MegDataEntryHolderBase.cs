@@ -13,50 +13,50 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T : IMegDataEntry
 {
     /// <summary>
-    /// 
+    /// All data entries of this instance.
     /// </summary>
-    protected readonly ReadOnlyCollection<T> Files;
+    protected readonly ReadOnlyCollection<T> Entries;
 
     private readonly ReadOnlyCollection<string> _fileNames;
 
     /// <inheritdoc />
-    public T this[int index] => Files[index];
+    public T this[int index] => Entries[index];
 
     /// <inheritdoc />
-    public int Count => Files.Count;
+    public int Count => Entries.Count;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegArchive"/> class
-    /// by coping all elements of the given <paramref name="files"/> list.
+    /// by coping all elements of the given <paramref name="entries"/> list.
     /// </summary>
-    /// <param name="files">The list of files in this archive.</param>
-    protected MegDataEntryHolderBase(IList<T> files)
+    /// <param name="entries">The list of entries in this archive.</param>
+    protected MegDataEntryHolderBase(IList<T> entries)
     {
-        if (files == null)
-            throw new ArgumentNullException(nameof(files));
+        if (entries == null)
+            throw new ArgumentNullException(nameof(entries));
 
-        Files = new ReadOnlyCollection<T>(files.ToList());
-        _fileNames = new ReadOnlyCollection<string>(Files.Select(x => x.FilePath).ToList());
+        Entries = new ReadOnlyCollection<T>(entries.ToList());
+        _fileNames = new ReadOnlyCollection<string>(Entries.Select(x => x.FilePath).ToList());
     }
 
     /// <inheritdoc />
     public bool Contains(T entry)
     {
-        return Files.Contains(entry);
+        return Entries.Contains(entry);
     }
 
     /// <inheritdoc />
     public int IndexOf(T entry)
     {
-        return Files.IndexOf(entry);
+        return Entries.IndexOf(entry);
     }
 
     /// <inheritdoc />
     public IReadOnlyList<T> FindAllEntries(string searchPattern)
     {
-        Debug.Assert(_fileNames.Count == Files.Count);
+        Debug.Assert(_fileNames.Count == Entries.Count);
 
-        if (Files.Count == 0)
+        if (Entries.Count == 0)
             return Array.Empty<T>();
 
         var glob = Glob.Parse(searchPattern,
@@ -67,7 +67,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
         for (var i = 0; i < _fileNames.Count; i++)
         {
             if (glob.IsMatch(_fileNames[i]))
-                foundMatches.Add(Files[i]);
+                foundMatches.Add(Entries[i]);
         }
 
         return foundMatches;
@@ -76,7 +76,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {
-        return Files.GetEnumerator();
+        return Entries.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

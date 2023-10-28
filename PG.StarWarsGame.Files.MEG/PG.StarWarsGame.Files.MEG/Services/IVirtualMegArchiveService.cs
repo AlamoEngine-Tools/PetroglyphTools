@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
-using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 
@@ -14,15 +13,15 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IVirtualMegArchiveBuilder
 {
     /// <summary>
-    /// Builds a virtual MEG archive from a collection of MEG data origin information. 
+    /// Builds a virtual MEG archive from a collection of MEG data references. 
     /// </summary>
     /// <remarks>
     /// The resulting archive is correctly sorted as specified.
     /// </remarks>
-    /// <param name="fileEntries">The collection of data origins.</param>
+    /// <param name="fileEntries">The collection of data references.</param>
     /// <param name="replaceExisting"></param>
     /// <returns>The virtual MEG archive.</returns>
-    IVirtualMegArchive BuildFrom(IEnumerable<MegFileDataEntry> fileEntries, bool replaceExisting);
+    IVirtualMegArchive BuildFrom(IEnumerable<MegFileDataEntryReference> fileEntries, bool replaceExisting);
 
     /// <summary>
     /// Converts an <see cref="IMegArchive"/> into a virtual, im-memory representation.
@@ -42,9 +41,4 @@ public interface IVirtualMegArchiveBuilder
     /// <param name="replaceExisting"></param>
     /// <returns></returns>
     IVirtualMegArchive BuildFrom(IList<IMegArchive> archive, bool replaceExisting);
-}
-
-internal interface IMegConstructionArchiveService
-{
-    IMegConstructionArchive Build(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries);
 }

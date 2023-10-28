@@ -5,9 +5,7 @@ using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
-using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -24,7 +22,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
 
 
     /// <inheritdoc/>
-    public string GetAbsoluteFilePath(MegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy)
+    public string GetAbsoluteFilePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy)
     {
         if (dataEntry is null) 
             throw new ArgumentNullException(nameof(dataEntry));
@@ -52,16 +50,16 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         }
 
         return Path.GetFullPath(Path.Combine(absoluteRootPath, dataEntry.FilePath));
-
     }
 
     /// <inheritdoc/>
-    public Stream GetFileData(IMegFile megFile, MegDataEntry dataEntry)
+    public Stream GetFileData(MegFileDataEntryReference fileDataEntry)
     {
-        if (megFile is null) 
-            throw new ArgumentNullException(nameof(megFile));
-        if (dataEntry is null) 
-            throw new ArgumentNullException(nameof(dataEntry));
+        if (fileDataEntry is null) 
+            throw new ArgumentNullException(nameof(fileDataEntry));
+
+        var megFile = fileDataEntry.MegFile;
+        var dataEntry = fileDataEntry.FileEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
@@ -69,23 +67,22 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (!megFile.Content.Contains(dataEntry))
             throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);
 
-        var origin = new MegDataEntryOriginInfo(new MegFileDataEntry(megFile, dataEntry));
-
         return Services.GetRequiredService<IMegDataStreamFactory>()
-            .GetDataStream(origin);
+            .GetDataStream(fileDataEntry);
     }
 
     /// <inheritdoc/>
-    public bool ExtractFile(IMegFile megFile, MegDataEntry dataEntry, string filePath, bool overwrite)
+    public bool ExtractFile(MegFileDataEntryReference fileDataEntry, string filePath, bool overwrite)
     {
-        if (megFile is null)
-            throw new ArgumentNullException(nameof(megFile));
-        if (dataEntry is null)
-            throw new ArgumentNullException(nameof(dataEntry));
+        if (fileDataEntry is null)
+            throw new ArgumentNullException(nameof(fileDataEntry));
         if (filePath is null)
             throw new ArgumentNullException(nameof(filePath));
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
+
+        var megFile = fileDataEntry.MegFile;
+        var dataEntry = fileDataEntry.FileEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
@@ -103,15 +100,12 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
             throw new ArgumentException("File location does not point to a directory", nameof(filePath));
         FileSystem.Directory.CreateDirectory(directory!);
 
-        // Not sure if this extra barrier is actually necessary. 
         var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
-
-        var origin = new MegDataEntryOriginInfo(new MegFileDataEntry(megFile, dataEntry));
 
         using var destinationStream = FileSystem.FileStream.New(fullFilePath, fileMode, FileAccess.Write, FileShare.None);
 
         using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>()
-            .GetDataStream(origin);
+            .GetDataStream(fileDataEntry);
         dataStream.CopyTo(destinationStream);
 
         return true;

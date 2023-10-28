@@ -4,7 +4,25 @@
 using System;
 using PG.Commons.Services;
 
-namespace PG.StarWarsGame.Files.MEG.Data;
+namespace PG.StarWarsGame.Files.MEG.Data.Entries;
+
+
+/// <summary>
+/// 
+/// </summary>
+public interface IMegDataEntry : IComparable<IMegDataEntry>
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    string FilePath { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    Crc32 FileNameCrc32 { get; }
+}
+
 
 /// <summary>
 /// Represents an archived file inside a MEG archive.
@@ -12,7 +30,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <remarks>
 /// Note that <see cref="Offset"/> is based on the actual target MEG file, this instance was create from.
 /// </remarks>
-public sealed class MegDataEntry : IEquatable<MegDataEntry>, IComparable<MegDataEntry>
+public sealed class MegDataEntry : IMegDataEntry, IEquatable<MegDataEntry>
 {
     /// <summary>
     /// Gets the relative file path as defined in the *.MEG file.<br />
@@ -68,7 +86,7 @@ public sealed class MegDataEntry : IEquatable<MegDataEntry>, IComparable<MegData
     /// </remarks>
     public bool Equals(MegDataEntry? other)
     {
-        if (ReferenceEquals(null, other)) 
+        if (ReferenceEquals(null, other))
             return false;
         if (ReferenceEquals(this, other))
             return true;
@@ -94,12 +112,12 @@ public sealed class MegDataEntry : IEquatable<MegDataEntry>, IComparable<MegData
     /// <b>Note:</b>
     /// In contrast to equality, comparison is only based on the <see cref="FileNameCrc32"/> checksum.
     /// </remarks>
-    public int CompareTo(MegDataEntry? other)
+    public int CompareTo(IMegDataEntry? other)
     {
         // IMPORTANT: Changing the logic here also requires to update the binary models!
-        if (ReferenceEquals(this, other)) 
+        if (ReferenceEquals(this, other))
             return 0;
-        if (ReferenceEquals(null, other)) 
+        if (ReferenceEquals(null, other))
             return 1;
         return FileNameCrc32.CompareTo(other.FileNameCrc32);
     }

@@ -45,20 +45,15 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-        foreach (var file in constructionArchive.Archive)
+        foreach (var file in constructionArchive)
         {
-            var location = constructionArchive.GetOrigin(file);
-           
-            if (location is null)
-                throw new InvalidOperationException(); // TODO: InvalidModelException
-
-            using var dataStream = streamFactory.GetDataStream(location);
+            using var dataStream = streamFactory.GetDataStream(file.OriginInfo);
 
             // TODO: Test in encryption case
-            if (dataStream.Length != file.Size)
+            if (dataStream.Length != file.DataEntry.Size)
                 throw new InvalidOperationException(); // TODO: InvalidModelException
 
-            if (fs.Position != file.Offset)
+            if (fs.Position != file.DataEntry.Offset)
                 throw new InvalidOperationException(); // TODO: InvalidModelException
 
             dataStream.CopyTo(fs);

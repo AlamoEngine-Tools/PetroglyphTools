@@ -3,33 +3,45 @@
 
 using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
 /// Service to build virtual MEG archives.
 /// </summary>
-public interface IVirtualMegArchiveService
+public interface IVirtualMegArchiveBuilder
 {
     /// <summary>
     /// Builds a virtual MEG archive from a collection of MEG data origin information. 
     /// </summary>
     /// <remarks>
-    /// The resulting <see cref="IVirtualMegArchive.Files"/> is correctly sorted as specified.
+    /// The resulting archive is correctly sorted as specified.
     /// </remarks>
-    /// <param name="dataOrigins">The collection of data origins.</param>
+    /// <param name="fileEntries">The collection of data origins.</param>
+    /// <param name="replaceExisting"></param>
     /// <returns>The virtual MEG archive.</returns>
-    IVirtualMegArchive Build(IEnumerable<MegDataEntryOriginInfo> dataOrigins);
+    IVirtualMegArchive BuildFrom(IEnumerable<MegFileDataEntry> fileEntries, bool replaceExisting);
 
     /// <summary>
     /// Converts an <see cref="IMegArchive"/> into a virtual, im-memory representation.
     /// </summary>
     /// <remarks>
-    /// The resulting <see cref="IVirtualMegArchive.Files"/> is sorted identical to the given <paramref name="archive"/>.
+    /// The resulting archive is sorted identical to the given <paramref name="archive"/>.
     /// </remarks>
     /// <param name="archive">The archive to convert</param>
+    /// <param name="replaceExisting"></param>
     /// <returns>The virtual MEG archive.</returns>
-    IVirtualMegArchive ConvertFrom(IMegArchive archive);
+    IVirtualMegArchive BuildFrom(IMegArchive archive, bool replaceExisting);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="archive"></param>
+    /// <param name="replaceExisting"></param>
+    /// <returns></returns>
+    IVirtualMegArchive BuildFrom(IList<IMegArchive> archive, bool replaceExisting);
 }
 
 internal interface IMegConstructionArchiveService

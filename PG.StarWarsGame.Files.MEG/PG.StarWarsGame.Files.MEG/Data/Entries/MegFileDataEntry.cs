@@ -4,12 +4,12 @@
 using System;
 using PG.StarWarsGame.Files.MEG.Files;
 
-namespace PG.StarWarsGame.Files.MEG.Data;
+namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
 /// <summary>
-/// Container to identify the location of a MEG data entry of a MEG file.
+/// MEG data entry with information of its owning MEG file.
 /// </summary>
-public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>
+public sealed class MegFileDataEntry : IMegDataEntry, IEquatable<MegFileDataEntry>
 {
     /// <summary>
     /// Gets the data entry.
@@ -38,7 +38,7 @@ public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>
     {
         if (other is null)
             return false;
-        if (ReferenceEquals(this, other)) 
+        if (ReferenceEquals(this, other))
             return true;
         return DataEntry.Equals(other.DataEntry) && MegFile.Equals(other.MegFile);
     }

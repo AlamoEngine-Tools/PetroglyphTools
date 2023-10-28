@@ -4,7 +4,7 @@
 using System;
 using PG.Commons.Binary.File;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 

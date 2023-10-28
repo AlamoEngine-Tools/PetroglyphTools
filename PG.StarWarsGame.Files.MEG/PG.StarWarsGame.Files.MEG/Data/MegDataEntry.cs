@@ -9,6 +9,9 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Represents an archived file inside a MEG archive.
 /// </summary>
+/// <remarks>
+/// Note that <see cref="Offset"/> is based on the actual target MEG file, this instance was create from.
+/// </remarks>
 public sealed class MegDataEntry : IEquatable<MegDataEntry>, IComparable<MegDataEntry>
 {
     /// <summary>

@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.Collections.Generic;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
@@ -37,7 +38,57 @@ public interface IVirtualMegArchive
 internal interface IMegConstructionArchive : IVirtualMegArchive
 {
     /// <summary>
-    /// Gets the archive model which represents this virtual archive.
+    /// Gets the binary-convertible archive of this instance.
     /// </summary>
     IMegArchive Archive { get; }
+}
+
+
+/// <summary>
+/// 
+/// </summary>
+public sealed class VirtualMegDataEntry : IEquatable<VirtualMegDataEntry>
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public string FileName { get; }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    public MegDataEntryOriginInfo OriginInfo { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="originInfo"></param>
+    public VirtualMegDataEntry(string fileName, MegDataEntryOriginInfo originInfo)
+    {
+        FileName = fileName;
+        OriginInfo = originInfo;
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(VirtualMegDataEntry? other)
+    {
+        if (other is null) 
+            return false;
+        if (ReferenceEquals(this, other)) 
+            return true;
+        return FileName == other.FileName && OriginInfo.Equals(other.OriginInfo);
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is VirtualMegDataEntry other && Equals(other);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(FileName, OriginInfo);
+    }
 }

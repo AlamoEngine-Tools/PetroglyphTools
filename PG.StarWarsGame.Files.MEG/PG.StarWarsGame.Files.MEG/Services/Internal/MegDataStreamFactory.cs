@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,12 +20,13 @@ internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
 
     public Stream GetDataStream(MegDataEntryOriginInfo originInfo)
     {
-        if (!originInfo.HasData)
-            throw new ArgumentException("Origin info does not contain any data.", nameof(originInfo));
+        if (originInfo == null) 
+            throw new ArgumentNullException(nameof(originInfo));
 
         if (originInfo.FilePath is not null)
             return FileSystem.File.OpenRead(originInfo.FilePath);
 
+        Debug.Assert(originInfo.MegFileLocation is not null);
 
         if (originInfo.MegFileLocation!.DataEntry.Encrypted)
         {

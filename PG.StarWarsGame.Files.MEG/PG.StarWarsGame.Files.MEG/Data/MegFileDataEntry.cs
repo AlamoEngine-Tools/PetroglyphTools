@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Container to identify the location of a MEG data entry of a MEG file.
 /// </summary>
-public sealed class MegFileDataEntry
+public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>
 {
     /// <summary>
     /// Gets the data entry.
@@ -31,5 +31,27 @@ public sealed class MegFileDataEntry
     {
         MegFile = megFile ?? throw new ArgumentNullException(nameof(megFile));
         DataEntry = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(MegFileDataEntry? other)
+    {
+        if (other is null)
+            return false;
+        if (ReferenceEquals(this, other)) 
+            return true;
+        return DataEntry.Equals(other.DataEntry) && MegFile.Equals(other.MegFile);
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is MegFileDataEntry other && Equals(other);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(DataEntry, MegFile);
     }
 }

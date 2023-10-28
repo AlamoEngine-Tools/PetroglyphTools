@@ -31,7 +31,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion)
     {
-        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileVersion);
+        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation);
 
         var metadata = Services.GetRequiredService<IMegBinaryServiceFactory>()
             .GetConverter(megFileVersion)

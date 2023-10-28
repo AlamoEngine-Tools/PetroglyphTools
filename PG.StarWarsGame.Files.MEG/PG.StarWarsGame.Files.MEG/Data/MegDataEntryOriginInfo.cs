@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Contains information about the actual file location of an archived MEG data entry.
 /// </summary>
-public sealed class MegDataEntryOriginInfo
+public sealed class MegDataEntryOriginInfo : IEquatable<MegDataEntryOriginInfo>
 {
     /// <summary>
     /// Gets the MEG file's data entry. <see langeword="null"/> if not present.
@@ -43,5 +43,26 @@ public sealed class MegDataEntryOriginInfo
     public MegDataEntryOriginInfo(MegFileDataEntry megFileDataEntry)
     {
         MegFileLocation = megFileDataEntry ?? throw new ArgumentNullException(nameof(megFileDataEntry));
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(MegDataEntryOriginInfo? other)
+    {
+        if (other is null)
+            return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Equals(MegFileLocation, other.MegFileLocation) && string.Equals(FilePath, other.FilePath, StringComparison.Ordinal);
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is MegDataEntryOriginInfo other && Equals(other);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(MegFileLocation, FilePath);
     }
 }

@@ -20,3 +20,8 @@ public interface IMegDataEntry : IComparable<IMegDataEntry>
     /// </summary>
     public Crc32 FileNameCrc32 { get; }
 }
+
+public interface IMegDataEntry<T> : IMegDataEntry where T : notnull
+{
+    public T Location { get; }
+}

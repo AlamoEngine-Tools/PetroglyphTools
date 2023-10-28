@@ -6,7 +6,7 @@ using PG.Commons.Services;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
-public abstract class MegFileDataEntryBase : MegDataEntryBase, IEquatable<MegFileDataEntryBase>
+public abstract class MegFileEntryDataBase<T> : MegDataEntryBase<T>, IEquatable<MegFileEntryDataBase<T>> where T : notnull
 {
     public MegFileDataEntry FileEntry { get; }
 
@@ -14,33 +14,22 @@ public abstract class MegFileDataEntryBase : MegDataEntryBase, IEquatable<MegFil
 
     public sealed override Crc32 FileNameCrc32 => FileEntry.FileNameCrc32;
 
-    protected MegFileDataEntryBase(MegFileDataEntry fileDataEntry)
+    protected MegFileEntryDataBase(MegFileDataEntry fileDataEntry, T location) : base(location)
     {
         FileEntry = fileDataEntry ?? throw new ArgumentNullException(nameof(fileDataEntry));
     }
 
-    bool IEquatable<MegFileDataEntryBase>.Equals(MegFileDataEntryBase? other)
+    public bool Equals(MegFileEntryDataBase<T>? other)
     {
-        if (other is null) 
+        if (other is null)
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return FileEntry.Equals(other.FileEntry);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is null) 
-            return false;
-        if (ReferenceEquals(this, obj))
-            return true;
-        if (obj.GetType() != GetType())
-            return false;
-        return Equals((MegFileDataEntryBase)obj);
+        return FileEntry.Equals(other.FileEntry) && base.Equals(other);
     }
 
     public override int GetHashCode()
     {
-        return FileEntry.GetHashCode();
+        return HashCode.Combine(base.GetHashCode(), FileEntry);
     }
 }

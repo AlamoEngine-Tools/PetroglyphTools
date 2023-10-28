@@ -40,7 +40,7 @@ internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
             throw new NotImplementedException();
         }
 
-        return CreateDataStream(dateReference.MegFile.FilePath,
+        return CreateDataStream(dateReference.Location.FilePath,
             dateReference.FileEntry.Location.Offset, dateReference.FileEntry.Location.Size);
     }
 

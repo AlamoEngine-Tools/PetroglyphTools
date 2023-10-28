@@ -58,7 +58,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (fileDataEntry is null) 
             throw new ArgumentNullException(nameof(fileDataEntry));
 
-        var megFile = fileDataEntry.MegFile;
+        var megFile = fileDataEntry.Location;
         var dataEntry = fileDataEntry.FileEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))
@@ -81,7 +81,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
 
-        var megFile = fileDataEntry.MegFile;
+        var megFile = fileDataEntry.Location;
         var dataEntry = fileDataEntry.FileEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))

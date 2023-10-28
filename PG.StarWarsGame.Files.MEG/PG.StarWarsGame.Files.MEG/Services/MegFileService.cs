@@ -47,7 +47,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         foreach (var file in constructionArchive)
         {
-            using var dataStream = streamFactory.GetDataStream(file.OriginInfo);
+            using var dataStream = streamFactory.GetDataStream(file.Location);
 
             // TODO: Test in encryption case
             if (dataStream.Length != file.FileEntry.Location.Size)

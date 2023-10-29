@@ -6,8 +6,8 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
 /// <summary>
-/// The archive content of a single .MEG file.
+/// Contains all data entries of a single, physical .MEG file.
 /// </summary>
-public interface IMegArchive : IMegDataEntryHolder<MegFileDataEntry>
+public interface IMegArchive : IMegDataEntryHolder<MegDataEntry>
 {
 }

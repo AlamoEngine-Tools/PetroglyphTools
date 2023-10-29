@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileExtractor
 {
     /// <summary>
-    /// Builds the absolute file path for a <see cref="MegDataEntryIdentity"/> and a given base directory.
+    /// Builds the absolute file path for a <see cref="IMegDataEntry"/> and a given base directory.
     /// <br/>
     /// If <paramref name="rootPath"/> is relative, the environment's <see cref="Environment.CurrentDirectory"/> will be prepended.
     /// </summary>
@@ -66,7 +66,7 @@ public interface IMegFileExtractor
     /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="FileNotFoundException">The .MEG file is not found.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    Stream GetFileData(MegFileDataEntryReference fileDataEntry);
+    Stream GetFileData(MegFileDataEntry fileDataEntry);
 
 
     /// <summary>
@@ -78,7 +78,7 @@ public interface IMegFileExtractor
     /// <br/>
     /// <b>Note: </b><paramref name="filePath"/> will first be resolved by <see cref="Path.GetFullPath(string)"/>. File path information of the data entry will not be used.
     /// <br/>
-    /// Use <see cref="GetAbsoluteFilePath"/> to create a <see cref="MegDataEntryIdentity"/>-based absolute path.
+    /// Use <see cref="GetAbsoluteFilePath"/> to create a <see cref="IMegDataEntry"/>-based absolute path.
     /// </remarks>
     /// <param name="fileDataEntry">The data entry information.</param>
     /// <param name="filePath">The destination file path.</param>
@@ -89,5 +89,5 @@ public interface IMegFileExtractor
     /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="IOException">When the extraction failed due to an IO error.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    bool ExtractFile(MegFileDataEntryReference fileDataEntry, string filePath, bool overwrite);
+    bool ExtractFile(MegFileDataEntry fileDataEntry, string filePath, bool overwrite);
 }

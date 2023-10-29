@@ -1,37 +1,36 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
+using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
-public readonly struct MegFileDataEntryLocation : IEquatable<MegFileDataEntryLocation>
+public sealed class MegFileDataEntryLocation : IEquatable<MegFileDataEntryLocation>
 {
-    /// <summary>
-    /// Gets the offset from the start of the *.MEG file archive.
-    /// </summary>
-    public uint Offset { get; }
+    public IMegFile MegFile { get; }
 
-    /// <summary>
-    /// Gets the file size in bytes.
-    /// </summary>
-    public uint Size { get; }
+    public MegDataEntry DataEntry { get; }
 
-    public MegFileDataEntryLocation(uint offset, uint size)
+    /// <inheritdoc />
+    public bool Equals(MegFileDataEntryLocation? other)
     {
-        Offset = offset;
-        Size = size;
+        if (other is null) 
+            return false;
+        if (ReferenceEquals(this, other)) 
+            return true;
+        return MegFile.Equals(other.MegFile) && DataEntry.Equals(other.DataEntry);
     }
 
-    public bool Equals(MegFileDataEntryLocation other)
-    {
-        return Offset == other.Offset && Size == other.Size;
-    }
-
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return obj is MegFileDataEntryLocation other && Equals(other);
+        return ReferenceEquals(this, obj) || obj is MegFileDataEntryLocation other && Equals(other);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
-        return HashCode.Combine(Offset, Size);
+        return HashCode.Combine(MegFile, DataEntry);
     }
 }

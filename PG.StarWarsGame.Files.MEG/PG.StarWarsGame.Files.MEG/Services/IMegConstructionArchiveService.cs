@@ -4,10 +4,11 @@
 using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
+using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 internal interface IMegConstructionArchiveService
 {
-    IMegConstructionArchive Build(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries);
+    IMegConstructionArchive Build(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries, MegFileVersion fileVersion);
 }

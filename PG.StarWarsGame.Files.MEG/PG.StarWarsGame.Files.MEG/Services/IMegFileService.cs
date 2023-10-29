@@ -17,34 +17,33 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileService
 {
     /// <summary>
-    /// Packs a list of files as an unencrypted *.MEG archive in the given <paramref name="megFileVersion"/>.
+    /// Packs a collection of files as an unencrypted *.MEG archive of a given MEG version.
     /// </summary>
     /// <remarks>
-    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntryIdentity"/>, it will be decrypted first.
+    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
+    /// <br/>
+    /// The items of <paramref name="builderInformation"/> will be correctly sorted by this operation.
     /// </remarks>
     /// <param name="filePath">The desired file path of the MEG archive.</param>
-    /// <param name="builderInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
-    /// <param name="megFileVersion">The file version of the .MEG file.</param>
-    void CreateMegArchive(
-        string filePath,
-        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, 
-        MegFileVersion megFileVersion);
+    /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
+    /// <param name="megFileVersion">The desired file version of the .MEG file.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>
+    void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion);
 
     /// <summary>
-    /// Packs a list of files as an encrypted *.MEG V3 archive.
+    /// Packs a collection of files as an encrypted *.MEG V3 archive.
     /// </summary>
     /// <remarks>
-    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntryIdentity"/>, it will be decrypted first.
+    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
+    /// <br/>
+    /// The items of <paramref name="builderInformation"/> will be correctly sorted by this operation.
     /// </remarks>
     /// <param name="filePath">The desired file path of the MEG archive.</param>
-    /// <param name="builderInformation">A list of absolute file paths, identified by their name in the .MEG file.</param>
+    /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
     /// <param name="key">The encryption key.</param>
     /// <param name="iv">The initialization vector used for encryption.</param>
-    void CreateMegArchive(
-        string filePath,
-        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation,
-        ReadOnlySpan<byte> key,
-        ReadOnlySpan<byte> iv);
+    void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
 
     /// <summary>
     /// Loads a *.MEG file's metadata into a <see cref="MegFileHolder" />.

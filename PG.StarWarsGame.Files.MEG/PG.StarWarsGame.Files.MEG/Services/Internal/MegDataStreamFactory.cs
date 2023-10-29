@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
@@ -26,22 +27,26 @@ internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
         if (originInfo.FilePath is not null)
             return FileSystem.File.OpenRead(originInfo.FilePath);
 
-        return GetDataStream(originInfo.MegFileLocation!);
+        var megFile = originInfo.MegFileLocation!.MegFile;
+        var entry = originInfo.MegFileLocation.DataEntry;
+
+        return GetDataStream(megFile, entry);
     }
 
-    public Stream GetDataStream(MegFileDataEntryReference dateReference)
+    public Stream GetDataStream(IMegFile megFile, MegDataEntry dataEntry)
     {
-        if (dateReference == null) 
-            throw new ArgumentNullException(nameof(dateReference));
+        if (megFile == null) 
+            throw new ArgumentNullException(nameof(megFile));
+        if (dataEntry == null) 
+            throw new ArgumentNullException(nameof(dataEntry));
 
 
-        if (dateReference.FileEntry.Encrypted)
+        if (dataEntry.Encrypted)
         {
             throw new NotImplementedException();
         }
 
-        return CreateDataStream(dateReference.Location.FilePath,
-            dateReference.FileEntry.Location.Offset, dateReference.FileEntry.Location.Size);
+        return CreateDataStream(megFile.FilePath, dataEntry.Location.Offset, dataEntry.Location.Size);
     }
 
     private Stream CreateDataStream(string path, uint offset, uint size)

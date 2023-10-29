@@ -3,6 +3,12 @@ using PG.Commons.Services;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
+/// <summary>
+/// Represents an archived file within a MEG archive.
+/// </summary>
+/// <remarks>
+/// Note: Comparison is based on the CRC32 checksum only. Equality checks may include more properties.
+/// </remarks>
 public interface IMegDataEntry : IComparable<IMegDataEntry>
 {
     /// <summary>
@@ -21,7 +27,12 @@ public interface IMegDataEntry : IComparable<IMegDataEntry>
     public Crc32 FileNameCrc32 { get; }
 }
 
-public interface IMegDataEntry<T> : IMegDataEntry where T : notnull
+/// <inheritdoc/>
+/// <typeparam name="T">The type of the entry's location information.</typeparam>
+public interface IMegDataEntry<out T> : IMegDataEntry where T : notnull
 {
+    /// <summary>
+    /// Get the location information of this data entry.
+    /// </summary>
     public T Location { get; }
 }

@@ -7,20 +7,32 @@ using PG.Commons.Services;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
+/// <summary>
+/// Base class to implement an <see cref="IMegDataEntry{T}"/>, handling data entry comparison and equality. 
+/// </summary>
+/// <inheritdoc cref="IMegDataEntry{T}"/>
 public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegDataEntryBase<T>> where T : notnull
 {
+    /// <inheritdoc />
     public abstract string FilePath { get; }
 
+    /// <inheritdoc />
     public abstract Crc32 FileNameCrc32 { get; }
 
+    /// <inheritdoc />
     public T Location { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MegDataEntryBase{T}"/> class with a given data entry location.
+    /// </summary>
+    /// <param name="location">The location information of this entry.</param>
+    /// <exception cref="ArgumentNullException">The <paramref name="location"/> is <see langword="null"/>.</exception>
     protected MegDataEntryBase(T location)
     {
         Location = location ?? throw new ArgumentNullException(nameof(location));
     }
 
-    // In contrast to equality, comparison is only based on the <see cref="FileNameCrc32"/> checksum.
+    /// <inheritdoc cref="IComparable{T}"/>
     public int CompareTo(IMegDataEntry other)
     {
         // IMPORTANT: Changing the logic here also requires to update the binary models!
@@ -31,7 +43,8 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
         return FileNameCrc32.CompareTo(other.FileNameCrc32);
     }
 
-    public virtual bool Equals(MegDataEntryBase<T>? other)
+    /// <inheritdoc />
+    public bool Equals(MegDataEntryBase<T>? other)
     {
         if (ReferenceEquals(null, other))
             return false;
@@ -40,6 +53,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
         return FilePath == other.FilePath && FileNameCrc32.Equals(other.FileNameCrc32) && EqualityComparer<T>.Default.Equals(Location, other.Location);
     }
 
+    /// <inheritdoc />
     public sealed override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) 
@@ -51,6 +65,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
         return Equals((MegDataEntryBase<T>)obj);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         return HashCode.Combine(FilePath, FileNameCrc32, Location);

@@ -20,21 +20,36 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 /// <inheritdoc cref="IMegFileService" />
 public sealed class MegFileService : ServiceBase, IMegFileService
 {
+    private IMegBinaryServiceFactory BinaryServiceFactory { get; }
+
     /// <summary>
     ///     Initializes a new <see cref="MegFileService" /> class.
     /// </summary>
     /// <param name="services">The service provider for this instance.</param>
     public MegFileService(IServiceProvider services) : base(services)
     {
+        BinaryServiceFactory = services.GetRequiredService<IMegBinaryServiceFactory>();
     }
 
     /// <inheritdoc />
     public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion)
     {
-        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation);
+        // TODO: Update exceptions infos in doc.
+        // E.g. IOException and use new MegDataEntryNotFoundException (FileNotInMegException : MegDataEntryNotFoundException : Exception)
+        // Also add overwrite-file param
 
-        var metadata = Services.GetRequiredService<IMegBinaryServiceFactory>()
-            .GetConverter(megFileVersion)
+        if (filePath == null) 
+            throw new ArgumentNullException(nameof(filePath));
+
+        if (builderInformation == null) 
+            throw new ArgumentNullException(nameof(builderInformation));
+
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
+
+        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileVersion);
+
+        var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
 
         var bytes = metadata.Bytes;
@@ -50,10 +65,10 @@ public sealed class MegFileService : ServiceBase, IMegFileService
             using var dataStream = streamFactory.GetDataStream(file.Location);
 
             // TODO: Test in encryption case
-            if (dataStream.Length != file.FileEntry.Location.Size)
+            if (dataStream.Length != file.DataEntry.Location.Size)
                 throw new InvalidOperationException(); // TODO: InvalidModelException
 
-            if (fs.Position != file.FileEntry.Location.Offset)
+            if (fs.Position != file.DataEntry.Location.Offset)
                 throw new InvalidOperationException(); // TODO: InvalidModelException
 
             dataStream.CopyTo(fs);
@@ -81,7 +96,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         fs.Seek(0, SeekOrigin.Begin);
 
-        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(megVersion);
+        using var reader = BinaryServiceFactory.GetReader(megVersion);
         using var param = new MegFileHolderParam
         {
             FilePath = filePath,
@@ -108,7 +123,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         fs.Seek(0, SeekOrigin.Begin);
 
-        using var reader = Services.GetRequiredService<IMegBinaryServiceFactory>().GetReader(key, iv);
+        using var reader = BinaryServiceFactory.GetReader(key, iv);
         using var param = new MegFileHolderParam
         {
             FilePath = filePath,
@@ -157,7 +172,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
             throw new BinaryCorruptedException($"Unable to read .MEG archive: {e.Message}", e);
         }
 
-        var converter = Services.GetRequiredService<IMegBinaryServiceFactory>().GetConverter(megVersion);
+        var converter = BinaryServiceFactory.GetConverter(megVersion);
         var megArchive = converter.BinaryToModel(megMetadata);
         return new MegFileHolder(megArchive, param, Services);
     }

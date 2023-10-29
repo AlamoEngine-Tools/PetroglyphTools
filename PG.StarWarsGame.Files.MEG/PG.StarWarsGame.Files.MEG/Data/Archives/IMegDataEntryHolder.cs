@@ -6,6 +6,10 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
+/// <summary>
+/// Holds a CRC32-sorted list of MEG data entries.
+/// </summary>
+/// <typeparam name="T">The type of the data entry.</typeparam>
 public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEntry
 {
     /// <summary>
@@ -37,6 +41,6 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// </remarks>
     /// <param name="searchPattern">The globbing pattern.</param>
     /// <returns></returns>
-    // TODO: FrugalList<T> cause i expect patterns mostly to contain 0 or 1 item.
+    // TODO: FrugalList<T> cause i expect results to contain mostly 0 or 1 item.
     IReadOnlyList<T> FindAllEntries(string searchPattern);
 }

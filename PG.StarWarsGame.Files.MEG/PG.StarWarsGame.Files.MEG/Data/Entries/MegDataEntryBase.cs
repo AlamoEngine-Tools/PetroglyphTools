@@ -54,7 +54,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     }
 
     /// <inheritdoc />
-    public sealed override bool Equals(object? obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) 
             return false;

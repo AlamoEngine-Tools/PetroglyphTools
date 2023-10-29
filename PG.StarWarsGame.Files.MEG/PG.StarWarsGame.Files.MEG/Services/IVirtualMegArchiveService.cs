@@ -21,7 +21,7 @@ public interface IVirtualMegArchiveBuilder
     /// <param name="fileEntries">The collection of data references.</param>
     /// <param name="replaceExisting"></param>
     /// <returns>The virtual MEG archive.</returns>
-    IVirtualMegArchive BuildFrom(IEnumerable<MegFileDataEntry> fileEntries, bool replaceExisting);
+    IVirtualMegArchive BuildFrom(IEnumerable<MegDataEntryReference> fileEntries, bool replaceExisting);
 
     /// <summary>
     /// Converts an <see cref="IMegArchive"/> into a virtual, im-memory representation.

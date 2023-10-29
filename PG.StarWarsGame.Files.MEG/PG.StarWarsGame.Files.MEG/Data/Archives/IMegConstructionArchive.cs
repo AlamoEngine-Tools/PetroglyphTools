@@ -6,12 +6,18 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
-internal interface IMegConstructionArchive : IMegDataEntryHolder<MegFileDataEntryReference>
+/// <summary>
+/// Intermediate MEG archive used for constructing new .MEG files.
+/// </summary>
+internal interface IMegConstructionArchive : IMegDataEntryHolder<VirtualMegDataEntryReference>
 {
     /// <summary>
     /// Gets the binary-convertible archive of this instance.
     /// </summary>
     IMegArchive Archive { get; }
 
+    /// <summary>
+    /// The MEG version of this archive.
+    /// </summary>
     MegFileVersion MegVersion { get; }
 }

@@ -31,6 +31,6 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 /// A PG game will use the file loaded <b>last</b>, which would be Unit_X.xml of the Mods XML directory. 
 /// However, a <see cref="IVirtualMegArchive"/> is not designed to reference cases shown in load order 3.
 /// </remarks>
-public interface IVirtualMegArchive : IMegDataEntryHolder<MegFileDataEntry>
+public interface IVirtualMegArchive : IMegDataEntryHolder<MegDataEntryReference>
 {
 }

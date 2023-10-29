@@ -53,13 +53,13 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     }
 
     /// <inheritdoc/>
-    public Stream GetFileData(MegFileDataEntry fileDataEntry)
+    public Stream GetFileData(MegDataEntryReference entryReference)
     {
-        if (fileDataEntry is null) 
-            throw new ArgumentNullException(nameof(fileDataEntry));
+        if (entryReference is null) 
+            throw new ArgumentNullException(nameof(entryReference));
 
-        var megFile = fileDataEntry.Location.MegFile;
-        var dataEntry = fileDataEntry.Location.DataEntry;
+        var megFile = entryReference.Location.MegFile;
+        var dataEntry = entryReference.Location.DataEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
@@ -72,17 +72,17 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     }
 
     /// <inheritdoc/>
-    public bool ExtractFile(MegFileDataEntry fileDataEntry, string filePath, bool overwrite)
+    public bool ExtractFile(MegDataEntryReference entryReference, string filePath, bool overwrite)
     {
-        if (fileDataEntry is null)
-            throw new ArgumentNullException(nameof(fileDataEntry));
+        if (entryReference is null)
+            throw new ArgumentNullException(nameof(entryReference));
         if (filePath is null)
             throw new ArgumentNullException(nameof(filePath));
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
 
-        var megFile = fileDataEntry.Location.MegFile;
-        var dataEntry = fileDataEntry.Location.DataEntry;
+        var megFile = entryReference.Location.MegFile;
+        var dataEntry = entryReference.Location.DataEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);

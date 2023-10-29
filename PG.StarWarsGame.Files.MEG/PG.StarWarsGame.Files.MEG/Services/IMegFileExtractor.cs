@@ -58,15 +58,15 @@ public interface IMegFileExtractor
 
 
     /// <summary>
-    /// Gets the data stream of the given <paramref name="fileDataEntry"/>.
+    /// Gets the data stream of the given <paramref name="entryReference"/>.
     /// </summary>
-    /// <param name="fileDataEntry">The data entry information.</param>
+    /// <param name="entryReference">The data entry information.</param>
     /// <returns>A stream containing the files contents.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fileDataEntry"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="entryReference"/> is <see langword="null"/>.</exception>
     /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="FileNotFoundException">The .MEG file is not found.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    Stream GetFileData(MegFileDataEntry fileDataEntry);
+    Stream GetFileData(MegDataEntryReference entryReference);
 
 
     /// <summary>
@@ -80,14 +80,14 @@ public interface IMegFileExtractor
     /// <br/>
     /// Use <see cref="GetAbsoluteFilePath"/> to create a <see cref="IMegDataEntry"/>-based absolute path.
     /// </remarks>
-    /// <param name="fileDataEntry">The data entry information.</param>
+    /// <param name="entryReference">The data entry information.</param>
     /// <param name="filePath">The destination file path.</param>
     /// <param name="overwrite">When set to <see langword="true"/> existing false will be overwritten; otherwise the extraction will be skipped.</param>
     /// <returns><see langword="true"/> if the file was extracted. <see langword="false"/> if and only if the extraction was skipped.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fileDataEntry"/> or <paramref name="filePath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="entryReference"/> or <paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>
     /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="IOException">When the extraction failed due to an IO error.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    bool ExtractFile(MegFileDataEntry fileDataEntry, string filePath, bool overwrite);
+    bool ExtractFile(MegDataEntryReference entryReference, string filePath, bool overwrite);
 }

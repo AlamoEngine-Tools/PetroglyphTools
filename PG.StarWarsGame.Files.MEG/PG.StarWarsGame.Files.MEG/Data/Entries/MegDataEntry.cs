@@ -47,11 +47,23 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// <inheritdoc />
     public bool Equals(MegDataEntry? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
             return false;
         if (ReferenceEquals(this, other))
             return true;
         return Encrypted == other.Encrypted && base.Equals(other);
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is not MegDataEntry other)
+            return false;
+        return Equals(other);
     }
 
     /// <inheritdoc />

@@ -12,7 +12,7 @@ namespace PG.Commons.Services;
 public class ChecksumService : IChecksumService
 {
     /// <summary>
-    /// Returns a singletone instance of this class for static usage.
+    /// Returns a singleton instance of this class for static usage.
     /// </summary>
     public static readonly IChecksumService Instance = new ChecksumService();
 

@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
+using PG.Commons.Services;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -13,18 +15,33 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEntry
 {
     /// <summary>
-    /// Determines whether the <see cref="IMegArchive"/> contains a specific file entry.
+    /// Determines whether the <see cref="IMegDataEntryHolder{T}"/> contains a specific file entry.
     /// </summary>
     /// <param name="entry">The entry to locate in the <see cref="IMegArchive"/>.</param>
     /// <returns><see langword="true"/> if the <typeparamref name="T"/> is found in the archive; otherwise, <see langword="false"/>.</returns>
     bool Contains(T entry);
 
     /// <summary>
-    /// Determines the index of a specific file entry in the <see cref="IMegArchive"/>.
+    /// Determines the index of a specific file entry in the <see cref="IMegDataEntryHolder{T}"/>.
     /// </summary>
-    /// <param name="entry">The entry to locate in the <see cref="IMegArchive"/>.</param>
+    /// <param name="entry">The entry to locate in the <see cref="IMegDataEntryHolder{T}"/>.</param>
     /// <returns>The index of <paramref name="entry"/> if found in the list; otherwise, -1.</returns>
     int IndexOf(T entry);
+
+    /// <summary>
+    /// Gets a list of data entries with the matching CRC32 checksum. 
+    /// </summary>
+    /// <param name="crc">The CRC to match.</param>
+    /// <returns>List of matching data entries. </returns>
+    // TODO: FrugalList<T> cause i expect results to contain mostly 0 or 1 item.
+    ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc);
+
+    /// <summary>
+    /// Get the last data entry with the matching CRC32 checksum or <see langword="null"/> if the no entry is found.
+    /// </summary>
+    /// <param name="crc">The CRC to match.</param>
+    /// <returns><see langword="null"/> if no entry is found; otherwise the last entry in the <see cref="IMegDataEntryHolder{T}"/>.</returns>
+    T? LastEntryWithCrc(Crc32 crc);
 
     /// <summary>
     /// Tries to find any <typeparamref name="T"/> by matching the provided search pattern.
@@ -41,6 +58,5 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// </remarks>
     /// <param name="searchPattern">The globbing pattern.</param>
     /// <returns></returns>
-    // TODO: FrugalList<T> cause i expect results to contain mostly 0 or 1 item.
-    IReadOnlyList<T> FindAllEntries(string searchPattern);
+    ReadOnlyFrugalList<T> FindAllEntries(string searchPattern);
 }

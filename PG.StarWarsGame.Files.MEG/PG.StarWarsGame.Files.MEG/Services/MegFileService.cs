@@ -31,7 +31,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         BinaryServiceFactory = services.GetRequiredService<IMegBinaryServiceFactory>();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc />   
     public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion)
     {
         // TODO: Update exceptions infos in doc.

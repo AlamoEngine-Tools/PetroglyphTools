@@ -14,7 +14,7 @@ internal readonly struct IndexRange
     public int Start { get; }
 
     /// <summary>
-    /// <see cref="Range"/>
+    /// The length of the index range.
     /// </summary>
     public int Length { get; }
 

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,12 +23,12 @@ public static class TestUtility
         }
     }
 
-    public static string GetRandomStringOfLength(int lenght)
+    public static string GetRandomStringOfLength(int length)
     {
         const string allowedChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
-        var chars = new char[lenght];
+        var chars = new char[length];
 
-        for (var i = 0; i < lenght; i++)
+        for (var i = 0; i < length; i++)
         {
             chars[i] = allowedChars[RandomGenerator.Next(0, allowedChars.Length)];
         }
@@ -71,5 +72,31 @@ public static class TestUtility
     {
         var currentAssembly = type.Assembly;
         return currentAssembly.GetManifestResourceStream($"{currentAssembly.GetName().Name}.Resources.{path}")!;
+    }
+}
+
+public static class ExceptionRecord
+{
+    public static void AssertThrows(Type[] exceptionTypes, Action testCode)
+    {
+        var exception = Record(testCode);
+        if (exception == null)
+            throw new AssertFailedException("Expected an exception but got null.");
+        var exceptionType = exception.GetType();
+        if (!exceptionTypes.Contains(exceptionType))
+            throw new AssertFailedException("Caught wrong exception.");
+    }
+
+    public static Exception? Record(Action testCode)
+    {
+        try
+        {
+            testCode();
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
     }
 }

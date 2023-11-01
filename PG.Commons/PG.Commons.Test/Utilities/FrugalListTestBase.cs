@@ -240,4 +240,13 @@ public abstract class FrugalListTestBase<T> : IListTestSuite<T>
     {
         Assert.ThrowsException<ArgumentNullException>(() => { _ = new FrugalList<T>(null!); });
     }
+
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void ToList(int count)
+    {
+        var enumerable = CreateEnumerable(null, count, 0, 0);
+        var list = new FrugalList<T>(enumerable);
+        CollectionAssert.AreEqual(enumerable.ToList(), list.ToList());
+    }
 }

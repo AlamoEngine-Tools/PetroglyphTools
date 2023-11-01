@@ -25,8 +25,11 @@ namespace PG.Commons.Utilities;
 //
 // 2.2  I rarely ever see the non-generic interfaces.
 //
-// 2.3  Ideally this struct would not have any interfaces and thus could be a ref-struct, since using this list as an interface causes boxing,
+// 2.3  Ideally this struct would not have any interfaces since using this as an interface causes boxing,
 //      which totally makes this whole thing useless.
+// 
+// 3. Ultimately this list *could* become a ref-struct. However this introduces a lot more restrictions which I'm currently not confident worth making.
+
 
 /// <summary>
 /// A memory-optimized strongly typed list which avoids unnecessary memory allocations if none or one item is present.
@@ -261,6 +264,19 @@ public struct FrugalList<T> : IList<T>
         }
     }
 
+    /// <summary>
+    /// Creates a <see cref="List{T}"/> from an this instance.
+    /// </summary>
+    /// <returns>A <see cref="List{T}"/> that contains elements from the this list.</returns>
+    public readonly List<T> ToList()
+    {
+        if (_tailList is null)
+            return new List<T>(0);
+        var list = new List<T>(Count) { _firstItem };
+        list.AddRange(_tailList);
+        return list;
+    }
+
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {
@@ -272,19 +288,23 @@ public struct FrugalList<T> : IList<T>
         return GetEnumerator();
     }
 
-    private struct FrugalEnumerator : IEnumerator<T?>
+    private struct FrugalEnumerator : IEnumerator<T>
     {
         private readonly FrugalList<T> _list;
 
         private int _position;
         private T _current;
 
-        public readonly T Current => _current;
+        object IEnumerator.Current => Current!;
 
-        readonly object? IEnumerator.Current => _current;
+        public T Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _current;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public FrugalEnumerator(ref FrugalList<T> list)
+        internal FrugalEnumerator(ref FrugalList<T> list)
         {
             _list = list;
             _position = 0;
@@ -307,8 +327,9 @@ public struct FrugalList<T> : IList<T>
 
         public void Reset()
         {
-            _position = 0;
             _current = default!;
+            _position = 0;
+
         }
 
         public void Dispose()

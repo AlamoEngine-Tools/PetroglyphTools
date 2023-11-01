@@ -155,4 +155,13 @@ public abstract class ReadOnlyFrugalListTestBase<T> : IReadOnlyListTestSuite<T>
         collection.CopyTo(array, 0);
         Assert.IsTrue(collection.SequenceEqual(array.Take(count)));
     }
+
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void ToList(int count)
+    {
+        var enumerable = CreateEnumerable(null, count, 0, 0);
+        var collection = GenericReadOnlyListFrugalListFactory(enumerable);
+        CollectionAssert.AreEqual(enumerable.ToList(), collection.ToList());
+    }
 }

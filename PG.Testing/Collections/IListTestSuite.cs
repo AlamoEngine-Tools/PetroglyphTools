@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace PG.Testing.Collections;
 
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
-public abstract class IListTesSuite<T> : ICollectionTestSuite<T> 
+public abstract class IListTestSuite<T> : ICollectionTestSuite<T> 
 {
     protected virtual Type IList_Generic_Item_InvalidIndex_ThrowType => typeof(ArgumentOutOfRangeException);
 
@@ -27,7 +28,7 @@ public abstract class IListTesSuite<T> : ICollectionTestSuite<T>
         return new ModifyEnumerableList(createT).GetModifyEnumerables(operations);
     }
 
-    private class ModifyEnumerableList : IListTesSuite<T>
+    private class ModifyEnumerableList : IListTestSuite<T>
     {
         private readonly Func<int, T> _createT;
 
@@ -135,6 +136,7 @@ public abstract class IListTesSuite<T> : ICollectionTestSuite<T>
             Sink(list[i]);
         return;
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         void Sink(T t) { }
     }
 

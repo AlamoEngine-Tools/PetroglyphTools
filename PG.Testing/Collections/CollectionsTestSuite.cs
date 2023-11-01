@@ -52,12 +52,12 @@ public abstract class CollectionsTestSuite
                 yield return new object[] { count, count + 2, 2, 0 };           // Enumerable that is 2 longer with 2 matching element
                 yield return new object[] { count, count - 1, count - 1, 0 };   // Enumerable with all elements matching minus one
                 yield return new object[] { count, count, 2, 0 };               // Enumerable of the same size with 2 matching element
-                yield return new object[] { count, count, 0, 1 };           // Enumerable with 1 element duplicated
+                yield return new object[] { count, count, 0, 1 };               // Enumerable with 1 element duplicated
             }
 
             if (count >= 3)
             {
-                yield return new object[] { count, count, 0, 1 };           // Enumerable with all elements duplicated
+                yield return new object[] { count, count, 0, 1 };               // Enumerable with all elements duplicated
                 yield return new object[] { count, count - 1, 2, 0 };           // Enumerable that is 1 smaller with 2 matching elements
             }
         }

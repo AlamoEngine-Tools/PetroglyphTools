@@ -1,12 +1,10 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PG.Testing.Collections;
 
+// This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
+// The .NET Foundation licenses this under the MIT license.
 public abstract class IReadOnlyCollectionTestSuite<T> : INonModifyingEnumerableTestSuite<T>
 {
     protected abstract IReadOnlyCollection<T> GenericIReadOnlyCollectionFactory(IEnumerable<T> baseCollection);

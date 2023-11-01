@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace PG.Commons.Utilities;
 
@@ -51,6 +50,13 @@ public readonly struct ReadOnlyFrugalList<T> : IReadOnlyList<T>
     internal ReadOnlyFrugalList(in FrugalList<T> items)
     {
         _list = new FrugalList<T>(in items);
+    }
+
+
+    /// <inheritdoc cref="ICollection{T}.CopyTo"/>
+    public void CopyTo(T[] array, int index)
+    {
+        _list.CopyTo(array, index);
     }
 
     /// <inheritdoc />

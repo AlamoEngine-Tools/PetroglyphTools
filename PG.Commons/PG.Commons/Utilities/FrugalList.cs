@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace PG.Commons.Utilities;
 
 // Design Notes for FrugalList<T>:
-// 1. This mutable structure is internal, to limit public support for it. Mutable structs expose dangerous side effects such as:
+// 1. This struct is mutable. Thus is has dangerous side effects such as:
 //      var a := FrugalList<int> { 0, 0 }
 //      var b := a          // Copy by value!
 //      a[0] = 1            // Modification of first item does not get reflected to copies.
@@ -15,28 +15,19 @@ namespace PG.Commons.Utilities;
 //      print(b[1])         // prints 0
 //
 //
-// 2. Also this list does not implement the non-generic IList interface for a single reason: 
-// The IList.CopyTo(Array, int) does not work without re-implementing major parts of the .NET type system.
-// E.g.
-//      int[] is compatible to uint[] is compatible to byte[] (see. ECMA335 I.8.7.1 array-element-compatible-with)
+// 2. Also this list does not implement the non-generic IList interface for the following reasons: 
+// 2.1. The IList.CopyTo(Array, int) adds complexity due to differences between .NET & C# type systems.
+//      E.g.
+//      In CLR: int[] is compatible to uint[] (see. ECMA335 I.8.7.1 array-element-compatible-with)
+//      C#: Forbids this without tricking the compiler by casting to object[].
+// 
+//      ReadOnlyCollection<T> has implemented this as a reference.
 //
-// What .NET provides:
+// 2.2  I rarely ever see the non-generic interfaces.
 //
-//      - Array.Copy() [needed for copying the _tailList]
-//              respects ECMA335 rules.
-//
-//      - Array.SetValue() [need for copying the _firstItem]
-//              does not fully respect ECMA335 ([...] 2. V and W have the same reduced type)
-// Also,
-//      - C# Reflection (T.IsAssignableFrom(Type)) does not provide means to correctly check for array compatibility. 
-//
-// TL:DR
-// Imagine we have a FrugalList<int>:
-//      ((IList)FrugalList<int>).CopyTo(array, 0) where
-//              array is object[]
-//          or 
-//              array is uint[]
-// This does not work out-of the without adding huge complexity. 
+// 2.3  Ideally this struct would not have any interfaces and thus could be a ref-struct, since using this list as an interface causes boxing,
+//      which totally makes this whole thing useless.
+
 /// <summary>
 /// A memory-optimized strongly typed list which avoids unnecessary memory allocations if none or one item is present.
 /// </summary>
@@ -47,7 +38,7 @@ namespace PG.Commons.Utilities;
 /// Usage advise: To avoid side effects either box this structure (e.g, to <see cref="IList{T}"/> (this allocates ) or pass this structure as by-<see langword="ref"/>.
 /// </remarks>
 /// <typeparam name="T">The type of elements in the list.</typeparam>
-internal struct FrugalList<T> : IList<T>
+public struct FrugalList<T> : IList<T>
 {
     private static readonly EqualityComparer<T> ItemComparer = EqualityComparer<T>.Default;
     private static readonly EmptyList EmptyDummyList = EmptyList.Instance;

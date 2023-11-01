@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace PG.Commons.Utilities;
 
@@ -47,9 +48,9 @@ public readonly struct ReadOnlyFrugalList<T> : IReadOnlyList<T>
     /// <remarks>
     /// Modifications to <paramref name="items"/> will not be reflected to this instance.
     /// </remarks>
-    public ReadOnlyFrugalList(in FrugalList<T> items)
+    internal ReadOnlyFrugalList(in FrugalList<T> items)
     {
-        _list = items;
+        _list = new FrugalList<T>(in items);
     }
 
     /// <inheritdoc />

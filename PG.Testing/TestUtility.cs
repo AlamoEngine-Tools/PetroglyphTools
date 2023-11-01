@@ -3,14 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PG.Testing;
 
 public static class TestUtility
 {
-    private static readonly Random RandomGenerator = new Random();
+    private static readonly Random RandomGenerator = new();
         
     public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
     {
@@ -21,12 +21,12 @@ public static class TestUtility
         }
     }
 
-    public static string GetRandomStringOfLength(int lenght)
+    public static string GetRandomStringOfLength(int length)
     {
         const string allowedChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
-        var chars = new char[lenght];
+        var chars = new char[length];
 
-        for (var i = 0; i < lenght; i++)
+        for (var i = 0; i < length; i++)
         {
             chars[i] = allowedChars[RandomGenerator.Next(0, allowedChars.Length)];
         }
@@ -34,35 +34,9 @@ public static class TestUtility
         return new string(chars);
     }
 
-    public static void Assert_CtorException<T>(Action action) where T : Exception
+    public static Stream GetEmbeddedResource(Type type, string path)
     {
-        Assert_CtorException(typeof(T), action);
-    }
-
-    public static void Assert_CtorException(Type type, Action action)
-    {
-        Assert_CtorException(type, () => action);
-    }
-
-    public static void Assert_CtorException<T>(Func<object?> action) where T : Exception
-    {
-        Assert_CtorException(typeof(T), action);
-    }
-
-    public static void Assert_CtorException(Type expectedException, Func<object?> action)
-    {
-        if (expectedException.IsAssignableFrom(typeof(Exception)))
-            throw new ArgumentException("Type argument must be assignable from System.Exception", nameof(expectedException));
-        try
-        {
-            action();
-        }
-        catch (TargetInvocationException e)
-        {
-            if (e.InnerException?.GetType() != expectedException)
-                Assert.Fail();
-            return;
-        }
-        Assert.Fail();
+        var currentAssembly = type.Assembly;
+        return currentAssembly.GetManifestResourceStream($"{currentAssembly.GetName().Name}.Resources.{path}")!;
     }
 }

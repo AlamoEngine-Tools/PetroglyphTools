@@ -59,6 +59,15 @@ public readonly struct ReadOnlyFrugalList<T> : IReadOnlyList<T>
         _list.CopyTo(array, index);
     }
 
+    /// <summary>
+    /// Creates a <see cref="List{T}"/> from an this instance.
+    /// </summary>
+    /// <returns>A <see cref="List{T}"/> that contains elements from the this list.</returns>
+    public List<T> ToList()
+    {
+        return _list.ToList();
+    }
+
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {

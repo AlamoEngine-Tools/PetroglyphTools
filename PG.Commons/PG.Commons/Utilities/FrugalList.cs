@@ -5,7 +5,17 @@ using System.Runtime.CompilerServices;
 
 namespace PG.Commons.Utilities;
 
-// This FrugalList<T> does not implement the non-generic IList interface for a single reason: 
+// Design Notes for FrugalList<T>:
+// 1. This mutable structure is internal, to limit public support for it. Mutable structs expose dangerous side effects such as:
+//      var a := FrugalList<int> { 0, 0 }
+//      var b := a          // Copy by value!
+//      a[0] = 1            // Modification of first item does not get reflected to copies.
+//      a[1] = 1            // Modification to all remaining items gets reflected to copies.
+//      print(b[0])         // prints 0
+//      print(b[1])         // prints 0
+//
+//
+// 2. Also this list does not implement the non-generic IList interface for a single reason: 
 // The IList.CopyTo(Array, int) does not work without re-implementing major parts of the .NET type system.
 // E.g.
 //      int[] is compatible to uint[] is compatible to byte[] (see. ECMA335 I.8.7.1 array-element-compatible-with)
@@ -30,8 +40,14 @@ namespace PG.Commons.Utilities;
 /// <summary>
 /// A memory-optimized strongly typed list which avoids unnecessary memory allocations if none or one item is present.
 /// </summary>
+/// <remarks>
+/// Note that this List is a <see langword="struct"/> and thus is copied by-value and not by-reference.
+/// There are <b>side effects</b> involving modifications to the first item!
+/// <br/>
+/// Usage advise: To avoid side effects either box this structure (e.g, to <see cref="IList{T}"/> (this allocates ) or pass this structure as by-<see langword="ref"/>.
+/// </remarks>
 /// <typeparam name="T">The type of elements in the list.</typeparam>
-public struct FrugalList<T> : IList<T>
+internal struct FrugalList<T> : IList<T>
 {
     private static readonly EqualityComparer<T> ItemComparer = EqualityComparer<T>.Default;
     private static readonly EmptyList EmptyDummyList = EmptyList.Instance;
@@ -66,10 +82,9 @@ public struct FrugalList<T> : IList<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FrugalList{T}"/> structure that contains elements
-    /// copied from the specified collection and has sufficient capacity to accommodate the number of elements copied.
+    /// Initializes a new instance of the <see cref="FrugalList{T}"/> structure that contains elements copied from the specified list.
     /// </summary>
-    /// <param name="collection">The collection whose elements are copied to the new list.</param>
+    /// <param name="collection">The list whose elements are copied to the new list.</param>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <see langword="null"/>.</exception>
     public FrugalList(IEnumerable<T> collection)
     {
@@ -80,10 +95,28 @@ public struct FrugalList<T> : IList<T>
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="FrugalList{T}"/> structure that copies all elements from the given list.
+    /// </summary>
+    /// <param name="list">The list whose elements are copied to the new list.</param>
+    /// <remarks>
+    /// Modifications to <paramref name="list"/> will not be reflected to this instance.
+    /// </remarks>
+    public FrugalList(in FrugalList<T> list)
+    {
+        _firstItem = list._firstItem;
+        if (list._tailList is null)
+            return;
+        _tailList = list._tailList is EmptyList ? EmptyDummyList : new List<T>(list._tailList);
+    }
+
+    /// <summary>
     /// Produces a read-only representation of the current state from this list.
     /// </summary>
+    /// <remarks>
+    /// Modifications to this instance will not be reflected to the newly create readonly list.
+    /// </remarks>
     /// <returns>The read-only list.</returns>
-    public readonly ReadOnlyFrugalList<T> ToReadOnly()
+    public readonly ReadOnlyFrugalList<T> AsReadOnly()
     {
         return new ReadOnlyFrugalList<T>(in this);
     }
@@ -108,15 +141,9 @@ public struct FrugalList<T> : IList<T>
     public void Clear()
     {
         _firstItem = default!;
-        if (_tailList is EmptyList)
-            _tailList = null;
-        else
-        {
-            if (_tailList is null)
-                return;
-            _tailList.Clear();
-            _tailList = null;
-        }
+        if (_tailList is not EmptyList) 
+            _tailList?.Clear();
+        _tailList = null;
     }
 
     /// <inheritdoc />
@@ -133,9 +160,19 @@ public struct FrugalList<T> : IList<T>
     {
         if (array == null)
             throw new ArgumentNullException(nameof(array));
+
+        // Formally (arrayIndex < array.GetLowerBound(0)) but since only SZArrays are allowed this is also OK.
+        if (arrayIndex < 0)
+            throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
         var count = Count;
-        if (count > 0)
+
+        if (count > array.Length - arrayIndex)
+            throw new ArgumentException(nameof(arrayIndex));
+
+        if (count > 0) 
             array[arrayIndex++] = _firstItem;
+
         if (count <= 1)
             return;
         _tailList!.CopyTo(array, arrayIndex);
@@ -234,9 +271,9 @@ public struct FrugalList<T> : IList<T>
     }
 
     /// <inheritdoc />
-    public readonly IEnumerator<T> GetEnumerator()
+    public IEnumerator<T> GetEnumerator()
     {
-        return new FrugalEnumerator(in this);
+        return new FrugalEnumerator(ref this);
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -247,20 +284,18 @@ public struct FrugalList<T> : IList<T>
     private struct FrugalEnumerator : IEnumerator<T?>
     {
         private readonly FrugalList<T> _list;
-        private readonly int _count;
 
         private int _position;
         private T _current;
 
-        public T Current => _current;
+        public readonly T Current => _current;
 
-        object? IEnumerator.Current => _current;
+        readonly object? IEnumerator.Current => _current;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public FrugalEnumerator(in FrugalList<T> list)
+        public FrugalEnumerator(ref FrugalList<T> list)
         {
             _list = list;
-            _count = list.Count;
             _position = 0;
             _current = default!;
         }
@@ -268,13 +303,13 @@ public struct FrugalList<T> : IList<T>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
-            if (_position < _count)
+            if (_position < _list.Count)
             {
                 _current = _list[_position];
                 ++_position;
                 return true;
             }
-            _position = _count + 1;
+            _position = _list.Count + 1;
             _current = default!;
             return false;
         }
@@ -297,7 +332,7 @@ public struct FrugalList<T> : IList<T>
     {
         public static readonly EmptyList Instance = new();
 
-        private EmptyList() : base(1)
+        private EmptyList() : base(0)
         {
         }
     }

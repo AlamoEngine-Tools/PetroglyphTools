@@ -1,258 +1,264 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PG.Testing;
-using System.Collections;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using PG.Commons.Utilities;
+using PG.Testing.Collections;
 
 namespace PG.Commons.Test.Utilities;
 
 [TestClass]
-public class FrugalList_Class_Test : FrugalListTest<object, FrugalList<object>>
+public class FrugalList_Test_String : FrugalListTest<string>
 {
-    protected override bool ExpectedIsReadOnly => false;
-
-    protected override FrugalList<object> CreateList(IEnumerable<object> items)
+    protected override string CreateT(int seed)
     {
-        return new FrugalList<object>(items);
-    }
-
-    protected override object CreateItem()
-    {
-        return TestUtility.GetRandomStringOfLength(2);
+        var stringLength = seed % 10 + 5;
+        var rand = new Random(seed);
+        var bytes = new byte[stringLength];
+        rand.NextBytes(bytes);
+        return Convert.ToBase64String(bytes);
     }
 }
 
 [TestClass]
-public class FrugalList_Struct_Test : FrugalListTest<int, FrugalList<int>>
+public class FrugalList_Test_Int : FrugalListTest<int>
 {
-    private readonly Random _random = new();
-
-    protected override bool ExpectedIsReadOnly => false;
-
-    protected override FrugalList<int> CreateList(IEnumerable<int> items)
+    protected override int CreateT(int seed)
     {
-        return new FrugalList<int>(items);
-    }
-
-    protected override int CreateItem()
-    {
-        return _random.Next();
+        var rand = new Random(seed);
+        return rand.Next();
     }
 }
 
-public abstract class FrugalListTest<T, TList> where TList : IList<T>
+public abstract class FrugalListTest<T> : IListTesSuite<T>
 {
-    protected abstract bool ExpectedIsReadOnly { get; }
-
-    [TestMethod]
-    public void IsReadOnly()
+    protected override bool Enumerator_ModifiedDuringEnumeration_ThrowsInvalidOperationException => false;
+    
+    protected override IList<T> GenericIListFactory()
     {
-        Assert.AreEqual(ExpectedIsReadOnly, GetList(null).IsReadOnly);
+        return GenericListFactory();
+    }
+
+    protected override IList<T> GenericIListFactory(int count)
+    {
+        return GenericListFactory(count);
+    }
+
+    private static FrugalList<T> GenericListFactory()
+    {
+        return new FrugalList<T>();
+    }
+
+    private FrugalList<T> GenericListFactory(int count)
+    {
+        var toCreateFrom = CreateEnumerable(null, count, 0, 0);
+        return new FrugalList<T>(toCreateFrom);
     }
 
     [TestMethod]
-    [DataRow(int.MinValue)]
-    [DataRow(-1)]
-    [DataRow(0)]
-    public void GetItemArgumentOutOfRange(int index)
+    public void Struct_Default()
     {
-        var list = GetList(null);
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => list[index]);
-        CollectionAssert.AreEqual(Array.Empty<object>(), list.ToList());
+        var list = default(FrugalList<T>);
+        Assert.AreEqual(0, list.Count);
+        Assert.IsFalse(list.IsReadOnly);
     }
 
     [TestMethod]
-    public void GetItemArgumentOutOfRangeFilledCollection()
+    public void Constructor_Default()
     {
-        var items = GenerateItems(32);
-        var list = GetList(items);
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => list[list.Count]);
-        CollectionAssert.AreEqual(items, list.ToList());
+        var list = new FrugalList<T>();
+        Assert.AreEqual(0, list.Count);
+        Assert.IsFalse(list.IsReadOnly);
     }
 
     [TestMethod]
-    public void GetItemEmpty()
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void Constructor_OtherFrugalList_Creates_Copy(int count)
     {
-        var items = Array.Empty<T>();
-        var list = GetList(items);
-        if (ExpectedIsReadOnly)
+        foreach (var modifyEnumerable in GetModifyEnumerables(ModifyEnumeratorThrows))
         {
-            CollectionAssert.AreEqual(items, list.ToList());
-        }
-        else
-        {
-            list.Clear();
-            items = GenerateItems(1);
+            var source = GenericListFactory(count);
+            var other = new FrugalList<T>(in source);
 
-            AddRange(ref list, items);
-            CollectionAssert.AreEqual(items, list.ToList());
+            IList<T> asEnumerable = source;
 
-            list.Clear();
-            items = GenerateItems(1024);
-            AddRange(ref list, items);
-            CollectionAssert.AreEqual(items, list.ToList());
-        }
-    }
-
-    [TestMethod]
-    public void SetItemNotSupported()
-    {
-        if (ExpectedIsReadOnly)
-        {
-            var items = GenerateItems(10);
-            var list = GetList(items);
-            Assert.ThrowsException<NotSupportedException>(() => list[0] = CreateItem());
-            CollectionAssert.AreEqual(items, list.ToList());
-
-            Assert.ThrowsException<NotSupportedException>(() => list[list.Count - 1] = CreateItem());
-            CollectionAssert.AreEqual(items, list.ToList());
+            if (modifyEnumerable(asEnumerable)) 
+                CollectionAssert.AreNotEqual(asEnumerable.ToList(), other.ToList());
         }
     }
 
     [TestMethod]
-    public void SetItemArgumentException()
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void BoxingHasNoSideEffects(int count)
     {
-        Type[] expectedExceptions;
-        if (ExpectedIsReadOnly)
+        foreach (var modifyEnumerable in GetModifyEnumerables(ModifyEnumeratorThrows))
         {
-            expectedExceptions = new[]
+            var source = GenericIEnumerableFactory(count);
+            var copy = source;
+
+            if (modifyEnumerable(source))
             {
-                typeof (ArgumentOutOfRangeException),
-                typeof (NotSupportedException)
-            };
-        }
-        else
-        {
-            expectedExceptions = new[]
-            { 
-                typeof (ArgumentOutOfRangeException)
-            };
-        }
-        {
-            var items = GenerateItems(10);
-            var list = GetList(items);
-            ExceptionRecord.AssertThrows(expectedExceptions, () => list[int.MinValue] = CreateItem());
-            CollectionAssert.AreEqual(items, list.ToList());
-
-            ExceptionRecord.AssertThrows(expectedExceptions, () => list[-1] = CreateItem());
-            CollectionAssert.AreEqual(items, list.ToList());
-        }
-
-        {
-            var items = GenerateItems(0);
-            var list = GetList(items);
-            ExceptionRecord.AssertThrows(expectedExceptions, () => list[0] = CreateItem());
-            CollectionAssert.AreEqual(items, list.ToList());
-
-            if (!ExpectedIsReadOnly)
-            {
-                items = GenerateItems(32);
-                AddRange(ref list, items);
-                ExceptionRecord.AssertThrows(expectedExceptions, () => list[list.Count] = CreateItem());
-                CollectionAssert.AreEqual(items, list.ToList());
+                CollectionAssert.AreEqual(source.ToList(), copy.ToList());
             }
         }
     }
 
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void ByRefHasNoSideEffects(int count)
+    {
+        foreach (var modifyEnumerable in GetModifyEnumerables(ModifyEnumeratorThrows))
+        {
+            var source = GenericListFactory(count);
+
+            ref var copy = ref source;
+
+            if (modifyEnumerable(copy))
+            {
+                CollectionAssert.AreEqual(source.ToList(), copy.ToList());
+            }
+        }
+    }
 
     [TestMethod]
-    public void SetItemInvalidValue()
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void ByRefHasNoSideEffects2(int count)
     {
-        var items = GenerateItems(32);
-        var list = GetList(items);
-        if (IsGenericCompatibility)
+        foreach (var modifyEnumerable in GetModifyEnumerables(ModifyEnumeratorThrows))
         {
-            foreach (object invalid in GetInvalidValues())
-            {
-                Type[] expectedExceptions;
-                if (invalid == null)
-                {
-                    if (ExpectedIsReadOnly)
-                    {
-                        expectedExceptions = new[]
-                        {
-                            typeof (ArgumentNullException),
-                            typeof (NotSupportedException)
-                        };
-                    }
-                    else
-                    {
-                        expectedExceptions = new[]
-                        {
-                            typeof (ArgumentNullException)
-                        };
-                    }
-                }
-                else if (ExpectedIsReadOnly)
-                {
-                    expectedExceptions = new[]
-                    {
-                        typeof (ArgumentException),
-                        typeof (NotSupportedException)
-                    };
-                }
-                else
-                {
-                    expectedExceptions = new[]
-                    {
-                        typeof (ArgumentException)
-                    };
-                }
+            var source = GenericListFactory(count);
 
-                object invalid1 = invalid;
-                ExceptionRecord.AssertThrows(expectedExceptions, () => list[0] = invalid1);
-                CollectionAssert.AreEqual(items, list.ToList());
+            ref var byRefSource = ref source;
+
+            var copy = byRefSource;
+
+            if (modifyEnumerable(byRefSource))
+            {
+                CollectionAssert.AreEqual(byRefSource.ToList(), copy.ToList());
+                CollectionAssert.AreEqual(byRefSource.ToList(), source.ToList());
             }
         }
     }
 
 
 
-    protected abstract TList CreateList(IEnumerable<T> items);
-
-    protected abstract T CreateItem();
-
-    protected TList GetList(IEnumerable<T>? items)
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void CopyByValue_SideEffects_Clear(int count)
     {
-        return CreateList(items ?? Enumerable.Empty<T>());
+        var source = GenericListFactory(count);
+        var copy = source;
+
+        source.Clear();
+        if (count >= 1)
+            CollectionAssert.AreNotEqual(source.ToList(), copy.ToList());
+        else
+            CollectionAssert.AreEqual(source.ToList(), copy.ToList());
     }
 
-    protected T[] GenerateItems(int size)
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void CopyByValue_SideEffects_AddingItems(int count)
     {
-        var ret = new T[size];
-        for (var i = 0; i < size; i++) 
-            ret[i] = CreateItem();
-        return ret;
+        var source = GenericListFactory(count);
+        var copy = source;
+
+        source.Add(CreateT(0));
+        if (count <= 1) 
+            CollectionAssert.AreNotEqual(source.ToList(), copy.ToList());
+        else 
+            CollectionAssert.AreEqual(source.ToList(), copy.ToList());
     }
 
-
-
-    protected static void AddRange(ref TList list, IEnumerable<T> items)
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void CopyByValue_SideEffects_InsertFirst(int count)
     {
-        foreach (var item in items)
-            list.Add(item);
+        var source = GenericListFactory(count);
+        var copy = source;
+
+        source.Insert(0, CreateT(0));
+        CollectionAssert.AreNotEqual(source.ToList(), copy.ToList());
     }
 
-    protected static void InsertRange(ref TList list, T[] items)
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void CopyByValue_SideEffects_RemoveFirst(int count)
     {
-        InsertRange(ref list, 0, items, 0, items.Length);
+        var source = GenericListFactory(count);
+        var copy = source;
+        if (count > 0)
+        {
+            source.RemoveAt(0);
+            CollectionAssert.AreNotEqual(source.ToList(), copy.ToList());
+        }
     }
 
-    protected static void InsertRange(ref TList list, int listStartIndex, T[] items, int startIndex, int count)
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void CopyByValue_SideEffects_RemoveLast(int count)
     {
-        var numToInsert = items.Length - startIndex;
-        if (count < numToInsert) numToInsert = count;
-        for (var i = 0; i < numToInsert; i++) list.Insert(listStartIndex + i, items[startIndex + i]);
+        var source = GenericListFactory(count);
+        var copy = source;
+        if (count > 0)
+        {
+            source.RemoveAt(count - 1);
+            if (count == 1)
+                CollectionAssert.AreNotEqual(source.ToList(), copy.ToList());
+            else
+                CollectionAssert.AreEqual(source.ToList(), copy.ToList());
+        }
     }
 
-    protected static void AddRange(ref TList list, T[] items, int startIndex, int count)
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void CopyByValue_SideEffects_OverrideFirst(int count)
     {
-        var numToAdd = items.Length - startIndex;
-        if (count < numToAdd)
-            numToAdd = count;
-        for (var i = 0; i < numToAdd; i++)
-            list.Add(items[startIndex + i]);
+        var source = GenericListFactory(count);
+        var copy = source;
+        if (count > 0)
+        {
+            source[0] = CreateT(0);
+            CollectionAssert.AreNotEqual(source.ToList(), copy.ToList());
+        }
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(ValidCollectionSizes), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void CopyByValue_SideEffects_OverrideLast(int count)
+    {
+        var source = GenericListFactory(count);
+        var copy = source;
+        if (count > 0)
+        {
+            source[count - 1] = CreateT(0);
+            if (count == 1)
+                CollectionAssert.AreNotEqual(source.ToList(), copy.ToList());
+            else
+                CollectionAssert.AreEqual(source.ToList(), copy.ToList());
+        }
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(GetEnumerableTestData), typeof(CollectionsTestSuite), DynamicDataSourceType.Method)]
+    public void Constructor_IEnumerable(int _, int enumerableLength, int __, int numberOfDuplicateElements)
+    {
+        var enumerable = CreateEnumerable(null, enumerableLength, 0, numberOfDuplicateElements);
+        var list = new FrugalList<T>(enumerable);
+        var expected = enumerable.ToList();
+
+        Assert.AreEqual(enumerableLength, list.Count); //"Number of items in list do not match the number of items given."
+
+        for (var i = 0; i < enumerableLength; i++)
+            Assert.AreEqual(expected[i], list[i]); //"Expected object in item array to be the same as in the list"
+
+        Assert.IsFalse(list.IsReadOnly); //"List should not be readonly"
+    }
+
+    [TestMethod]
+    public void Constructor_NullIEnumerable_ThrowsArgumentNullException()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() => { _ = new FrugalList<T>(null!); });
     }
 }

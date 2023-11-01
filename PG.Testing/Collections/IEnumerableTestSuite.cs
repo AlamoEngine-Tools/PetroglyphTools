@@ -281,7 +281,10 @@ public abstract class IEnumerableTestSuite<T> : INonModifyingEnumerableTestSuite
         {
             var enumerable = GenericIEnumerableFactory(count);
             using var enumerator = enumerable.GetEnumerator();
-            while (enumerator.MoveNext()) ;
+            while (enumerator.MoveNext())
+            {
+            }
+
             if (modifyEnumerable(enumerable))
             {
                 if (count == 0 ? Enumerator_Empty_ModifiedDuringEnumeration_ThrowsInvalidOperationException : Enumerator_ModifiedDuringEnumeration_ThrowsInvalidOperationException)
@@ -305,11 +308,11 @@ public abstract class IEnumerableTestSuite<T> : INonModifyingEnumerableTestSuite
             var enumerable = GenericIEnumerableFactory(count);
             using var enumerator = enumerable.GetEnumerator();
             while (enumerator.MoveNext())
-                ;
-            if (modifyEnumerable(enumerable))
             {
-                enumerator.Reset();
             }
+
+            if (modifyEnumerable(enumerable)) 
+                enumerator.Reset();
         }
     }
 

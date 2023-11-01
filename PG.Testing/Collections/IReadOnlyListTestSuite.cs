@@ -1,13 +1,13 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PG.Testing.Collections;
 
+// This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
+// The .NET Foundation licenses this under the MIT license.
 public abstract class IReadOnlyListTestSuite<T> : IReadOnlyCollectionTestSuite<T>
 {
     protected virtual Type IList_Generic_Item_InvalidIndex_ThrowType => typeof(ArgumentOutOfRangeException);
@@ -74,7 +74,8 @@ public abstract class IReadOnlyListTestSuite<T> : IReadOnlyCollectionTestSuite<T
             Sink(list[i]);
         return;
 
-        void Sink(T t) { }
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        void Sink(T _) { }
     }
 
     #endregion

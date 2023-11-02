@@ -101,7 +101,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
                 foundMatches.Add(Entries[i]);
         }
 
-        return foundMatches.ToReadOnly();
+        return foundMatches.AsReadOnly();
     }
 
     /// <inheritdoc />

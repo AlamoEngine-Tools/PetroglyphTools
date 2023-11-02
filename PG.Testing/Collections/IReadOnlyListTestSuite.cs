@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,12 +9,26 @@ namespace PG.Testing.Collections;
 
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
+/// <summary>
+/// Contains tests that ensure the correctness of any class that implements the generic
+/// <see cref="IReadOnlyList{T}"/> interface
+/// </summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public abstract class IReadOnlyListTestSuite<T> : IReadOnlyCollectionTestSuite<T>
 {
     protected virtual Type IList_Generic_Item_InvalidIndex_ThrowType => typeof(ArgumentOutOfRangeException);
 
+    /// <summary>
+    /// Creates an instance of an <see cref="IReadOnlyList{T}"/> that can be used for testing.
+    /// </summary>
+    /// <returns>An instance of an <see cref="IReadOnlyList{T}"/> that can be used for testing.</returns>
     protected abstract IReadOnlyList<T> GenericIReadOnlyListFactory(IEnumerable<T> baseCollection);
 
+    /// <summary>
+    /// Creates an instance of an <see cref="IReadOnlyList{T}"/> that can be used for testing.
+    /// </summary>
+    /// <param name="count">The number of unique items that the returned <see cref="IReadOnlyList{T}"/> contains.</param>
+    /// <returns>An instance of an <see cref="IReadOnlyList{T}"/> that can be used for testing.</returns>
     protected virtual IReadOnlyList<T> GenericIReadOnlyListFactory(int count)
     {
         var baseCollection = CreateEnumerable(null, count, 0, 0);

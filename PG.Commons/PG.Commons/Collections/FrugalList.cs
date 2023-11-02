@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace PG.Commons.Utilities;
+namespace PG.Commons.Collections;
 
 // Design Notes for FrugalList<T>:
 // 1. This struct is mutable. Thus is has dangerous side effects such as:
@@ -12,33 +12,46 @@ namespace PG.Commons.Utilities;
 //      a[0] = 1            // Modification of first item does not get reflected to copies.
 //      a[1] = 1            // Modification to all remaining items gets reflected to copies.
 //      print(b[0])         // prints 0
-//      print(b[1])         // prints 0
+//      print(b[1])         // prints 1
 //
 //
 // 2. Also this list does not implement the non-generic IList interface for the following reasons: 
 // 2.1. The IList.CopyTo(Array, int) adds complexity due to differences between .NET & C# type systems.
 //      E.g.
-//      In CLR: int[] is compatible to uint[] (see. ECMA335 I.8.7.1 array-element-compatible-with)
+//      In CLR: int[] is compatible to uint[] as vice-versa (see. ECMA335 I.8.7.1 array-element-compatible-with)
 //      C#: Forbids this without tricking the compiler by casting to object[].
 // 
-//      ReadOnlyCollection<T> has implemented this as a reference.
+//      (ReadOnlyCollection<T> has implemented this as a reference.)
 //
-// 2.2  I rarely ever see the non-generic interfaces.
+// 2.2  I rarely ever see the non-generic interfaces used.
 //
 // 2.3  Ideally this struct would not have any interfaces since using this as an interface causes boxing,
-//      which totally makes this whole thing useless.
+//      which totally makes the idea of this FrugalList obsolete.
 // 
-// 3. Ultimately this list *could* become a ref-struct. However this introduces a lot more restrictions which I'm currently not confident worth making.
+// 3. Ultimately this list *could* become a ref-struct. However this introduces a lot more restrictions which I'm currently not confident they are worth taking.
 
 
 /// <summary>
 /// A memory-optimized strongly typed list which avoids unnecessary memory allocations if none or one item is present.
 /// </summary>
 /// <remarks>
-/// Note that this List is a <see langword="struct"/> and thus is copied by-value and not by-reference.
-/// There are <b>side effects</b> involving modifications to the first item!
+/// <b>Note</b> that this List is a <see langword="struct"/> and thus is copied by-value and not by-reference.
+/// Modifications to an instance only gets reflected partially to all other copies.
+/// Precisely modifications involving the first item may not be reflected.
+/// Reason is that the first item is stored directly in an instance field while the remaining items are stored in a backing list.
 /// <br/>
-/// Usage advise: To avoid side effects either box this structure (e.g, to <see cref="IList{T}"/> (this allocates ) or pass this structure as by-<see langword="ref"/>.
+/// <br/>
+/// <para>
+/// <b>Usage advise:</b>
+/// <para>
+/// a) To ensure that all changes get reflected to other variables (including the first item)
+/// either box this structure (e.g, to <see cref="IList{T}"/> (this allocates memory though) or pass this structure as by-<see langword="ref"/>.
+/// </para>
+/// <para>
+/// b) If a copy shall not reflect any changes from its source use <see cref="FrugalList{T}(in FrugalList{T})"/>
+/// which creates a full shallow-copy of all items in this list.
+/// </para>
+/// </para>
 /// </remarks>
 /// <typeparam name="T">The type of elements in the list.</typeparam>
 public struct FrugalList<T> : IList<T>
@@ -76,15 +89,25 @@ public struct FrugalList<T> : IList<T>
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="FrugalList{T}"/> structure to one item.
+    /// </summary>
+    /// <param name="item">The first item for the new list.</param>
+    public FrugalList(T item)
+    {
+        _firstItem = item;
+        _tailList = EmptyDummyList;
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="FrugalList{T}"/> structure that contains elements copied from the specified list.
     /// </summary>
     /// <param name="collection">The list whose elements are copied to the new list.</param>
     /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <see langword="null"/>.</exception>
     public FrugalList(IEnumerable<T> collection)
     {
-        if (collection == null) 
+        if (collection == null)
             throw new ArgumentNullException(nameof(collection));
-        foreach (var item in collection) 
+        foreach (var item in collection)
             Add(item);
     }
 
@@ -135,7 +158,7 @@ public struct FrugalList<T> : IList<T>
     public void Clear()
     {
         _firstItem = default!;
-        if (_tailList is not EmptyList) 
+        if (_tailList is not EmptyList)
             _tailList?.Clear();
         _tailList = null;
     }
@@ -164,7 +187,7 @@ public struct FrugalList<T> : IList<T>
         if (count > array.Length - arrayIndex)
             throw new ArgumentException(nameof(arrayIndex));
 
-        if (count > 0) 
+        if (count > 0)
             array[arrayIndex++] = _firstItem;
 
         if (count <= 1)
@@ -191,12 +214,12 @@ public struct FrugalList<T> : IList<T>
             case > 0 when ItemComparer.Equals(_firstItem, item):
                 return 0;
             case > 1:
-            {
-                var indexInList = _tailList!.IndexOf(item);
-                if (indexInList >= 0)
-                    return 1 + indexInList;
-                break;
-            }
+                {
+                    var indexInList = _tailList!.IndexOf(item);
+                    if (indexInList >= 0)
+                        return 1 + indexInList;
+                    break;
+                }
         }
         return -1;
     }
@@ -264,6 +287,10 @@ public struct FrugalList<T> : IList<T>
         }
     }
 
+    #region Linq Re-Implemenations
+
+    // Natively implementing frequent Linq functions avoids boxing. Add more if necessary.
+
     /// <summary>
     /// Creates a <see cref="List{T}"/> from an this instance.
     /// </summary>
@@ -277,27 +304,110 @@ public struct FrugalList<T> : IList<T>
         return list;
     }
 
-    /// <inheritdoc />
-    public IEnumerator<T> GetEnumerator()
+    /// <summary>
+    /// Copies the elements of the <see cref="FrugalList{T}"/> to a new array.
+    /// </summary>
+    /// <returns>An array containing copies of the elements of the <see cref="FrugalList{T}"/>.</returns>
+    public readonly T[] ToArray()
     {
-        return new FrugalEnumerator(ref this);
+        var count = Count;
+        if (count == 0)
+            return Array.Empty<T>();
+        var array = new T[count];
+        CopyTo(array, 0);
+        return array;
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
+    /// <summary>
+    /// Returns the first element of of the <see cref="FrugalList{T}"/>.
+    /// </summary>
+    /// <returns>The first element of the specified <see cref="FrugalList{T}"/></returns>
+    /// <exception cref="InvalidOperationException">The <see cref="FrugalList{T}"/> is empty.</exception>
+    public readonly T First()
     {
-        return GetEnumerator();
+        if (Count == 0)
+            throw new InvalidOperationException("The list contains no elements");
+        return _firstItem;
     }
 
-    private struct FrugalEnumerator : IEnumerator<T>
+    /// <summary>
+    /// Returns the last element of the <see cref="FrugalList{T}"/>.
+    /// </summary>
+    /// <returns>The last element of the specified <see cref="FrugalList{T}"/></returns>
+    /// <exception cref="InvalidOperationException">The <see cref="FrugalList{T}"/> is empty.</exception>
+    public readonly T Last()
+    {
+        var count = Count;
+        if (count == 0)
+            throw new InvalidOperationException("The list contains no elements");
+        return count switch
+        {
+            1 => _firstItem,
+            _ => _tailList![_tailList.Count - 1]
+        };
+    }
+
+    /// <summary>
+    /// Returns the first element of the <see cref="FrugalList{T}"/>, or a default value if no element is found.
+    /// </summary>
+    /// <returns><see langword="default(T)"/> if source is empty; otherwise, the first element in source.</returns>
+    public readonly T? FirstOrDefault()
+    {
+        return _firstItem;
+    }
+
+    /// <summary>
+    /// Returns the last element of the <see cref="FrugalList{T}"/>, or a default value if no element is found.
+    /// </summary>
+    /// <returns><see langword="default(T)"/> if source is empty; otherwise, the last element in source.</returns>
+    public readonly T? LastOrDefault()
+    {
+        return Count switch
+        {
+            0 => default,
+            1 => _firstItem,
+            _ => _tailList![_tailList.Count - 1]
+        };
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Returns an enumerator that iterates through the <see cref="FrugalList{T}"/>
+    /// </summary>
+    /// <returns>A <see cref="FrugalEnumerator"/> for the <see cref="FrugalList{T}"/>.</returns>
+    public FrugalEnumerator GetEnumerator() => new(ref this);
+
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => new FrugalEnumerator(ref this);
+
+    IEnumerator IEnumerable.GetEnumerator() => new FrugalEnumerator(ref this);
+
+    /// <summary>
+    /// Private type exists so that we can perform type checking on that type rather than reference checking.
+    /// </summary>
+    private sealed class EmptyList : List<T>
+    {
+        public static readonly EmptyList Instance = new();
+
+        private EmptyList() : base(0)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Enumerates the elements of a <see cref="FrugalList{T}"/>.
+    /// </summary>
+    public struct FrugalEnumerator : IEnumerator<T>
     {
         private readonly FrugalList<T> _list;
 
         private int _position;
         private T _current;
 
-        object IEnumerator.Current => Current!;
+        readonly object IEnumerator.Current => Current!;
 
-        public T Current
+        /// <inheritdoc />
+        public readonly T Current
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _current;
@@ -311,6 +421,7 @@ public struct FrugalList<T> : IList<T>
             _current = default!;
         }
 
+        /// <inheritdoc />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
@@ -325,6 +436,7 @@ public struct FrugalList<T> : IList<T>
             return false;
         }
 
+        /// <inheritdoc />
         public void Reset()
         {
             _current = default!;
@@ -332,19 +444,8 @@ public struct FrugalList<T> : IList<T>
 
         }
 
-        public void Dispose()
-        {
-        }
-    }
-
-    /// <summary>
-    /// Private type exists so that we can perform type checking on that type rather than reference checking.
-    /// </summary>
-    private sealed class EmptyList : List<T>
-    {
-        public static readonly EmptyList Instance = new();
-
-        private EmptyList() : base(0)
+        /// <inheritdoc />
+        public readonly void Dispose()
         {
         }
     }

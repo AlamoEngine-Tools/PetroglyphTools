@@ -9,25 +9,17 @@ namespace PG.Testing.Collections;
 
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
+/// <summary>
+/// Contains tests that ensure the correctness of any class that implements the generic
+/// <see cref="IList{T}"/> interface
+/// </summary>
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public abstract class IListTestSuite<T> : ICollectionTestSuite<T> 
 {
-    protected virtual Type IList_Generic_Item_InvalidIndex_ThrowType => typeof(ArgumentOutOfRangeException);
-
-    protected abstract IList<T> GenericIListFactory();
-
-    protected virtual IList<T> GenericIListFactory(int count)
-    {
-        var collection = GenericIListFactory();
-        AddToCollection(collection, count);
-        return collection;
-    }
-
-    public static IEnumerable<ModifyEnumerable> GetModifyEnumerables(ModifyOperation operations, Func<int, T> createT)
-    {
-        return new ModifyEnumerableList(createT).GetModifyEnumerables(operations);
-    }
-
+    /// <summary>
+    /// Helper class to provide means to modify an enumerable, which is not the to be tested type.
+    /// </summary>
     private class ModifyEnumerableList : IListTestSuite<T>
     {
         private readonly Func<int, T> _createT;
@@ -48,7 +40,37 @@ public abstract class IListTestSuite<T> : ICollectionTestSuite<T>
         }
     }
 
+    protected virtual Type IList_Generic_Item_InvalidIndex_ThrowType => typeof(ArgumentOutOfRangeException);
 
+    /// <summary>
+    /// Returns a set of ModifyEnumerable delegates that modify the enumerable passed to them.
+    /// </summary>
+    public static IEnumerable<ModifyEnumerable> GetModifyEnumerables(ModifyOperation operations, Func<int, T> createT)
+    {
+        return new ModifyEnumerableList(createT).GetModifyEnumerables(operations);
+    }
+
+    /// <summary>
+    /// Creates an instance of an <see cref="IList{T}"/> that can be used for testing.
+    /// </summary>
+    /// <returns>An instance of an <see cref="IList{T}"/> that can be used for testing.</returns>
+    protected abstract IList<T> GenericIListFactory();
+
+    /// <summary>
+    /// Creates an instance of an <see cref="IList{T}"/> that can be used for testing.
+    /// </summary>
+    /// <param name="count">The number of unique items that the returned <see cref="IList{T}"/> contains.</param>
+    /// <returns>An instance of an <see cref="IList{T}"/> that can be used for testing.</returns>
+    protected virtual IList<T> GenericIListFactory(int count)
+    {
+        var collection = GenericIListFactory();
+        AddToCollection(collection, count);
+        return collection;
+    }
+
+    /// <summary>
+    /// Returns a set of ModifyEnumerable delegates that modify the enumerable passed to them.
+    /// </summary>
     protected override IEnumerable<ModifyEnumerable> GetModifyEnumerables(ModifyOperation operations)
     {
         foreach (var item in base.GetModifyEnumerables(operations))
@@ -104,7 +126,6 @@ public abstract class IListTestSuite<T> : ICollectionTestSuite<T>
     {
         return GenericIListFactory(count);
     }
-
 
     #region Item Getter
 

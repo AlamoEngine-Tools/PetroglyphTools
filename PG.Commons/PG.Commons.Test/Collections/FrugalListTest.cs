@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PG.Commons.Test.Utilities;
+namespace PG.Commons.Test.Collections;
 
 [TestClass]
 public class FrugalList_Test_String : FrugalListTestBase<string>

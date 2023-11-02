@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -10,6 +10,11 @@ namespace PG.Testing.Collections;
 
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
+/// <summary>
+/// Contains tests that ensure the correctness of any class that implements the generic
+/// <see cref="ICollection{T}"/> interface
+/// </summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public abstract class ICollectionTestSuite<T> : IEnumerableTestSuite<T>
 {
     protected virtual Type ICollection_Generic_CopyTo_IndexLargerThanArrayCount_ThrowType => typeof(ArgumentException);
@@ -28,23 +33,15 @@ public abstract class ICollectionTestSuite<T> : IEnumerableTestSuite<T>
 
     protected virtual bool DefaultValueWhenNotAllowed_Throws => true;
 
-    public static void EqualUnordered(ICollection? expected, ICollection? actual)
-    {
-        Assert.AreEqual(expected is null, actual is null);
-        if (expected == null)
-            return;
+    /// <summary>
+    /// Creates an instance of an <see cref="ICollection{T}"/> that can be used for testing.
+    /// </summary>
+    /// <returns>An instance of an <see cref="ICollection{T}"/> that can be used for testing.</returns>
+    protected abstract ICollection<T> GenericICollectionFactory();
 
-        // Lookups are an aggregated collections (enumerable contents), but ordered.
-        var e = expected.Cast<object>().ToLookup(key => key);
-        var a = actual!.Cast<object>().ToLookup(key => key);
-
-        // Dictionaries can't handle null keys, which is a possibility
-        Assert.AreEqual(e.Where(kv => kv.Key != null).ToDictionary(g => g.Key, g => g.Count()), a.Where(kv => kv.Key != null).ToDictionary(g => g.Key, g => g.Count()));
-
-        // Get count of null keys.  Returns an empty sequence (and thus a 0 count) if no null key
-        Assert.AreEqual(e[null!].Count(), a[null!].Count());
-    }
-
+    /// <summary>
+    /// Returns a set of ModifyEnumerable delegates that modify the enumerable passed to them.
+    /// </summary>
     protected override IEnumerable<ModifyEnumerable> GetModifyEnumerables(ModifyOperation operations)
     {
         if (!AddRemoveClear_ThrowsNotSupported && operations.HasFlag(ModifyOperation.Add))
@@ -89,8 +86,11 @@ public abstract class ICollectionTestSuite<T> : IEnumerableTestSuite<T>
         return GenericICollectionFactory(count);
     }
 
-    protected abstract ICollection<T> GenericICollectionFactory();
-
+    /// <summary>
+    /// Creates an instance of an <see cref="ICollection{T}"/> that can be used for testing.
+    /// </summary>
+    /// <param name="count">The number of unique items that the returned <see cref="ICollection{T}"/> contains.</param>
+    /// <returns>An instance of an <see cref="ICollection{T}"/> that can be used for testing.</returns>
     protected virtual ICollection<T> GenericICollectionFactory(int count)
     {
         var collection = GenericICollectionFactory();
@@ -110,7 +110,6 @@ public abstract class ICollectionTestSuite<T> : IEnumerableTestSuite<T>
             collection.Add(toAdd);
         }
     }
-
 
     #region IsReadOnly
 
@@ -247,7 +246,7 @@ public abstract class ICollectionTestSuite<T> : IEnumerableTestSuite<T>
 
             collection.Add(toAdd);
             items.Add(toAdd);
-            //CollectionAsserts.EqualUnordered(items, collection);
+            CollectionAssertExtensions.EqualUnordered(items, collection);
         }
     }
 
@@ -258,7 +257,6 @@ public abstract class ICollectionTestSuite<T> : IEnumerableTestSuite<T>
         if (!IsReadOnly && !AddRemoveClear_ThrowsNotSupported)
         {
             var collection = GenericICollectionFactory(count);
-            var itemsToRemove = collection.ToList();
             for (var i = 0; i < count; i++)
                 collection.Remove(collection.ElementAt(0));
             collection.Add(CreateT(254));
@@ -363,9 +361,7 @@ public abstract class ICollectionTestSuite<T> : IEnumerableTestSuite<T>
             var value = collection.First();
 
             if (useRemove)
-            {
                 Assert.IsTrue(collection.Remove(value));
-            }
             else
             {
                 collection.Clear();

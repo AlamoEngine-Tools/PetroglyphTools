@@ -11,33 +11,75 @@ namespace PG.Testing.Collections;
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
 
-#pragma warning disable CS8600
+/// <summary>
+/// Contains tests that ensure the correctness of any class that implements the generic
+/// IEnumerable interface.
+/// </summary>
 [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public abstract class INonModifyingEnumerableTestSuite<T> : CollectionsTestSuite<T>
-{ 
-    protected virtual bool ResetImplemented => true;
-
-    protected virtual bool Enumerator_Empty_UsesSingletonInstance => false;
-
-    protected virtual bool Enumerator_Current_UndefinedOperation_Throws => false;
-
-    protected virtual bool Enumerator_Empty_Current_UndefinedOperation_Throws => Enumerator_Current_UndefinedOperation_Throws;
-
-    protected abstract IEnumerable<T> GenericIEnumerableFactory(int count);
-
-    protected virtual EnumerableOrder Order => EnumerableOrder.Sequential;
-
+{
+    /// <summary>
+    /// An enum to allow specification of the order of the Enumerable. Used in validation for enumerables.
+    /// </summary>
     protected enum EnumerableOrder
     {
         Unspecified,
         Sequential
     }
 
+    /// <summary>
+    /// The Reset method is provided for COM interoperability. It does not necessarily need to be
+    /// implemented; instead, the implementer can simply throw a NotSupportedException.
+    ///
+    /// If Reset is not implemented, this property must return False. The default value is true.
+    /// </summary>
+    protected virtual bool ResetImplemented => true;
+
+    /// <summary>Whether the enumerator returned from GetEnumerator is a singleton instance when the collection is empty.</summary>
+    protected virtual bool Enumerator_Empty_UsesSingletonInstance => false;
+
+    /// <summary>
+    /// When calling Current of the enumerator before the first MoveNext, after the end of the collection,
+    /// or after modification of the enumeration, the resulting behavior is undefined. Tests are included
+    /// to cover two behavioral scenarios:
+    ///   - Throwing an InvalidOperationException
+    ///   - Returning an undefined value.
+    ///
+    /// If this property is set to true, the tests ensure that the exception is thrown. The default value is
+    /// false.
+    /// </summary>
+    protected virtual bool Enumerator_Current_UndefinedOperation_Throws => false;
+
+    /// <summary>
+    /// When calling Current of the empty enumerator before the first MoveNext, after the end of the collection,
+    /// or after modification of the enumeration, the resulting behavior is undefined. Tests are included
+    /// to cover two behavioral scenarios:
+    ///   - Throwing an InvalidOperationException
+    ///   - Returning an undefined value.
+    ///
+    /// If this property is set to true, the tests ensure that the exception is thrown. The default value is
+    /// <see cref="Enumerator_Current_UndefinedOperation_Throws"/>.
+    /// </summary>
+    protected virtual bool Enumerator_Empty_Current_UndefinedOperation_Throws => Enumerator_Current_UndefinedOperation_Throws;
+
+    /// <summary>
+    /// Specifies whether this IEnumerable follows some sort of ordering pattern.
+    /// </summary>
+    protected virtual EnumerableOrder Order => EnumerableOrder.Sequential;
+
+    /// <summary>
+    /// Creates an instance of an IEnumerable{T} that can be used for testing.
+    /// </summary>
+    /// <param name="count">The number of unique items that the returned IEnumerable{T} contains.</param>
+    /// <returns>An instance of an IEnumerable{T} that can be used for testing.</returns>
+    protected abstract IEnumerable<T> GenericIEnumerableFactory(int count);
+
 
     private void RepeatTest(Action<IEnumerator<T>, T[]> testCode, int iters = 3)
     {
-        RepeatTest((e, i, it) => testCode(e, i), iters);
+        RepeatTest((e, i, _) => testCode(e, i), iters);
     }
 
     private void RepeatTest(Action<IEnumerator<T>, T[], int> testCode, int iters = 3)
@@ -88,7 +130,7 @@ public abstract class INonModifyingEnumerableTestSuite<T> : CollectionsTestSuite
             var itemsVisited = new BitArray(needToMatchAllExpectedItems ? count : expectedItems.Length, false);
             for (iterations = 0; iterations < count && enumerator.MoveNext(); iterations++)
             {
-                object currentItem = enumerator.Current;
+                object? currentItem = enumerator.Current;
 
                 var itemFound = false;
                 for (var i = 0; i < itemsVisited.Length; ++i)
@@ -105,7 +147,7 @@ public abstract class INonModifyingEnumerableTestSuite<T> : CollectionsTestSuite
 
                 for (var i = 0; i < 3; i++)
                 {
-                    object tempItem = enumerator.Current;
+                    object? tempItem = enumerator.Current;
                     Assert.AreEqual(currentItem, tempItem);
                 }
             }
@@ -135,11 +177,11 @@ public abstract class INonModifyingEnumerableTestSuite<T> : CollectionsTestSuite
         {
             for (iterations = 0; iterations < count && enumerator.MoveNext(); iterations++)
             {
-                object currentItem = enumerator.Current;
+                object? currentItem = enumerator.Current;
                 Assert.AreEqual(expectedItems[iterations], currentItem);
                 for (var i = 0; i < 3; i++)
                 {
-                    object tempItem = enumerator.Current;
+                    object? tempItem = enumerator.Current;
                     Assert.AreEqual(currentItem, tempItem);
                 }
             }
@@ -212,9 +254,9 @@ public abstract class INonModifyingEnumerableTestSuite<T> : CollectionsTestSuite
         //Tests that the enumerators returned by GetEnumerator operate independently of one another
         var enumerable = GenericIEnumerableFactory(count);
         var iterations = 0;
-        foreach (var item in enumerable)
-        foreach (var item2 in enumerable)
-        foreach (var item3 in enumerable)
+        foreach (var _ in enumerable)
+        foreach (var __ in enumerable)
+        foreach (var ___ in enumerable)
             iterations++;
         Assert.AreEqual(count * count * count, iterations);
     }
@@ -359,7 +401,10 @@ public abstract class INonModifyingEnumerableTestSuite<T> : CollectionsTestSuite
     {
         var enumerable = GenericIEnumerableFactory(count);
         using var enumerator = enumerable.GetEnumerator();
-        while (enumerator.MoveNext()) ;
+        while (enumerator.MoveNext())
+        {
+        }
+
         if (count == 0 ? Enumerator_Empty_Current_UndefinedOperation_Throws : Enumerator_Current_UndefinedOperation_Throws)
             Assert.ThrowsException<InvalidOperationException>(() => enumerator.Current);
         else

@@ -8,6 +8,9 @@ namespace PG.Testing.Collections;
 
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
+/// <summary>
+/// Provides a base set of nongeneric operations that are used by all other testing interfaces.
+/// </summary>
 public abstract class CollectionsTestSuite
 {
     [Flags]
@@ -67,12 +70,30 @@ public abstract class CollectionsTestSuite
 
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
+/// <summary>
+/// Provides a base set of generic operations that are used by all other generic testing interfaces.
+/// </summary>
 public abstract class CollectionsTestSuite<T> : CollectionsTestSuite
 {
+    /// <summary>
+    /// To be implemented in the concrete collections test classes. Creates an instance of T that
+    /// is dependent only on the seed passed as input and will return the same value on repeated
+    /// calls with the same seed.
+    /// </summary>
     protected abstract T CreateT(int seed);
 
+    /// <summary>
+    /// The EqualityComparer that can be used in the overriding class when creating test enumerables
+    /// or test collections. Default if not overridden is the default comparator.
+    /// </summary>
     protected virtual IEqualityComparer<T> GetIEqualityComparer() => EqualityComparer<T>.Default;
-    
+
+    /// <summary>
+    /// Helper function to create an enumerable fulfilling the given specific parameters. The function will
+    /// create an enumerable of the desired type using the Default constructor for that type and then add values
+    /// to it until it is full. It will begin by adding the desired number of matching and duplicate elements,
+    /// followed by random (deterministic) elements until the desired count is reached.
+    /// </summary>
     protected IEnumerable<T> CreateEnumerable(IEnumerable<T>? enumerableToMatchTo, int count, int numberOfMatchingElements, int numberOfDuplicateElements)
     {
         return CreateList(enumerableToMatchTo, count, numberOfMatchingElements, numberOfDuplicateElements);
@@ -89,7 +110,7 @@ public abstract class CollectionsTestSuite<T> : CollectionsTestSuite
         var list = new List<T>(count);
         var seed = 528;
         var duplicateAdded = 0;
-        List<T> match = null;
+        List<T> match = null!;
 
         // Add Matching elements
         if (enumerableToMatchTo != null)

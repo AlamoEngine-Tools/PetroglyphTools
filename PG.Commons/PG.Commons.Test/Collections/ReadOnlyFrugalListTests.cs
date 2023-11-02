@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Utilities;
+using PG.Commons.Collections;
 
-namespace PG.Commons.Test.Utilities;
+namespace PG.Commons.Test.Collections;
 
 [TestClass]
 public class ReadOnlyFrugalList_Test_String : ReadOnlyFrugalListTestBase<string>

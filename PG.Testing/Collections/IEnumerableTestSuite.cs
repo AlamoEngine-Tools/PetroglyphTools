@@ -7,24 +7,55 @@ namespace PG.Testing.Collections;
 
 // This test suite is taken from the .NET runtime repository (https://github.com/dotnet/runtime) and adapted to the VSTesting Framework.
 // The .NET Foundation licenses this under the MIT license.
+/// <summary>
+/// Contains tests that ensure the correctness of any class that implements the generic
+/// IEnumerable interface.
+/// </summary>
 [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public abstract class IEnumerableTestSuite<T> : INonModifyingEnumerableTestSuite<T>
 {
+    /// <summary>
+    /// Modifies the given IEnumerable such that any enumerators for that IEnumerable will be
+    /// invalidated.
+    /// </summary>
+    /// <param name="enumerable">An IEnumerable to modify</param>
+    /// <returns>true if the enumerable was successfully modified. Else false.</returns>
     public delegate bool ModifyEnumerable(IEnumerable<T> enumerable);
 
+    /// <summary>
+    /// When calling MoveNext or Reset after modification of the enumeration, the resulting behavior is
+    /// undefined. Tests are included to cover two behavioral scenarios:
+    ///   - Throwing an InvalidOperationException
+    ///   - Execute MoveNext or Reset.
+    ///
+    /// If this property is set to true, the tests ensure that the exception is thrown. The default value is
+    /// true.
+    /// </summary>
     protected virtual bool Enumerator_ModifiedDuringEnumeration_ThrowsInvalidOperationException => true;
 
+    /// <summary>
+    /// When calling MoveNext or Reset after modification of an empty enumeration, the resulting behavior is
+    /// undefined. Tests are included to cover two behavioral scenarios:
+    ///   - Throwing an InvalidOperationException
+    ///   - Execute MoveNext or Reset.
+    ///
+    /// If this property is set to true, the tests ensure that the exception is thrown. The default value is
+    /// <see cref="Enumerator_ModifiedDuringEnumeration_ThrowsInvalidOperationException"/>.
+    /// </summary>
     protected virtual bool Enumerator_Empty_ModifiedDuringEnumeration_ThrowsInvalidOperationException => Enumerator_ModifiedDuringEnumeration_ThrowsInvalidOperationException;
 
     protected virtual ModifyOperation ModifyEnumeratorThrows => ModifyOperation.Add | ModifyOperation.Insert | ModifyOperation.Overwrite | ModifyOperation.Remove | ModifyOperation.Clear;
 
     protected virtual ModifyOperation ModifyEnumeratorAllowed => ModifyOperation.None;
 
+    /// <summary>
+    /// To be implemented in the concrete collections test classes. Returns a set of ModifyEnumerable delegates
+    /// that modify the enumerable passed to them.
+    /// </summary>
     protected abstract IEnumerable<ModifyEnumerable> GetModifyEnumerables(ModifyOperation operations);
     
-
     #region Enumerator.MoveNext
 
     [TestMethod]
@@ -318,5 +349,3 @@ public abstract class IEnumerableTestSuite<T> : INonModifyingEnumerableTestSuite
 
     #endregion
 }
-
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.

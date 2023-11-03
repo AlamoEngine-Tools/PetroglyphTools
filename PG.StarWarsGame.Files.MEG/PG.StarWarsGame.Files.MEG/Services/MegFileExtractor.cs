@@ -58,8 +58,8 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (dataEntryLocation is null) 
             throw new ArgumentNullException(nameof(dataEntryLocation));
 
-        var megFile = dataEntryLocation.MegFile ?? throw new ArgumentException("Meg file cannot be null.", nameof(dataEntryLocation));
-        var dataEntry = dataEntryLocation.DataEntry ?? throw new ArgumentException("Data entry cannot be null", nameof(dataEntryLocation));
+        var megFile = dataEntryLocation.MegFile;
+        var dataEntry = dataEntryLocation.DataEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
@@ -81,8 +81,8 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
 
-        var megFile = dataEntryLocation.MegFile ?? throw new ArgumentException("Meg file cannot be null.", nameof(dataEntryLocation));
-        var dataEntry = dataEntryLocation.DataEntry ?? throw new ArgumentException("Data entry cannot be null", nameof(dataEntryLocation));
+        var megFile = dataEntryLocation.MegFile;
+        var dataEntry = dataEntryLocation.DataEntry;
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);

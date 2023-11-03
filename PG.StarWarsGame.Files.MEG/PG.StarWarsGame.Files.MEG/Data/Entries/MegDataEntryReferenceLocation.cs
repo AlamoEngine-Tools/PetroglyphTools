@@ -27,18 +27,10 @@ public sealed class MegDataEntryReferenceLocation : IEquatable<MegDataEntryRefer
     /// <param name="megFile">The owning .MEG file</param>
     /// <param name="dataEntry">The referenced <see cref="MegDataEntry"/>.</param>
     /// <exception cref="ArgumentNullException">The <paramref name="megFile"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
-    /// <exception cref="FileNotInMegException">The <paramref name="dataEntry"/> does not exist in the <paramref name="megFile"/>'s archive.</exception>
     public MegDataEntryReferenceLocation(IMegFile megFile, MegDataEntry dataEntry)
     {
-        if (megFile == null) 
-            throw new ArgumentNullException(nameof(megFile));
-        if (dataEntry == null) 
-            throw new ArgumentNullException(nameof(dataEntry));
-        if (megFile.Content.Contains(dataEntry))
-            throw new FileNotInMegException(megFile.FilePath, dataEntry.FilePath);
-        
-        MegFile = megFile;
-        DataEntry = dataEntry;
+        MegFile = megFile ?? throw new ArgumentNullException(nameof(megFile));
+        DataEntry = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
     }
 
     /// <inheritdoc />

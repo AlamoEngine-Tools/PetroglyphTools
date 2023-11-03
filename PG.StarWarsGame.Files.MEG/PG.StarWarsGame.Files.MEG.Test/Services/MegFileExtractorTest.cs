@@ -93,20 +93,6 @@ public class MegFileExtractorTest
     }
 
     [TestMethod]
-    public void Test_GetFileData_ThrowsArgumentsIncorrect()
-    {
-        var entry = CreateEntry("file.txt");
-
-        var location_MegNull = new MegDataEntryReferenceLocation(null!, entry);
-
-        Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetFileData(location_MegNull));
-
-        var meg = new Mock<IMegFile>();
-        var location_EntryNull = new MegDataEntryReferenceLocation(meg.Object, null!);
-        Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetFileData(location_EntryNull));
-    }
-
-    [TestMethod]
     public void Test_GetFileData_Throws_MegFileNotFound()
     { 
         var entry = CreateEntry("file.txt");

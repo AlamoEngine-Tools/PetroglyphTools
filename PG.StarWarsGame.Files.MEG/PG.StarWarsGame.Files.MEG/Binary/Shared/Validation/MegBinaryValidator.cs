@@ -20,13 +20,11 @@ internal sealed class MegBinaryValidator : AbstractValidator<IMegBinaryValidatio
         // Tool's are free to handle this on their own.
 
         RuleFor(i => i.Metadata.FileTable)
-            .SetValidator(serviceProvider.GetRequiredService<IFileTableValidator>());
-           // .WithMessage("The meg's file table is invalid.");
+            .SetValidator(serviceProvider.GetRequiredService<IFileTableValidator>())
+            .WithMessage("The meg's file table is invalid.");
 
            RuleFor(i => i)
-               .SetValidator(serviceProvider.GetRequiredService<IMegFileSizeValidator>());
-           //.WithMessage("The read bytes do not match expected size.");
-
-
+               .SetValidator(serviceProvider.GetRequiredService<IMegFileSizeValidator>())
+               .WithMessage("The read bytes do not match expected size.");
     }
 }

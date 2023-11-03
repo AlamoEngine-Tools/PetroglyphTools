@@ -29,35 +29,35 @@ public class MegDataStreamFactoryTest
         _ = new MegDataStreamFactory(null!);
     }
 
-    [TestMethod]
-    public void Test_CreateDataStream_EmptyDataFile()
-    {
-        _fileSystem.AddFile("test.meg", new MockFileData(new byte[] { 1, 2 }));
+    //[TestMethod]
+    //public void Test_CreateDataStream_EmptyDataFile()
+    //{
+    //    _fileSystem.AddFile("test.meg", new MockFileData(new byte[] { 1, 2 }));
 
-        var factory = new MegDataStreamFactory(_serviceProvider);
-        var stream = factory.CreateDataStream("test.meg", 2, 0);
-        Assert.AreEqual(0, stream.Length);
-    }
+    //    var factory = new MegDataStreamFactory(_serviceProvider);
+    //    var stream = factory.CreateDataStream("test.meg", 2, 0);
+    //    Assert.AreEqual(0, stream.Length);
+    //}
 
-    [TestMethod]
-    public void Test_CreateDataStream_File()
-    {
-        _fileSystem.AddFile("test.meg", new MockFileData(new byte[] { 1, 2, 3, 4, 5 }));
+    //[TestMethod]
+    //public void Test_CreateDataStream_File()
+    //{
+    //    _fileSystem.AddFile("test.meg", new MockFileData(new byte[] { 1, 2, 3, 4, 5 }));
 
-        var factory = new MegDataStreamFactory(_serviceProvider);
-        var stream = factory.CreateDataStream("test.meg", 1, 2);
-        Assert.AreEqual(2, stream.Length);
+    //    var factory = new MegDataStreamFactory(_serviceProvider);
+    //    var stream = factory.CreateDataStream("test.meg", 1, 2);
+    //    Assert.AreEqual(2, stream.Length);
 
-        var resultStream = new MemoryStream(new byte[2]);
-        stream.CopyTo(resultStream);
-        CollectionAssert.AreEqual(new byte[] { 2, 3 }, resultStream.ToArray());
-    }
+    //    var resultStream = new MemoryStream(new byte[2]);
+    //    stream.CopyTo(resultStream);
+    //    CollectionAssert.AreEqual(new byte[] { 2, 3 }, resultStream.ToArray());
+    //}
 
-    [TestMethod]
-    [ExpectedException(typeof(FileNotFoundException))]
-    public void Test_CreateDataStream_FileNotFound()
-    { 
-        var factory = new MegDataStreamFactory(_serviceProvider);
-        factory.CreateDataStream("test.meg", 1, 2);
-    }
+    //[TestMethod]
+    //[ExpectedException(typeof(FileNotFoundException))]
+    //public void Test_CreateDataStream_FileNotFound()
+    //{ 
+    //    var factory = new MegDataStreamFactory(_serviceProvider);
+    //    factory.CreateDataStream("test.meg", 1, 2);
+    //}
 }

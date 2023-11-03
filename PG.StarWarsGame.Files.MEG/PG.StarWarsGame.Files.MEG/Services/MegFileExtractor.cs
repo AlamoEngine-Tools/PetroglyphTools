@@ -53,13 +53,13 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     }
 
     /// <inheritdoc/>
-    public Stream GetFileData(MegDataEntryReference entryReference)
+    public Stream GetFileData(MegDataEntryReferenceLocation dataEntryLocation)
     {
-        if (entryReference is null) 
-            throw new ArgumentNullException(nameof(entryReference));
+        if (dataEntryLocation is null) 
+            throw new ArgumentNullException(nameof(dataEntryLocation));
 
-        var megFile = entryReference.Location.MegFile;
-        var dataEntry = entryReference.Location.DataEntry;
+        var megFile = dataEntryLocation.MegFile ?? throw new ArgumentException("Meg file cannot be null.", nameof(dataEntryLocation));
+        var dataEntry = dataEntryLocation.DataEntry ?? throw new ArgumentException("Data entry cannot be null", nameof(dataEntryLocation));
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
@@ -72,17 +72,17 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     }
 
     /// <inheritdoc/>
-    public bool ExtractFile(MegDataEntryReference entryReference, string filePath, bool overwrite)
+    public bool ExtractFile(MegDataEntryReferenceLocation dataEntryLocation, string filePath, bool overwrite)
     {
-        if (entryReference is null)
-            throw new ArgumentNullException(nameof(entryReference));
+        if (dataEntryLocation is null)
+            throw new ArgumentNullException(nameof(dataEntryLocation));
         if (filePath is null)
             throw new ArgumentNullException(nameof(filePath));
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
 
-        var megFile = entryReference.Location.MegFile;
-        var dataEntry = entryReference.Location.DataEntry;
+        var megFile = dataEntryLocation.MegFile ?? throw new ArgumentException("Meg file cannot be null.", nameof(dataEntryLocation));
+        var dataEntry = dataEntryLocation.DataEntry ?? throw new ArgumentException("Data entry cannot be null", nameof(dataEntryLocation));
 
         if (!FileSystem.File.Exists(megFile.FilePath))
             throw new FileNotFoundException("MEG file not found.", megFile.FilePath);

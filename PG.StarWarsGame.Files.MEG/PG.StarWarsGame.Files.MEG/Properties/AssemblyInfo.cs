@@ -1,4 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("PG.StarWarsGame.Entries.MEG.Test")]
+[assembly:InternalsVisibleTo("PG.StarWarsGame.Files.MEG.Test")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

@@ -32,7 +32,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
         Location = location ?? throw new ArgumentNullException(nameof(location));
     }
 
-    /// <inheritdoc cref="IComparable{T}"/>
+    /// <inheritdoc/>
     public int CompareTo(IMegDataEntry other)
     {
         // IMPORTANT: Changing the logic here also requires to update the binary models!

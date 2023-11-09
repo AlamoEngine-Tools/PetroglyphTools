@@ -45,7 +45,7 @@ namespace PG.Commons.Collections;
 /// <b>Usage advise:</b>
 /// <para>
 /// a) To ensure that all changes get reflected to other variables (including the first item)
-/// either box this structure (e.g, to <see cref="IList{T}"/> (this allocates memory though) or pass this structure as by-<see langword="ref"/>.
+/// either box this structure (e.g, to <see cref="IList{T}"/> [this allocates memory though]) or pass this structure as by-<see langword="ref"/>.
 /// </para>
 /// <para>
 /// b) If a copy shall not reflect any changes from its source use <see cref="FrugalList{T}(in FrugalList{T})"/>

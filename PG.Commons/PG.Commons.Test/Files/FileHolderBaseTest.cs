@@ -57,12 +57,12 @@ public class FileHolderBaseTest
         IServiceProvider sp = null;
 
 
-        TestUtility.Assert_CtorException<ArgumentNullException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), sp).Object);
+        ExceptionUtilities.VSTesting_Assert_CtorException<ArgumentNullException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), sp).Object);
 
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        TestUtility.Assert_CtorException<ArgumentNullException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, null!, spMock.Object).Object);
+        ExceptionUtilities.VSTesting_Assert_CtorException<ArgumentNullException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, null!, spMock.Object).Object);
     }
 
     [TestMethod]
@@ -71,7 +71,7 @@ public class FileHolderBaseTest
         var model = new object();
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns((IFileSystem)null!);
-        TestUtility.Assert_CtorException<InvalidOperationException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), spMock.Object).Object);
+        ExceptionUtilities.VSTesting_Assert_CtorException<InvalidOperationException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), spMock.Object).Object);
     }
 
     [TestMethod]
@@ -85,7 +85,7 @@ public class FileHolderBaseTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        TestUtility.Assert_CtorException(type, () => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam(path), sp.Object).Object);
+        ExceptionUtilities.VSTesting_Assert_CtorException(type, () => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam(path), sp.Object).Object);
     }
 
     [TestMethod]

@@ -3,12 +3,11 @@
 
 using System;
 
-namespace PG.Commons.Services
+namespace PG.Commons.Services;
+
+/// <summary>
+/// Marker interface for publicly available service definitions. 
+/// </summary>
+public interface IService : IDisposable
 {
-    /// <summary>
-    /// Marker interface for publicly available service definitions. 
-    /// </summary>
-    public interface IService :IDisposable
-    {
-    }
 }

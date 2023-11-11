@@ -22,6 +22,6 @@ public sealed class DatFileHolder : FileHolderBase<DatFileHolderParam, IReadOnly
     public DatFileHolder(IReadOnlyList<DatFileEntry> model, DatFileHolderParam param, IServiceProvider serviceProvider)
         : base(model, param, serviceProvider)
     {
-        Order = param.Order ?? throw new ArgumentException(nameof(param.Order));
+        Order = param.Order;
     }
 }

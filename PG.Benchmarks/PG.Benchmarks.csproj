@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<TargetFrameworks>net48;net7.0</TargetFrameworks>
+		<TargetFrameworks>net48;net8.0</TargetFrameworks>
 		<Product>PG.Benchmarks</Product>
 		<Title>PG.Benchmarks</Title>
 		<PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>
@@ -24,5 +24,4 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
 	</ItemGroup>
-
 </Project>

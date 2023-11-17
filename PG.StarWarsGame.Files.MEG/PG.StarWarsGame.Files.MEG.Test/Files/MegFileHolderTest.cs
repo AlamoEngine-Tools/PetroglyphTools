@@ -109,23 +109,18 @@ public class MegFileHolderTest
         var baseParam = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3 };
         var model = new Mock<IMegArchive>().Object;
 
-        var keyIv = new byte[4];
-        RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
+        var invalidSize = new byte[4];
+        var validSize = new byte[16];
+        RandomNumberGenerator.Create().GetNonZeroBytes(invalidSize);
+        RandomNumberGenerator.Create().GetNonZeroBytes(validSize);
 
-        var param1 = baseParam with { Key = keyIv, IV = keyIv };
+
+        var param1 = baseParam with { Key = invalidSize, IV = validSize };
+        var param2 = baseParam with { Key = validSize, IV = invalidSize };
+        var param3 = baseParam with { Key = validSize, IV = validSize, FileVersion = MegFileVersion.V2 };
 
         Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param1, _serviceProvider.Object));
-
-        keyIv = new byte[18];
-        RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
-        var param2 = baseParam with { Key = keyIv, IV = keyIv };
         Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param2, _serviceProvider.Object));
-
-
-        keyIv = new byte[16];
-        RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
-        var param3 = baseParam with { Key = keyIv, IV = keyIv, FileVersion = MegFileVersion.V2};
-
         Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param3, _serviceProvider.Object));
     }
 }

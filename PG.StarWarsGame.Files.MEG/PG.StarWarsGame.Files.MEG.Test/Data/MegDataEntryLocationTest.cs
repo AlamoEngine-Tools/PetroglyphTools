@@ -44,6 +44,8 @@ public class MegDataEntryLocationTest
         Assert.AreEqual(location1.GetHashCode(), location2.GetHashCode());
 
         Assert.AreNotEqual(location1, location3);
+        Assert.AreNotEqual(location1, new object());
+        Assert.AreNotEqual(location1, (object?)null);
         Assert.AreNotEqual(location1.GetHashCode(), location3.GetHashCode());
     }
 }

@@ -7,19 +7,19 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 namespace PG.StarWarsGame.Files.MEG.Test.Data;
 
 [TestClass]
-public class MegArchiveTest
+public class VirtualMegArchiveTest
 {
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void Test_Ctor_Throw_NullArgument()
     {
-        _ = new MegArchive(null!);
+        _ = new VirtualMegArchive(null!);
     }
 
     [TestMethod]
     public void Test_Ctor()
     {
-        var entries = new List<MegDataEntry>();
-        _ = new MegArchive(entries);
+        var entries = new List<MegDataEntryReference>();
+        _ = new VirtualMegArchive(entries);
     }
 }

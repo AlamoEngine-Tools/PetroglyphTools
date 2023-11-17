@@ -33,12 +33,12 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     }
 
     /// <inheritdoc/>
-    public int CompareTo(IMegDataEntry other)
+    public int CompareTo(IMegDataEntry? other)
     {
         // IMPORTANT: Changing the logic here also requires to update the binary models!
         if (ReferenceEquals(this, other))
             return 0;
-        if (ReferenceEquals(null, other))
+        if (other is null)
             return 1;
         return FileNameCrc32.CompareTo(other.FileNameCrc32);
     }
@@ -46,7 +46,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     /// <inheritdoc />
     public bool Equals(MegDataEntryBase<T>? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
             return false;
         if (ReferenceEquals(this, other))
             return true;
@@ -56,7 +56,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj)) 
+        if (obj is null) 
             return false;
         if (ReferenceEquals(this, obj))
             return true;

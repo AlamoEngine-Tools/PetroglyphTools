@@ -100,9 +100,7 @@ internal class DatFileConverter : ServiceBase, IDatFileConverter
         {
             datFileContent.Add(new DatFileEntry(model.KeyTable[i], model.ValueTable[i]));
         }
-
-        param0.Order ??= isSorted ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered;
-
-        return new DatFileHolder(datFileContent.AsReadOnly(), param0, Services);
+        var param1 = param0 with { Order = (isSorted ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered) };
+        return new DatFileHolder(datFileContent.AsReadOnly(), param1, Services);
     }
 }

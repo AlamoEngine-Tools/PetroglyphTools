@@ -21,6 +21,6 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
     </ItemGroup>
 </Project>

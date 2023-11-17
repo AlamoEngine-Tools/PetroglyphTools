@@ -19,6 +19,7 @@ public class DatFileConverterTest : ServiceTestBase
 {
     private class TestParam : IFileHolderParam
     {
+        public string FilePath { get; }
     }
 
     private class NullDatModel : IDatFileMetadata

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <TargetFrameworks>net8.0</TargetFrameworks>
@@ -14,11 +14,5 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
     </ItemGroup>
 </Project>

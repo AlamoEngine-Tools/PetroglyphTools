@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <TargetFrameworks>net8.0</TargetFrameworks>
@@ -25,11 +25,5 @@
         <ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
         <ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
         <ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
     </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<TargetFrameworks>net7.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
 		<Product>PG.Benchmarks</Product>
 		<Title>PG.Benchmarks</Title>
@@ -25,5 +25,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
 	</ItemGroup>
-
 </Project>

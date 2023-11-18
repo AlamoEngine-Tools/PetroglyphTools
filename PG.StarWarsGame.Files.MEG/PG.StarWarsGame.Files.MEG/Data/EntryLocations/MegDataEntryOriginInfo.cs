@@ -2,14 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.StarWarsGame.Files.MEG.Data.Entries;
 
-namespace PG.StarWarsGame.Files.MEG.Data;
+namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
-/// Contains information about the actual file location of an archived MEG data entry.
+/// The origin of a MEG data entry which is either packed in a MEG archive or present on the file system.
 /// </summary>
-public sealed class MegDataEntryOriginInfo : IEquatable<MegDataEntryOriginInfo>
+public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegDataEntryOriginInfo>
 {
     /// <summary>
     /// Gets the MEG file's data entry. <see langeword="null"/> if not present.
@@ -29,7 +28,7 @@ public sealed class MegDataEntryOriginInfo : IEquatable<MegDataEntryOriginInfo>
     /// <exception cref="ArgumentException">If <paramref name="filePath"/> is empty or only whitespace.</exception>
     public MegDataEntryOriginInfo(string filePath)
     {
-        if (filePath == null) 
+        if (filePath == null)
             throw new ArgumentNullException(nameof(filePath));
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException(nameof(filePath));
@@ -51,7 +50,7 @@ public sealed class MegDataEntryOriginInfo : IEquatable<MegDataEntryOriginInfo>
     {
         if (other is null)
             return false;
-        if (ReferenceEquals(this, other)) 
+        if (ReferenceEquals(this, other))
             return true;
         return Equals(MegFileLocation, other.MegFileLocation) && string.Equals(FilePath, other.FilePath, StringComparison.Ordinal);
     }

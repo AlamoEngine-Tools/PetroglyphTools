@@ -1,5 +1,6 @@
 using System;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
@@ -29,7 +30,7 @@ public interface IMegDataEntry : IComparable<IMegDataEntry>
 
 /// <inheritdoc/>
 /// <typeparam name="T">The type of the entry's location information.</typeparam>
-public interface IMegDataEntry<out T> : IMegDataEntry where T : notnull
+public interface IMegDataEntry<out T> : IMegDataEntry where T : IDataEntryLocation
 {
     /// <summary>
     /// Get the location information of this data entry.

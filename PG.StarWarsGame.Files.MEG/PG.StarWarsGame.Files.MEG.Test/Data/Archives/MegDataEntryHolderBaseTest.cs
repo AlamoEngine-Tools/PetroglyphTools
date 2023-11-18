@@ -8,7 +8,7 @@ using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Data;
+namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
 [TestClass]
 public class MegDataEntryHolderBaseTest
@@ -39,7 +39,7 @@ public class MegDataEntryHolderBaseTest
 
 
         var newEntries = new List<IMegDataEntry>();
-        foreach (var entry in (IEnumerable)archive) 
+        foreach (var entry in (IEnumerable)archive)
             newEntries.Add((IMegDataEntry)entry);
 
         CollectionAssert.AreEqual(entries, newEntries);
@@ -73,7 +73,7 @@ public class MegDataEntryHolderBaseTest
     {
         var entry1 = new Mock<IMegDataEntry>();
         entry1.SetupGet(e => e.FilePath).Returns("a");
-        
+
         var entry2 = new Mock<IMegDataEntry>();
         entry2.SetupGet(e => e.FilePath).Returns("b");
 

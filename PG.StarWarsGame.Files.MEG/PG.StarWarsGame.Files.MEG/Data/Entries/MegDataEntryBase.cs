@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
@@ -11,7 +12,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 /// Base class to implement an <see cref="IMegDataEntry{T}"/>, handling data entry comparison and equality. 
 /// </summary>
 /// <inheritdoc cref="IMegDataEntry{T}"/>
-public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegDataEntryBase<T>> where T : notnull
+public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegDataEntryBase<T>> where T : IDataEntryLocation
 {
     /// <inheritdoc />
     public abstract string FilePath { get; }

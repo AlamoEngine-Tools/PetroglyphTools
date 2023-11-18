@@ -4,12 +4,13 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Services;
-using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Data;
+namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
 [TestClass]
 public class ConstructingMegArchiveTest

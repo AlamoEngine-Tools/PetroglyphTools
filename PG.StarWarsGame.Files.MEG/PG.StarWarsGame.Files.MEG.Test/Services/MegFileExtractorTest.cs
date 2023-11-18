@@ -5,12 +5,12 @@ using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
-using PG.StarWarsGame.Files.MEG.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
 
-using static PG.StarWarsGame.Files.MEG.Test.Data.MegDataEntryTest;
+using static PG.StarWarsGame.Files.MEG.Test.Data.Entries.MegDataEntryTest;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 

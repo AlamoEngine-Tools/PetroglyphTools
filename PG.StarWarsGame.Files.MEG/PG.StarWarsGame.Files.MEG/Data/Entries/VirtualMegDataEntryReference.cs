@@ -3,6 +3,7 @@
 
 using PG.Commons.Services;
 using System;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;

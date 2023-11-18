@@ -2,11 +2,12 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Data;
+namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
 [TestClass]
-public class MegDataEntryBaseTest : MegDataEntryBaseTest<object>
+public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.TestLocation>
 {
     [TestMethod]
     public void Test_CtorNull()
@@ -14,31 +15,36 @@ public class MegDataEntryBaseTest : MegDataEntryBaseTest<object>
         Assert.ThrowsException<ArgumentNullException>(() => CreateEntry("path", new Crc32(0), null!));
     }
 
-    protected override MegDataEntryBase<object> CreateEntry(string path, Crc32 crc, object location)
+    protected override MegDataEntryBase<TestLocation> CreateEntry(string path, Crc32 crc, TestLocation location)
     {
         return new TestDataEntry(path, crc, location);
     }
 
-    protected override object CreateLocation(int seed)
+    protected override TestLocation CreateLocation(int seed)
     {
-        return seed;
+        return new TestLocation();
     }
 
-    private class TestDataEntry : MegDataEntryBase<object>
+    private class TestDataEntry : MegDataEntryBase<TestLocation>
     {
         public override string FilePath { get; }
         public override Crc32 FileNameCrc32 { get; }
 
-        public TestDataEntry(string path, Crc32 crc32, object location) : base(location)
+        public TestDataEntry(string path, Crc32 crc32, TestLocation location) : base(location)
         {
             FilePath = path;
             FileNameCrc32 = crc32;
         }
     }
 
+    public class TestLocation : IDataEntryLocation
+    {
+        
+    }
+
 }
 
-public abstract class MegDataEntryBaseTest<T> where T : notnull
+public abstract class MegDataEntryBaseTest<T> where T : IDataEntryLocation
 {
     protected static readonly Crc32 DefaultCrc = new(123);
     protected static readonly Crc32 SecondaryCrc = new(456);
@@ -67,7 +73,7 @@ public abstract class MegDataEntryBaseTest<T> where T : notnull
     }
 
     [TestMethod]
-    public void TestEquals_HashCode()
+    public void Test_Equals_HashCode_Base()
     {
         var seed = 251;
 

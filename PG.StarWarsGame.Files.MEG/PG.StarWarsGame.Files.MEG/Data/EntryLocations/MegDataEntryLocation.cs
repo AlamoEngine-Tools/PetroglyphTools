@@ -1,11 +1,11 @@
 using System;
 
-namespace PG.StarWarsGame.Files.MEG.Data.Entries;
+namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
 /// Location of an archived MEG data entry inside a .MEG file. 
 /// </summary>
-public readonly struct MegDataEntryLocation : IEquatable<MegDataEntryLocation>
+public readonly struct MegDataEntryLocation : IDataEntryLocation, IEquatable<MegDataEntryLocation>
 {
     /// <summary>
     /// Gets the offset from the start of the .MEG file archive.

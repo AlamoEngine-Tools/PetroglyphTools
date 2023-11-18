@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.StarWarsGame.Files.MEG.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Data;
+namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
 [TestClass]
 public class MegDataEntryLocationTest

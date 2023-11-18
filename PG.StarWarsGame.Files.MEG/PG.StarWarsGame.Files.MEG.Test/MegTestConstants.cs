@@ -3,9 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
-using PG.StarWarsGame.Files.MEG.Test.Binary;
 using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test;

@@ -2,11 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <summary>
-/// Container with file information for building .MEG files.
+/// Container with data entry information for building .MEG files.
 /// </summary>
 public sealed class MegFileDataEntryBuilderInfo
 {

@@ -2,14 +2,15 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
 
-namespace PG.StarWarsGame.Files.MEG.Data.Entries;
+namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
 /// Location reference of an existing MEG data entry and its owning .MEG file.
 /// </summary>
-public sealed class MegDataEntryReferenceLocation : IEquatable<MegDataEntryReferenceLocation>
+public sealed class MegDataEntryReferenceLocation : IDataEntryLocation, IEquatable<MegDataEntryReferenceLocation>
 {
     /// <summary>
     /// Gets the owning .MEG file of <see cref="DataEntry"/>.
@@ -36,9 +37,9 @@ public sealed class MegDataEntryReferenceLocation : IEquatable<MegDataEntryRefer
     /// <inheritdoc />
     public bool Equals(MegDataEntryReferenceLocation? other)
     {
-        if (other is null) 
+        if (other is null)
             return false;
-        if (ReferenceEquals(this, other)) 
+        if (ReferenceEquals(this, other))
             return true;
         return MegFile.Equals(other.MegFile) && DataEntry.Equals(other.DataEntry);
     }

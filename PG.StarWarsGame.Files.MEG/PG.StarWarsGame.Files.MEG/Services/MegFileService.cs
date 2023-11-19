@@ -32,53 +32,47 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     }
 
     /// <inheritdoc />   
-    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion)
+    public void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
     {
         // TODO: Update exceptions infos in doc.
         // E.g. IOException and use new MegDataEntryNotFoundException (FileNotInMegException : MegDataEntryNotFoundException : Exception)
         // Also add overwrite-file param
 
-        if (filePath == null) 
-            throw new ArgumentNullException(nameof(filePath));
+        //if (filePath == null) 
+        //    throw new ArgumentNullException(nameof(filePath));
 
-        if (builderInformation == null) 
-            throw new ArgumentNullException(nameof(builderInformation));
+        //if (builderInformation == null) 
+        //    throw new ArgumentNullException(nameof(builderInformation));
 
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
+        //if (string.IsNullOrWhiteSpace(filePath))
+        //    throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
 
-        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileVersion);
+        //var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileVersion);
 
-        var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
-            .ModelToBinary(constructionArchive.Archive);
+        //var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
+        //    .ModelToBinary(constructionArchive.Archive);
 
-        var bytes = metadata.Bytes;
+        //var bytes = metadata.Bytes;
 
-        using var fs = FileSystem.FileStream.New(filePath, FileMode.Create, FileAccess.Write);
+        //using var fs = FileSystem.FileStream.New(filePath, FileMode.Create, FileAccess.Write);
 
-        fs.Write(bytes, 0, bytes.Length);
+        //fs.Write(bytes, 0, bytes.Length);
 
-        var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
+        //var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-        foreach (var file in constructionArchive)
-        {
-            using var dataStream = streamFactory.GetDataStream(file.Location);
+        //foreach (var file in constructionArchive)
+        //{
+        //    using var dataStream = streamFactory.GetDataStream(file.Location);
 
-            // TODO: Test in encryption case
-            if (dataStream.Length != file.DataEntry.Location.Size)
-                throw new InvalidOperationException(); // TODO: InvalidModelException
+        //    // TODO: Test in encryption case
+        //    if (dataStream.Length != file.DataEntry.Location.Size)
+        //        throw new InvalidOperationException(); // TODO: InvalidModelException
 
-            if (fs.Position != file.DataEntry.Location.Offset)
-                throw new InvalidOperationException(); // TODO: InvalidModelException
+        //    if (fs.Position != file.DataEntry.Location.Offset)
+        //        throw new InvalidOperationException(); // TODO: InvalidModelException
 
-            dataStream.CopyTo(fs);
-        }
-    }
-
-    /// <inheritdoc />
-    public void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
-    { 
-        throw new NotImplementedException();
+        //    dataStream.CopyTo(fs);
+        //}
     }
 
     /// <inheritdoc />

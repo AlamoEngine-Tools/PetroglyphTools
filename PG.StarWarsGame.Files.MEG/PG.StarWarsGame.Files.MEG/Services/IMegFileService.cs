@@ -17,33 +17,20 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileService
 {
     /// <summary>
-    /// Packs a collection of files as an unencrypted *.MEG archive of a given MEG version.
+    /// Packs a collection of files to a new *.MEG archive.
     /// </summary>
     /// <remarks>
     /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
     /// <br/>
     /// The items of <paramref name="builderInformation"/> will be correctly sorted by this operation.
     /// </remarks>
-    /// <param name="filePath">The desired file path of the MEG archive.</param>
+    /// <param name="megFileParameters">The desired file properties of the new MEG archive.</param>
     /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
-    /// <param name="megFileVersion">The desired file version of the .MEG file.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>
-    void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, MegFileVersion megFileVersion);
-
-    /// <summary>
-    /// Packs a collection of files as an encrypted *.MEG V3 archive.
-    /// </summary>
-    /// <remarks>
-    /// In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
-    /// <br/>
-    /// The items of <paramref name="builderInformation"/> will be correctly sorted by this operation.
-    /// </remarks>
-    /// <param name="filePath">The desired file path of the MEG archive.</param>
-    /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
-    /// <param name="key">The encryption key.</param>
-    /// <param name="iv">The initialization vector used for encryption.</param>
-    void CreateMegArchive(string filePath, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
+    /// <param name="overwrite">When set to <see langword="true"/> existing files will be overwritten; otherwise the creation of the MEG file will cause an <see cref="IOException"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="megFileParameters"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="megFileParameters"/> contains invalid data.</exception>
+    /// <exception cref="IOException">The MEG file could not be created.</exception>
+    void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite);
 
     /// <summary>
     /// Loads a *.MEG file's metadata into a <see cref="MegFileHolder" />.

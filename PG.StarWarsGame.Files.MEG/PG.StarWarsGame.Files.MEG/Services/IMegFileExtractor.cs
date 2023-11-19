@@ -84,7 +84,7 @@ public interface IMegFileExtractor
     /// </remarks>
     /// <param name="dataEntryLocation">The data entry information.</param>
     /// <param name="filePath">The destination file path.</param>
-    /// <param name="overwrite">When set to <see langword="true"/> existing false will be overwritten; otherwise the extraction will be skipped.</param>
+    /// <param name="overwrite">When set to <see langword="true"/> existing files will be overwritten; otherwise the extraction will be skipped.</param>
     /// <returns><see langword="true"/> if the file was extracted. <see langword="false"/> if and only if the extraction was skipped.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> or <paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>

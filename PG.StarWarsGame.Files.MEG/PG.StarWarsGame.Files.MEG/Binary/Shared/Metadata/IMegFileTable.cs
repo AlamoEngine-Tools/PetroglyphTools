@@ -5,6 +5,4 @@ using PG.Commons.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
-internal interface IMegFileTable : IBinaryTable<IMegFileDescriptor>
-{
-}
+internal interface IMegFileTable : IBinaryTable<IMegFileDescriptor>;

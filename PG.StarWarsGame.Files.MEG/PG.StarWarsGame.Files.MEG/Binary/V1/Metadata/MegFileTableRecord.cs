@@ -23,6 +23,9 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
     int IMegFileDescriptor.FileNameIndex => (int)FileNameIndex;
     int IMegFileDescriptor.Index => (int)FileTableRecordIndex;
 
+    // For V1 this field is not part of the binary.
+    public bool Encrypted => false;
+
     public unsafe byte[] Bytes
     {
         get

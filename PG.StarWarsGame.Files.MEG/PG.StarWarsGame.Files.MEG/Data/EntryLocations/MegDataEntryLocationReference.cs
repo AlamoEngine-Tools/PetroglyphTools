@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 /// <summary>
 /// Location reference of an existing MEG data entry and its owning .MEG file.
 /// </summary>
-public sealed class MegDataEntryReferenceLocation : IDataEntryLocation, IEquatable<MegDataEntryReferenceLocation>
+public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatable<MegDataEntryLocationReference>
 {
     /// <summary>
     /// Gets the owning .MEG file of <see cref="DataEntry"/>.
@@ -23,19 +23,24 @@ public sealed class MegDataEntryReferenceLocation : IDataEntryLocation, IEquatab
     public MegDataEntry DataEntry { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryReferenceLocation"/>.
+    /// Gets a value indicating whether the data exists in the meg file referenced in this instance.
+    /// </summary>
+    public bool Exists => MegFile.Archive.Contains(DataEntry);
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MegDataEntryLocationReference"/>.
     /// </summary>
     /// <param name="megFile">The owning .MEG file</param>
     /// <param name="dataEntry">The referenced <see cref="MegDataEntry"/>.</param>
     /// <exception cref="ArgumentNullException">The <paramref name="megFile"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
-    public MegDataEntryReferenceLocation(IMegFile megFile, MegDataEntry dataEntry)
+    public MegDataEntryLocationReference(IMegFile megFile, MegDataEntry dataEntry)
     {
         MegFile = megFile ?? throw new ArgumentNullException(nameof(megFile));
         DataEntry = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
     }
 
     /// <inheritdoc />
-    public bool Equals(MegDataEntryReferenceLocation? other)
+    public bool Equals(MegDataEntryLocationReference? other)
     {
         if (other is null)
             return false;
@@ -47,7 +52,7 @@ public sealed class MegDataEntryReferenceLocation : IDataEntryLocation, IEquatab
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is MegDataEntryReferenceLocation other && Equals(other);
+        return ReferenceEquals(this, obj) || obj is MegDataEntryLocationReference other && Equals(other);
     }
 
     /// <inheritdoc />

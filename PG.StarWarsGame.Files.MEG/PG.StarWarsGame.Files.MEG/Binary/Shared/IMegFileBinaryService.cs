@@ -3,6 +3,4 @@
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal interface IMegFileBinaryService : IMegFileBinaryReader
-{
-}
+internal interface IMegFileBinaryService : IMegFileBinaryReader;

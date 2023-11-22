@@ -34,45 +34,46 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />   
     public void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
     {
-        // TODO: Update exceptions infos in doc.
+        // TODO: Update exceptions info in doc.
         // E.g. IOException and use new MegDataEntryNotFoundException (FileNotInMegException : MegDataEntryNotFoundException : Exception)
-        // Also add overwrite-file param
 
-        //if (filePath == null) 
-        //    throw new ArgumentNullException(nameof(filePath));
+        if (megFileParameters == null)
+            throw new ArgumentNullException(nameof(megFileParameters));
 
-        //if (builderInformation == null) 
-        //    throw new ArgumentNullException(nameof(builderInformation));
+        if (builderInformation == null)
+            throw new ArgumentNullException(nameof(builderInformation));
 
-        //if (string.IsNullOrWhiteSpace(filePath))
-        //    throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
+        if (string.IsNullOrWhiteSpace(megFileParameters.FilePath))
+            throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(megFileParameters));
+        
+        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileParameters.FileVersion);
 
-        //var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileVersion);
+        var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
+            .ModelToBinary(constructionArchive.Archive);
 
-        //var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
-        //    .ModelToBinary(constructionArchive.Archive);
+        var bytes = metadata.Bytes;
 
-        //var bytes = metadata.Bytes;
+        var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
-        //using var fs = FileSystem.FileStream.New(filePath, FileMode.Create, FileAccess.Write);
+        using var fs = FileSystem.FileStream.New(megFileParameters.FilePath, fileMode, FileAccess.Write, FileShare.None);
 
-        //fs.Write(bytes, 0, bytes.Length);
+        fs.Write(bytes, 0, bytes.Length);
 
-        //var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
+        var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-        //foreach (var file in constructionArchive)
-        //{
-        //    using var dataStream = streamFactory.GetDataStream(file.Location);
+        foreach (var file in constructionArchive)
+        {
+            using var dataStream = streamFactory.GetDataStream(file.Location);
 
-        //    // TODO: Test in encryption case
-        //    if (dataStream.Length != file.DataEntry.Location.Size)
-        //        throw new InvalidOperationException(); // TODO: InvalidModelException
+            // TODO: Test in encryption case
+            if (dataStream.Length != file.DataEntry.Location.Size)
+                throw new InvalidOperationException(); // TODO: InvalidModelException
 
-        //    if (fs.Position != file.DataEntry.Location.Offset)
-        //        throw new InvalidOperationException(); // TODO: InvalidModelException
+            if (fs.Position != file.DataEntry.Location.Offset)
+                throw new InvalidOperationException(); // TODO: InvalidModelException
 
-        //    dataStream.CopyTo(fs);
-        //}
+            dataStream.CopyTo(fs);
+        }
     }
 
     /// <inheritdoc />
@@ -93,7 +94,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         using var reader = BinaryServiceFactory.GetReader(megVersion);
         using var param = new MegFileHolderParam
         {
-            FilePath = filePath,
+            FilePath = filePath, // Is there a valid reason not to use an absolute path here?
             FileVersion = megVersion,
         };
 
@@ -120,7 +121,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         using var reader = BinaryServiceFactory.GetReader(key, iv);
         using var param = new MegFileHolderParam
         {
-            FilePath = filePath,
+            FilePath = filePath, // Is there a valid reason not to use an absolute path here?
             FileVersion = megVersion,
             Key = key.ToArray(),
             IV = iv.ToArray()
@@ -139,7 +140,7 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
             var bytesRead = endPosition - startPosition;
 
-            // These is no reason to validate the archive's size if we cannot access the whole stream size. 
+            // There is no reason to validate the archive's size if we cannot access the whole stream size. 
             // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
             if (!megStream.CanSeek)
                 throw new NotSupportedException("Non-seekable streams are currently not supported.");

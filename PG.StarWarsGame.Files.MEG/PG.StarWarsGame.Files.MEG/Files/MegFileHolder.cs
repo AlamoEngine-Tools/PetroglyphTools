@@ -58,6 +58,9 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
     /// </summary>
     public bool HasEncryption => Key != null && IV != null;
 
+    /// <inheritdoc/>
+    public IMegArchive Archive => Content;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFileHolder"/> class. 
     /// </summary>

@@ -15,7 +15,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 /// and thus is capable referencing a data entry without further information.
 /// </remarks>
 /// <inheritdoc cref="IMegDataEntry"/>
-public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryReferenceLocation>, IEquatable<MegDataEntryReference>
+public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryLocationReference>, IEquatable<MegDataEntryReference>
 {
     /// <inheritdoc />
     public override string FilePath => Location.DataEntry.FilePath;
@@ -27,7 +27,7 @@ public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryReferen
     /// Initializes a new instance of the <see cref="MegDataEntryReference"/>.
     /// </summary>
     /// <param name="location">The full location information of this data entry.</param>
-    public MegDataEntryReference(MegDataEntryReferenceLocation location) : base(location)
+    public MegDataEntryReference(MegDataEntryLocationReference location) : base(location)
     {
     }
 

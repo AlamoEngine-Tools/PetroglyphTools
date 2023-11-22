@@ -8,16 +8,16 @@ using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
 [TestClass]
-public class MegDataEntryReferenceLocationTest
+public class MegDataEntryLocationReferenceTest
 {
     [TestMethod]
     public void Test_Ctor_Throws()
     {
         Assert.ThrowsException<ArgumentNullException>(() =>
-            new MegDataEntryReferenceLocation(null!, MegDataEntryTest.CreateEntry("path")));
+            new MegDataEntryLocationReference(null!, MegDataEntryTest.CreateEntry("path")));
 
         Assert.ThrowsException<ArgumentNullException>(() =>
-            new MegDataEntryReferenceLocation(new Mock<IMegFile>().Object, null!));
+            new MegDataEntryLocationReference(new Mock<IMegFile>().Object, null!));
     }
 
     [TestMethod]
@@ -26,7 +26,7 @@ public class MegDataEntryReferenceLocationTest
         var meg = new Mock<IMegFile>().Object;
         var entry = MegDataEntryTest.CreateEntry("path");
 
-        var reference = new MegDataEntryReferenceLocation(meg, entry);
+        var reference = new MegDataEntryLocationReference(meg, entry);
 
         Assert.AreSame(meg, reference.MegFile);
         Assert.AreSame(entry, reference.DataEntry);
@@ -38,12 +38,12 @@ public class MegDataEntryReferenceLocationTest
         var meg = new Mock<IMegFile>().Object;
         var entry = MegDataEntryTest.CreateEntry("path");
 
-        var reference = new MegDataEntryReferenceLocation(meg, entry);
+        var reference = new MegDataEntryLocationReference(meg, entry);
 
-        var otherEqual = new MegDataEntryReferenceLocation(meg, entry);
+        var otherEqual = new MegDataEntryLocationReference(meg, entry);
 
-        var otherNotEqualMeg = new MegDataEntryReferenceLocation(new Mock<IMegFile>().Object, entry);
-        var otherNotEqualEntry = new MegDataEntryReferenceLocation(meg, MegDataEntryTest.CreateEntry("other"));
+        var otherNotEqualMeg = new MegDataEntryLocationReference(new Mock<IMegFile>().Object, entry);
+        var otherNotEqualEntry = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("other"));
 
         Assert.AreEqual(reference, reference);
         Assert.AreEqual(reference, otherEqual);

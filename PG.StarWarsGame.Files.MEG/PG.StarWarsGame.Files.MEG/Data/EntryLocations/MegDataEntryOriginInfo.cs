@@ -13,7 +13,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     /// <summary>
     /// Gets the MEG file's data entry. <see langeword="null"/> if not present.
     /// </summary>
-    public MegDataEntryReferenceLocation? MegFileLocation { get; }
+    public MegDataEntryLocationReference? MegFileLocation { get; }
 
     /// <summary>
     /// Gets the file's path on the file system. <see langeword="null"/> if not present.
@@ -38,11 +38,11 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     /// <summary>
     /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> structure to the specified MEG file's data entry.
     /// </summary>
-    /// <param name="referenceLocation">The MEG file's data entry.</param>
-    /// <exception cref="ArgumentNullException">If <paramref name="referenceLocation"/> is <see langword="null"/>.</exception>
-    public MegDataEntryOriginInfo(MegDataEntryReferenceLocation referenceLocation)
+    /// <param name="locationReference">The MEG file's data entry.</param>
+    /// <exception cref="ArgumentNullException">If <paramref name="locationReference"/> is <see langword="null"/>.</exception>
+    public MegDataEntryOriginInfo(MegDataEntryLocationReference locationReference)
     {
-        MegFileLocation = referenceLocation ?? throw new ArgumentNullException(nameof(referenceLocation));
+        MegFileLocation = locationReference ?? throw new ArgumentNullException(nameof(locationReference));
     }
 
     /// <inheritdoc/>

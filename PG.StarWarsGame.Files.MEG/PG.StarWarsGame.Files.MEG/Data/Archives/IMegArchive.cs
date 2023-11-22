@@ -8,6 +8,4 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 /// <summary>
 /// Contains all data entries of a single, physical .MEG file.
 /// </summary>
-public interface IMegArchive : IMegDataEntryHolder<MegDataEntry>
-{
-}
+public interface IMegArchive : IMegDataEntryHolder<MegDataEntry>;

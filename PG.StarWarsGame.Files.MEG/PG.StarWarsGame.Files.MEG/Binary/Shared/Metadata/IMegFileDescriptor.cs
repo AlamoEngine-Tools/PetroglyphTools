@@ -27,4 +27,6 @@ internal interface IMegFileDescriptor : IBinary, IComparable<IMegFileDescriptor>
     /// limited to <see cref="int"/> for indexing native list-like structures.<br/>
     /// </remarks>
     public int Index { get; }
+    
+    public bool Encrypted { get; }
 }

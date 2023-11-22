@@ -45,7 +45,7 @@ public class ConstructingMegArchiveTest
             entry1, new MegDataEntryOriginInfo("path"));
 
         var reference2 = new VirtualMegDataEntryReference(
-            entry2, new MegDataEntryOriginInfo(new MegDataEntryReferenceLocation(meg.Object, locEntry)));
+            entry2, new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg.Object, locEntry)));
 
         var entries = new List<VirtualMegDataEntryReference>
         {

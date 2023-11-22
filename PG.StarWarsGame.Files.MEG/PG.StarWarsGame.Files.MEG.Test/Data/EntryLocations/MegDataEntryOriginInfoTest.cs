@@ -14,7 +14,7 @@ public class MegDataEntryOriginInfoTest
     public void Test_Ctor_Throws()
     {
         Assert.ThrowsException<ArgumentNullException>(() => new MegDataEntryOriginInfo((string)null!));
-        Assert.ThrowsException<ArgumentNullException>(() => new MegDataEntryOriginInfo((MegDataEntryReferenceLocation)null!));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegDataEntryOriginInfo((MegDataEntryLocationReference)null!));
 
         Assert.ThrowsException<ArgumentException>(() => new MegDataEntryOriginInfo(string.Empty));
         Assert.ThrowsException<ArgumentException>(() => new MegDataEntryOriginInfo("    "));
@@ -33,7 +33,7 @@ public class MegDataEntryOriginInfoTest
     public void Test_Ctor_ReferenceLocation()
     {
         var meg = new Mock<IMegFile>().Object;
-        var location = new MegDataEntryReferenceLocation(meg, MegDataEntryTest.CreateEntry("path"));
+        var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 
         var originInfo = new MegDataEntryOriginInfo(location);
 
@@ -45,8 +45,8 @@ public class MegDataEntryOriginInfoTest
     public void Test_HashCode()
     {
         var meg = new Mock<IMegFile>().Object;
-        var location = new MegDataEntryReferenceLocation(meg, MegDataEntryTest.CreateEntry("path"));
-        var otherLocation = new MegDataEntryReferenceLocation(meg, MegDataEntryTest.CreateEntry("path"));
+        var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
+        var otherLocation = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 
         var originLoc = new MegDataEntryOriginInfo(location);
         var otherOriginLoc = new MegDataEntryOriginInfo(otherLocation);
@@ -63,8 +63,8 @@ public class MegDataEntryOriginInfoTest
     public void Test_Equals()
     {
         var meg = new Mock<IMegFile>().Object;
-        var location = new MegDataEntryReferenceLocation(meg, MegDataEntryTest.CreateEntry("path"));
-        var otherLocation = new MegDataEntryReferenceLocation(meg, MegDataEntryTest.CreateEntry("path"));
+        var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
+        var otherLocation = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 
         var originLoc = new MegDataEntryOriginInfo(location);
         var otherOriginLoc = new MegDataEntryOriginInfo(otherLocation);
@@ -92,6 +92,6 @@ public class MegDataEntryOriginInfoTest
         Assert.AreNotEqual(originPath, new MegDataEntryOriginInfo("PATH"));
 
         Assert.AreNotEqual(originLoc,
-            new MegDataEntryOriginInfo(new MegDataEntryReferenceLocation(meg, MegDataEntryTest.CreateEntry("PATH"))));
+            new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("PATH"))));
     }
 }

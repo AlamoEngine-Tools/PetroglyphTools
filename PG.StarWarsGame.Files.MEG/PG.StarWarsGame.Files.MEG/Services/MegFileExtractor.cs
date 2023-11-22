@@ -54,26 +54,16 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     }
 
     /// <inheritdoc/>
-    public Stream GetFileData(MegDataEntryReferenceLocation dataEntryLocation)
+    public Stream GetFileData(MegDataEntryLocationReference dataEntryLocation)
     {
         if (dataEntryLocation is null) 
             throw new ArgumentNullException(nameof(dataEntryLocation));
-
-        var megFile = dataEntryLocation.MegFile;
-        var dataEntry = dataEntryLocation.DataEntry;
-
-        if (!FileSystem.File.Exists(megFile.FilePath))
-            throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
-
-        if (!megFile.Content.Contains(dataEntry))
-            throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);
-
-        return Services.GetRequiredService<IMegDataStreamFactory>()
-            .GetDataStream(megFile, dataEntry);
+        
+        return Services.GetRequiredService<IMegDataStreamFactory>().GetDataStream(dataEntryLocation);
     }
 
     /// <inheritdoc/>
-    public bool ExtractFile(MegDataEntryReferenceLocation dataEntryLocation, string filePath, bool overwrite)
+    public bool ExtractFile(MegDataEntryLocationReference dataEntryLocation, string filePath, bool overwrite)
     {
         if (dataEntryLocation is null)
             throw new ArgumentNullException(nameof(dataEntryLocation));
@@ -81,15 +71,6 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
             throw new ArgumentNullException(nameof(filePath));
         if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
-
-        var megFile = dataEntryLocation.MegFile;
-        var dataEntry = dataEntryLocation.DataEntry;
-
-        if (!FileSystem.File.Exists(megFile.FilePath))
-            throw new FileNotFoundException("MEG file not found.", megFile.FilePath);
-
-        if (!megFile.Content.Contains(dataEntry))
-            throw new FileNotInMegException(dataEntry.FilePath, megFile.FilePath);
 
         var fullFilePath = FileSystem.Path.GetFullPath(filePath);
 
@@ -105,8 +86,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
 
         using var destinationStream = FileSystem.FileStream.New(fullFilePath, fileMode, FileAccess.Write, FileShare.None);
 
-        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>()
-            .GetDataStream(megFile, dataEntry);
+        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>().GetDataStream(dataEntryLocation);
         dataStream.CopyTo(destinationStream);
 
         return true;

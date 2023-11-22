@@ -5,6 +5,4 @@ using FluentValidation;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Validation;
 
-internal interface IMegFileSizeValidator : IValidator<IMegBinaryValidationInformation>
-{
-}
+internal interface IMegFileSizeValidator : IValidator<IMegBinaryValidationInformation>;

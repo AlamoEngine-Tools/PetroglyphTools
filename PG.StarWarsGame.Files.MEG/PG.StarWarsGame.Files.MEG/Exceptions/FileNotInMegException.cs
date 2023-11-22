@@ -1,6 +1,8 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+
 namespace PG.StarWarsGame.Files.MEG;
 
 /// <summary>
@@ -24,5 +26,15 @@ public sealed class FileNotInMegException : MegDataEntryNotFoundException
     {
         _file = file;
         _megFile = megFile;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileNotInMegException"/> class with a location reference which does not exist.
+    /// </summary>
+    /// <param name="locationReference">The non-existing data entry location.</param>
+    public FileNotInMegException(MegDataEntryLocationReference locationReference)
+    {
+        _file = locationReference.DataEntry.FilePath;
+        _megFile = locationReference.MegFile.FilePath;
     }
 }

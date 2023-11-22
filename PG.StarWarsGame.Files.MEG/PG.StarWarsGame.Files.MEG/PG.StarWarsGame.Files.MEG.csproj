@@ -40,4 +40,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <None Update="C:\Users\Anakin\Source\Repos\AlamoEngine-Tools\PetroglyphTools\aet.png" Link="aet.png" />
+    </ItemGroup>
 </Project>

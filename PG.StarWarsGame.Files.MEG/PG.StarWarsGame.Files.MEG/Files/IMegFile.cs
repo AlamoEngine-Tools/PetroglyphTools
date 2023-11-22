@@ -33,4 +33,9 @@ public interface IMegFile : IFileHolder<IMegArchive, MegAlamoFileType>
     /// Gets a value indicating whether the MEG file is encrypted.
     /// </summary>
     bool HasEncryption { get; }
+
+    /// <summary>
+    /// Gets the archive model of this MEG file.
+    /// </summary>
+    IMegArchive Archive { get; }
 }

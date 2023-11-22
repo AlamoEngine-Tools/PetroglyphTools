@@ -26,7 +26,7 @@ public class VirtualMegDataEntryReferenceTest_ReferenceLocation : MegDataEntryBa
 
     protected override MegDataEntryOriginInfo CreateLocation(int seed)
     {
-        return new MegDataEntryOriginInfo(new MegDataEntryReferenceLocation(_megFile,
+        return new MegDataEntryOriginInfo(new MegDataEntryLocationReference(_megFile,
             new MegDataEntry(seed.ToString(), DefaultCrc, new MegDataEntryLocation((uint)seed, (uint)seed), false)));
     }
 

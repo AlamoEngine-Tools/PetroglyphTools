@@ -72,8 +72,7 @@ internal abstract class MegBinaryConverterBase<TMegMetadata> : ServiceBase, IMeg
 
             var location = new MegDataEntryLocation(fileOffset, fileSize);
 
-            // TODO: Set proper encryption flag
-            files.Add(new MegDataEntry(fileName, crc, location, false));
+            files.Add(new MegDataEntry(fileName, crc, location, fileDescriptor.Encrypted));
         }
         return new MegArchive(files);
     }

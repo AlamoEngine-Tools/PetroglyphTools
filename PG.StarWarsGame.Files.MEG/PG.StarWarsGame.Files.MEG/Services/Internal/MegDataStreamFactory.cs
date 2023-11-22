@@ -6,9 +6,7 @@ using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
-using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
-using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
@@ -27,32 +25,30 @@ internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
         if (originInfo.FilePath is not null)
             return FileSystem.File.OpenRead(originInfo.FilePath);
 
-        var megFile = originInfo.MegFileLocation!.MegFile;
-        var entry = originInfo.MegFileLocation.DataEntry;
-
-        return GetDataStream(megFile, entry);
+        return GetDataStream(originInfo.MegFileLocation!);
     }
 
-    public Stream GetDataStream(IMegFile megFile, MegDataEntry dataEntry)
+    public Stream GetDataStream(MegDataEntryLocationReference locationReference)
     {
-        if (megFile == null) 
-            throw new ArgumentNullException(nameof(megFile));
-        if (dataEntry == null) 
-            throw new ArgumentNullException(nameof(dataEntry));
+        if (locationReference == null) 
+            throw new ArgumentNullException(nameof(locationReference));
 
+        if (!locationReference.Exists)
+            throw new FileNotInMegException(locationReference);
 
-        if (dataEntry.Encrypted)
+        if (locationReference.DataEntry.Encrypted)
         {
             throw new NotImplementedException();
         }
 
-        return CreateDataStream(megFile.FilePath, dataEntry.Location.Offset, dataEntry.Location.Size);
+        return CreateDataStream(locationReference.MegFile.FilePath, locationReference.DataEntry.Location.Offset,
+            locationReference.DataEntry.Location.Size);
     }
 
     private Stream CreateDataStream(string path, uint offset, uint size)
     {
         // Cause MIKE.NL's tool uses the offset megFile[megSize + 1] for empty Entries we would cause an ArgumentOutOfRangeException
-        // when trying to access this index on a real file. Therefore we return the Null stream.
+        // when trying to access this index on a real file. Therefore, we return the Null stream.
         if (size == 0)
             return Stream.Null;
 

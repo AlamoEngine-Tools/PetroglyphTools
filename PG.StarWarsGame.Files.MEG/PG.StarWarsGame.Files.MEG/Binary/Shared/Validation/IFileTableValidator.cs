@@ -6,6 +6,4 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Validation;
 
-internal interface IFileTableValidator : IValidator<IMegFileTable>
-{
-}
+internal interface IFileTableValidator : IValidator<IMegFileTable>;

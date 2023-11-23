@@ -111,25 +111,6 @@ public class MegFileExtractorTest
         Assert.ThrowsException<Exception>(() => _extractor.GetFileData(location));
     }
 
-    // TODO: This is a good test for the StreamFactory
-    //[TestMethod]
-    //public void Test_GetFileData_Throws_FileNotInMeg()
-    //{
-    //    _fileSystem.AddEmptyFile("a.meg");
-    //    var entry = CreateEntry("file.txt");
-
-    //    var archive = new Mock<IMegArchive>();
-    //    archive.Setup(a => a.Contains(entry)).Returns(false);
-
-    //    var meg = new Mock<IMegFile>();
-    //    meg.SetupGet(m => m.FilePath).Returns(_fileSystem.Path.GetFullPath("a.meg"));
-    //    meg.SetupGet(m => m.Content).Returns(archive.Object);
-
-    //    var location = new MegDataEntryLocationReference(meg.Object, entry);
-
-    //    Assert.ThrowsException<FileNotInMegException>(() => _extractor.GetFileData(location));
-    //}
-
     [TestMethod]
     public void Test_GetFileData()
     {

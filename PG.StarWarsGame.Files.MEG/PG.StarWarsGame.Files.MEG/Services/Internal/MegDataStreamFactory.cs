@@ -47,6 +47,9 @@ internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
 
     private Stream CreateDataStream(string path, uint offset, uint size)
     {
+        if (!FileSystem.File.Exists(path))
+            throw new FileNotFoundException($"MEG file '{path}' does not exist", path);
+
         // Cause MIKE.NL's tool uses the offset megFile[megSize + 1] for empty Entries we would cause an ArgumentOutOfRangeException
         // when trying to access this index on a real file. Therefore, we return the Null stream.
         if (size == 0)

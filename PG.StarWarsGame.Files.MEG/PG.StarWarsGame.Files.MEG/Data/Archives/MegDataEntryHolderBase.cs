@@ -39,7 +39,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     {
         if (entries == null)
             throw new ArgumentNullException(nameof(entries));
-
+        
         Entries = new ReadOnlyCollection<T>(entries.ToList());
         _fileNames = new ReadOnlyCollection<string>(Entries.Select(x => x.FilePath).ToList());
 

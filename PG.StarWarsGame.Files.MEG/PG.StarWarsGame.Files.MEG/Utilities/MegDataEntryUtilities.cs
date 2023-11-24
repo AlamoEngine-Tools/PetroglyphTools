@@ -3,13 +3,37 @@
 
 using System.Collections.Generic;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Utilities;
 
+internal interface IHasCrc32
+{
+    Crc32 Crc32 { get; }
+}
+
 internal static class MegDataEntryUtilities
 {
+    public static void EnsureSortedByCrc32<T>(IEnumerable<T> entries) where T : IHasCrc32
+    {
+        var lastCrc = default(Crc32);
+        foreach (var entry in entries)
+        {
+            var currentCrc = entry.Crc32;
+            if (currentCrc < lastCrc)
+                throw new InvalidOperationException();
+            lastCrc = currentCrc;
+        }
+    }
+
+    public static IReadOnlyList<T> SortByCrc32<T>(IEnumerable<T> entries) where T : IHasCrc32
+    {
+        return new ReadOnlyCollection<T>(entries.OrderBy(o => o.Crc32).ToList());
+    }
+
     /// <summary>
     /// Converts an already sorted list of <see cref="IMegDataEntry"/> into a table where the key is the <see cref="Crc32"/> checksum
     /// of the entry and the value is an <see cref="IndexRange"/>.
@@ -26,7 +50,7 @@ internal static class MegDataEntryUtilities
 
         var dict = new Dictionary<Crc32, IndexRange>();
 
-        var lastCrc = new Crc32(0);
+        var lastCrc = default(Crc32);
         var currentRangeStart = 0;
         var currentRangeLength = 0;
 

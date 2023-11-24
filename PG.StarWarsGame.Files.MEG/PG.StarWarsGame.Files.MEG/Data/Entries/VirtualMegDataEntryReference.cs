@@ -4,7 +4,6 @@
 using PG.Commons.Services;
 using System;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
@@ -13,12 +12,12 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 /// <br/>
 /// This data entry type hold the following information:
 /// <list type="bullet">
-/// <item>The <see cref="MegDataEntry"/> which represent and locates this entry within it to be build .MEG file. </item>
+/// <item>The <see cref="MegDataEntry"/> which represent and locates this entry within it to be built .MEG file. </item>
 /// <item>The location of the actual file. This is either an archived data entry or a file on the file system.</item>
 /// </list>
 /// </summary>
 /// <remarks>
-/// <b>Note:</b> <see cref="DataEntry"/> already is dependent to the <see cref="MegFileVersion"/> of the to be build .MEG file.
+/// <b>Note:</b> <see cref="DataEntry"/>'s location already is dependent to the binary representation of the to be built .MEG file.
 /// </remarks>
 internal sealed class VirtualMegDataEntryReference : MegDataEntryBase<MegDataEntryOriginInfo>, IEquatable<VirtualMegDataEntryReference>
 {

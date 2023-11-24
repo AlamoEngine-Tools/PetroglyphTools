@@ -22,4 +22,20 @@ public class ChecksumServiceTest
         Assert.AreEqual((int)expectedChecksum, (int)crc);
         Assert.AreEqual((uint)expectedChecksum, (uint)crc);
     }
+
+    [TestMethod]
+    public void Test_Encoding_Ambiguity()
+    {
+        var crc1 = ChecksumService.Instance.GetChecksum("Ä", Encoding.ASCII);
+        var crc2 = ChecksumService.Instance.GetChecksum("ü", Encoding.ASCII);
+        Assert.AreEqual(crc1, crc2);
+    }
+
+    [TestMethod]
+    public void Test_Encoding_NoAmbiguity()
+    {
+        var crc1 = ChecksumService.Instance.GetChecksum("Ä", Encoding.Unicode);
+        var crc2 = ChecksumService.Instance.GetChecksum("ü", Encoding.Unicode);
+        Assert.AreNotEqual(crc1, crc2);
+    }
 }

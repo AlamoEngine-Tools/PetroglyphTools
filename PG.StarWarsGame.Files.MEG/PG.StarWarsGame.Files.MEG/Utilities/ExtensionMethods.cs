@@ -17,7 +17,7 @@ public static class ExtensionMethods
     /// <returns>´The meg file's parameters.</returns>
     public static MegFileHolderParam CreateParam(this IMegFile megFile)
     {
-        // We don't want this to be an instance method, cause that could be understood the returned MegFileHolderParam instance is a singletone.
+        // We don't want this to be an instance method, because that could be understood the returned MegFileHolderParam instance is a singleton.
         // This however is not possible, cause MegFileHolderParam is disposable for security/confidentiallty reasons. 
         // MegFileHolderParam is considered to be short-lived and thus should not co-exist with the holder it represents.
 

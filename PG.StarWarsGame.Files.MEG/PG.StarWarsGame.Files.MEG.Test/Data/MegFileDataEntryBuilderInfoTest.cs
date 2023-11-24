@@ -12,15 +12,11 @@ public class MegFileDataEntryBuilderInfoTest
     public void Test_Ctor()
     {
         var origin = new MegDataEntryOriginInfo("path");
-        var info = new MegFileDataEntryBuilderInfo(origin)
-        {
-            OverrideEncrypted = true,
-            OverrideFileName = "PATH"
-        };
+        var info = new MegFileDataEntryBuilderInfo(origin, "PATH", true);
 
         Assert.AreSame(origin, info.OriginInfo);
-        Assert.AreEqual("PATH", info.OverrideFileName);
-        Assert.IsTrue(info.OverrideEncrypted);
+        Assert.AreEqual("PATH", info.FilePath);
+        Assert.IsTrue(info.Encrypted);
     }
 
     [TestMethod]

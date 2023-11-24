@@ -15,6 +15,7 @@ public interface IMegFileExtractor
 {
     /// <summary>
     /// Builds the absolute file path for a <see cref="IMegDataEntry"/> and a given base directory.
+    /// Use this method to get an absolute path for extracting an entry. 
     /// <br/>
     /// If <paramref name="rootPath"/> is relative, the environment's <see cref="Environment.CurrentDirectory"/> will be prepended.
     /// </summary>
@@ -65,7 +66,7 @@ public interface IMegFileExtractor
     /// <returns>A stream containing the files contents.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>
-    /// <exception cref="MegDataEntryNotFoundException">The data entry does not exist in the .MEG file.</exception>
+    /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
     Stream GetFileData(MegDataEntryLocationReference dataEntryLocation);
 
@@ -88,7 +89,7 @@ public interface IMegFileExtractor
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> or <paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>
     /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>
-    /// <exception cref="MegDataEntryNotFoundException">The data entry does not exist in the .MEG file.</exception>
+    /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="IOException">When the extraction failed due to an IO error.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
     bool ExtractFile(MegDataEntryLocationReference dataEntryLocation, string filePath, bool overwrite);

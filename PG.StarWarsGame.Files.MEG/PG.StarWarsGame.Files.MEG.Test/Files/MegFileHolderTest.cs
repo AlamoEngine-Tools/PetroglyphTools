@@ -41,6 +41,7 @@ public class MegFileHolderTest
         var holder = new MegFileHolder(model, param, _serviceProvider.Object);
 
         Assert.AreSame(model, holder.Content);
+        Assert.AreSame(model, holder.Archive);
         Assert.AreEqual(MegFileVersion.V2, holder.FileVersion);
         Assert.IsFalse(holder.HasEncryption);
         Assert.IsNull(holder.IV);

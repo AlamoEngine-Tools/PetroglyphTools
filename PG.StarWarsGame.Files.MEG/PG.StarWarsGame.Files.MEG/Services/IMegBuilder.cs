@@ -8,7 +8,10 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
-// TODO: This could be in a Package
+// TODO: This should be in other Package, as this provides high-level support for EaW/FoC
+
+// TODO: I don't quite like the design of this interface yet
+// (e.g, two build methods, build does not return, Files is already sorted (should be impl. detail))
 
 /// <summary>
 /// High-level builder service which takes certain restrictions form the PG games into account.

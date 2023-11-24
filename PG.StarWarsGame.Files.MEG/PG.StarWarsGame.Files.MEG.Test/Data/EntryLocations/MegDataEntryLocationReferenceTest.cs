@@ -1,6 +1,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
@@ -57,5 +58,21 @@ public class MegDataEntryLocationReferenceTest
 
         Assert.AreNotEqual(reference.GetHashCode(), otherNotEqualMeg.GetHashCode());
         Assert.AreNotEqual(reference.GetHashCode(), otherNotEqualEntry.GetHashCode());
+    }
+
+    [TestMethod]
+    public void Test_Exists()
+    {
+        var entry = MegDataEntryTest.CreateEntry("path");
+        var archive = new Mock<IMegArchive>();
+        archive.Setup(a => a.Contains(entry)).Returns(true);
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.Archive).Returns(archive.Object);
+
+        var locationExists = new MegDataEntryLocationReference(meg.Object, entry);
+        var locationNotExists = new MegDataEntryLocationReference(meg.Object, MegDataEntryTest.CreateEntry("other"));
+
+        Assert.IsTrue(locationExists.Exists);
+        Assert.IsFalse(locationNotExists.Exists);
     }
 }

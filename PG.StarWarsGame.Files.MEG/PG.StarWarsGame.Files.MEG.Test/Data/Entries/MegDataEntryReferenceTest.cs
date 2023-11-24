@@ -11,17 +11,22 @@ namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 public class MegDataEntryReferenceTest : MegDataEntryBaseTest<MegDataEntryLocationReference>
 {
     // We need a instance global variable, cause IMegFile equality is only done by reference.
-    private readonly IMegFile _megFile = new Mock<IMegFile>().Object;
+    private readonly Mock<IMegFile> _megFile = new();
 
-    protected override MegDataEntryBase<MegDataEntryLocationReference> CreateEntry(string path, Crc32 crc, MegDataEntryLocationReference location)
+    private MegDataEntryReference CreateEntryReference(string path, Crc32 crc, MegDataEntryLocationReference location)
     {
         var newLocation = CreateLocation(path, crc, location);
         return new MegDataEntryReference(newLocation);
     }
 
-    protected MegDataEntryLocationReference CreateLocation(string path, Crc32 crc, MegDataEntryLocationReference location)
+    protected override MegDataEntryBase<MegDataEntryLocationReference> CreateEntry(string path, Crc32 crc, MegDataEntryLocationReference location)
     {
-        return new MegDataEntryLocationReference(_megFile,
+        return CreateEntryReference(path, crc, location);
+    }
+
+    private MegDataEntryLocationReference CreateLocation(string path, Crc32 crc, MegDataEntryLocationReference location)
+    {
+        return new MegDataEntryLocationReference(_megFile.Object,
             new MegDataEntry(path, crc, location.DataEntry.Location, false));
     }
 
@@ -29,7 +34,7 @@ public class MegDataEntryReferenceTest : MegDataEntryBaseTest<MegDataEntryLocati
     {
         unchecked
         {
-            return new MegDataEntryLocationReference(_megFile,
+            return new MegDataEntryLocationReference(_megFile.Object,
                 new MegDataEntry("path", DefaultCrc, new MegDataEntryLocation((uint)seed, (uint)seed), false));
         }
     }

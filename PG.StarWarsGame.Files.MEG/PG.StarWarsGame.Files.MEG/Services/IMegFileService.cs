@@ -60,7 +60,7 @@ public interface IMegFileService
     /// <param name="file">The .MEG file.</param>
     /// <param name="encrypted">Indicates whether the .MEG archive is encrypted or not.</param>
     /// <returns>The version of the .MEG archive.</returns>
-    /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid .MEG archive.</exception>
+    /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid MEG archive.</exception>
     /// <exception cref="FileNotFoundException">When <paramref name="file"/> was not found.</exception>
     MegFileVersion GetMegFileVersion(string file, out bool encrypted);
 
@@ -70,6 +70,6 @@ public interface IMegFileService
     /// <param name="stream">The .MEG's archive stream</param>
     /// <param name="encrypted">Indicates whether the .MEG archive is encrypted or not.</param>
     /// <returns>The version of the .MEG archive.</returns>
-    /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid .MEG archive.</exception>
+    /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid MEG archive.</exception>
     MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted);
 }

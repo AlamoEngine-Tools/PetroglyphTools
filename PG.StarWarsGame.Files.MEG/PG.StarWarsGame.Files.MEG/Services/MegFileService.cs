@@ -34,9 +34,6 @@ public sealed class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />   
     public void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
     {
-        // TODO: Update exceptions info in doc.
-        // E.g. IOException and use new MegDataEntryNotFoundException (FileNotInMegException : MegDataEntryNotFoundException : Exception)
-
         if (megFileParameters == null)
             throw new ArgumentNullException(nameof(megFileParameters));
 
@@ -50,13 +47,12 @@ public sealed class MegFileService : ServiceBase, IMegFileService
 
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
-
-        var bytes = metadata.Bytes;
-
+        
         var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
         using var fs = FileSystem.FileStream.New(megFileParameters.FilePath, fileMode, FileAccess.Write, FileShare.None);
 
+        var bytes = metadata.Bytes;
         fs.Write(bytes, 0, bytes.Length);
 
         var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();

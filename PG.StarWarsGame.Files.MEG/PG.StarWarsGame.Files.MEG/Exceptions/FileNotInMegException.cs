@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG;
@@ -8,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG;
 /// <summary>
 /// The exception that is thrown when a data entry is not found inside a MEG archive.
 /// </summary>
-public sealed class FileNotInMegException : MegDataEntryNotFoundException
+public sealed class FileNotInMegException : Exception
 {
     private readonly string _file;
     private readonly string _megFile;

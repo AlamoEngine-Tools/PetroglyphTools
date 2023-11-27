@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 
-namespace PG.Commons.Test.Services;
+namespace PG.Commons.Test.Hashing;
 
 [TestClass]
 public class ChecksumServiceTest
@@ -18,8 +18,26 @@ public class ChecksumServiceTest
     // This test method accepts long so that we can interpret expectedChecksum as either uint or int.
     public void Test_Correct_Checksums(string value, long expectedChecksum)
     {
-        var crc = ChecksumService.Instance.GetChecksum(value, Encoding.ASCII);
+        var crc = new ChecksumService().GetChecksum(value, Encoding.ASCII);
         Assert.AreEqual((int)expectedChecksum, (int)crc);
         Assert.AreEqual((uint)expectedChecksum, (uint)crc);
+    }
+
+    [TestMethod]
+    public void Test_Encoding_Ambiguity()
+    {
+        var chksv = new ChecksumService();
+        var crc1 = chksv.GetChecksum("Ä", Encoding.ASCII);
+        var crc2 = chksv.GetChecksum("ü", Encoding.ASCII);
+        Assert.AreEqual(crc1, crc2);
+    }
+
+    [TestMethod]
+    public void Test_Encoding_NoAmbiguity()
+    {
+        var chksv = new ChecksumService();
+        var crc1 = chksv.GetChecksum("Ä", Encoding.Unicode);
+        var crc2 = chksv.GetChecksum("ü", Encoding.Unicode);
+        Assert.AreNotEqual(crc1, crc2);
     }
 }

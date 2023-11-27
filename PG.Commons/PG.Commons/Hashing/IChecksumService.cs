@@ -3,7 +3,7 @@
 
 using System.Text;
 
-namespace PG.Commons.Services;
+namespace PG.Commons.Hashing;
 
 /// <summary>
 /// Provides necessary methods to compute CRC32 checksum from strings.

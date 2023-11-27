@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
 using PG.Commons.Binary.File;
+using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;

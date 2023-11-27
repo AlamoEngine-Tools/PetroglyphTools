@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Files;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Files;

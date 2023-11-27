@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
-using PG.Commons.Utilities;
+using PG.Commons.DataTypes;
 
 namespace PG.Commons.Test.Services;
 

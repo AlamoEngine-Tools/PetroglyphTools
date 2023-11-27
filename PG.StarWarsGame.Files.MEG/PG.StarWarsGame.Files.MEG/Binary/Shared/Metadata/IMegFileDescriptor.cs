@@ -1,6 +1,6 @@
 ﻿using System;
 using PG.Commons.Binary;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;

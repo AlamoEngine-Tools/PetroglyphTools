@@ -25,7 +25,7 @@ public class Crc32UtilitiesTest
     [TestMethod]
     public void Test_EnsureSortedByCrc32_Throws()
     {
-        Assert.ThrowsException<ArgumentException>(() => Crc32Utilities.EnsureSortedByCrc32<IHasCrc32>(null!));
+        Assert.ThrowsException<ArgumentNullException>(() => Crc32Utilities.EnsureSortedByCrc32<IHasCrc32>(null!));
     }
 
     [TestMethod]
@@ -70,7 +70,7 @@ public class Crc32UtilitiesTest
     [TestMethod]
     public void Test_SortByCrc32_Throws()
     {
-        Assert.ThrowsException<ArgumentException>(() => Crc32Utilities.SortByCrc32<IHasCrc32>(null!));
+        Assert.ThrowsException<ArgumentNullException>(() => Crc32Utilities.SortByCrc32<IHasCrc32>(null!));
     }
 
 
@@ -90,27 +90,32 @@ public class Crc32UtilitiesTest
     {
         return new[]
         {
-            new object[] {
-                new[] { ("a", 1), ("b", 1), ("c", 2), ("d", 3), ("e", 3), ("f", 4) }
-            },
+            new object[]
+            {
+                new[] { 1, 1, 2, 3, 3, 4 },
+                new Dictionary<int, (int, int)> { { 1, (0, 2) }, { 2, (2, 1) }, { 3, (3, 2) }, { 4, (5, 1) } }
+            }
         };
     }
 
-    //[DataTestMethod]
-    //[DynamicData(nameof(SortedTestDataForIndexTable), DynamicDataSourceType.Method)]
-    //public void Test_ListToCrcIndexRangeTable((string Id, int Crc)[] data, IDictionary<int, (int, int)> expectedDictionary)
-    //{
-    //    var list = data.Select(d => new CrcHolderWithIdentity(d.Id, d.Crc)).ToList();
-        
-    //    var expectedTransformed = new Dictionary<Crc32, IndexRange>();
+    [TestMethod]
+    public void Test_ListToCrcIndexRangeTable()
+    {
+        var inputData = new[] { 1, 1, 2, 3, 3, 4 };
+        var expectedData = new Dictionary<int, (int, int)>
+            { { 1, (0, 2) }, { 2, (2, 1) }, { 3, (3, 2) }, { 4, (5, 1) } };
 
-    //    foreach (var tuple in expectedDictionary)
-    //        expectedTransformed[new Crc32(tuple.Key)] = new IndexRange(tuple.Value.Item1, tuple.Value.Item2);
 
-    //    var result = Crc32Utilities.ListToCrcIndexRangeTable(list);
+        var list = inputData.Select(d => new CrcHolder(d)).ToList();
+        var expectedTransformed = new Dictionary<Crc32, IndexRange>();
 
-    //}
+        foreach (var tuple in expectedData)
+            expectedTransformed[new Crc32(tuple.Key)] = new IndexRange(tuple.Value.Item1, tuple.Value.Item2);
 
+        var result = Crc32Utilities.ListToCrcIndexRangeTable(list);
+
+        CollectionAssert.AreEqual(expectedTransformed.ToList(), result.ToList());
+    }
 
 
     private class CrcHolder : IHasCrc32

@@ -79,6 +79,9 @@ public static class Crc32Utilities
     /// <exception cref="ArgumentException"><paramref name="items"/> is not sorted by CRC32 checksum.</exception>
     public static void EnsureSortedByCrc32<T>(IEnumerable<T> items) where T : IHasCrc32
     {
+        if (items == null)
+            throw new ArgumentNullException(nameof(items));
+
         var lastCrc = default(Crc32);
         foreach (var item in items)
         {

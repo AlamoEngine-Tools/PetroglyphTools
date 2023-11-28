@@ -35,7 +35,6 @@ public class ContainsInvalidCharsBenchmark
 
 
     [Benchmark(Baseline = true)]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool ContainsInvalidChars()
     {
         var span = _s1.AsSpan();
@@ -62,7 +61,6 @@ public class ContainsInvalidCharsBenchmark
 
 
     [Benchmark]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool New()
     {
         var span = _s1.AsSpan();
@@ -79,8 +77,8 @@ public class ContainsInvalidCharsBenchmark
         return false;
     }
 
+    // Seems to be the winner
     [Benchmark]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool New_WithoutMarshal()
     {
         var span = _s1.AsSpan();
@@ -109,7 +107,7 @@ public class ContainsInvalidCharsBenchmark
 
     private static string RandomString(int length)
     {
-        const string chars = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\<>{}[]!?.:*|";
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Make sure strings only enter the slow path
         return new string(Enumerable.Repeat(chars, length)
             .Select(s => s[Random.Next(s.Length)]).ToArray());
     }

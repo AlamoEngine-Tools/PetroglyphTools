@@ -3,7 +3,7 @@ using Moq;
 using Moq.Protected;
 using PG.Commons.DataTypes;
 
-namespace PG.Commons.Test.Services;
+namespace PG.Commons.Test.DataTypes;
 
 [TestClass]
 public class DisposableObjectTest

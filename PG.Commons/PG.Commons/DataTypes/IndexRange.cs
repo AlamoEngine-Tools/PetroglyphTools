@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PG.Commons.DataTypes;
 
@@ -52,6 +53,7 @@ internal readonly struct IndexRange
         return HashCode.Combine(Start, Length);
     }
 
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         return $"{Start}..{Start + Length}";

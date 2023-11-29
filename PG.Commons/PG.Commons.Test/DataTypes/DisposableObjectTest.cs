@@ -1,7 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Reflection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
 using PG.Commons.DataTypes;
+using ExceptionUtilities = PG.Testing.ExceptionUtilities;
 
 namespace PG.Commons.Test.DataTypes;
 
@@ -18,6 +21,10 @@ public class DisposableObjectTest
 
         Assert.IsFalse(disposable.Object.IsDisposed);
 
+        var throwIfDisposed = disposable.Object.GetType().GetMethod("ThrowIfDisposed", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        ExceptionUtilities.AssertDoesNotThrowException(() => throwIfDisposed!.Invoke(disposable.Object, null));
+
         disposable.Object.Dispose();
 
         disposable.Protected().Verify("DisposeManagedResources", Times.Once());
@@ -33,5 +40,7 @@ public class DisposableObjectTest
         disposable.Protected().Verify("DisposeManagedResources", Times.Once());
         disposable.Protected().Verify("DisposeNativeResources", Times.Once());
 
+
+        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ObjectDisposedException>(() => throwIfDisposed!.Invoke(disposable.Object, null));
     }
 }

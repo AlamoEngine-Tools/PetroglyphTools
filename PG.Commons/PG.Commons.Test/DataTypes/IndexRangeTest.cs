@@ -31,13 +31,13 @@ public class IndexRangeTest
         var range3 = new IndexRange(1, 3);
         var range4 = new IndexRange(2, 2);
         
-        Assert.AreEqual(range1, range2);
-        Assert.AreEqual(range1, (object)range2);
+        Assert.IsTrue(range1.Equals(range2));
+        Assert.IsTrue(range1.Equals((object)range2));
 
-        Assert.AreNotEqual(range1, (object)null!);
-        Assert.AreNotEqual(range1, default);
-        Assert.AreNotEqual(range1, range3);
-        Assert.AreNotEqual(range1, range4);
+        Assert.IsFalse(range1.Equals(null!));
+        Assert.IsFalse(range1.Equals(default));
+        Assert.IsFalse(range1.Equals(range3));
+        Assert.IsFalse(range1.Equals(range4));
 
         Assert.AreEqual(range1.GetHashCode(), range2.GetHashCode());
         Assert.AreNotEqual(range1.GetHashCode(), range3.GetHashCode());

@@ -73,22 +73,22 @@ public static class ExceptionUtilities
         }
     }
 
-    public static void VSTesting_Assert_CtorException<T>(Action action) where T : Exception
+    public static void AssertThrowsException_IgnoreTargetInvocationException<T>(Action action) where T : Exception
     {
-        VSTesting_Assert_CtorException(typeof(T), action);
+        AssertThrowsException_IgnoreTargetInvocationException(typeof(T), action);
     }
 
-    public static void VSTesting_Assert_CtorException(Type type, Action action)
+    public static void AssertThrowsException_IgnoreTargetInvocationException(Type type, Action action)
     {
-        VSTesting_Assert_CtorException(type, () => action);
+        AssertThrowsException_IgnoreTargetInvocationException(type, () => action);
     }
 
-    public static void VSTesting_Assert_CtorException<T>(Func<object?> action) where T : Exception
+    public static void AssertThrowsException_IgnoreTargetInvocationException<T>(Func<object?> action) where T : Exception
     {
-        VSTesting_Assert_CtorException(typeof(T), action);
+        AssertThrowsException_IgnoreTargetInvocationException(typeof(T), action);
     }
 
-    public static void VSTesting_Assert_CtorException(Type expectedException, Func<object?> action)
+    public static void AssertThrowsException_IgnoreTargetInvocationException(Type expectedException, Func<object?> action)
     {
         if (expectedException.IsAssignableFrom(typeof(Exception)))
             throw new ArgumentException("Type argument must be assignable from System.Exception", nameof(expectedException));

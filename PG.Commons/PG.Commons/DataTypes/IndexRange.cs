@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PG.Commons.DataTypes;
@@ -9,7 +10,7 @@ namespace PG.Commons.DataTypes;
 /// <summary>
 /// Represent a range has a start index and a length.
 /// </summary>
-internal readonly struct IndexRange
+public readonly struct IndexRange
 {
     /// <summary>Represent the inclusive start index of the Range.</summary>
     public int Start { get; }
@@ -53,6 +54,7 @@ internal readonly struct IndexRange
         return HashCode.Combine(Start, Length);
     }
 
+    /// <inheritdoc/>
     [ExcludeFromCodeCoverage]
     public override string ToString()
     {

@@ -13,12 +13,12 @@ namespace PG.Commons.Test.Utilities;
 public class Crc32UtilitiesTest
 {
     [TestMethod]
-    [DataRow(1,2,3,4)]
-    [DataRow(1,1,1,1,1)]
-    [DataRow(1,2,2,2,3,5,100)]
+    [DataRow(1, 2, 3, 4)]
+    [DataRow(1, 1, 1, 1, 1)]
+    [DataRow(1, 2, 2, 2, 3, 5, 100, -1)]
     public void Test_EnsureSortedByCrc32(params int[] checksums)
     {
-        var list = checksums.Select(checksum => new CrcHolder(checksum)).Cast<IHasCrc32>().ToList(); 
+        var list = checksums.Select(checksum => new CrcHolder(checksum)).Cast<IHasCrc32>().ToList();
         ExceptionUtilities.AssertDoesNotThrowException(() => Crc32Utilities.EnsureSortedByCrc32(list));
     }
 
@@ -31,6 +31,7 @@ public class Crc32UtilitiesTest
     [TestMethod]
     [DataRow(4, 3, 2, 1)]
     [DataRow(1, 1, 2, 4, 3, 5)]
+    [DataRow(-1, 0, 1, 2, 3)]
     public void Test_EnsureSortedByCrc32_ThrowsUnsorted(params int[] checksums)
     {
         var list = checksums.Select(checksum => new CrcHolder(checksum)).ToList();
@@ -42,12 +43,18 @@ public class Crc32UtilitiesTest
     {
         return new[]
         {
-            new object[] {
+            new object[]
+            {
                 new[] { ("a", 1), ("b", 1), ("c", 2), ("d", 3) }, // Already sorted
                 new[] { ("a", 1), ("b", 1), ("c", 2), ("d", 3) }
             },
-
-            new object[] {
+            new object[]
+            {
+                new[] { ("a", -1), ("b", 1), ("c", 2), ("d", 3) }, 
+                new[] { ("b", 1), ("c", 2), ("d", 3), ("a", -1) }
+            },
+            new object[]
+            {
                 new[] { ("a", 2), ("b", 1), ("c", 3), ("d", 1) },
                 new[] { ("b", 1), ("d", 1), ("a", 2), ("c", 3) } // Ensure ("b", 1) is always before ("d", 1)
             },
@@ -94,18 +101,29 @@ public class Crc32UtilitiesTest
             {
                 new[] { 1, 1, 2, 3, 3, 4 },
                 new Dictionary<int, (int, int)> { { 1, (0, 2) }, { 2, (2, 1) }, { 3, (3, 2) }, { 4, (5, 1) } }
-            }
+            },
+            new object[]
+            {
+                new int[] { },
+                new Dictionary<int, (int, int)>()
+            },
+            new object[]
+            {
+                new[] { 1, 2, 3, 3 },
+                new Dictionary<int, (int, int)> { { 1, (0, 1) }, { 2, (1, 1) }, { 3, (2, 2) } }
+            },
+            new object[]
+            {
+                new[] { 1, -1 },
+                new Dictionary<int, (int, int)> { { 1, (0, 1) }, { -1, (1, 1) } }
+            },
         };
     }
 
-    [TestMethod]
-    public void Test_ListToCrcIndexRangeTable()
+    [DataTestMethod]
+    [DynamicData(nameof(SortedTestDataForIndexTable), DynamicDataSourceType.Method)]
+    public void Test_ListToCrcIndexRangeTable(int[] inputData, Dictionary<int, (int, int)> expectedData)
     {
-        var inputData = new[] { 1, 1, 2, 3, 3, 4 };
-        var expectedData = new Dictionary<int, (int, int)>
-            { { 1, (0, 2) }, { 2, (2, 1) }, { 3, (3, 2) }, { 4, (5, 1) } };
-
-
         var list = inputData.Select(d => new CrcHolder(d)).ToList();
         var expectedTransformed = new Dictionary<Crc32, IndexRange>();
 

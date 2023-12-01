@@ -24,7 +24,7 @@ public static class Crc32Utilities
     /// <example>
     /// The given input list [1,2,2,2,3] returns the following dictionary: {{1, (0, 1)}, {2, (1, 3)}, {3, (4, 1)}}
     /// </example>
-    internal static IReadOnlyDictionary<Crc32, IndexRange> ListToCrcIndexRangeTable<T>(IList<T> items) where T : IHasCrc32
+    public static IReadOnlyDictionary<Crc32, IndexRange> ListToCrcIndexRangeTable<T>(IList<T> items) where T : IHasCrc32
     {
         if (items == null)
             throw new ArgumentNullException(nameof(items));

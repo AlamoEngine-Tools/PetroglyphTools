@@ -6,24 +6,11 @@ using System.Collections.Generic;
 using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
-
-internal sealed class MegBinaryConverterV1 : MegBinaryConverterBase<MegMetadata>
-{
-    public MegBinaryConverterV1(IServiceProvider services) : base(services)
-    {
-    }
-
-    protected override MegMetadata ModelToBinaryCore(IMegArchive model)
-    {
-        throw new NotImplementedException();
-    }
-}
 
 internal abstract class MegBinaryConverterBase<TMegMetadata> : ServiceBase, IMegBinaryConverter where TMegMetadata : IMegFileMetadata
 {

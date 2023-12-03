@@ -9,6 +9,8 @@ namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 internal readonly struct MegHeader : IMegHeader
 {
+    internal static readonly int SizeValue = sizeof(uint) + sizeof(uint);
+
     internal uint NumFileNames { get; }
 
     internal uint NumFiles { get; }
@@ -27,7 +29,7 @@ internal readonly struct MegHeader : IMegHeader
         }
     }
 
-    public int Size => sizeof(uint) + sizeof(uint);
+    public int Size => SizeValue;
 
     internal MegHeader(uint numFileNames, uint numFiles)
     {

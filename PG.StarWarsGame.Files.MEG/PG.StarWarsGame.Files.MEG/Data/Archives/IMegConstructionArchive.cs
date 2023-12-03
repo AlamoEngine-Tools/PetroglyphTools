@@ -17,7 +17,12 @@ internal interface IMegConstructionArchive : IMegDataEntryHolder<VirtualMegDataE
     IMegArchive Archive { get; }
 
     /// <summary>
-    /// The MEG version of this archive.
+    /// Gets the MEG version of this archive.
     /// </summary>
     MegFileVersion MegVersion { get; }
+
+    /// <summary>
+    /// Gets whether this archive will be encrypted.
+    /// </summary>
+    bool Encrypted { get; }
 }

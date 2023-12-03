@@ -120,11 +120,10 @@ internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
             //              0x210001 (~2MB), which is massive and unseen for any PG game or even existing modification.
             //              (Such files would be artificial only made to crash this library - but we are prepared!)
             //              
-            //              The value 0x20210001 is represents the following: 
-            //              0x210001 <=> [0x01, 0x00, 0x21, 0x00] (Little Endian)
-            //                  where [0x01, 0x00] is the # chars of the first filename in the table,
-            //                  where [0x21], shortest allowed filename value "!" and
-            //                  where [0x00] is the LSB part of the next file name length.
+            //              The value 0x210001 <=> [0x01, 0x00, 0x21, 0x00] (Little Endian) stands for the following: 
+            //                  [0x01, 0x00] is the # chars of the first filename in the table (which is 1)
+            //                  [0x21], shortest allowed filename value "!" and
+            //                  [0x00] is the LSB part of the next file name length.
             if (flags == MegFileConstants.MegFileUnencryptedFlag)
             {
                 if (!TryReadUInt32(reader, out var filenamesSize))
@@ -143,7 +142,7 @@ internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
                     return MegFileVersion.V2;
                 }
 
-                delegate*<BinaryReader, uint, bool> method;
+                delegate*<BinaryReader, uint, bool> recordCheckMethod;
                 MegFileVersion versionToCheck;
 
                 // known start of the FileTable
@@ -156,24 +155,24 @@ internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
                 {
                     Logger.LogTrace("Checking MEG version: Checking V3 case...");
                     versionToCheck = MegFileVersion.V3;
-                    method = &FileRecordIsV3;
+                    recordCheckMethod = &FileRecordIsV3;
                 }
                 else
                 {
                     Logger.LogTrace("Checking MEG version: Checking V2 case...");
                     versionToCheck = MegFileVersion.V2;
-                    method = &FileRecordIsV2;
+                    recordCheckMethod = &FileRecordIsV2;
                 }
 
                 reader.BaseStream.Position = fileTableOffset;
 
-                if (CheckFirstAndLastRecord(reader, dataStart, numFiles, method))
+                if (CheckFirstAndLastRecord(reader, dataStart, numFiles, recordCheckMethod))
                     return versionToCheck;
 
                 if (versionToCheck == MegFileVersion.V2)
                     throw new BinaryCorruptedException("Unrecognized .MEG file version.");
 
-                Logger.LogTrace("Checking MEG version: Checking V2 case, cause the V3 case did not pass...");
+                Logger.LogTrace("Checking MEG version: V3 case did not pass, checking for V2...");
 
                 // The V3 check failed.
                 // There is a chance > 0% (as explained above) the archive looked like V3 but actually is V2.

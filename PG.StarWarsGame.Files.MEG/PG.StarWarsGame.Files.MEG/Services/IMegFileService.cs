@@ -30,6 +30,8 @@ public interface IMegFileService
     /// <exception cref="ArgumentNullException"><paramref name="megFileParameters"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="megFileParameters"/> contains invalid data.</exception>
     /// <exception cref="IOException">The MEG file could not be created.</exception>
+    /// <exception cref="FileNotFoundException">A data entry file was not found.</exception>
+    /// <exception cref="NotSupportedException">A data entry's file size exceeds 4GB.</exception>
     void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite);
 
     /// <summary>

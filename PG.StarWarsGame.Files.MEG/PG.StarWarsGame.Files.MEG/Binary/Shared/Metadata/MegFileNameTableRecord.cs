@@ -14,7 +14,7 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
     internal string FileName { get; }
 
-    internal string OriginalFileName { get; }
+    internal string OriginalFilePath { get; }
 
     public byte[] Bytes
     {
@@ -35,15 +35,15 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
     public int Size => sizeof(ushort) + _fileNameLength;
 
-    public MegFileNameTableRecord(string fileName)
+    public MegFileNameTableRecord(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(fileName))
-            throw new ArgumentException($"{nameof(fileName)} must not be null or empty");
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException($"{nameof(filePath)} must not be null or empty");
 
         var encoding = MegFileConstants.MegContentFileNameEncoding;
-        OriginalFileName = fileName;
+        OriginalFilePath = filePath;
 
-        var charCount = StringUtilities.ValidateStringCharLengthUInt16(fileName);
+        var charCount = StringUtilities.ValidateStringCharLengthUInt16(filePath);
         _fileNameLength = charCount;
 
         var byteCount = encoding.GetByteCountPG(charCount);
@@ -51,7 +51,11 @@ internal readonly struct MegFileNameTableRecord : IBinary
         // Encoding the string as ASCII has the potential of creating PG/Windows
         // illegal file names due to the replacement character '?'. 
         // At this stage we don't check for sanity in order to read .MEG files created by other tools, such as Mike's MEG Editor.
-        FileName = encoding.EncodeString(fileName, byteCount);
+        FileName = encoding.EncodeString(filePath, byteCount);
     }
-    
+
+    internal static int GetRecordSize(string filePath)
+    {
+        return sizeof(ushort) + filePath.Length;
+    }
 }

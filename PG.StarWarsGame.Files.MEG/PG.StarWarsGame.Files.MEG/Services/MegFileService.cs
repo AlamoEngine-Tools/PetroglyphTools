@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -18,18 +19,13 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <inheritdoc cref="IMegFileService" />
-public sealed class MegFileService : ServiceBase, IMegFileService
+/// <summary>
+///     Initializes a new <see cref="MegFileService" /> class.
+/// </summary>
+/// <param name="services">The service provider for this instance.</param>
+public sealed class MegFileService(IServiceProvider services) : ServiceBase(services), IMegFileService
 {
-    private IMegBinaryServiceFactory BinaryServiceFactory { get; }
-
-    /// <summary>
-    ///     Initializes a new <see cref="MegFileService" /> class.
-    /// </summary>
-    /// <param name="services">The service provider for this instance.</param>
-    public MegFileService(IServiceProvider services) : base(services)
-    {
-        BinaryServiceFactory = services.GetRequiredService<IMegBinaryServiceFactory>();
-    }
+    private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
     /// <inheritdoc />   
     public void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
@@ -40,35 +36,67 @@ public sealed class MegFileService : ServiceBase, IMegFileService
         if (builderInformation == null)
             throw new ArgumentNullException(nameof(builderInformation));
 
-        if (string.IsNullOrWhiteSpace(megFileParameters.FilePath))
+        var megFilePath = megFileParameters.FilePath;
+
+        if (string.IsNullOrWhiteSpace(megFilePath))
             throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(megFileParameters));
         
-        var constructionArchive = Services.GetRequiredService<IMegConstructionArchiveService>().Build(builderInformation, megFileParameters.FileVersion);
+        var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megFileParameters.FileVersion)
+            .BuildConstructingMegArchive(builderInformation);
 
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
         
         var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
-        using var fs = FileSystem.FileStream.New(megFileParameters.FilePath, fileMode, FileAccess.Write, FileShare.None);
-
-        var bytes = metadata.Bytes;
-        fs.Write(bytes, 0, bytes.Length);
-
-        var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
-
-        foreach (var file in constructionArchive)
+        try
         {
-            using var dataStream = streamFactory.GetDataStream(file.Location);
+            using var fs = FileSystem.FileStream.New(megFilePath, fileMode, FileAccess.Write, FileShare.None);
 
-            // TODO: Test in encryption case
-            if (dataStream.Length != file.DataEntry.Location.Size)
-                throw new InvalidOperationException(); // TODO: InvalidModelException
+#if NETSTANDARD2_1_OR_GREATER || NET
+            fs.Write(metadata.Bytes);
+#else
+            fs.Write(metadata.Bytes, 0, metadata.Size);
+#endif
 
-            if (fs.Position != file.DataEntry.Location.Offset)
-                throw new InvalidOperationException(); // TODO: InvalidModelException
+            var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-            dataStream.CopyTo(fs);
+            var dataBytesWritten = 0u;
+            foreach (var file in constructionArchive)
+            {
+                using var dataStream = streamFactory.GetDataStream(file.Location);
+
+                if (dataStream.Length > uint.MaxValue)
+                    ThrowHelper.ThrowFileExceeds4GigabyteException(file.Location.FilePath);
+
+                // TODO: Test in encryption case
+                if (dataStream.Length != file.DataEntry.Location.Size)
+                    throw new InvalidOperationException(); // TODO: InvalidModelException
+
+                if (fs.Position != file.DataEntry.Location.Offset)
+                    throw new InvalidOperationException(); // TODO: InvalidModelException
+
+                dataStream.CopyTo(fs);
+
+                dataBytesWritten += (uint)dataStream.Length;
+            }
+
+            var totalBytesWritten = metadata.Size + dataBytesWritten;
+            if (totalBytesWritten > uint.MaxValue || fs.Position != totalBytesWritten)
+                throw new InvalidOperationException("Written ");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, $"Error writing MEG file to '{megFilePath}': {e.Message}");
+            try
+            {
+                FileSystem.File.Delete(megFilePath);
+            }
+            catch
+            {
+                Logger.LogWarning("Unable to delete corrupt MEG file. Skipping.");
+            }
+            throw;
         }
     }
 

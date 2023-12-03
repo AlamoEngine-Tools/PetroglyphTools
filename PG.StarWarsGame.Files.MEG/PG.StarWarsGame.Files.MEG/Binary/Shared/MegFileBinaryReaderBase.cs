@@ -11,8 +11,8 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFileTable> :
-    ServiceBase, 
-    IMegFileBinaryService
+    ServiceBase,
+    IMegFileBinaryReader
     where TMegMetadata : IMegFileMetadata
     where TMegHeader : IMegHeader
     where TMegFileTable : IMegFileTable 
@@ -46,6 +46,9 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
     protected internal virtual MegFileNameTable BuildFileNameTable(BinaryReader binaryReader, TMegHeader header)
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
+
+        // TODO: Use Latin1 here, so we can populate the OriginalFilePath of the record. 
+        // Since The record also encodes the string, this is safe.
         var encoding = MegFileConstants.MegContentFileNameEncoding;
         for (uint i = 0; i < header.FileNumber; i++)
         {

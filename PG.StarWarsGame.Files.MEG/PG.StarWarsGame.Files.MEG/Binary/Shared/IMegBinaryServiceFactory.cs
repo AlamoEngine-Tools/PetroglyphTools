@@ -16,4 +16,6 @@ internal interface IMegBinaryServiceFactory
     IMegFileBinaryReader GetReader(ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
 
     IMegBinaryConverter GetConverter(MegFileVersion megVersion);
+
+    IConstructingMegArchiveBuilder GetConstructionBuilder(MegFileVersion megVersion);
 }

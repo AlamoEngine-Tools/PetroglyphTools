@@ -51,7 +51,7 @@ public class MegFileNameTableRecordTest
     {
         var record = new MegFileNameTableRecord(fileName);
         Assert.AreEqual(expectedName, record.FileName);
-        Assert.AreEqual(fileName, record.OriginalFileName);
+        Assert.AreEqual(fileName, record.OriginalFilePath);
     }
 
     [TestMethod]

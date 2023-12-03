@@ -36,4 +36,12 @@ internal class MegBinaryServiceFactory : IMegBinaryServiceFactory
 
         throw new NotImplementedException();
     }
+
+    public IConstructingMegArchiveBuilder GetConstructionBuilder(MegFileVersion megVersion)
+    {
+        if (megVersion == MegFileVersion.V1)
+            return new ConstructingMegArchiveBuilderV1(_serviceProvider);
+
+        throw new NotImplementedException();
+    }
 }

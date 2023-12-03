@@ -17,15 +17,19 @@ internal sealed class ConstructingMegArchive : MegDataEntryHolderBase<VirtualMeg
     /// <inheritdoc/>
     public MegFileVersion MegVersion { get; }
 
+    public bool Encrypted { get; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ConstructingMegArchive"/> class.
     /// </summary>
     /// <param name="virtualEntries">The data entries of this archive.</param>
     /// <param name="megVersion">The MEG version of this archive.</param>
-    internal ConstructingMegArchive(IList<VirtualMegDataEntryReference> virtualEntries, MegFileVersion megVersion) : base(virtualEntries)
+    /// <param name="encrypted">Encryption information of this archive.</param>
+    internal ConstructingMegArchive(IList<VirtualMegDataEntryReference> virtualEntries, MegFileVersion megVersion, bool encrypted) : base(virtualEntries)
     {
         var dataEntries = Entries.Select(f => f.DataEntry).ToList();
         Archive = new MegArchive(dataEntries);
         MegVersion = megVersion;
+        Encrypted = encrypted;
     }
 }

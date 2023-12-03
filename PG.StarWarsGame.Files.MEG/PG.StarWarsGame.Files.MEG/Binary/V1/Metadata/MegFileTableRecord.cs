@@ -10,6 +10,8 @@ namespace PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
 
 internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<MegFileTableRecord>
 {
+    internal static readonly int SizeValue = sizeof(uint) * 5;
+
     public Crc32 Crc32 { get; }
 
     public uint FileOffset { get; }
@@ -46,7 +48,7 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
         }
     }
 
-    public int Size => sizeof(uint) * 5;
+    public int Size => SizeValue;
 
     public MegFileTableRecord(
         Crc32 crc32,

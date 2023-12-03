@@ -21,9 +21,9 @@ internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
     {
         if (originInfo == null) 
             throw new ArgumentNullException(nameof(originInfo));
-
+        
         if (originInfo.FilePath is not null)
-            return FileSystem.File.OpenRead(originInfo.FilePath);
+            return FileSystem.FileStream.New(originInfo.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         return GetDataStream(originInfo.MegFileLocation!);
     }

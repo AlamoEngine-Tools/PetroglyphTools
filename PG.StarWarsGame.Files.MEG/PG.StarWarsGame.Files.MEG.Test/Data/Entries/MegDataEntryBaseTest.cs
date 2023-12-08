@@ -28,12 +28,12 @@ public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.Te
     private class TestDataEntry : MegDataEntryBase<TestLocation>
     {
         public override string FilePath { get; }
-        public override Crc32 FileNameCrc32 { get; }
+        public override Crc32 Crc32 { get; }
 
         public TestDataEntry(string path, Crc32 crc32, TestLocation location) : base(location)
         {
             FilePath = path;
-            FileNameCrc32 = crc32;
+            Crc32 = crc32;
         }
     }
 

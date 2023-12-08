@@ -90,9 +90,9 @@ public class MegBinaryConverterBaseTest
         Assert.AreEqual(2, model.Count);
 
         Assert.AreEqual("A", model[0].FilePath);
-        Assert.AreEqual(new Crc32(0), model[0].FileNameCrc32);
+        Assert.AreEqual(new Crc32(0), model[0].Crc32);
         Assert.AreEqual("B", model[1].FilePath);
-        Assert.AreEqual(new Crc32(1), model[1].FileNameCrc32);
+        Assert.AreEqual(new Crc32(1), model[1].Crc32);
     }
 
     [TestMethod]

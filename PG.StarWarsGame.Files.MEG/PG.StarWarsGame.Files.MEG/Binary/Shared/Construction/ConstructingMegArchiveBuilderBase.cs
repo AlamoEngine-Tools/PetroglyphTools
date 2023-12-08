@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -14,10 +13,8 @@ using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
-using static PG.StarWarsGame.Files.MEG.Binary.MegSizeInformation;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
-
 
 internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider services) : ServiceBase(services), IConstructingMegArchiveBuilder
 {
@@ -137,38 +134,4 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
 
         return new MegDataEntrySize(dataSize, binarySize);
     }
-}
-
-
-internal class MegFileBinaryInformation(
-    int metadataSize,
-    MegFileVersion megFileVersion,
-    bool encrypted,
-    IEnumerable<MegDataEntryBinaryInformation> entries)
-{
-    public int MetadataSize { get; } = metadataSize;
-
-    public bool Encrypted { get; } = encrypted;
-
-    public MegFileVersion MegFileVersion { get; } = megFileVersion;
-
-    public IEnumerable<MegDataEntryBinaryInformation> Entries { get; } = entries;
-}
-
-internal class MegDataEntryBinaryInformation(
-    Crc32 crc32,
-    string filePath,
-    MegDataEntrySize sizes,
-    bool encrypted,
-    MegDataEntryOriginInfo origin) : IHasCrc32
-{
-    public string FilePath { get; } = filePath;
-
-    public Crc32 Crc32 { get; } = crc32;
-
-    public bool Encrypted { get; } = encrypted;
-
-    public MegDataEntrySize Sizes { get; } = sizes;
-
-    public MegDataEntryOriginInfo Origin { get; } = origin;
 }

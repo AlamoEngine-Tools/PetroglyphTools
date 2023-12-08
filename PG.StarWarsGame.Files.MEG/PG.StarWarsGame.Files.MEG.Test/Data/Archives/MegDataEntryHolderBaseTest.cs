@@ -78,7 +78,7 @@ public class MegDataEntryHolderBaseTest
         entry2.SetupGet(e => e.FilePath).Returns("b");
 
         var entry3 = new Mock<IMegDataEntry>();
-        entry3.SetupGet(e => e.FileNameCrc32).Returns(new Crc32(1));
+        entry3.SetupGet(e => e.Crc32).Returns(new Crc32(1));
 
         var entries = new List<IMegDataEntry>
         {

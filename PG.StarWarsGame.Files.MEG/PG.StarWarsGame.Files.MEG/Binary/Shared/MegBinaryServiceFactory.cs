@@ -7,14 +7,9 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal class MegBinaryServiceFactory : IMegBinaryServiceFactory
+internal class MegBinaryServiceFactory(IServiceProvider serviceProvider) : IMegBinaryServiceFactory
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public MegBinaryServiceFactory(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
     public IMegFileBinaryReader GetReader(MegFileVersion megVersion)
     {

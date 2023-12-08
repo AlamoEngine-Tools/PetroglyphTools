@@ -33,66 +33,31 @@ public sealed class MegFileDataEntryBuilderInfo
     /// </summary>
     /// <param name="originInfo">The origin info of the data entry.</param>
     /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used.</param>
+    /// <param name="fileSize"></param>
     /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used.</param>
     /// <exception cref="ArgumentException"><paramref name="originInfo"/> has invalid file path data.</exception>
     /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty or contains only whitespace.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="originInfo"/> is <see langword="null"/>.</exception>
-    public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo, string? overrideFilePath = null, bool? overrideEncrypted = null)
+    public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo, string? overrideFilePath = null, uint? fileSize = null, bool? overrideEncrypted = null)
     {
         if (overrideEncrypted is not null && string.IsNullOrWhiteSpace(overrideFilePath))
-            throw new ArgumentException("Overriding file path must not be empty or whitespace only.", nameof(overrideEncrypted));
+            throw new ArgumentException("Overriding file path must not be empty or only whitespace.", nameof(overrideFilePath));
 
         OriginInfo = originInfo ?? throw new ArgumentNullException(nameof(originInfo));
 
         var filePath = GetFilePath(originInfo, overrideFilePath);
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("File name must not be null, empty or whitespace only.", nameof(originInfo));
         FilePath = filePath;
+
+        Size = originInfo.IsLocalFile ? fileSize : originInfo.MegFileLocation!.DataEntry.Location.Size;
 
         Encrypted = GetEncryption(originInfo, overrideEncrypted);
     }
-
-    //public MegFileDataEntryBuilderInfo(MegDataEntryLocationReference locationReference, bool overrideEncrypted = false) 
-    //    : this(locationReference, null, overrideEncrypted)
-    //{
-    //}
-
-    //public MegFileDataEntryBuilderInfo(MegDataEntryLocationReference locationReference, string? overrideFilePath, bool? overrideEncrypted = null)
-    //{
-    //    if (locationReference == null)
-    //        throw new ArgumentNullException(nameof(locationReference));
-
-    //    // TODO: Null is allowed!
-    //    //if (string.IsNullOrWhiteSpace(overrideFilePath))
-    //    //    throw new ArgumentException("file path must not be whitespace only.", nameof(overrideFilePath));
-
-    //    OriginInfo = new MegDataEntryOriginInfo(locationReference);
-    //    Encrypted = overrideEncrypted ?? locationReference.DataEntry.Encrypted;
-    //    Size = locationReference.DataEntry.Location.Size;
-    //    FilePath = overrideFilePath ?? locationReference.DataEntry.FilePath;
-    //}
-
-    //public MegFileDataEntryBuilderInfo(string localFilePath, string entryFilePath, uint? size = null, bool encrypted = false)
-    //{
-    //    if (localFilePath == null)
-    //        throw new ArgumentNullException(nameof(localFilePath));
-    //    if (entryFilePath == null)
-    //        throw new ArgumentNullException(nameof(entryFilePath));
-    //    if (string.IsNullOrWhiteSpace(entryFilePath))
-    //        throw new ArgumentException("file path must not be whitespace only.", nameof(entryFilePath));
-
-
-    //    OriginInfo = new MegDataEntryOriginInfo(localFilePath);
-    //    Size = size;
-    //    FilePath = entryFilePath;
-    //    Encrypted = encrypted;
-    //}
-
+    
     private static string GetFilePath(MegDataEntryOriginInfo originInfo, string? overrideFileName)
     {
         if (overrideFileName is not null)
             return overrideFileName;
-        if (originInfo.FilePath is not null)
+        if (originInfo.IsLocalFile)
             return originInfo.FilePath;
         return originInfo.MegFileLocation!.DataEntry.FilePath;
     }
@@ -103,7 +68,7 @@ public sealed class MegFileDataEntryBuilderInfo
             return overrideEncrypted.Value;
 
         // Fallback for the case, origin is a file system path but overrideEncrypted was forgotten to set explicitly.
-        if (originInfo.FilePath is not null)
+        if (originInfo.IsLocalFile)
             return false;
 
         return originInfo.MegFileLocation!.DataEntry.Encrypted;

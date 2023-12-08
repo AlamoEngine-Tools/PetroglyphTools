@@ -27,6 +27,9 @@ public class MegDataEntryOriginInfoTest
 
         Assert.AreEqual("path", originInfo.FilePath);
         Assert.IsNull(originInfo.MegFileLocation);
+
+        Assert.IsTrue(originInfo.IsLocalFile);
+        Assert.IsFalse(originInfo.IsEntryReference);
     }
 
     [TestMethod]
@@ -39,6 +42,9 @@ public class MegDataEntryOriginInfoTest
 
         Assert.AreEqual(location, originInfo.MegFileLocation);
         Assert.IsNull(originInfo.FilePath);
+
+        Assert.IsTrue(originInfo.IsEntryReference);
+        Assert.IsFalse(originInfo.IsLocalFile);
     }
 
     [TestMethod]

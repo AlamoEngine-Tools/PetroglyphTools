@@ -17,7 +17,7 @@ public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
     {
         var entry = new MegDataEntry("path", new Crc32(123), new MegDataEntryLocation(1, 2), true);
 
-        Assert.AreEqual(new Crc32(123), entry.FileNameCrc32);
+        Assert.AreEqual(new Crc32(123), entry.Crc32);
         Assert.AreEqual("path", entry.FilePath);
         Assert.AreEqual(1u, entry.Location.Offset);
         Assert.AreEqual(2u, entry.Location.Size);
@@ -29,7 +29,7 @@ public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
     {
         var entry = new MegDataEntry("path", new Crc32(123), default, true);
 
-        Assert.AreEqual(new Crc32(123), entry.FileNameCrc32);
+        Assert.AreEqual(new Crc32(123), entry.Crc32);
         Assert.AreEqual("path", entry.FilePath);
         Assert.AreEqual(0u, entry.Location.Offset);
         Assert.AreEqual(0u, entry.Location.Size);

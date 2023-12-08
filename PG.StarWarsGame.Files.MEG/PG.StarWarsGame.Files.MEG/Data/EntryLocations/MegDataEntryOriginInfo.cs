@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
@@ -10,6 +11,18 @@ namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 /// </summary>
 public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegDataEntryOriginInfo>
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(FilePath))]
+    public bool IsLocalFile => FilePath != null;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(MegFileLocation))]
+    public bool IsEntryReference => MegFileLocation != null;
+
     /// <summary>
     /// Gets the MEG file's data entry. <see langeword="null"/> if not present.
     /// </summary>

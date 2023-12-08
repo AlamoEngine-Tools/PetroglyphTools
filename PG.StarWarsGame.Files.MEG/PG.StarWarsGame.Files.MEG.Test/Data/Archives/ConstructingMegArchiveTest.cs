@@ -19,17 +19,18 @@ public class ConstructingMegArchiveTest
     [ExpectedException(typeof(ArgumentNullException))]
     public void Test_Ctor_Throw_NullArgument()
     {
-        _ = new ConstructingMegArchive(null!, MegFileVersion.V1);
+        _ = new ConstructingMegArchive(null!, MegFileVersion.V1, false);
     }
 
     [TestMethod]
     public void Test_Ctor_Empty()
     {
         var entries = new List<VirtualMegDataEntryReference>();
-        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3);
+        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, true);
 
         Assert.AreEqual(MegFileVersion.V3, cArchive.MegVersion);
         CollectionAssert.AreEqual(new MegArchive(new List<MegDataEntry>()).ToList(), cArchive.Archive.ToList());
+        Assert.IsTrue(cArchive.Encrypted);
     }
 
     [TestMethod]
@@ -52,9 +53,10 @@ public class ConstructingMegArchiveTest
             reference1, reference2
         };
 
-        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3);
+        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, false);
 
         Assert.AreEqual(MegFileVersion.V3, cArchive.MegVersion);
+        Assert.IsFalse(cArchive.Encrypted);
 
         var expectedArchiveList = new List<MegDataEntry>
         {

@@ -4,7 +4,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.StarWarsGame.Files.MEG.Binary.V1.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 

@@ -8,8 +8,8 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
-/// <inheritdoc cref="IMegConstructionArchive"/>
-internal sealed class ConstructingMegArchive : MegDataEntryHolderBase<VirtualMegDataEntryReference>, IMegConstructionArchive
+/// <inheritdoc cref="IConstructingMegArchive"/>
+internal sealed class ConstructingMegArchive : MegDataEntryHolderBase<VirtualMegDataEntryReference>, IConstructingMegArchive
 {
     /// <inheritdoc/>
     public IMegArchive Archive { get; }

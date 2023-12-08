@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
@@ -130,8 +129,11 @@ public static class FileNameUtilities
             return true;
 
         // Additional check for invalid Windows file name characters
-        if (InvalidFileNameChars.Contains(c))
-            return true;
+        foreach (var charToCheck in InvalidFileNameChars.AsSpan())
+        {
+            if (charToCheck == c)
+                return true;
+        }
 
         return false;
     }

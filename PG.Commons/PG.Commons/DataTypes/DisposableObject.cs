@@ -3,7 +3,7 @@
 
 using System;
 
-namespace PG.Commons.Utilities;
+namespace PG.Commons.DataTypes;
 
 /// <summary>
 /// Base implementation for classes which shall implement the <see cref="IDisposable"/> interface.

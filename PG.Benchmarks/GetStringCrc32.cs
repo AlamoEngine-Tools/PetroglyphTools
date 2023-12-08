@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 
 namespace PG.Benchmarks;
 

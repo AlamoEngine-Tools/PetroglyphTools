@@ -1,7 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT
 // license. See LICENSE file in the project root for details.
 
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 using System;
 

@@ -2,9 +2,9 @@
 using System.Buffers.Binary;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 
-namespace PG.Commons.Test.Services;
+namespace PG.Commons.Test.Hashing;
 
 [TestClass]
 public class Crc32Test
@@ -75,13 +75,15 @@ public class Crc32Test
         var crcM1 = new Crc32(-1);
 
         Assert.IsTrue(crc1 < crc2);
+        Assert.IsTrue(crc1 <= crc2);
         Assert.IsFalse(crc1 > crc2);
+        Assert.IsFalse(crc1 >= crc2);
         Assert.IsTrue(crc2 > crc1);
         Assert.IsFalse(crc2 < crc1);
         Assert.IsTrue(crc2 != crc1);
 
         Assert.IsTrue(crcM1 > crc2);
-        Assert.IsFalse((int)crcM1 > (int) crc2);
+        Assert.IsFalse((int)crcM1 > (int)crc2);
     }
 
     [TestMethod]

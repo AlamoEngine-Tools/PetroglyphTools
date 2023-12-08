@@ -4,18 +4,13 @@
 using System;
 using System.Text;
 
-namespace PG.Commons.Services;
+namespace PG.Commons.Hashing;
 
 /// <summary>
 /// A service to compute CRC32 checksum which is used throughout the Alamo Engine 
 /// </summary>
 public class ChecksumService : IChecksumService
 {
-    /// <summary>
-    /// Returns a singleton instance of this class for static usage.
-    /// </summary>
-    public static readonly IChecksumService Instance = new ChecksumService();
-
     /// <inheritdoc/>
     public unsafe Crc32 GetChecksum(string s, Encoding encoding)
     {
@@ -25,7 +20,7 @@ public class ChecksumService : IChecksumService
             throw new ArgumentNullException(nameof(encoding));
 
         Span<byte> buffer;
-        
+
         if (s.Length > 256)
         {
 #if NETSTANDARD2_1_OR_GREATER || NET
@@ -44,7 +39,7 @@ public class ChecksumService : IChecksumService
             var stringSpan = s.AsSpan();
             var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
 
-            if (stringSpan.IsEmpty) 
+            if (stringSpan.IsEmpty)
                 buffer = Span<byte>.Empty;
             else
             {

@@ -1,5 +1,5 @@
-using PG.Commons.Services;
 using System;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 

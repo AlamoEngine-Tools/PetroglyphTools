@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using PG.Commons.Collections;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;

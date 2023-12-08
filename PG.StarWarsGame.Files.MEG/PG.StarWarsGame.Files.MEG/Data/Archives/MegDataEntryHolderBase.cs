@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using DotNet.Globbing;
 using PG.Commons.Collections;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Utilities;
 

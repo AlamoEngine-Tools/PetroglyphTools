@@ -30,7 +30,7 @@ public static class BinaryReaderUtilities
     /// <param name="reader">The binary reader instance.</param>
     /// <param name="length">The length in <b>bytes</b>.</param>
     /// <param name="encoding">The encoding used to produce the string.</param>
-    /// <param name="isZeroTerminated">When set to <see langword="true"/>, the any possible null terminators ('\0') are removed from the end of the result. Default is <see langword="false"/>.</param>
+    /// <param name="isZeroTerminated">When set to <see langword="true"/>, any possible null terminators ('\0') are removed from the end of the result. Default is <see langword="false"/>.</param>
     /// <returns>The string being read.</returns>
     /// <exception cref="ArgumentNullException">A argument is <see langword="null"/>.</exception>
     /// <exception cref="IndexOutOfRangeException">The number of bytes read, mismatched the expected number of bytes.</exception>
@@ -47,7 +47,7 @@ public static class BinaryReaderUtilities
         string result = null!;
 
 #if NETSTANDARD2_1_OR_GREATER || NET
-        // This is the only perf optimization i could get (~ half in runtime and allocations)
+        // This is the only perf optimization I could get (~ half in runtime and allocations)
         if (length <= 256)
         {
             Span<byte> buffer = stackalloc byte[length];

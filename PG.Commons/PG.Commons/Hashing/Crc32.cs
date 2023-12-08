@@ -6,7 +6,7 @@ using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Text;
 
-namespace PG.Commons.Services;
+namespace PG.Commons.Hashing;
 
 /// <summary>
 /// Represents a 32-bit Cyclic Redundancy Check (CRC32) checksum.
@@ -49,20 +49,20 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
         _checksum = BinaryPrimitives.ReadUInt32LittleEndian(checksum);
     }
 
-    /// <inheritdoc cref="Object.ToString()"/>
+    /// <inheritdoc cref="object.ToString()"/>
     public override string ToString()
     {
         return ToString(false);
     }
 
-    /// <inheritdoc cref="Object.ToString()"/>
+    /// <inheritdoc cref="object.ToString()"/>
     /// <param name="asSignedInteger">When <see langword="true"/>, this checksum shall be represented by a signed integer; unsigned otherwise.</param>
     public string ToString(bool asSignedInteger)
     {
         var sb = new StringBuilder("CRC: ");
         if (asSignedInteger)
             sb.Append((int)_checksum);
-        else 
+        else
             sb.Append(_checksum);
         return sb.ToString();
     }
@@ -101,7 +101,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
         GetBytes(data);
         return data.ToArray();
     }
-    
+
     /// <summary>
     /// Writes the CRC32 checksum into a span of bytes in little endian.
     /// </summary>

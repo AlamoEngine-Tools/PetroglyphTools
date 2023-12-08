@@ -6,7 +6,7 @@ using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using PG.Commons.Utilities;
+using PG.Commons.DataTypes;
 
 namespace PG.Commons.Files;
 

@@ -1,5 +1,5 @@
 using System;
-using PG.Commons.Hashing;
+using PG.Commons.DataTypes;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 /// <remarks>
 /// Note: Comparison is based on the CRC32 checksum only. Equality checks may include more properties.
 /// </remarks>
-public interface IMegDataEntry : IComparable<IMegDataEntry>
+public interface IMegDataEntry : IHasCrc32, IComparable<IMegDataEntry>
 {
     /// <summary>
     /// Gets the relative file path as defined in the *.MEG file.<br />
@@ -21,11 +21,6 @@ public interface IMegDataEntry : IComparable<IMegDataEntry>
     /// deal with potential dangerous file paths.
     /// </remarks>
     public string FilePath { get; }
-
-    /// <summary>
-    /// Gets the <see cref="Crc32"/> of the file name.
-    /// </summary>
-    public Crc32 FileNameCrc32 { get; }
 }
 
 /// <inheritdoc/>

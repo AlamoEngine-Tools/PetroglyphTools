@@ -15,7 +15,7 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     public override string FilePath { get; }
 
     /// <inheritdoc />
-    public override Crc32 FileNameCrc32 { get; }
+    public override Crc32 Crc32 { get; }
 
     /// <summary>
     /// Indicates whether the file is encrypted
@@ -41,7 +41,7 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
         // Note: We cannot validate correct CRC32 here in order to stay compatible with MIKE.NL's tool.
         // See the ASCII vs. Latin1 encoding problem.
         FilePath = filePath;
-        FileNameCrc32 = crc32;
+        Crc32 = crc32;
         Encrypted = encrypted;
     }
 

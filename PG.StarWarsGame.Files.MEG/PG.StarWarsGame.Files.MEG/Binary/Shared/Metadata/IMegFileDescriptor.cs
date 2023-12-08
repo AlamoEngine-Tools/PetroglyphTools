@@ -1,14 +1,12 @@
 ﻿using System;
 using PG.Commons.Binary;
-using PG.Commons.Hashing;
+using PG.Commons.DataTypes;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
-internal interface IMegFileDescriptor : IBinary, IComparable<IMegFileDescriptor>
+internal interface IMegFileDescriptor : IBinary, IHasCrc32, IComparable<IMegFileDescriptor>
 {
-    public Crc32 Crc32 { get; }
-    
     public uint FileOffset { get; }
 
     public uint FileSize { get; }

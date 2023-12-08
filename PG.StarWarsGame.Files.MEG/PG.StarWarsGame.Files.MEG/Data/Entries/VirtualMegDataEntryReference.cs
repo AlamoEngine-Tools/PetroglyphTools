@@ -27,7 +27,7 @@ internal sealed class VirtualMegDataEntryReference : MegDataEntryBase<MegDataEnt
     public override string FilePath => DataEntry.FilePath;
 
     /// <inheritdoc />
-    public override Crc32 FileNameCrc32 => DataEntry.FileNameCrc32;
+    public override Crc32 Crc32 => DataEntry.Crc32;
 
     public VirtualMegDataEntryReference(MegDataEntry dataEntry, MegDataEntryOriginInfo originInfo) : base(originInfo)
     {

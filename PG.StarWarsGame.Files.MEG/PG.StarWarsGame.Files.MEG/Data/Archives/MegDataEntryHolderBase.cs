@@ -6,9 +6,10 @@ using System.Diagnostics;
 using System.Linq;
 using DotNet.Globbing;
 using PG.Commons.Collections;
+using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
-using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
@@ -43,7 +44,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
         Entries = new ReadOnlyCollection<T>(entries.ToList());
         _fileNames = new ReadOnlyCollection<string>(Entries.Select(x => x.FilePath).ToList());
 
-        _crcToIndexMap = MegDataEntryUtilities.EntriesToCrcIndexRangeTable(Entries);
+        _crcToIndexMap = Crc32Utilities.ListToCrcIndexRangeTable(Entries);
     }
 
     /// <inheritdoc />

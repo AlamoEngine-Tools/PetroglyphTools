@@ -21,7 +21,7 @@ public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryLocatio
     public override string FilePath => Location.DataEntry.FilePath;
 
     /// <inheritdoc />
-    public override Crc32 FileNameCrc32 => Location.DataEntry.FileNameCrc32;
+    public override Crc32 Crc32 => Location.DataEntry.Crc32;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegDataEntryReference"/>.

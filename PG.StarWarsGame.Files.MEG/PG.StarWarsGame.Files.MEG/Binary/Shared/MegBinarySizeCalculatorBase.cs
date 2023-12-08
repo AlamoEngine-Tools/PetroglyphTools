@@ -4,8 +4,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -26,8 +28,6 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
     // Empty file at end
     // Empty file in the middle
     // Archives that shall be encrypted
-
-
     public ConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries)
     {
         var binaryInformation = GetBinaryInformation(builderEntries);
@@ -37,9 +37,9 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
 
         var currentOffset = Convert.ToUInt32(binaryInformation.MetadataSize);
 
-        // TODO: Sort entries by CRC
+        var sortedEntries = Crc32Utilities.SortByCrc32(binaryInformation.Entries);
 
-        foreach (var entry in binaryInformation.Entries)
+        foreach (var entry in sortedEntries)
         {
             var dataEntryLocation = new MegDataEntryLocation(currentOffset, entry.Sizes.DataSize);
             var dataEntry = new MegDataEntry(entry.FilePath, entry.Crc32, dataEntryLocation, entry.Encrypted);
@@ -160,7 +160,7 @@ internal class MegDataEntryBinaryInformation(
     string filePath,
     MegDataEntrySize sizes,
     bool encrypted,
-    MegDataEntryOriginInfo origin)
+    MegDataEntryOriginInfo origin) : IHasCrc32
 {
     public string FilePath { get; } = filePath;
 

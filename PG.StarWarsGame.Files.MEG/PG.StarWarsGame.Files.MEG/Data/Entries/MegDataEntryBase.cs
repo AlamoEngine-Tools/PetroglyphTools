@@ -18,7 +18,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     public abstract string FilePath { get; }
 
     /// <inheritdoc />
-    public abstract Crc32 FileNameCrc32 { get; }
+    public abstract Crc32 Crc32 { get; }
 
     /// <inheritdoc />
     public T Location { get; }
@@ -41,7 +41,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
             return 0;
         if (other is null)
             return 1;
-        return FileNameCrc32.CompareTo(other.FileNameCrc32);
+        return Crc32.CompareTo(other.Crc32);
     }
 
     /// <inheritdoc />
@@ -51,7 +51,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return FilePath == other.FilePath && FileNameCrc32.Equals(other.FileNameCrc32) && EqualityComparer<T>.Default.Equals(Location, other.Location);
+        return FilePath == other.FilePath && Crc32.Equals(other.Crc32) && EqualityComparer<T>.Default.Equals(Location, other.Location);
     }
 
     /// <inheritdoc />
@@ -69,6 +69,6 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        return HashCode.Combine(FilePath, FileNameCrc32, Location);
+        return HashCode.Combine(FilePath, Crc32, Location);
     }
 }

@@ -22,6 +22,31 @@ public class MegFileDataStreamTest
     }
 
     [TestMethod]
+    public void Test_Ctor()
+    {
+        var ms = new MemoryStream(new byte[20]);
+        var stream = new MegFileDataStream(ms, 0, 5);
+
+        Assert.IsTrue(stream.CanRead);
+        Assert.IsFalse(stream.CanSeek);
+        Assert.IsFalse(stream.CanWrite);
+        Assert.AreEqual(5, stream.Length);
+    }
+
+    [TestMethod]
+    public void Test_NotSupportedOperations()
+    {
+        var ms = new MemoryStream();
+        var stream = new MegFileDataStream(ms, 0, 0);
+
+        Assert.ThrowsException<NotSupportedException>(() => stream.SetLength(1));
+        Assert.ThrowsException<NotSupportedException>(() => stream.Position = 1);
+        Assert.ThrowsException<NotSupportedException>(() => stream.Seek(1, SeekOrigin.Begin));
+        Assert.ThrowsException<NotSupportedException>(() => stream.Write(new byte[1], 0, 0));
+
+    }
+
+    [TestMethod]
     public void Test_Dispose()
     {
         var ms = new MemoryStream();
@@ -100,15 +125,47 @@ public class MegFileDataStreamTest
 
 
         var data = new byte[] {99, 99, 99, 99, 99};
+        Assert.AreEqual(0, stream.Position);
         stream.Read(data, 1, 1);
+        Assert.AreEqual(1, stream.Position);
         stream.Read(data, 2, 1);
+        Assert.AreEqual(2, stream.Position);
         stream.Read(data, 3, 1);
+        Assert.AreEqual(3, stream.Position);
 
         // Goes out of bounds of the target data
         Assert.AreEqual(0, stream.Read(data, 3, 1));
 
         // Last value must not be 0xFF
         CollectionAssert.AreEqual(new byte[] { 99, 1, 2, 3, 99 }, data);
+    }
+
+    [TestMethod]
+    public void Test_Read_SuddenCutOfData_Throws()
+    {
+        // 0xFF represents data we should never read
+        var source = new byte[] { 1, 2, 3 };
+        var ms = new MemoryStream(source);
+
+        var stream = new MegFileDataStream(ms, 0, 3);
+
+
+        var data = new byte[] { 99, 99, 99, 99, 99 };
+        var n = stream.Read(data, 0, 1);
+        Assert.AreEqual(1, n);
+
+        ms.SetLength(1);
+
+        Assert.ThrowsException<InvalidOperationException>(() => stream.Read(data, 0, 1));
+    }
+
+    [TestMethod]
+    public void Test_Flush_NOP()
+    {
+        var ms = new MemoryStream();
+        var stream = new MegFileDataStream(ms, 0, 0);
+
+        stream.Flush();
     }
 
     private class NonReadableStream : Stream

@@ -68,6 +68,6 @@ public partial class MegFileServiceTest
         Assert.IsTrue(_fileSystem.FileExists("a.meg"));
         var data = _fileSystem.File.ReadAllBytes("a.meg");
 
-        CollectionAssert.AreEqual(new byte[] { }, data);
+        CollectionAssert.AreEqual(new byte[] { 0, 1, 2 }, data);
     }
 }

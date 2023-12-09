@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
@@ -19,10 +20,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider services) : ServiceBase(services), IConstructingMegArchiveBuilder
 {
     // TODO: Test-cases:
-    // Empty archive
-    // Normal
     // Two empty file at beginning then file with data
-    // Only Two empty files
     // Two Empty files at end
     // Empty file in the middle
     // Archives that shall be encrypted
@@ -86,7 +84,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             fileNameTableSize += MegFileNameTableRecord.GetRecordSize(builderInfo.FilePath);
             fileTableSize += GetFileDescriptorSize(builderInfo.Encrypted);
 
-            // We do *not* re-encode the FilePath here to ASCII, so we can store the original value
+            // We do *not* re-encode builderInfo.FilePath here to ASCII, so we can store the original value
             // in MegFileNameTableRecord. MegFileNameTableRecord performs the final encoding and specification checks.
             var crc = checksumService.GetChecksum(builderInfo.FilePath, MegFileConstants.MegContentFileNameEncoding);
             var dataSizes = GetDataSize(builderInfo);
@@ -115,14 +113,13 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             dataSize = builderInfo.Size.Value;
         else
         {
+            Debug.Assert(builderInfo.OriginInfo.IsLocalFile, "Expected OriginInfo to point to a local file!");
+            
             var filePath = builderInfo.OriginInfo.FilePath;
-            if (string.IsNullOrEmpty(filePath))
-                throw new InvalidOperationException("Expected OriginInfo to point to a local file!");
-
             var fileSize = FileSystem.FileInfo.New(filePath!).Length;
 
             if (fileSize > uint.MaxValue)
-                ThrowHelper.ThrowFileExceeds4GigabyteException(FileSystem.Path.GetFullPath(filePath!));
+                ThrowHelper.ThrowDataEntryExceeds4GigabyteException(FileSystem.Path.GetFullPath(filePath!));
 
             dataSize = (uint) fileSize;
         }

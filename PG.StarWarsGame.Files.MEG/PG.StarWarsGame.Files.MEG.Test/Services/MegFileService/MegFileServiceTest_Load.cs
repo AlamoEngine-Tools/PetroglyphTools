@@ -33,7 +33,7 @@ public partial class MegFileServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
+    [ExpectedException(typeof(InvalidOperationException))]
     public void Test_Load__ThrowNotSupported_Encrypted()
     {
         var encrypted = true;
@@ -49,7 +49,7 @@ public partial class MegFileServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
+    [ExpectedException(typeof(InvalidOperationException))]
     public void Test_Load__ThrowNotSupported_NotEncrypted()
     {
         var encrypted = false;
@@ -77,6 +77,9 @@ public partial class MegFileServiceTest
 
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
+        _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
+            .Returns(new ValidationResult(new List<ValidationFailure> { new("Fail", "Fail") }));
+        
         _fileSystem.AddEmptyFile("test.meg");
 
         _megFileService.Load("test.meg");
@@ -102,9 +105,7 @@ public partial class MegFileServiceTest
 
         _fileSystem.AddFile("test.meg", new MockFileData(fileData));
 
-        var e1 = Assert.ThrowsException<BinaryCorruptedException>(() => _megFileService.Load("test.meg"));
-        Assert.IsInstanceOfType<InvalidOperationException>(e1.InnerException);
-
+        Assert.ThrowsException<InvalidOperationException>(() => _megFileService.Load("test.meg"));
 
         _megBinaryReader.Setup(r => r.ReadBinary(It.IsAny<Stream>())).Throws<BinaryCorruptedException>();
 

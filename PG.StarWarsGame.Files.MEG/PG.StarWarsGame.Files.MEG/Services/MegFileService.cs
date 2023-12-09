@@ -7,11 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -28,7 +26,8 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
     /// <inheritdoc />   
-    public void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
+    public void CreateMegArchive(MegFileHolderParam megFileParameters,
+        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
     {
         if (megFileParameters == null)
             throw new ArgumentNullException(nameof(megFileParameters));
@@ -39,65 +38,56 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         var megFilePath = megFileParameters.FilePath;
 
         if (string.IsNullOrWhiteSpace(megFilePath))
-            throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(megFileParameters));
-        
+            throw new ArgumentException("File path must not be empty or contain only whitespace",
+                nameof(megFileParameters));
+
         var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megFileParameters.FileVersion)
             .BuildConstructingMegArchive(builderInformation);
 
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
-        
+
         var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
-        try
-        {
-            using var fs = FileSystem.FileStream.New(megFilePath, fileMode, FileAccess.Write, FileShare.None);
+        using var fs = FileSystem.FileStream.New(megFilePath, fileMode, FileAccess.Write, FileShare.None);
 
 #if NETSTANDARD2_1_OR_GREATER || NET
-            fs.Write(metadata.Bytes);
+        fs.Write(metadata.Bytes);
 #else
-            fs.Write(metadata.Bytes, 0, metadata.Size);
+        fs.Write(metadata.Bytes, 0, metadata.Size);
 #endif
+        long dataBytesWritten = metadata.Size;
 
-            var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
+        var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-            var dataBytesWritten = 0u;
-            foreach (var file in constructionArchive)
-            {
-                using var dataStream = streamFactory.GetDataStream(file.Location);
-
-                if (dataStream.Length > uint.MaxValue)
-                    ThrowHelper.ThrowFileExceeds4GigabyteException(file.Location.FilePath);
-
-                // TODO: Test in encryption case
-                if (dataStream.Length != file.DataEntry.Location.Size)
-                    throw new InvalidOperationException(); // TODO: InvalidModelException
-
-                if (fs.Position != file.DataEntry.Location.Offset)
-                    throw new InvalidOperationException(); // TODO: InvalidModelException
-
-                dataStream.CopyTo(fs);
-
-                dataBytesWritten += (uint)dataStream.Length;
-            }
-
-            var totalBytesWritten = metadata.Size + dataBytesWritten;
-            if (totalBytesWritten > uint.MaxValue || fs.Position != totalBytesWritten)
-                throw new InvalidOperationException("Written ");
-        }
-        catch (Exception e)
+        foreach (var file in constructionArchive)
         {
-            Logger.LogError(e, $"Error writing MEG file to '{megFilePath}': {e.Message}");
-            try
-            {
-                FileSystem.File.Delete(megFilePath);
-            }
-            catch
-            {
-                Logger.LogWarning("Unable to delete corrupt MEG file. Skipping.");
-            }
-            throw;
+            using var dataStream = streamFactory.GetDataStream(file.Location);
+
+            if (dataStream.Length > uint.MaxValue)
+                ThrowHelper.ThrowDataEntryExceeds4GigabyteException(file.Location.FilePath);
+
+            // TODO: Test in encryption case
+            if (dataStream.Length != file.DataEntry.Location.Size)
+                throw new InvalidOperationException(); // TODO: InvalidModelException
+
+            if (fs.Position != file.DataEntry.Location.Offset)
+                throw new InvalidOperationException(); // TODO: InvalidModelException
+
+            dataStream.CopyTo(fs);
+
+            dataBytesWritten += dataStream.Length;
         }
+
+
+        // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
+        // E.g, a MEG with one entry being exactly 4GB large.
+        // The Archive itself is larger (Metadata + 4GB),
+        // however the Metadata is still valid since no each part is within the uint32 range. 
+        if (dataBytesWritten > uint.MaxValue)
+            ThrowHelper.ThrowMegExceeds4GigabyteException(megFilePath);
+        
+        Debug.Assert(dataBytesWritten == fs.Position);
     }
 
     /// <inheritdoc />
@@ -108,10 +98,8 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         var megVersion = Services.GetRequiredService<IMegVersionIdentifier>().GetMegFileVersion(fs, out var encrypted);
 
         if (encrypted)
-        {
-            throw new NotSupportedException("Cannot load an encrypted .MEG archive without encryption key.\r\n" +
-                                            "Use Load(string, ReadOnlySpan<byte>, ReadOnlySpan<byte>) instead.");
-        }
+            throw new InvalidOperationException("Cannot load an encrypted .MEG archive without encryption key.\r\n" +
+                                                "Use Load(string, ReadOnlySpan<byte>, ReadOnlySpan<byte>) instead.");
 
         fs.Seek(0, SeekOrigin.Begin);
 
@@ -133,10 +121,8 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         var megVersion = GetMegFileVersion(fs, out var encrypted);
         
         if (!encrypted)
-        {
-            throw new NotSupportedException("The given .MEG archive is not encrypted.\r\n" +
-                                            "Use Load(string) instead.");
-        }
+            throw new InvalidOperationException("The given .MEG archive is not encrypted.\r\n" +
+                                                "Use Load(string) instead.");
 
         Debug.Assert(megVersion == MegFileVersion.V3);
 
@@ -153,43 +139,39 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         return Load(reader, fs, megVersion, param);
     }
 
-    private IMegFile Load(IMegFileBinaryReader binaryReader, Stream megStream, MegFileVersion megVersion, MegFileHolderParam param)
+    private MegFileHolder Load(IMegFileBinaryReader binaryReader, Stream megStream, MegFileVersion megVersion, MegFileHolderParam param)
     {
-        IMegFileMetadata megMetadata;
-        try
+        var startPosition = megStream.Position;
+        var megMetadata = binaryReader.ReadBinary(megStream);
+        var endPosition = megStream.Position;
+
+        var bytesRead = endPosition - startPosition;
+
+        // There is no reason to validate the archive's size if we cannot access the whole stream size. 
+        // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
+        if (!megStream.CanSeek)
+            throw new NotSupportedException("Non-seekable streams are currently not supported.");
+
+        var actualMegSize = megStream.Length - startPosition;
+
+        // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
+        // E.g, a MEG with one entry being exactly 4GB large.
+        // The Archive itself is larger (Metadata + 4GB),
+        // however the Metadata is still valid since no each part is within the uint32 range. 
+        if (actualMegSize > uint.MaxValue)
+            ThrowHelper.ThrowMegExceeds4GigabyteException(param.FilePath);
+
+        var validator = Services.GetRequiredService<IMegBinaryValidator>();
+
+        var validationResult = validator.Validate(new MegBinaryValidationInformation
         {
-            var startPosition = megStream.Position;
-            megMetadata = binaryReader.ReadBinary(megStream);
-            var endPosition = megStream.Position;
+            Metadata = megMetadata,
+            FileSize = actualMegSize,
+            BytesRead = bytesRead
+        });
 
-            var bytesRead = endPosition - startPosition;
-
-            // There is no reason to validate the archive's size if we cannot access the whole stream size. 
-            // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
-            if (!megStream.CanSeek)
-                throw new NotSupportedException("Non-seekable streams are currently not supported.");
-
-            var actualMegSize = megStream.Length - startPosition;
-            var validator = Services.GetRequiredService<IMegBinaryValidator>();
-
-            var validationResult = validator.Validate(new MegBinaryValidationInformation
-            {
-                Metadata = megMetadata,
-                FileSize = actualMegSize,
-                BytesRead = bytesRead
-            });
-
-            if (!validationResult.IsValid)
-                throw new BinaryCorruptedException($"Unable to read .MEG archive: {validationResult.Errors.First().ErrorMessage}");
-        }
-        catch (BinaryCorruptedException)
-        {
-            throw;
-        }
-        catch (Exception e)
-        {
-            throw new BinaryCorruptedException($"Unable to read .MEG archive: {e.Message}", e);
-        }
+        if (!validationResult.IsValid)
+            throw new BinaryCorruptedException($"Unable to read .MEG archive: {validationResult.Errors.First().ErrorMessage}");
 
         var converter = BinaryServiceFactory.GetConverter(megVersion);
         var megArchive = converter.BinaryToModel(megMetadata);

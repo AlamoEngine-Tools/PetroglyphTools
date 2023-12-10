@@ -64,21 +64,19 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         {
             using var dataStream = streamFactory.GetDataStream(file.Location);
 
-            if (dataStream.Length > uint.MaxValue)
-                ThrowHelper.ThrowDataEntryExceeds4GigabyteException(file.Location.FilePath);
-
             // TODO: Test in encryption case
             if (dataStream.Length != file.DataEntry.Location.Size)
-                throw new InvalidOperationException(); // TODO: InvalidModelException
+                throw new InvalidOperationException(
+                    $"Actual data entry size '{dataStream.Length}' does not match expected value: {file.DataEntry.Location.Size}");
 
             if (fs.Position != file.DataEntry.Location.Offset)
-                throw new InvalidOperationException(); // TODO: InvalidModelException
+                throw new InvalidOperationException(
+                    $"Actual file position '{fs.Position}' does not match expected entry offset: {file.DataEntry.Location.Offset}");
 
             dataStream.CopyTo(fs);
 
             dataBytesWritten += dataStream.Length;
         }
-
 
         // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
         // E.g, a MEG with one entry being exactly 4GB large.

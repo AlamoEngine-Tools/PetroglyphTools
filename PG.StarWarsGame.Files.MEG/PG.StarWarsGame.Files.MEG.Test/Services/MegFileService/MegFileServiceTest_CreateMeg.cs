@@ -150,7 +150,6 @@ public partial class MegFileServiceTest
         _binaryServiceFactory.Setup(f => f.GetConverter(MegFileVersion.V2))
             .Returns(_megBinaryConverter.Object);
 
-        
         _megFileService.CreateMegArchive(fileParams, builderEntries, overrideFile);
     }
 }

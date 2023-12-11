@@ -13,12 +13,10 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal abstract class MegBinaryConverterBase<TMegMetadata> : ServiceBase, IMegBinaryConverter where TMegMetadata : IMegFileMetadata
+internal abstract class MegBinaryConverterBase<TMegMetadata>(IServiceProvider services) 
+    : ServiceBase(services), IMegBinaryConverter
+    where TMegMetadata : IMegFileMetadata
 {
-    protected MegBinaryConverterBase(IServiceProvider services) : base(services)
-    {
-    }
-
     /// <inheritdoc/>
     public IMegFileMetadata ModelToBinary(IMegArchive model)
     {

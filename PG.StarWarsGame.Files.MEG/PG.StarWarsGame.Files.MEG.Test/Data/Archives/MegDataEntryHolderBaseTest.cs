@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
@@ -43,6 +44,23 @@ public class MegDataEntryHolderBaseTest
             newEntries.Add((IMegDataEntry)entry);
 
         CollectionAssert.AreEqual(entries, newEntries);
+    }
+
+    [TestMethod]
+    public void Test_Ctor_UnsortedEntries_Throws()
+    {
+        var entry1 = new Mock<IMegDataEntry>();
+        entry1.SetupGet(e => e.Crc32).Returns(new Crc32(1));
+
+        var entry2 = new Mock<IMegDataEntry>();
+        entry2.SetupGet(e => e.Crc32).Returns(new Crc32(0));
+
+        var entries = new List<IMegDataEntry>
+        {
+            entry1.Object, entry2.Object
+        };
+
+        Assert.ThrowsException<ArgumentException>(() => new TestArchive(entries));
     }
 
     [TestMethod]

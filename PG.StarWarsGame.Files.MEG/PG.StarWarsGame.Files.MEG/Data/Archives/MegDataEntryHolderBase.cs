@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using DotNet.Globbing;
 using PG.Commons.Collections;
 using PG.Commons.DataTypes;
@@ -40,10 +39,22 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     {
         if (entries == null)
             throw new ArgumentNullException(nameof(entries));
-        
-        Entries = new ReadOnlyCollection<T>(entries.ToList());
-        _fileNames = new ReadOnlyCollection<string>(Entries.Select(x => x.FilePath).ToList());
 
+        var copyList = new List<T>(entries.Count);
+        var fileNames = new List<string>(entries.Count);
+
+        var lastCrc = default(Crc32);
+        foreach (var entry in entries)
+        {
+            if (entry.Crc32 < lastCrc)
+                throw new ArgumentException("not sorted", nameof(entries));
+            fileNames.Add(entry.FilePath);
+            copyList.Add(entry);
+            lastCrc = entry.Crc32;
+        }
+
+        Entries = new ReadOnlyCollection<T>(copyList);
+        _fileNames = new ReadOnlyCollection<string>(fileNames);
         _crcToIndexMap = Crc32Utilities.ListToCrcIndexRangeTable(Entries);
     }
 

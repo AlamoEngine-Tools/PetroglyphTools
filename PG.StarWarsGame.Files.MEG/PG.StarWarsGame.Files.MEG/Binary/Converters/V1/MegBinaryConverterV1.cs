@@ -9,12 +9,8 @@ using PG.StarWarsGame.Files.MEG.Data.Archives;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
-internal sealed class MegBinaryConverterV1 : MegBinaryConverterBase<MegMetadata>
+internal sealed class MegBinaryConverterV1(IServiceProvider services) : MegBinaryConverterBase<MegMetadata>(services)
 {
-    public MegBinaryConverterV1(IServiceProvider services) : base(services)
-    {
-    }
-
     protected override MegMetadata ModelToBinaryCore(IMegArchive model)
     {
         var fileCount = (uint)model.Count;

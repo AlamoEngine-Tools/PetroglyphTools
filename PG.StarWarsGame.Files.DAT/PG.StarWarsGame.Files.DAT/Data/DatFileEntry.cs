@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Binary;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
@@ -30,11 +32,7 @@ public sealed class DatFileEntry : IEquatable<DatFileEntry>, IComparable<DatFile
     /// <exception cref="ArgumentNullException">If the key is null, empty or whitespace.</exception>
     public DatFileEntry(string key, string? value)
     {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            throw new ArgumentNullException(nameof(key),
-                "No valid key was provided. Make sure the key is not null, empty or only consists of whitespace.");
-        }
+        ThrowHelper.ThrowIfNullOrWhiteSpace(key);
 
         Key = key;
         Value = value;

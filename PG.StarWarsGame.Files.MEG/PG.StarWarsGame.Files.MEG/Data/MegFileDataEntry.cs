@@ -3,6 +3,7 @@
 
 using System;
 using PG.Commons.Hashing;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
@@ -41,8 +42,7 @@ public sealed class MegFileDataEntry : IEquatable<MegFileDataEntry>
     /// <param name="size">The file's data size in bytes</param>
     internal MegFileDataEntry(Crc32 crc, string relativeFilePath, uint offset, uint size)
     {
-        if (string.IsNullOrWhiteSpace(relativeFilePath))
-            throw new ArgumentException("Meg packed file name must not be null or empty.", nameof(relativeFilePath));
+        ThrowHelper.ThrowIfNullOrWhiteSpace(relativeFilePath);
         FileNameCrc32 = crc;
         RelativeFilePath = relativeFilePath;
         Offset = offset;

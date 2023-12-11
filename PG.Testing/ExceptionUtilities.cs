@@ -1,5 +1,5 @@
-// // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// // Licensed under the MIT license. See LICENSE file in the project root for details.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
 using System.Linq;
@@ -30,8 +30,6 @@ public static class ExceptionUtilities
                 $"Expected no exception to be thrown but got '{e.GetType().Name}' instead", e);
         }
     }
-
-
 
     public static void AssertThrowsException<T>(Type type, Func<T> action)
     {
@@ -102,6 +100,12 @@ public static class ExceptionUtilities
                 Assert.Fail();
             return;
         }
-        Assert.Fail();
+        catch (Exception e)
+        {
+            if (e.GetType() == expectedException)
+                return;
+            Assert.Fail($"Expected exception of type {expectedException.Name} but got {e.GetType().Name}");
+        }
+        Assert.Fail($"Excepted exception of type {expectedException.Name} but non was thrown.");
     }
 }

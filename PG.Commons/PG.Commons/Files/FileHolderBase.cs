@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PG.Commons.DataTypes;
+using PG.Commons.Utilities;
 
 namespace PG.Commons.Files;
 
@@ -76,13 +77,11 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
         // We let concrete holders or other services the opportunity to do validation.
         // This of course allows invalid file names (such as ".", "..", "\\", "/") to be used here, but the assumption is,
         // that reading or writing such a file will cause an exception anyway. 
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("File path of param is empty.", nameof(param));
-
+        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
 
         FilePath = filePath;
 
-        // Empty file names such as "Data/.meg" are allowed in general. Thus we don't check for this constraint here.
+        // Empty file names such as "Data/.meg" are allowed in general. Thus, we don't check for this constraint here.
         // The concrete holder can check for possible file name constraints.
         FileName = FileSystem.Path.GetFileNameWithoutExtension(filePath);
 

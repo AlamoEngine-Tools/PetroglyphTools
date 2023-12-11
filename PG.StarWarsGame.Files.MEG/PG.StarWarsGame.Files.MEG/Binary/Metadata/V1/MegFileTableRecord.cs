@@ -4,7 +4,6 @@
 using System;
 using System.Buffers.Binary;
 using PG.Commons.Hashing;
-using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 

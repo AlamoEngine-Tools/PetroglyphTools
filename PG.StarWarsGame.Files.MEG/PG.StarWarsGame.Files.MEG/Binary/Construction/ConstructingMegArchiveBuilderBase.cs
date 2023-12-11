@@ -19,11 +19,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider services) : ServiceBase(services), IConstructingMegArchiveBuilder
 {
-    // TODO: Test-cases:
-    // Two empty file at beginning then file with data
-    // Two Empty files at end
-    // Empty file in the middle
-    // Archives that shall be encrypted
+    // TODO: Test encryption cases
     public IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries)
     {
         if (builderEntries == null) 

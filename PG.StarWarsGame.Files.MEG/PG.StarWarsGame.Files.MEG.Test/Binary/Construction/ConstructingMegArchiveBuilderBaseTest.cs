@@ -225,6 +225,9 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         yield return new object[] { SingleFileMeg() };
         yield return new object[] { UnsortedWithDuplicateCrcDueToNonASCIIFilePath() };
         yield return new object[] { OnlyTwoEmptyFiles() };
+        yield return new object[] { TwoEmptyFilesFirstThenData() };
+        yield return new object[] { DataThenTwoEmptyFiles() };
+        yield return new object[] { DataThenEmptyThenData() };
     }
 
     public static string GetTestDisplayNames(MethodInfo _, object[] values)
@@ -307,6 +310,78 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             {
                 new("0", new Crc32(0),0, fileNameAndFileTableSize + 0),
                 new("1", new Crc32(1),0, fileNameAndFileTableSize + 0),
+            }
+        );
+    }
+
+    private static ConstructingMegTestData TwoEmptyFilesFirstThenData()
+    {
+        // (N * 2 + Ni(length)) + (N * 20)
+        const int fileNameAndFileTableSize = 9 + 60;
+
+        return new(
+            nameof(TwoEmptyFilesFirstThenData),
+            // Input
+            new List<MegFileDataEntryBuilderInfo>
+            {
+                new(new MegDataEntryOriginInfo("A"), "1", 0),
+                new(new MegDataEntryOriginInfo("B"), "2", 0),
+                new(new MegDataEntryOriginInfo("C"), "3", 3),
+            },
+            // Expected
+            new List<ExpectedEntryData>
+            {
+                new("1", new Crc32(1),0, fileNameAndFileTableSize + 0),
+                new("2", new Crc32(2),0, fileNameAndFileTableSize + 0),
+                new("3", new Crc32(3),3, fileNameAndFileTableSize + 0),
+            }
+        );
+    }
+
+    private static ConstructingMegTestData DataThenTwoEmptyFiles()
+    {
+        // (N * 2 + Ni(length)) + (N * 20)
+        const int fileNameAndFileTableSize = 9 + 60;
+
+        return new(
+            nameof(DataThenTwoEmptyFiles),
+            // Input
+            new List<MegFileDataEntryBuilderInfo>
+            {
+                new(new MegDataEntryOriginInfo("A"), "1", 3),
+                new(new MegDataEntryOriginInfo("B"), "2", 0),
+                new(new MegDataEntryOriginInfo("C"), "3", 0),
+            },
+            // Expected
+            new List<ExpectedEntryData>
+            {
+                new("1", new Crc32(1),3, fileNameAndFileTableSize + 0),
+                new("2", new Crc32(2),0, fileNameAndFileTableSize + 3),
+                new("3", new Crc32(3),0, fileNameAndFileTableSize + 3),
+            }
+        );
+    }
+
+    private static ConstructingMegTestData DataThenEmptyThenData()
+    {
+        // (N * 2 + Ni(length)) + (N * 20)
+        const int fileNameAndFileTableSize = 9 + 60;
+
+        return new(
+            nameof(DataThenEmptyThenData),
+            // Input
+            new List<MegFileDataEntryBuilderInfo>
+            {
+                new(new MegDataEntryOriginInfo("A"), "1", 3),
+                new(new MegDataEntryOriginInfo("B"), "2", 0),
+                new(new MegDataEntryOriginInfo("C"), "3", 3),
+            },
+            // Expected
+            new List<ExpectedEntryData>
+            {
+                new("1", new Crc32(1),3, fileNameAndFileTableSize + 0),
+                new("2", new Crc32(2),0, fileNameAndFileTableSize + 3),
+                new("3", new Crc32(3),3, fileNameAndFileTableSize + 3),
             }
         );
     }

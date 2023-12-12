@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
+#if !NETSTANDARD2_1_OR_GREATER
+using System.Diagnostics;
+#endif
+
 
 namespace PG.Commons.Utilities;
 

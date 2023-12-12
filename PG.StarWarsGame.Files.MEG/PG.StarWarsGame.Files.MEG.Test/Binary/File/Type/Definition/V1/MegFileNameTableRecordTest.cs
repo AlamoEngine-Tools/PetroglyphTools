@@ -13,7 +13,6 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.File.Type.Definition.V1;
 public class MegFileNameTableRecordTest
 {
     [TestMethod]
-    [DataRow(null)]
     [DataRow("")]
     [DataRow("    ")]
     [DataRow("  \n\t  ")]
@@ -22,6 +21,13 @@ public class MegFileNameTableRecordTest
     public void Ctor_Test__ThrowsArgumentException(string fileName)
     {
         _ = new MegFileNameTableRecord(fileName, Encoding.ASCII);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void Ctor_Test__ThrowsArgumentNullException()
+    {
+        _ = new MegFileNameTableRecord(null!, Encoding.ASCII);
     }
 
     [TestMethod]

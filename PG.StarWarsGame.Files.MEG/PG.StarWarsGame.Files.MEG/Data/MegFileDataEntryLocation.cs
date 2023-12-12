@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
@@ -28,10 +29,8 @@ public class MegFileDataEntryLocation
     /// <param name="pathToFile">The current path of the file on the local file system.</param>
     public MegFileDataEntryLocation(string pathInMeg, string pathToFile)
     {
-        if (string.IsNullOrWhiteSpace(pathInMeg))
-            throw new ArgumentNullException(nameof(pathInMeg));
-        if (string.IsNullOrWhiteSpace(pathToFile))
-            throw new ArgumentNullException(nameof(pathToFile));
+        ThrowHelper.ThrowIfNullOrWhiteSpace(pathInMeg);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(pathToFile);
         PathInMeg = pathInMeg;
         PathToFile = pathToFile;
     }

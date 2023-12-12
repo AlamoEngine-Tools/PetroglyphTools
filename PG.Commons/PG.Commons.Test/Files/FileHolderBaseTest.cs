@@ -54,7 +54,7 @@ public class FileHolderBaseTest
         var fs = new MockFileSystem();
         
         var model = new object();
-        IServiceProvider sp = null;
+        IServiceProvider sp = null!;
 
 
         ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), sp).Object);
@@ -76,7 +76,7 @@ public class FileHolderBaseTest
 
     [TestMethod]
     [DataRow("", typeof(ArgumentException))]
-    [DataRow(null!, typeof(ArgumentException))]
+    [DataRow(null!, typeof(ArgumentNullException))]
     [DataRow("     ", typeof(ArgumentException))]
     public void Test__Ctor_InvalidPath(string path, Type type)
     {

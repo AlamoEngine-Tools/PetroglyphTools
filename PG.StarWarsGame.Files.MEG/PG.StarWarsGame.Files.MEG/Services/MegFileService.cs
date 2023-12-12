@@ -12,6 +12,7 @@ using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -124,10 +125,7 @@ public class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
-        if (string.IsNullOrWhiteSpace(file))
-        {
-            throw new ArgumentNullException(nameof(file));
-        }
+        ThrowHelper.ThrowIfNullOrWhiteSpace(file);
 
         using FileSystemStream fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         return GetMegFileVersion(fs, out encrypted);

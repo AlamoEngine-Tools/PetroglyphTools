@@ -6,16 +6,16 @@ using System.Runtime.CompilerServices;
 namespace PG.Commons.Collections;
 
 // Design Notes for FrugalList<T>:
-// 1. This struct is mutable. Thus is has dangerous side effects such as:
+// 1. This struct is mutable. Thus, it has dangerous side effects such as:
 //      var a := FrugalList<int> { 0, 0 }
 //      var b := a          // Copy by value!
-//      a[0] = 1            // Modification of first item does not get reflected to copies.
+//      a[0] = 1            // Modification of first item does *not* get reflected to copies.
 //      a[1] = 1            // Modification to all remaining items gets reflected to copies.
 //      print(b[0])         // prints 0
 //      print(b[1])         // prints 1
 //
 //
-// 2. Also this list does not implement the non-generic IList interface for the following reasons: 
+// 2. Also, this list does not implement the non-generic IList interface for the following reasons: 
 // 2.1. The IList.CopyTo(Array, int) adds complexity due to differences between .NET & C# type systems.
 //      E.g.
 //      In CLR: int[] is compatible to uint[] as vice-versa (see. ECMA335 I.8.7.1 array-element-compatible-with)
@@ -28,7 +28,7 @@ namespace PG.Commons.Collections;
 // 2.3  Ideally this struct would not have any interfaces since using this as an interface causes boxing,
 //      which totally makes the idea of this FrugalList obsolete.
 // 
-// 3. Ultimately this list *could* become a ref-struct. However this introduces a lot more restrictions which I'm currently not confident they are worth taking.
+// 3. Ultimately this list *could* become a ref-struct. However, this introduces a lot more restrictions which I'm currently not confident they are worth taking.
 
 
 /// <summary>

@@ -8,6 +8,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using PG.Commons.Common.Exceptions;
 using PG.Commons.Services;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -23,16 +24,8 @@ internal class DatFileService : ServiceBase, IDatFileService
     public void StoreDatFile(string datFileName, string targetDirectory, IEnumerable<DatFileEntry> entries,
         DatFileType datFileType)
     {
-        if (string.IsNullOrWhiteSpace(datFileName))
-        {
-            throw new ArgumentException($"No valid file name provided: {datFileName}", nameof(datFileName));
-        }
-
-        if (string.IsNullOrWhiteSpace(targetDirectory))
-        {
-            throw new ArgumentException($"No valid target director provided: {targetDirectory}",
-                nameof(targetDirectory));
-        }
+        ThrowHelper.ThrowIfNullOrWhiteSpace(datFileName);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(targetDirectory);
 
         // ReSharper disable once PossibleMultipleEnumeration
         var entryList = entries.ToList();

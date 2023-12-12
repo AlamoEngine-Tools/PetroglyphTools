@@ -179,8 +179,7 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
     /// <inheritdoc />
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
-        if (string.IsNullOrWhiteSpace(file))
-            throw new ArgumentNullException(nameof(file));
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(file);
 
         using var fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         return GetMegFileVersion(fs, out encrypted);

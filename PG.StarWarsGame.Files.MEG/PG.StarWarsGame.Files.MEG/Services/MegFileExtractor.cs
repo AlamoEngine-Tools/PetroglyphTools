@@ -27,10 +27,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     {
         if (dataEntry is null) 
             throw new ArgumentNullException(nameof(dataEntry));
-        if (rootPath is null) 
-            throw new ArgumentNullException(nameof(rootPath));
-        if (string.IsNullOrWhiteSpace(rootPath))
-            throw new ArgumentException(nameof(rootPath));
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(rootPath);
 
         var entryPath = dataEntry.FilePath;
         var absoluteRootPath = FileSystem.Path.GetFullPath(rootPath);
@@ -67,10 +64,7 @@ public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
     {
         if (dataEntryLocation is null)
             throw new ArgumentNullException(nameof(dataEntryLocation));
-        if (filePath is null)
-            throw new ArgumentNullException(nameof(filePath));
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("File path must not be empty or contain only whitespace", nameof(filePath));
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
 
         var fullFilePath = FileSystem.Path.GetFullPath(filePath);
 

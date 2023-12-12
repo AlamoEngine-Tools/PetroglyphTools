@@ -21,7 +21,7 @@ public partial class MegFileServiceTest
     {
         Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, new List<MegFileDataEntryBuilderInfo>(), false));
         Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "Path"}, null!, false));
-        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = null!}, new List<MegFileDataEntryBuilderInfo>(), false));
+        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = null!}, new List<MegFileDataEntryBuilderInfo>(), false));
         Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = ""}, new List<MegFileDataEntryBuilderInfo>(), false));
         Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "   "}, new List<MegFileDataEntryBuilderInfo>(), false));
     }

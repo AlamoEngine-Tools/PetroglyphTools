@@ -41,10 +41,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     /// <exception cref="ArgumentException">If <paramref name="filePath"/> is empty or only whitespace.</exception>
     public MegDataEntryOriginInfo(string filePath)
     {
-        if (filePath == null)
-            throw new ArgumentNullException(nameof(filePath));
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException(nameof(filePath));
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
         FilePath = filePath;
     }
 

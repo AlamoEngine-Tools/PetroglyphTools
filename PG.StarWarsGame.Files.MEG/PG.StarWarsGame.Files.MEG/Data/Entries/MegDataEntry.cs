@@ -33,10 +33,7 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// <exception cref="ArgumentException"></exception>
     internal MegDataEntry(string filePath, Crc32 crc32, MegDataEntryLocation location, bool encrypted) : base(location)
     {
-        if (filePath is null)
-            throw new ArgumentNullException(nameof(filePath));
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("Archived file name must not be null or empty.", nameof(filePath));
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
 
         // Note: We cannot validate correct CRC32 here in order to stay compatible with MIKE.NL's tool.
         // See the ASCII vs. Latin1 encoding problem.

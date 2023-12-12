@@ -16,8 +16,8 @@ public partial class MegFileServiceTest
         _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((string)null!, out _));
-       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion("", out _));
-       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion("   ", out _));
+       Assert.ThrowsException<ArgumentException>(() => _megFileService.GetMegFileVersion("", out _));
+       Assert.ThrowsException<ArgumentException>(() => _megFileService.GetMegFileVersion("   ", out _));
        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((Stream)null!, out _));
     }
 

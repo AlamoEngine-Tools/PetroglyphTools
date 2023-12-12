@@ -40,8 +40,8 @@ public sealed class MegFileDataEntryBuilderInfo
     /// <exception cref="ArgumentNullException"><paramref name="originInfo"/> is <see langword="null"/>.</exception>
     public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo, string? overrideFilePath = null, uint? fileSize = null, bool? overrideEncrypted = null)
     {
-        if (overrideEncrypted is not null && string.IsNullOrWhiteSpace(overrideFilePath))
-            throw new ArgumentException("Overriding file path must not be empty or only whitespace.", nameof(overrideFilePath));
+        if (overrideEncrypted is not null)
+            Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(overrideFilePath);
 
         OriginInfo = originInfo ?? throw new ArgumentNullException(nameof(originInfo));
 

@@ -37,8 +37,7 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
     public MegFileNameTableRecord(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException($"{nameof(filePath)} must not be null or empty");
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
 
         var encoding = MegFileConstants.MegContentFileNameEncoding;
         OriginalFilePath = filePath;

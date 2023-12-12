@@ -37,9 +37,7 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
 
         var megFilePath = megFileParameters.FilePath;
 
-        if (string.IsNullOrWhiteSpace(megFilePath))
-            throw new ArgumentException("File path must not be empty or contain only whitespace",
-                nameof(megFileParameters));
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(megFilePath, nameof(megFileParameters));
 
         var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megFileParameters.FileVersion)
             .BuildConstructingMegArchive(builderInformation);

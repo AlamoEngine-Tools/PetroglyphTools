@@ -11,11 +11,17 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 public class MegFileNameTableRecordTest
 {
     [TestMethod]
-    [DataRow(null)]
     [DataRow("")]
+    [DataRow("   ")]
     public void Ctor_Test__ThrowsArgumentException(string fileName)
     {
         Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fileName));
+    }
+
+    [TestMethod]
+    public void Ctor_Test__ThrowsArgumentNullException()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() => new MegFileNameTableRecord(null!));
     }
 
     [TestMethod]

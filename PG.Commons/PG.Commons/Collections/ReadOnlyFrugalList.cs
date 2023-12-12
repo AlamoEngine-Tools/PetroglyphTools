@@ -67,7 +67,7 @@ public readonly struct ReadOnlyFrugalList<T> : IReadOnlyList<T>
     /// <summary>
     /// Creates a <see cref="List{T}"/> from an this instance.
     /// </summary>
-    /// <returns>A <see cref="List{T}"/> that contains elements from the this list.</returns>
+    /// <returns>A <see cref="List{T}"/> that contains elements from this list.</returns>
     public List<T> ToList()
     {
         return _list.ToList();
@@ -83,7 +83,7 @@ public readonly struct ReadOnlyFrugalList<T> : IReadOnlyList<T>
     }
 
     /// <summary>
-    /// Returns the first element of of the <see cref="FrugalList{T}"/>.
+    /// Returns the first element of the <see cref="FrugalList{T}"/>.
     /// </summary>
     /// <returns>The first element of the specified <see cref="FrugalList{T}"/></returns>
     /// <exception cref="InvalidOperationException">The <see cref="FrugalList{T}"/> is empty.</exception>

@@ -77,4 +77,23 @@ public class MegFileTableValidatorTest
         var validator = new MegFileTableValidator();
         Assert.IsFalse(validator.Validate(fileTable.Object).IsValid);
     }
+
+    [TestMethod]
+    public void Test_Validate_Invalid_NotSorted()
+    {
+        var entry1 = new Mock<IMegFileDescriptor>();
+        entry1.SetupGet(e => e.Crc32).Returns(new Crc32(99));
+        entry1.SetupGet(e => e.Index).Returns(0);
+        var entry2 = new Mock<IMegFileDescriptor>();
+        entry2.SetupGet(e => e.Crc32).Returns(new Crc32(0));
+        entry2.SetupGet(e => e.Index).Returns(1);
+
+        var fileTable = new Mock<IMegFileTable>();
+        fileTable.SetupGet(t => t.Count).Returns(2);
+        fileTable.SetupGet(t => t[0]).Returns(entry1.Object);
+        fileTable.SetupGet(t => t[1]).Returns(entry2.Object);
+
+        var validator = new MegFileTableValidator();
+        Assert.IsFalse(validator.Validate(fileTable.Object).IsValid);
+    }
 }

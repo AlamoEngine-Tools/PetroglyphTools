@@ -10,17 +10,13 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFileTable> :
-    ServiceBase,
+internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFileTable>(IServiceProvider services) :
+    ServiceBase(services),
     IMegFileBinaryReader
     where TMegMetadata : IMegFileMetadata
     where TMegHeader : IMegHeader
-    where TMegFileTable : IMegFileTable 
+    where TMegFileTable : IMegFileTable
 {
-    protected MegFileBinaryReaderBase(IServiceProvider services) : base(services)
-    {
-    }
-
     public IMegFileMetadata ReadBinary(Stream byteStream)
     {
         if (byteStream == null)
@@ -64,10 +60,5 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
         }
 
         return new MegFileNameTable(fileNameTable);
-    }
-
-    public override string ToString()
-    {
-        return GetType().Name;
     }
 }

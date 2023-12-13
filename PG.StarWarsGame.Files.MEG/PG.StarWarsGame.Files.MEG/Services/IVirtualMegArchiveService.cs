@@ -7,6 +7,7 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
+// TODO
 /// <summary>
 /// Service to build virtual MEG archives.
 /// </summary>

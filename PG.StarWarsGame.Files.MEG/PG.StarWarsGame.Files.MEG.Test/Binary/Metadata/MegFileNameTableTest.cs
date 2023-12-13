@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -96,6 +97,12 @@ public class MegFileNameTableTest
         IMegFileNameTable ifaceTable = table;
         foreach (var name in ifaceTable)
             names.Add(name);
+        CollectionAssert.AreEqual(recordList.Select(r => r.FileName).ToList(), names);
+
+        names.Clear();
+
+        foreach (MegFileNameTableRecord name in (IEnumerable)ifaceTable)
+            names.Add(name.FileName);
         CollectionAssert.AreEqual(recordList.Select(r => r.FileName).ToList(), names);
 
     }

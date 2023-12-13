@@ -11,12 +11,9 @@ using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
-internal sealed class MegDataStreamFactory : ServiceBase, IMegDataStreamFactory
+internal sealed class MegDataStreamFactory(IServiceProvider serviceProvider)
+    : ServiceBase(serviceProvider), IMegDataStreamFactory
 {
-    public MegDataStreamFactory(IServiceProvider serviceProvider) : base(serviceProvider)
-    {
-    }
-
     public Stream GetDataStream(MegDataEntryOriginInfo originInfo)
     {
         if (originInfo == null) 

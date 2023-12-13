@@ -33,7 +33,6 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
     /// <returns>List of matching data entries. </returns>
-    // TODO: FrugalList<T> cause i expect results to contain mostly 0 or 1 item.
     ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc);
 
     /// <summary>

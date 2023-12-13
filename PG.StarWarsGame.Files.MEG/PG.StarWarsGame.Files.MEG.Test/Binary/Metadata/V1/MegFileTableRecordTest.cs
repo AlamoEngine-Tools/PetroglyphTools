@@ -4,6 +4,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
@@ -53,6 +54,15 @@ public class MegFileTableRecordTest
 
         Assert.IsTrue(r1 <= r1);
         Assert.IsTrue(r1 >= r1);
+
+        Assert.AreEqual(0, r0.CompareTo(r0));
+        Assert.AreEqual(-1, r0.CompareTo(r1));
+        Assert.AreEqual(1, r1.CompareTo(r0));
+
+        Assert.AreEqual(1, ((IComparable<IMegFileDescriptor>)r1).CompareTo(null!));
+        Assert.AreEqual(0, ((IComparable<IMegFileDescriptor>)r1).CompareTo(r1));
+        Assert.AreEqual(1, ((IComparable<IMegFileDescriptor>)r1).CompareTo(r0));
+        Assert.AreEqual(-1, ((IComparable<IMegFileDescriptor>)r0).CompareTo(r1));
     }
 
     [TestMethod]

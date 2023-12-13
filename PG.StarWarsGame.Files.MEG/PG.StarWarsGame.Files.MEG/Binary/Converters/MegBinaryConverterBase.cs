@@ -20,6 +20,8 @@ internal abstract class MegBinaryConverterBase<TMegMetadata>(IServiceProvider se
     /// <inheritdoc/>
     public IMegFileMetadata ModelToBinary(IMegArchive model)
     {
+        if (model == null) 
+            throw new ArgumentNullException(nameof(model));
         return ModelToBinaryCore(model);
     }
 

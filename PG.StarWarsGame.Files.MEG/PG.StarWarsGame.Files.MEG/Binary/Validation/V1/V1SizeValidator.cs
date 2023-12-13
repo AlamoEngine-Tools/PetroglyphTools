@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Validation.V1;

@@ -41,4 +41,12 @@ public static class TestUtility
         return assembly.GetManifestResourceStream(resourcePath) ??
                throw new FileNotFoundException($"Could not find embedded resource: '{resourcePath}'", path);
     }
+
+    public static byte[] GetEmbeddedResourceAsByteArray(Type type, string path)
+    {
+        using var stream = GetEmbeddedResource(type, path);
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        return ms.ToArray();
+    }
 }

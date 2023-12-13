@@ -3,7 +3,6 @@
 
 using System;
 using System.Buffers.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 

@@ -46,7 +46,7 @@ internal sealed class VirtualMegArchiveBuilder : IVirtualMegArchiveBuilder
     /// <inheritdoc/>
     public IVirtualMegArchive BuildFrom(IList<IMegFile> megFiles, bool replaceExisting)
     {
-        var entryReferences = (from megFile in megFiles from entry in megFile.Archive select new MegDataEntryReference(new MegDataEntryLocationReference(megFile, entry)));
+        var entryReferences = from megFile in megFiles from entry in megFile.Archive select new MegDataEntryReference(new MegDataEntryLocationReference(megFile, entry));
         return BuildFrom(entryReferences, replaceExisting);
     }
 }

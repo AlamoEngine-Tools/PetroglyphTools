@@ -19,16 +19,27 @@ public readonly struct IndexRange
     /// </summary>
     public int Length { get; }
 
-    /// <summary>Construct a Range object using the start and end indexes.</summary>
+    /// <summary>
+    /// The last index, inclusive, of the range.
+    /// </summary>
+    public int End => Start + Length - 1;
+
+    /// <summary>Construct a Range object using the start and length.</summary>
     /// <param name="start">Represent the inclusive start index of the range.</param>
-    /// <param name="length">Represent the exclusive end index of the range.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="start"/> or <paramref name="length"/> is negative.</exception>
+    /// <param name="length">The length of range.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="start"/> is negative.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="length"/> is less than 1.</exception>
+    /// <exception cref="OverflowException">The range is too long.</exception>
     public IndexRange(int start, int length)
     {
-        if (start < 0 || length < 0)
-            throw new ArgumentOutOfRangeException();
+        if (start < 0)
+            throw new ArgumentOutOfRangeException(nameof(start));
+        if (length <= 0)
+            throw new ArgumentOutOfRangeException(nameof(start));
         Start = start;
         Length = length;
+        if (End < start)
+            throw new OverflowException("Range exceeds the maximum allowed size.");
     }
 
     /// <summary>Indicates whether the current Range object is equal to another object of the same type.</summary>
@@ -57,7 +68,7 @@ public readonly struct IndexRange
     [ExcludeFromCodeCoverage]
     public override string ToString()
     {
-        return $"{Start}..{Start + Length}";
+        return $"{Start}..{End}";
     }
 
     /// <summary>

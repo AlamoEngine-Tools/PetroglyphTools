@@ -9,12 +9,12 @@ using PG.StarWarsGame.Files.MEG.Services;
 namespace PG.StarWarsGame.Files.MEG;
 
 /// <summary>
-///     Provides methods to initialize this library.
+/// Provides methods to initialize this library.
 /// </summary>
 public static class MegDomain
 {
     /// <summary>
-    ///     Adds the requires services for this library to the service collection.
+    ///     Adds the required services for this library to the service collection.
     /// </summary>
     /// <param name="serviceCollection">The service collection to populate.</param>
     public static void RegisterServices(IServiceCollection serviceCollection)
@@ -23,6 +23,7 @@ public static class MegDomain
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
         serviceCollection.AddSingleton<IMegDataStreamFactory>(sp => new MegDataStreamFactory(sp));
+        serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(sp => new VirtualMegArchiveBuilder());
         
         serviceCollection.AddTransient<IMegBinaryValidator>(sp => new MegBinaryValidator(sp));
         serviceCollection.AddTransient<IFileTableValidator>(_ => new MegFileTableValidator());

@@ -20,6 +20,19 @@ public class IndexRangeTest
     {
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => new IndexRange(-1, 1));
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => new IndexRange(0, -1));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new IndexRange(0, 0));
+        Assert.ThrowsException<OverflowException>(() => new IndexRange(int.MaxValue, 2));
+    }
+
+    [TestMethod]
+    [DataRow(0, 1, 0)]
+    [DataRow(1, 1, 1)]
+    [DataRow(0, 2, 1)]
+    [DataRow(1, 2, 2)]
+    [DataRow(1, 2, 2)]
+    public void Test_End(int start, int length, int expectedEnd)
+    {
+        Assert.AreEqual(expectedEnd, new IndexRange(start, length).End);
     }
 
     [TestMethod]

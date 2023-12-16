@@ -30,7 +30,7 @@ public class MegFileDataEntryLocation
     public MegFileDataEntryLocation(string pathInMeg, string pathToFile)
     {
         ThrowHelper.ThrowIfNullOrWhiteSpace(pathInMeg);
-        ThrowHelper.ThrowIfNullOrWhiteSpace(pathToFile);
+        ThrowHelper.ThrowIfNullOrEmpty(pathToFile);
         PathInMeg = pathInMeg;
         PathToFile = pathToFile;
     }

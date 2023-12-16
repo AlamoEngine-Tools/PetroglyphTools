@@ -97,7 +97,7 @@ public static class ExceptionUtilities
         catch (TargetInvocationException e)
         {
             if (e.InnerException?.GetType() != expectedException)
-                Assert.Fail();
+                Assert.Fail($"Expected exception of type {expectedException.Name} but got {e.InnerException?.GetType().Name}");
             return;
         }
         catch (Exception e)

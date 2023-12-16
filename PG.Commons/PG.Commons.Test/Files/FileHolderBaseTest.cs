@@ -34,18 +34,27 @@ public class FileHolderBaseTest
     }
 
     [TestMethod]
-    [DataRow("test")]
-    [DataRow("..")]
-    [DataRow(".")]
-    [DataRow("üöä")]
-    public void Test__PassingFileNames(string filePath)
+    [DataRow("test", "test", "")]
+    [DataRow("..", null, null)]
+    [DataRow(".", null, null)]
+    [DataRow("üöä", "üöä", "")]
+    [DataRow("a/b", "b", "a")]
+    [DataRow("test/\u00A0", "\u00A0", "test")]
+    public void Test__PassingFileNames(string filePath, string? expectedFileName, string expectedDirectory)
     {
-        var fs = new MockFileSystem();
+        var fs = new FileSystem();
         var model = new object();
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
+        
+        var holder = new TestFileHolder(model, new TestParam(filePath), sp.Object);
 
-        _ = new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam(filePath), sp.Object).Object;
+        if (expectedFileName is not null)
+        {
+            Assert.AreEqual(expectedFileName, holder.FileName);
+            Assert.AreEqual(expectedDirectory, holder.Directory);
+            Assert.AreEqual(filePath, holder.FilePath);
+        }
     }
 
     [TestMethod]
@@ -77,7 +86,12 @@ public class FileHolderBaseTest
     [TestMethod]
     [DataRow("", typeof(ArgumentException))]
     [DataRow(null!, typeof(ArgumentNullException))]
-    [DataRow("     ", typeof(ArgumentException))]
+#if NET
+    [DataRow("   ", typeof(InvalidOperationException))]
+#elif NETFRAMEWORK
+    [DataRow("   ", typeof(ArgumentException))]
+#endif
+
     public void Test__Ctor_InvalidPath(string path, Type type)
     {
         var fs = new MockFileSystem();
@@ -101,7 +115,7 @@ public class FileHolderBaseTest
         Assert.AreEqual(NullLogger.Instance, holder.Logger);
     }
 
-    public class TestParam : IFileHolderParam
+    private class TestParam : IFileHolderParam
     {
         public TestParam(string filePath)
         {
@@ -111,9 +125,12 @@ public class FileHolderBaseTest
         public string FilePath { get; }
     }
 
-    public struct TestFileType : IAlamoFileType
+    private struct TestFileType : IAlamoFileType
     {
         public FileType Type { get; }
         public string FileExtension { get; }
     }
+
+    private class TestFileHolder(object model, TestParam param, IServiceProvider serviceProvider)
+        : FileHolderBase<TestParam, object, TestFileType>(model, param, serviceProvider);
 }

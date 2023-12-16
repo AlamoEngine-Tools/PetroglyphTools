@@ -125,7 +125,7 @@ public class MegFileService : ServiceBase, IMegFileService
     /// <inheritdoc />
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
-        ThrowHelper.ThrowIfNullOrWhiteSpace(file);
+        ThrowHelper.ThrowIfNullOrEmpty(file);
 
         using FileSystemStream fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         return GetMegFileVersion(fs, out encrypted);

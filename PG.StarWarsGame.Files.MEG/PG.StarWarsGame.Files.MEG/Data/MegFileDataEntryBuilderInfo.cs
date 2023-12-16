@@ -26,14 +26,17 @@ public sealed class MegFileDataEntryBuilderInfo
     /// </summary>
     public bool Encrypted { get; }
 
-    internal uint? Size { get; private set; }
+    /// <summary>
+    /// Gets the size of the data entry or <see langword="null"/> if no size was specified.
+    /// </summary>
+    public uint? Size { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class with a data entry origin info and optional override parameters.
     /// </summary>
     /// <param name="originInfo">The origin info of the data entry.</param>
     /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used.</param>
-    /// <param name="fileSize"></param>
+    /// <param name="fileSize">Pre-calculated size of the data entry. Parameter gets ignored when <paramref name="originInfo"/> holds an existing data entry.</param>
     /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used.</param>
     /// <exception cref="ArgumentException"><paramref name="originInfo"/> has invalid file path data.</exception>
     /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty or contains only whitespace.</exception>

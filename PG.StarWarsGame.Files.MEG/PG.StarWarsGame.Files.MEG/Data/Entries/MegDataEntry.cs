@@ -18,6 +18,11 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     public override Crc32 Crc32 { get; }
 
     /// <summary>
+    /// The original file path value without the default MEG encoding applied.
+    /// </summary>
+    public string OriginalFilePath { get; }
+
+    /// <summary>
     /// Indicates whether the file is encrypted
     /// </summary>
     public bool Encrypted { get; }
@@ -29,17 +34,21 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// <param name="crc32">The CRC32 checksum of the filePath</param>
     /// <param name="location">The location information of the entry inside it's MEG file.</param>
     /// <param name="encrypted">Indicator </param>
+    /// <param name="originalFilePath">The original file path value.</param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    internal MegDataEntry(string filePath, Crc32 crc32, MegDataEntryLocation location, bool encrypted) : base(location)
+    internal MegDataEntry(string filePath, Crc32 crc32, MegDataEntryLocation location, bool encrypted, string originalFilePath) : base(location)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
+        //Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+
+        Crc32 = crc32;
+        Encrypted = encrypted;
+        OriginalFilePath = originalFilePath;
 
         // Note: We cannot validate correct CRC32 here in order to stay compatible with MIKE.NL's tool.
         // See the ASCII vs. Latin1 encoding problem.
         FilePath = filePath;
-        Crc32 = crc32;
-        Encrypted = encrypted;
     }
 
     /// <inheritdoc />

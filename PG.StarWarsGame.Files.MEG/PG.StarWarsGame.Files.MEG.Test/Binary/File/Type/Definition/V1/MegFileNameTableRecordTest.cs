@@ -31,7 +31,7 @@ public class MegFileNameTableRecordTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(OverflowException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void Ctor_Test__ThrowsOverflowException()
     {
         var fn = TestUtility.GetRandomStringOfLength(ushort.MaxValue + 5);

@@ -25,12 +25,13 @@ public class FileHolderBaseTest
         sp.Setup(s => s.GetService(typeof(ILoggerFactory))).Returns(loggerFactoryMock.Object);
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        var holder = new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), sp.Object).Object;
+        var holder = new TestFileHolder(model, new TestParam("test"), sp.Object);
 
         Assert.AreSame(model, holder.Content);
         Assert.AreEqual("test", holder.FilePath);
         Assert.AreEqual(string.Empty, holder.Directory);
         Assert.IsNotNull(holder.FileType);
+        Assert.AreSame(sp.Object, holder.Services);
     }
 
     [TestMethod]
@@ -65,13 +66,14 @@ public class FileHolderBaseTest
         var model = new object();
         IServiceProvider sp = null!;
 
-
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), sp).Object);
+        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new TestFileHolder(model, new TestParam("test"), sp));
 
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, null!, spMock.Object).Object);
+        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new TestFileHolder(model, null!, spMock.Object));
+
+        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new TestFileHolder(null!, new TestParam("test"), spMock.Object));
     }
 
     [TestMethod]
@@ -80,7 +82,7 @@ public class FileHolderBaseTest
         var model = new object();
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns((IFileSystem)null!);
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<InvalidOperationException>(() => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), spMock.Object).Object);
+        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<InvalidOperationException>(() => new TestFileHolder(model, new TestParam("test"), spMock.Object));
     }
 
     [TestMethod]
@@ -99,7 +101,7 @@ public class FileHolderBaseTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException(type, () => new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam(path), sp.Object).Object);
+        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException(type, () => new TestFileHolder(model, new TestParam(path), sp.Object));
     }
 
     [TestMethod]
@@ -110,19 +112,14 @@ public class FileHolderBaseTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        var holder = new Mock<FileHolderBase<IFileHolderParam, object, TestFileType>>(model, new TestParam("test"), sp.Object).Object;
+        var holder = new TestFileHolder(model, new TestParam("test"), sp.Object);
 
         Assert.AreEqual(NullLogger.Instance, holder.Logger);
     }
 
-    private class TestParam : IFileHolderParam
+    private class TestParam(string filePath) : IFileHolderParam
     {
-        public TestParam(string filePath)
-        {
-            FilePath = filePath;
-        }
-
-        public string FilePath { get; }
+        public string FilePath { get; } = filePath;
     }
 
     private struct TestFileType : IAlamoFileType

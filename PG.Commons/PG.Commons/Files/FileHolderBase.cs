@@ -18,6 +18,7 @@ namespace PG.Commons.Files;
 /// <typeparam name="TFileType">The alamo file type definition implementing <see cref="IAlamoFileType" /></typeparam>
 /// <typeparam name="TParam">The <see cref="IFileHolderParam" /> used during creation.</typeparam>
 public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObject, IFileHolder<TModel, TFileType>
+    where TModel : notnull
     where TParam : IFileHolderParam
     where TFileType : IAlamoFileType, new()
 {

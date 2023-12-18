@@ -8,11 +8,20 @@ internal class MegFileConstants
     public const uint MegFileUnencryptedFlag = 0xFFFFFFFF;
     public const uint MegFileEncryptedFlag = 0x8FFFFFFF;
 
-    // The game only supports ASCII. While other encoding, especially single-byte encodings like Latin1, might be possible
-    // we do not support that here. Using Latin1 for example causes ambiguous files names.
+    // However, the specification does not state which encoding is required but instead relies on the number of characters of a string.
+    // Implicitly, a 1:1 ratio for bytes - # chars is required though, which limits the possible encodings to a single-byte encoding,
+    // such as ASCII, ISO 8859, Windows 1252, etc.
+    //
+    // For file names such as MEG files or MEG data entries, the game only supports ASCII.
+    // 
+    // Note: Mike.NL's MEG tool actually uses an extended ASCII encoding, probably ISO 8859-1.
+    // This can cause situations where arbitrary MEG files might have data entries causing ambiguities:
     // e.g.:
     //      'ß.txt' --> '?.txt'
     //      'ä.txt' --> '?.txt'
-    // Note: Mike.NL's Meg tool actually uses Latin1 (Windows-1251) causing this exact situation.
-    public static readonly Encoding MegContentFileNameEncoding = Encoding.ASCII;
+    public static readonly Encoding MegDataEntryPathEncoding = Encoding.ASCII;
+
+    // This encoding *only* gets used for reading binary MEG files to maintain compatibility with Mike.NL's tool.
+    // This way we can preserve the original file name so that consumers of this library can handle non-ASCII named files.
+    public static readonly Encoding ExtendedMegEntryPathEncoding = Encoding.GetEncoding(28591);
 }

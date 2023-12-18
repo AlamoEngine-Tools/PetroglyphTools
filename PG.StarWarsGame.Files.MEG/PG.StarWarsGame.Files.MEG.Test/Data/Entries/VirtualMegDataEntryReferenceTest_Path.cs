@@ -10,8 +10,7 @@ public class VirtualMegDataEntryReferenceTest_Path : MegDataEntryBaseTest<MegDat
 {
     private VirtualMegDataEntryReference CreateVirtualMegDataEntryReference(string path, Crc32 crc, MegDataEntryOriginInfo location)
     {
-        return new VirtualMegDataEntryReference(
-            new MegDataEntry(path, crc, new MegDataEntryLocation(), false), location);
+        return new VirtualMegDataEntryReference(MegDataEntryTest.CreateEntry(path, crc), location);
     }
 
     protected override MegDataEntryBase<MegDataEntryOriginInfo> CreateEntry(string path, Crc32 crc, MegDataEntryOriginInfo location)

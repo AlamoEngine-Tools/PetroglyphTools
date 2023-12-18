@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 [TestClass]
 public class MegDataEntryReferenceTest : MegDataEntryBaseTest<MegDataEntryLocationReference>
 {
-    // We need a instance global variable, cause IMegFile equality is only done by reference.
+    // We need an instance global variable, cause IMegFile equality is only done by reference.
     private readonly Mock<IMegFile> _megFile = new();
 
     private MegDataEntryReference CreateEntryReference(string path, Crc32 crc, MegDataEntryLocationReference location)
@@ -27,15 +27,15 @@ public class MegDataEntryReferenceTest : MegDataEntryBaseTest<MegDataEntryLocati
     private MegDataEntryLocationReference CreateLocation(string path, Crc32 crc, MegDataEntryLocationReference location)
     {
         return new MegDataEntryLocationReference(_megFile.Object,
-            new MegDataEntry(path, crc, location.DataEntry.Location, false));
+            MegDataEntryTest.CreateEntry(path, crc, location.DataEntry.Location, false, null));
     }
 
     protected override MegDataEntryLocationReference CreateLocation(int seed)
     {
         unchecked
         {
-            return new MegDataEntryLocationReference(_megFile.Object,
-                new MegDataEntry("path", DefaultCrc, new MegDataEntryLocation((uint)seed, (uint)seed), false));
+            return new MegDataEntryLocationReference(_megFile.Object, 
+                MegDataEntryTest.CreateEntry("path", DefaultCrc, (uint)seed, (uint)seed));
         }
     }
 }

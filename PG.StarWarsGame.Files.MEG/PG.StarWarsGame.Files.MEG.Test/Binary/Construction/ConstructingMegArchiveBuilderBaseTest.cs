@@ -12,9 +12,9 @@ using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using PG.Testing;
 using PG.Testing.Hashing;
 
@@ -103,7 +103,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             new(new MegDataEntryOriginInfo(
                     new MegDataEntryLocationReference(
                         meg.Object,
-                        new MegDataEntry("A", default, new MegDataEntryLocation(0, 5), false)
+                        MegDataEntryTest.CreateEntry("A", default, 0, 5)
                     )),
                 "0")
         };
@@ -117,7 +117,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         var expectedCrc = new Crc32(123);
         
         var mockChecksumService = new Mock<IChecksumService>();
-        mockChecksumService.Setup(cs => cs.GetChecksum("ÄÖÜ", Encoding.ASCII))
+        mockChecksumService.Setup(cs => cs.GetChecksum("???", Encoding.ASCII))
             .Returns(expectedCrc);
         
         _serviceProviderMock.Setup(sp => sp.GetService(typeof(IChecksumService)))
@@ -132,16 +132,18 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             new(new MegDataEntryOriginInfo(
                     new MegDataEntryLocationReference(
                         meg.Object,
-                        new MegDataEntry("A", default, new MegDataEntryLocation(0, 5), false)
+                        MegDataEntryTest.CreateEntry("A", default, 0, 5)
                     )),
                 "ÄÖÜ")
         };
 
         var archive = service.BuildConstructingMegArchive(builderEntries);
 
-        // Check that filename does not get encoded
-        Assert.AreEqual("ÄÖÜ",archive[0].FilePath);
-        Assert.AreEqual("ÄÖÜ", archive.Archive[0].FilePath);
+        // Check that filename gets encoded
+        Assert.AreEqual("???",archive[0].FilePath);
+        Assert.AreEqual("ÄÖÜ",archive[0].DataEntry.OriginalFilePath);
+        Assert.AreEqual("???", archive.Archive[0].FilePath);
+        Assert.AreEqual("ÄÖÜ", archive.Archive[0].OriginalFilePath);
         
         // Ensures that ASCII encoding was used for creating the CRC
         Assert.AreEqual(expectedCrc, archive.Archive[0].Crc32);

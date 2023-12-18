@@ -19,20 +19,16 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 /// <remarks>
 /// <b>Note:</b> <see cref="DataEntry"/>'s location already is dependent to the binary representation of the to be built .MEG file.
 /// </remarks>
-internal sealed class VirtualMegDataEntryReference : MegDataEntryBase<MegDataEntryOriginInfo>, IEquatable<VirtualMegDataEntryReference>
+internal sealed class VirtualMegDataEntryReference(MegDataEntry dataEntry, MegDataEntryOriginInfo originInfo)
+    : MegDataEntryBase<MegDataEntryOriginInfo>(originInfo), IEquatable<VirtualMegDataEntryReference>
 {
-    public MegDataEntry DataEntry { get; }
+    public MegDataEntry DataEntry { get; } = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
 
     /// <inheritdoc />
     public override string FilePath => DataEntry.FilePath;
 
     /// <inheritdoc />
     public override Crc32 Crc32 => DataEntry.Crc32;
-
-    public VirtualMegDataEntryReference(MegDataEntry dataEntry, MegDataEntryOriginInfo originInfo) : base(originInfo)
-    {
-        DataEntry = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
-    }
 
     /// <inheritdoc />
     public bool Equals(VirtualMegDataEntryReference? other)

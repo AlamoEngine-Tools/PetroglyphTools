@@ -69,8 +69,8 @@ public class MegFileNameTableTest
 
         IMegFileNameTable ifaceTable = table;
         Assert.AreEqual(2, ifaceTable.Count);
-        Assert.AreEqual("123", ifaceTable[0]);
-        Assert.AreEqual("456", ifaceTable[1]);
+        Assert.AreEqual("123", ifaceTable[0].FileName);
+        Assert.AreEqual("456", ifaceTable[1].FileName);
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => ifaceTable[2]);
     }
 
@@ -93,17 +93,17 @@ public class MegFileNameTableTest
             list.Add(record);
         CollectionAssert.AreEqual(recordList, list);
 
-        var names = new List<string>();
+        var names = new List<MegFileNameInformation>();
         IMegFileNameTable ifaceTable = table;
-        foreach (var name in ifaceTable)
-            names.Add(name);
-        CollectionAssert.AreEqual(recordList.Select(r => r.FileName).ToList(), names);
+        foreach (var nameInfo in ifaceTable)
+            names.Add(nameInfo);
+        CollectionAssert.AreEqual(recordList.Select(r => new MegFileNameInformation(r.FileName, r.OriginalFilePath)).ToList(), names);
 
         names.Clear();
 
         foreach (MegFileNameTableRecord name in (IEnumerable)ifaceTable)
-            names.Add(name.FileName);
-        CollectionAssert.AreEqual(recordList.Select(r => r.FileName).ToList(), names);
+            names.Add(new MegFileNameInformation(name.FileName, name.OriginalFilePath));
+        CollectionAssert.AreEqual(recordList.Select(r => new MegFileNameInformation(r.FileName, r.OriginalFilePath)).ToList(), names);
 
     }
 

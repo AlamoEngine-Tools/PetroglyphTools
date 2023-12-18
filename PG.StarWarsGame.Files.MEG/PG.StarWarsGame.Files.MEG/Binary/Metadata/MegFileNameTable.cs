@@ -5,7 +5,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using PG.Commons.Binary;
+using PG.Commons.Collections;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
@@ -15,7 +17,14 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
 
     public MegFileNameTableRecord this[int i] => _megFileNameTableRecords[i];
 
-    string IBinaryTable<string>.this[int i] => _megFileNameTableRecords[i].FileName;
+    MegFileNameInformation IBinaryTable<MegFileNameInformation>.this[int i]
+    {
+        get
+        {
+            var entry = _megFileNameTableRecords[i];
+            return new MegFileNameInformation(entry.FileName, entry.OriginalFilePath);
+        }
+    }
 
     public int Count => _megFileNameTableRecords.Count;
 
@@ -48,9 +57,9 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
         return bytes.ToArray();
     }
 
-    IEnumerator<string> IEnumerable<string>.GetEnumerator()
+    IEnumerator<MegFileNameInformation> IEnumerable<MegFileNameInformation>.GetEnumerator()
     {
-        return _megFileNameTableRecords.Select(x => x.FileName).GetEnumerator();
+        return new MegFileNameInformationEnumerator(_megFileNameTableRecords);
     }
 
     public IEnumerator<MegFileNameTableRecord> GetEnumerator()
@@ -61,5 +70,66 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+
+    /// <summary>
+    /// Enumerates the elements of a <see cref="FrugalList{T}"/>.
+    /// </summary>
+    public struct MegFileNameInformationEnumerator : IEnumerator<MegFileNameInformation>
+    {
+        private readonly IReadOnlyList<MegFileNameTableRecord> _list;
+
+        private int _position;
+        private MegFileNameTableRecord _currentRecord;
+
+        readonly object IEnumerator.Current => Current!;
+
+        /// <inheritdoc />
+        public readonly MegFileNameInformation Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                var currentRecord = _currentRecord;
+                return new MegFileNameInformation(currentRecord.FileName, currentRecord.OriginalFilePath);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal MegFileNameInformationEnumerator(IReadOnlyList<MegFileNameTableRecord> list)
+        {
+            _list = list;
+            _position = 0;
+            _currentRecord = default!;
+        }
+
+        /// <inheritdoc />
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool MoveNext()
+        {
+            if (_position < _list.Count)
+            {
+                _currentRecord = _list[_position];
+                ++_position;
+                return true;
+            }
+            _position = _list.Count + 1;
+            _currentRecord = default!;
+            return false;
+        }
+
+        /// <inheritdoc />
+        public void Reset()
+        {
+            _currentRecord = default!;
+            _position = 0;
+
+        }
+
+        /// <inheritdoc />
+        public readonly void Dispose()
+        {
+        }
     }
 }

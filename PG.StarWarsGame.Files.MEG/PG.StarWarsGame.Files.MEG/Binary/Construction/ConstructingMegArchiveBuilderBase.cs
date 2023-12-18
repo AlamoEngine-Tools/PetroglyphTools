@@ -14,6 +14,7 @@ using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
@@ -34,7 +35,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         foreach (var entry in Crc32Utilities.SortByCrc32(binaryInformation.Entries))
         {
             var dataEntryLocation = new MegDataEntryLocation(currentOffset, entry.Sizes.DataSize);
-            var dataEntry = new MegDataEntry(entry.FilePath, entry.Crc32, dataEntryLocation, entry.Encrypted);
+            var dataEntry = new MegDataEntry(entry.FilePath, entry.Crc32, dataEntryLocation, entry.Encrypted, entry.OriginalFilePath);
             
             entries.Add(new VirtualMegDataEntryReference(dataEntry, entry.Origin));
             
@@ -80,16 +81,19 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             fileNameTableSize += MegFileNameTableRecord.GetRecordSize(builderInfo.FilePath);
             fileTableSize += GetFileDescriptorSize(builderInfo.Encrypted);
 
-            // We do *not* re-encode builderInfo.FilePath here to ASCII, so we can store the original value
-            // in MegFileNameTableRecord. MegFileNameTableRecord performs the final encoding and specification checks.
-            var crc = checksumService.GetChecksum(builderInfo.FilePath, MegFileConstants.MegContentFileNameEncoding);
+            var megEncoding = MegFileConstants.MegDataEntryPathEncoding;
+
+            var encodedFilePath = MegFilePathUtilities.EncodeMegFilePath(builderInfo.FilePath, megEncoding);
+            MegFilePathUtilities.ValidateFilePathCharacterLength(encodedFilePath);
+            var crc = checksumService.GetChecksum(encodedFilePath, megEncoding);
             var dataSizes = GetDataSize(builderInfo);
 
             var itemInfo = new MegDataEntryBinaryInformation(
                 crc,
-                builderInfo.FilePath,
+                encodedFilePath,
                 dataSizes,
                 builderInfo.Encrypted,
+                builderInfo.FilePath,
                 builderInfo.OriginInfo);
 
             entryInfoList.Add(itemInfo);

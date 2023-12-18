@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
@@ -46,7 +47,8 @@ public class MegFileBinaryReaderV1IntegrationTest
         var fileSizes = megMetadata.FileTable.Select(x => x.FileSize).Sum(x => x);
         Assert.AreEqual(3, fileSizes);
 
-        Assert.AreEqual("TEST.TXT", megMetadata.FileNameTable[0]);
+        Assert.AreEqual("TEST.TXT", megMetadata.FileNameTable[0].FileName);
+        Assert.AreEqual("TEST.TXT", megMetadata.FileNameTable[0].OriginalFileName);
         Assert.AreEqual(3u, megMetadata.FileTable[0].FileSize);
     }
 
@@ -72,8 +74,10 @@ public class MegFileBinaryReaderV1IntegrationTest
         Assert.AreEqual(2, megMetadata.FileTable.Count);
         Assert.AreEqual(2, megMetadata.Header.FileNumber);
 
-        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[0]);
-        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[1]);
+        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[0].FileName);
+        Assert.AreEqual("TESTü.TXT", megMetadata.FileNameTable[0].OriginalFileName);
+        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[1].FileName);
+        Assert.AreEqual("TESTä.TXT", megMetadata.FileNameTable[1].OriginalFileName);
 
         // Not equal, cause MIKE uses Latin1 and thus CRC32 is calculated on the original file name, 
         Assert.AreNotEqual(megMetadata.FileTable[0].Crc32, megMetadata.FileTable[1].Crc32);
@@ -84,7 +88,9 @@ public class MegFileBinaryReaderV1IntegrationTest
     {
         var megMetadata = _binaryReader.ReadBinary(new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1));
 
-        Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0]);
-        Assert.AreEqual("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1]);
+        Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].FileName);
+        Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].OriginalFileName);
+        Assert.AreEqual("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1].FileName);
+        Assert.AreEqual("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1].OriginalFileName);
     }
 }

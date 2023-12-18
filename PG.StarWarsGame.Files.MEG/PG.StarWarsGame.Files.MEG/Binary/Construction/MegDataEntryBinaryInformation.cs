@@ -12,9 +12,12 @@ internal class MegDataEntryBinaryInformation(
     string filePath,
     MegDataEntrySize sizes,
     bool encrypted,
+    string originalFilePath,
     MegDataEntryOriginInfo origin) : IHasCrc32
 {
     public string FilePath { get; } = filePath;
+
+    public string OriginalFilePath { get; } = originalFilePath;
 
     public Crc32 Crc32 { get; } = crc32;
 

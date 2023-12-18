@@ -33,15 +33,17 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// <param name="filePath">The file path of the entry.</param>
     /// <param name="crc32">The CRC32 checksum of the filePath</param>
     /// <param name="location">The location information of the entry inside it's MEG file.</param>
-    /// <param name="encrypted">Indicator </param>
+    /// <param name="encrypted">Indicates whether this entry is encrypted or not.</param>
     /// <param name="originalFilePath">The original file path value.</param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
     internal MegDataEntry(string filePath, Crc32 crc32, MegDataEntryLocation location, bool encrypted, string originalFilePath) : base(location)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
-        //Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        //Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
 
+        //StringUtilities.ValidateIsAsciiOnly(filePath.AsSpan());
+        
         Crc32 = crc32;
         Encrypted = encrypted;
         OriginalFilePath = originalFilePath;

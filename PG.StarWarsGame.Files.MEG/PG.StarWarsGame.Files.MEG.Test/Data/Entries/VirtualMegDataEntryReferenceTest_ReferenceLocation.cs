@@ -15,8 +15,7 @@ public class VirtualMegDataEntryReferenceTest_ReferenceLocation : MegDataEntryBa
 
     private MegDataEntryBase<MegDataEntryOriginInfo> CreateVirtualMegDataEntryReference(string path, Crc32 crc, MegDataEntryOriginInfo location)
     {
-        return new VirtualMegDataEntryReference(
-            new MegDataEntry(path, crc, new MegDataEntryLocation(), false), location);
+        return new VirtualMegDataEntryReference(MegDataEntryTest.CreateEntry(path, crc), location);
     }
 
     protected override MegDataEntryBase<MegDataEntryOriginInfo> CreateEntry(string path, Crc32 crc, MegDataEntryOriginInfo location)
@@ -27,7 +26,7 @@ public class VirtualMegDataEntryReferenceTest_ReferenceLocation : MegDataEntryBa
     protected override MegDataEntryOriginInfo CreateLocation(int seed)
     {
         return new MegDataEntryOriginInfo(new MegDataEntryLocationReference(_megFile,
-            new MegDataEntry(seed.ToString(), DefaultCrc, new MegDataEntryLocation((uint)seed, (uint)seed), false)));
+            MegDataEntryTest.CreateEntry(seed.ToString(), DefaultCrc, (uint)seed, (uint)seed)));
     }
 
     [TestMethod]

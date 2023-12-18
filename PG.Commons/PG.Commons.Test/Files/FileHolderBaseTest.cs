@@ -14,7 +14,7 @@ namespace PG.Commons.Test.Files;
 public class FileHolderBaseTest
 {
     [TestMethod]
-    public void Test__Ctor_SetupProperties()
+    public void Test_Ctor_SetupProperties()
     {
         var fs = new MockFileSystem();
         var model = new object();
@@ -34,6 +34,25 @@ public class FileHolderBaseTest
         Assert.AreSame(sp.Object, holder.Services);
     }
 
+    [PlatformSpecificTestMethod(TestConstants.PLATFORM_LINUX)]
+    [DataRow("   ", "   ", "")]
+    public void Test_PassingFileNames_Whitespace_Linux(string filePath, string? expectedFileName, string expectedDirectory)
+    {
+        var fs = new MockFileSystem();
+        var model = new object();
+        var sp = new Mock<IServiceProvider>();
+        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
+
+        var holder = new TestFileHolder(model, new TestParam(filePath), sp.Object);
+
+        if (expectedFileName is not null)
+        {
+            Assert.AreEqual(expectedFileName, holder.FileName);
+            Assert.AreEqual(expectedDirectory, holder.Directory);
+            Assert.AreEqual(filePath, holder.FilePath);
+        }
+    }
+
     [TestMethod]
     [DataRow("test", "test", "")]
     [DataRow("..", null, null)]
@@ -41,7 +60,7 @@ public class FileHolderBaseTest
     [DataRow("üöä", "üöä", "")]
     [DataRow("a/b", "b", "a")]
     [DataRow("test/\u00A0", "\u00A0", "test")]
-    public void Test__PassingFileNames(string filePath, string? expectedFileName, string expectedDirectory)
+    public void Test_PassingFileNames(string filePath, string? expectedFileName, string expectedDirectory)
     {
         var fs = new MockFileSystem();
         var model = new object();
@@ -59,53 +78,62 @@ public class FileHolderBaseTest
     }
 
     [TestMethod]
-    public void Test__Ctor_ThrowsArgumentNullException()
+    public void Test_Ctor_ThrowsArgumentNullException()
     {
         var fs = new MockFileSystem();
         
         var model = new object();
         IServiceProvider sp = null!;
 
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new TestFileHolder(model, new TestParam("test"), sp));
+        Assert.ThrowsException<ArgumentNullException>(() => new TestFileHolder(model, new TestParam("test"), sp));
 
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new TestFileHolder(model, null!, spMock.Object));
+        Assert.ThrowsException<ArgumentNullException>(() => new TestFileHolder(model, null!, spMock.Object));
 
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<ArgumentNullException>(() => new TestFileHolder(null!, new TestParam("test"), spMock.Object));
+        Assert.ThrowsException<ArgumentNullException>(() => new TestFileHolder(null!, new TestParam("test"), spMock.Object));
     }
 
     [TestMethod]
-    public void Test__Ctor_ThrowsNoFileSystem()
+    public void Test_Ctor_ThrowsNoFileSystem_Throws()
     { 
         var model = new object();
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns((IFileSystem)null!);
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException<InvalidOperationException>(() => new TestFileHolder(model, new TestParam("test"), spMock.Object));
+        Assert.ThrowsException<InvalidOperationException>(() => new TestFileHolder(model, new TestParam("test"), spMock.Object));
     }
 
     [TestMethod]
     [DataRow("", typeof(ArgumentException))]
     [DataRow(null!, typeof(ArgumentNullException))]
-#if NET
-    [DataRow("   ", typeof(InvalidOperationException))]
-#elif NETFRAMEWORK
-    [DataRow("   ", typeof(ArgumentException))]
-#endif
 
-    public void Test__Ctor_InvalidPath(string path, Type type)
+    public void Test_Ctor_InvalidPath_EmptyOrNull_Throws(string path, Type type)
     {
         var fs = new MockFileSystem();
         var model = new object();
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
+        ExceptionUtilities.AssertThrowsException(type, () => new TestFileHolder(model, new TestParam(path), sp.Object));
+    }
 
-        ExceptionUtilities.AssertThrowsException_IgnoreTargetInvocationException(type, () => new TestFileHolder(model, new TestParam(path), sp.Object));
+    [PlatformSpecificTestMethod(TestConstants.PLATFORM_WINDOWS)]
+#if NET
+    [DataRow("   ", typeof(InvalidOperationException))]
+#elif NETFRAMEWORK
+    [DataRow("   ", typeof(ArgumentException))]
+#endif
+    public void Test_Ctor_InvalidPath_Whitespace_Windows_Throws(string path, Type type)
+    {
+        var fs = new MockFileSystem();
+        var model = new object();
+        var sp = new Mock<IServiceProvider>();
+        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
+        ExceptionUtilities.AssertThrowsException(type, () => new TestFileHolder(model, new TestParam(path), sp.Object));
     }
 
     [TestMethod]
-    public void Test__Ctor_NullLogger()
+    public void Test_Ctor_NullLogger()
     {
         var fs = new MockFileSystem();
         var model = new object();
@@ -113,7 +141,6 @@ public class FileHolderBaseTest
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
         var holder = new TestFileHolder(model, new TestParam("test"), sp.Object);
-
         Assert.AreEqual(NullLogger.Instance, holder.Logger);
     }
 

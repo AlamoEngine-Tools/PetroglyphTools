@@ -42,7 +42,7 @@ public class FileHolderBaseTest
     [DataRow("test/\u00A0", "\u00A0", "test")]
     public void Test__PassingFileNames(string filePath, string? expectedFileName, string expectedDirectory)
     {
-        var fs = new FileSystem();
+        var fs = new MockFileSystem();
         var model = new object();
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);

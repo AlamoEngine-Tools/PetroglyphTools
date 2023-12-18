@@ -113,4 +113,11 @@ public class Crc32Test
         crcM1.GetBytes(data);
         CollectionAssert.AreEqual(expected, data.ToArray());
     }
+
+    [TestMethod]
+    public void Test_Boxing()
+    {
+        object crc = new Crc32(2);
+        Assert.AreEqual((object)new Crc32(2), (Crc32)crc);
+    }
 }

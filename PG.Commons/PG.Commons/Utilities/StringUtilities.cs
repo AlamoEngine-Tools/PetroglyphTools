@@ -28,7 +28,7 @@ public static class StringUtilities
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET
         var size = encoding.GetByteCount(value);   
 #else
         int size;

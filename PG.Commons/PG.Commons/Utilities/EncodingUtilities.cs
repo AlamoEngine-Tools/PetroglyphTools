@@ -71,25 +71,7 @@ public static class EncodingUtilities
         return encodingType == asciiType ||
                (asciiType.IsAssignableFrom(encodingType) && encodingType.Assembly == asciiType.Assembly);
     }
-
-    /// <summary>
-    /// Encodes a character sequence.
-    /// </summary>
-    /// <param name="value">The character sequence to encode.</param>
-    /// <param name="encoding">The encoding to use for transformation.</param>
-    /// <returns>The encoded string.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langword="null"/>.</exception>
-    public static string EncodeString(this Encoding encoding, ReadOnlySpan<char> value)
-    {
-        if (encoding is null)
-            throw new ArgumentNullException(nameof(encoding));
-
-        // Overapproximation is OK in this case, since EncodeString(string, int, Encoding)
-        // uses the actual byte code during the transformation.
-        var byteCount = encoding.GetMaxByteCount(value.Length);
-        return encoding.EncodeString(value, byteCount);
-    }
-
+    
     /// <summary>
     /// Encodes a string value.
     /// </summary>
@@ -99,54 +81,55 @@ public static class EncodingUtilities
     /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
     public static string EncodeString(this Encoding encoding, string value)
     {
+        if (encoding is null)
+            throw new ArgumentNullException(nameof(encoding));
         if (value == null)
             throw new ArgumentNullException(nameof(value));
-        return EncodeString(encoding, value.AsSpan());
+        return EncodeString(value.AsSpan(), encoding, encoding.GetMaxByteCount(value.Length));
     }
-
 
     /// <summary>
     /// Encodes a string value.
     /// </summary>
     /// <param name="value">The string to encode.</param>
-    /// <param name="byteCount">Maximum bytes required for encoding.</param>
+    /// <param name="maxByteCount">Maximum bytes required for encoding.</param>
     /// <param name="encoding">The encoding to use.</param>
     /// <returns>The encoded string.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
-    public static string EncodeString(this Encoding encoding, string value, int byteCount)
+    /// <exception cref="ArgumentException"><paramref name="maxByteCount"/> is less than actually required.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxByteCount"/> is negative.</exception>
+    public static string EncodeString(this Encoding encoding, string value, int maxByteCount)
     {
-        if (value == null) 
+        if (encoding == null) 
+            throw new ArgumentNullException(nameof(encoding));
+        if (value == null)
             throw new ArgumentNullException(nameof(value));
-        return EncodeString(encoding, value.AsSpan(), byteCount);
+        return EncodeString(value.AsSpan(), encoding, maxByteCount);
     }
 
-    /// <summary>
-    /// Encodes a character sequence.
-    /// </summary>
-    /// <param name="value">The character sequence to encode.</param>
-    /// <param name="byteCount">Maximum bytes required for encoding.</param>
-    /// <param name="encoding">The encoding to use.</param>
-    /// <returns>The encoded string.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langword="null"/>.</exception>
-    public static unsafe string EncodeString(this Encoding encoding, ReadOnlySpan<char> value, int byteCount)
+    // We cannot use a public method taking a ReadOnlySpan<char> cause conversion from (string)null would give us an empty span.
+    // Once that conversion is performed we cannot tell whether the string actually was null or empty. 
+    // Since trying to encode a null-reference does not make any sense, exposing this method to public
+    // could break expectations on how this method should behave.
+    private static unsafe string EncodeString(ReadOnlySpan<char> value, Encoding encoding, int maxByteCount)
     {
-        if (encoding is null)
-            throw new ArgumentNullException(nameof(encoding));
+        if (maxByteCount < 0)
+            throw new ArgumentOutOfRangeException(nameof(maxByteCount), "value must not be negative.");
 
         if (value.IsEmpty)
             return string.Empty;
 
-        var buffer = byteCount <= 256 ? stackalloc byte[byteCount] : new byte[byteCount];
+        var buffer = maxByteCount <= 256 ? stackalloc byte[maxByteCount] : new byte[maxByteCount];
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET
         var bytesWritten = encoding.GetBytes(value, buffer);
         return encoding.GetString(buffer.Slice(0, bytesWritten));
 #else
         fixed (char* pFileName = &value.GetPinnableReference())
         fixed (byte* pBuffer = buffer)
         {
-            var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, byteCount);
-            Debug.Assert(bytesWritten <= byteCount);
+            var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, maxByteCount);
+            Debug.Assert(bytesWritten <= maxByteCount);
             return encoding.GetString(pBuffer, bytesWritten);
         }
 #endif

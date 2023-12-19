@@ -125,7 +125,7 @@ public static class EncodingUtilities
         var bytesWritten = encoding.GetBytes(value, buffer);
         return encoding.GetString(buffer.Slice(0, bytesWritten));
 #else
-        fixed (char* pFileName = &value.GetPinnableReference())
+        fixed (char* pFileName = value)
         fixed (byte* pBuffer = buffer)
         {
             var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, maxByteCount);

@@ -74,10 +74,13 @@ public static class StringUtilities
     /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
     public static void ValidateIsAsciiOnly(ReadOnlySpan<char> value)
     {
+        if (value == null)
+            throw new ArgumentNullException(nameof(value));
+
         foreach (var ch in value)
         {
             if ((uint)ch > '\x007f')
-                throw new ArgumentException("String contains non-ASCII characters.", nameof(value));
+                throw new ArgumentException("Value contains non-ASCII characters.", nameof(value));
         }
     }
 }

@@ -5,30 +5,11 @@ using System.Collections.Generic;
 
 namespace PG.Commons.Binary;
 
+// Note: The Alamo specifications usually allows tables with *unsigned* int32 possible entries, however in .NET we are
+// limited to *signed* int32 for indexing native list-like structures.  
+
 /// <summary>
 /// A readonly list-like table used by Alamo binary models to hold metadata information
 /// </summary>
 /// <typeparam name="T">The content type of this table.</typeparam>
-public interface IBinaryTable<out T> : IBinary, IEnumerable<T>
-{
-    /// <summary>
-    /// Gets the element at the specified index.
-    /// </summary>
-    /// <remarks>
-    /// The Alamo specifications usually allows tables with <see cref="uint"/> possible entries, however in .NET we are
-    /// limited to <see cref="int"/> for indexing native list-like structures.  
-    /// </remarks>
-    /// <param name="i">The zero-based index of the element to get or set.</param>
-    /// <returns>The element at the specified index.</returns>
-    T this[int i] { get; }
-
-    /// <summary>
-    /// Gets the number of elements contained in this <see cref="IBinaryTable{T}"/>.
-    /// </summary>
-    /// <remarks>
-    /// The Alamo specifications usually allows tables with <see cref="uint"/> possible entries, however in .NET we are
-    /// limited to <see cref="int"/> for indexing native list-like structures.  
-    /// </remarks>
-    /// <returns>The number of elements contained in this <see cref="IBinaryTable{T}"/>. </returns>
-    int Count { get; }
-}
+public interface IBinaryTable<out T> : IBinary, IReadOnlyList<T>;

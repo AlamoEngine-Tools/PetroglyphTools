@@ -10,6 +10,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
+
 [TestClass]
 public class MegFileNameTableTest
 {
@@ -92,19 +93,81 @@ public class MegFileNameTableTest
         foreach (var record in table)
             list.Add(record);
         CollectionAssert.AreEqual(recordList, list);
+    }
 
+    [TestMethod]
+    public void IFileNameTable_Test_EnumerateAsIEnumerable()
+    {
+        MegFileNameTableRecord entry1 = new("123");
+        MegFileNameTableRecord entry2 = new("456");
+
+        var recordList = new List<MegFileNameTableRecord>
+        {
+            entry1,
+            entry2
+        };
+
+        IEnumerable table = new MegFileNameTable(recordList);
+
+        var list = new List<MegFileNameTableRecord>();
+        foreach (MegFileNameTableRecord record in table)
+            list.Add(record);
+        CollectionAssert.AreEqual(recordList, list);
+    }
+
+    [TestMethod]
+    public void Test_Enumerate_AsIMegFileNameTable()
+    {
+        MegFileNameTableRecord entry1 = new("123");
+        MegFileNameTableRecord entry2 = new("456");
+
+        var recordList = new List<MegFileNameTableRecord>
+        {
+            entry1,
+            entry2
+        };
+
+        var expectedNameInfoList = recordList.Select(r => new MegFileNameInformation(r.FileName, r.OriginalFilePath)).ToList();
+
+        IMegFileNameTable table = new MegFileNameTable(recordList);
         var names = new List<MegFileNameInformation>();
-        IMegFileNameTable ifaceTable = table;
-        foreach (var nameInfo in ifaceTable)
-            names.Add(nameInfo);
-        CollectionAssert.AreEqual(recordList.Select(r => new MegFileNameInformation(r.FileName, r.OriginalFilePath)).ToList(), names);
 
-        names.Clear();
+        using var enumerator = table.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            var currentTyped = enumerator.Current;
+            var currentObj = ((IEnumerator)enumerator).Current;
+            Assert.AreEqual(currentObj, currentTyped);
 
-        foreach (MegFileNameTableRecord name in (IEnumerable)ifaceTable)
-            names.Add(new MegFileNameInformation(name.FileName, name.OriginalFilePath));
-        CollectionAssert.AreEqual(recordList.Select(r => new MegFileNameInformation(r.FileName, r.OriginalFilePath)).ToList(), names);
+            names.Add(currentTyped);
+        }
 
+        CollectionAssert.AreEqual(expectedNameInfoList, names);
+
+    }
+
+    [TestMethod]
+    public void Test_Enumerate_AsIMegFileNameTable_ResetEnumerator()
+    {
+        MegFileNameTableRecord entry1 = new("123");
+        MegFileNameTableRecord entry2 = new("456");
+
+        var recordList = new List<MegFileNameTableRecord>
+        {
+            entry1,
+            entry2
+        };
+
+
+        IMegFileNameTable table = new MegFileNameTable(recordList);
+
+        using var enumerator = table.GetEnumerator();
+        enumerator.MoveNext();
+        Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
+        enumerator.Reset();
+        Assert.AreEqual(default, enumerator.Current);
+        enumerator.MoveNext();
+        Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
     }
 
     [TestMethod]

@@ -36,8 +36,6 @@ internal readonly struct MegHeader : IMegHeader
             throw new ArgumentException("Number of files must match number of file names.", nameof(numFiles));
         if (numFileNames > int.MaxValue)
             throw new ArgumentOutOfRangeException(nameof(numFileNames), ".MEG archives with more files than Int32.MaxValue are not supported.");
-        if (numFiles > int.MaxValue)
-            throw new ArgumentOutOfRangeException(nameof(numFiles), ".MEG archives with more files than Int32.MaxValue are not supported.");
         NumFileNames = numFileNames;
         NumFiles = numFiles;
     }

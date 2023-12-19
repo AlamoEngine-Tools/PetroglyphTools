@@ -5,9 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using PG.Commons.Binary;
-using PG.Commons.Collections;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
@@ -17,7 +15,7 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
 
     public MegFileNameTableRecord this[int i] => _megFileNameTableRecords[i];
 
-    MegFileNameInformation IBinaryTable<MegFileNameInformation>.this[int i]
+    MegFileNameInformation IReadOnlyList<MegFileNameInformation>.this[int i]
     {
         get
         {
@@ -71,32 +69,27 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
     {
         return GetEnumerator();
     }
-
-
-    /// <summary>
-    /// Enumerates the elements of a <see cref="FrugalList{T}"/>.
-    /// </summary>
-    public struct MegFileNameInformationEnumerator : IEnumerator<MegFileNameInformation>
+    
+    private struct MegFileNameInformationEnumerator : IEnumerator<MegFileNameInformation>
     {
         private readonly IReadOnlyList<MegFileNameTableRecord> _list;
 
         private int _position;
         private MegFileNameTableRecord _currentRecord;
 
-        readonly object IEnumerator.Current => Current!;
+        readonly object IEnumerator.Current => Current;
 
-        /// <inheritdoc />
         public readonly MegFileNameInformation Current
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 var currentRecord = _currentRecord;
+                if (currentRecord.Equals(default(MegFileNameTableRecord)))
+                    return default;
                 return new MegFileNameInformation(currentRecord.FileName, currentRecord.OriginalFilePath);
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal MegFileNameInformationEnumerator(IReadOnlyList<MegFileNameTableRecord> list)
         {
             _list = list;
@@ -104,8 +97,6 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
             _currentRecord = default!;
         }
 
-        /// <inheritdoc />
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
             if (_position < _list.Count)
@@ -119,15 +110,12 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
             return false;
         }
 
-        /// <inheritdoc />
         public void Reset()
         {
             _currentRecord = default!;
             _position = 0;
-
         }
 
-        /// <inheritdoc />
         public readonly void Dispose()
         {
         }

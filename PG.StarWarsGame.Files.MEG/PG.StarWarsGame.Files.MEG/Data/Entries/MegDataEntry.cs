@@ -1,5 +1,6 @@
 using System;
 using PG.Commons.Hashing;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
@@ -40,9 +41,9 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     internal MegDataEntry(string filePath, Crc32 crc32, MegDataEntryLocation location, bool encrypted, string originalFilePath) : base(location)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
-        //Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
 
-        //StringUtilities.ValidateIsAsciiOnly(filePath.AsSpan());
+        StringUtilities.ValidateIsAsciiOnly(filePath.AsSpan());
         
         Crc32 = crc32;
         Encrypted = encrypted;

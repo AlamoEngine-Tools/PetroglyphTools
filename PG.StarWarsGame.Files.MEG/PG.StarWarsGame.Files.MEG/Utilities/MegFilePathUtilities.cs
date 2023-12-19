@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 using PG.Commons.Utilities;
@@ -15,6 +16,6 @@ internal static class MegFilePathUtilities
 
     internal static ushort ValidateFilePathCharacterLength(string filePath)
     {
-        return StringUtilities.ValidateStringCharLengthUInt16(filePath);
+        return StringUtilities.ValidateStringCharLengthUInt16(filePath.AsSpan());
     }
 }

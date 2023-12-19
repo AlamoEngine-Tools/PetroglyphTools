@@ -5,14 +5,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
+
 [TestClass]
-public class MegFileTableTest
+public class MegFileTableTest : MegFileTableBaseTest
 {
+    private static MegFileTable CreateFileTableV1(IList<MegFileTableRecord> files)
+    {
+        return new MegFileTable(files);
+    }
+
+    private protected override IMegFileTable CreateFileTable(IList<IMegFileDescriptor> files)
+    {
+        return CreateFileTableV1(files.Select(CreateFileRecordV1).ToList());
+    }
+
+    private static MegFileTableRecord CreateFileRecordV1(IMegFileDescriptor file)
+    {
+        return new MegFileTableRecord(file.Crc32, (uint)file.Index, file.FileSize, file.FileOffset, (uint)file.FileNameIndex);
+    }
+
+    private protected override IMegFileDescriptor CreateFile(uint index, uint seed)
+    {
+        return new MegFileTableRecord(new Crc32(seed), index, seed, seed, index);
+    }
+
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentNullException()
     {
@@ -20,43 +42,11 @@ public class MegFileTableTest
     }
 
     [TestMethod]
-    public void Test__EmptyTable()
+    public void Test_Index()
     {
-        var table = new MegFileTable(new List<MegFileTableRecord>(0));
-        Assert.AreEqual(0, table.Count);
-        Assert.AreEqual(0, table.Size);
-        CollectionAssert.AreEqual(new byte[] { }, table.Bytes);
-    }
-
-    [TestMethod]
-    public void Test_Size_1_Entry()
-    {
-        MegFileTableRecord entry = new(default, 0, default, default, default);
-        var table = new MegFileTable(new List<MegFileTableRecord>
-        {
-            entry
-        });
-        Assert.AreEqual(entry.Size, table.Size);
-    }
-
-    [TestMethod]
-    public void Test_Size_2_Entries()
-    {
-        MegFileTableRecord entry = new(default, 0, default, default, default);
-        var table = new MegFileTable(new List<MegFileTableRecord>
-        {
-            entry,
-            entry
-        });
-        Assert.AreEqual(entry.Size * 2, table.Size);
-    }
-
-    [TestMethod]
-    public void IFileNameTable_Test_Index()
-    {
-        MegFileTableRecord entry1 = new(default, 0, default, default, default);
-        MegFileTableRecord entry2 = new(default, 1, default, default, default);
-        var table = new MegFileTable(new List<MegFileTableRecord>
+        var entry1 = CreateFileRecordV1(CreateFile(0, 1));
+        var entry2 = CreateFileRecordV1(CreateFile(1, 2));
+        var table = CreateFileTableV1(new List<MegFileTableRecord>
         {
             entry1,
             entry2
@@ -66,53 +56,5 @@ public class MegFileTableTest
         Assert.AreEqual(entry1, table[0]);
         Assert.AreEqual(entry2, table[1]);
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => table[2]);
-
-        IMegFileTable ifaceTable = table;
-        Assert.AreEqual(2, ifaceTable.Count);
-        Assert.AreEqual(entry1, ifaceTable[0]);
-        Assert.AreEqual(entry2, ifaceTable[1]);
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => ifaceTable[2]);
-    }
-
-    [TestMethod]
-    public void IFileNameTable_Test_Enumerate()
-    {
-        MegFileTableRecord entry1 = new(default, 0, default, default, default);
-        MegFileTableRecord entry2 = new(default, 1, default, default, default);
-
-        var recordList = new List<MegFileTableRecord>
-        {
-            entry1,
-            entry2
-        };
-
-        var table = new MegFileTable(recordList);
-
-        var list = new List<MegFileTableRecord>();
-        foreach (var record in table)
-            list.Add(record);
-        CollectionAssert.AreEqual(recordList, list);
-
-        var names = new List<IMegFileDescriptor>();
-        IMegFileTable ifaceTable = table;
-        foreach (var name in ifaceTable)
-            names.Add(name);
-        CollectionAssert.AreEqual(recordList.ToList(), names);
-
-    }
-
-    [TestMethod]
-    public void Test_Bytes()
-    {
-        MegFileTableRecord entry1 = new(default, 0, default, default, default);
-        MegFileTableRecord entry2 = new(default, 1, default, default, default);
-        var table = new MegFileTable(new List<MegFileTableRecord>
-        {
-            entry1,
-            entry2
-        });
-
-        var expectedTableBytes = entry1.Bytes.Concat(entry2.Bytes).ToArray();
-        CollectionAssert.AreEqual(expectedTableBytes, table.Bytes);
     }
 }

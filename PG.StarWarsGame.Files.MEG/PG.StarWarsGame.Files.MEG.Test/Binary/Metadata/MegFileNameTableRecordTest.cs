@@ -25,10 +25,10 @@ public class MegFileNameTableRecordTest
     }
 
     [TestMethod]
-    public void Ctor_Test__ThrowsOverflowException()
+    public void Ctor_Test__ThrowsArgumentException()
     {
         var fn = new string('a', ushort.MaxValue + 1);
-        Assert.ThrowsException<OverflowException>(() => new MegFileNameTableRecord(fn));
+        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fn));
     }
 
     [TestMethod]

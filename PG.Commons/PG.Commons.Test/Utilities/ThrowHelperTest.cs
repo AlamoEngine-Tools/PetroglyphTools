@@ -7,12 +7,13 @@ using PG.Testing;
 namespace PG.Commons.Test.Utilities;
 
 [TestClass]
-public class ExceptionUtilitiesTest
+public class ThrowHelperTest
 {
     [TestMethod]
     [DataRow("")]
     [DataRow("    ")]
-    public void TestThrowIfNullOrWhiteSpace_Throws(string value)
+    [DataRow("\u00A0")]
+    public void Test_ThrowIfNullOrWhiteSpace_Throws(string value)
     {
         Assert.ThrowsException<ArgumentException>(() => ThrowHelper.ThrowIfNullOrWhiteSpace(value));
     }
@@ -25,10 +26,29 @@ public class ExceptionUtilitiesTest
 
     [TestMethod]
     [DataRow("value")]
-    [DataRow("\0160")]
     public void Test_ThrowIfNullOrWhiteSpace_DoesNotThrow(string value)
     {
         ExceptionUtilities.AssertDoesNotThrowException(() => ThrowHelper.ThrowIfNullOrWhiteSpace(value));
+    }
+
+    [TestMethod]
+    [DataRow("")]
+    public void Test_ThrowIfNullOrEmpty_Throws(string value)
+    {
+        Assert.ThrowsException<ArgumentException>(() => ThrowHelper.ThrowIfNullOrEmpty(value));
+    }
+
+    [TestMethod]
+    public void Test_ThrowIfNullOrEmpty_Null_Throws()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() => ThrowHelper.ThrowIfNullOrEmpty(null));
+    }
+
+    [TestMethod]
+    [DataRow("   ")]
+    public void Test_ThrowIfNullOrEmpty_DoesNotThrow(string value)
+    {
+        ExceptionUtilities.AssertDoesNotThrowException(() => ThrowHelper.ThrowIfNullOrEmpty(value));
     }
 
     [TestMethod]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using BenchmarkDotNet.Attributes;
@@ -7,6 +8,7 @@ using PG.Commons.Hashing;
 
 namespace PG.Benchmarks;
 
+[ExcludeFromCodeCoverage]
 [SimpleJob(RuntimeMoniker.Net481)]
 [SimpleJob(RuntimeMoniker.Net80)]
 [MemoryDiagnoser]

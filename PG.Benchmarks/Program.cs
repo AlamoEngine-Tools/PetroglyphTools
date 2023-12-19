@@ -1,7 +1,9 @@
-﻿using BenchmarkDotNet.Running;
+﻿using System.Diagnostics.CodeAnalysis;
+using BenchmarkDotNet.Running;
 
 namespace PG.Benchmarks;
 
+[ExcludeFromCodeCoverage]
 class Benchmark
 {
     private static void Main()

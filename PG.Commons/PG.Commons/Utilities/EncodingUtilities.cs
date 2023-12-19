@@ -81,11 +81,7 @@ public static class EncodingUtilities
     /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
     public static string EncodeString(this Encoding encoding, string value)
     {
-        if (encoding is null)
-            throw new ArgumentNullException(nameof(encoding));
-        if (value == null)
-            throw new ArgumentNullException(nameof(value));
-        return EncodeString(value.AsSpan(), encoding, encoding.GetMaxByteCount(value.Length));
+        return EncodeString(encoding, value.AsSpan());
     }
 
     /// <summary>
@@ -100,19 +96,39 @@ public static class EncodingUtilities
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxByteCount"/> is negative.</exception>
     public static string EncodeString(this Encoding encoding, string value, int maxByteCount)
     {
+        return EncodeString(encoding, value.AsSpan(), maxByteCount);
+    }
+
+    /// <summary>
+    /// Encodes a character sequence.
+    /// </summary>
+    /// <param name="value">The character sequence to encode.</param>
+    /// <param name="encoding">The encoding to use.</param>
+    /// <returns>The encoded string.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
+    public static string EncodeString(this Encoding encoding, ReadOnlySpan<char> value)
+    {
         if (encoding == null) 
+            throw new ArgumentNullException(nameof(encoding));
+        return EncodeString(encoding, value, encoding.GetMaxByteCount(value.Length));
+    }
+
+    /// <summary>
+    /// Encodes a character sequence.
+    /// </summary>
+    /// <param name="value">The character sequence to encode.</param>
+    /// <param name="maxByteCount">Maximum bytes required for encoding.</param>
+    /// <param name="encoding">The encoding to use.</param>
+    /// <returns>The encoded string.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="maxByteCount"/> is less than actually required.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxByteCount"/> is negative.</exception>
+    public static unsafe string EncodeString(this Encoding encoding, ReadOnlySpan<char> value, int maxByteCount)
+    {
+        if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
         if (value == null)
             throw new ArgumentNullException(nameof(value));
-        return EncodeString(value.AsSpan(), encoding, maxByteCount);
-    }
-
-    // We cannot use a public method taking a ReadOnlySpan<char> cause conversion from (string)null would give us an empty span.
-    // Once that conversion is performed we cannot tell whether the string actually was null or empty. 
-    // Since trying to encode a null-reference does not make any sense, exposing this method to public
-    // could break expectations on how this method should behave.
-    private static unsafe string EncodeString(ReadOnlySpan<char> value, Encoding encoding, int maxByteCount)
-    {
         if (maxByteCount < 0)
             throw new ArgumentOutOfRangeException(nameof(maxByteCount), "value must not be negative.");
 

@@ -21,7 +21,7 @@ public static class StringUtilities
     /// <returns>The actual length of the value in bytes.</returns>
     /// <exception cref="ArgumentException">The string is too long.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ushort ValidateStringByteSizeUInt16(ReadOnlySpan<char> value, Encoding encoding)
+    public static ushort ValidateStringByteSizeUInt16(ReadOnlySpan<char> value, Encoding encoding)
     {
         if (value == null)
             throw new ArgumentNullException(nameof(value));
@@ -36,8 +36,11 @@ public static class StringUtilities
             size = 0;
         else
         {
-            fixed (char* cp = &value.GetPinnableReference())
-                size = encoding.GetByteCount(cp, value.Length);
+            unsafe
+            {
+                fixed (char* cp = value)
+                    size = encoding.GetByteCount(cp, value.Length);
+            }
         }
 #endif
 
@@ -74,10 +77,13 @@ public static class StringUtilities
     /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
     public static void ValidateIsAsciiOnly(ReadOnlySpan<char> value)
     {
+        if (value == null)
+            throw new ArgumentNullException(nameof(value));
+
         foreach (var ch in value)
         {
             if ((uint)ch > '\x007f')
-                throw new ArgumentException("String contains non-ASCII characters.", nameof(value));
+                throw new ArgumentException("Value contains non-ASCII characters.", nameof(value));
         }
     }
 }

@@ -18,8 +18,10 @@ public class EncodingUtilitiesTest
         Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString("", 0));
 
         encoding = Encoding.Unicode;
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(null!));
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(null!, 0));
+        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((string)null!));
+        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((ReadOnlySpan<char>)null!));
+        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((string)null!, 0));
+        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((ReadOnlySpan<char>)null!, 0));
     }
 
     [TestMethod]

@@ -75,9 +75,9 @@ public class MegFileBinaryReaderV1IntegrationTest
         Assert.AreEqual(2, megMetadata.Header.FileNumber);
 
         Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[0].FileName);
-        Assert.AreEqual("TESTü.TXT", megMetadata.FileNameTable[0].OriginalFileName);
+        Assert.AreEqual("TEST\u00FC.TXT", megMetadata.FileNameTable[0].OriginalFileName);
         Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[1].FileName);
-        Assert.AreEqual("TESTä.TXT", megMetadata.FileNameTable[1].OriginalFileName);
+        Assert.AreEqual("TEST\u00E4.TXT", megMetadata.FileNameTable[1].OriginalFileName);
 
         // Not equal, cause MIKE uses Latin1 and thus CRC32 is calculated on the original file name, 
         Assert.AreNotEqual(megMetadata.FileTable[0].Crc32, megMetadata.FileTable[1].Crc32);

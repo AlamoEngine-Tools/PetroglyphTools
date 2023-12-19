@@ -30,6 +30,7 @@ public interface IFileHolder : IDisposable
 /// <typeparam name="TModel">The content of the alamo file in a usable data format.</typeparam>
 /// <typeparam name="TAlamoFileType">The alamo file type definition implementing <see cref="IAlamoFileType" /></typeparam>
 public interface IFileHolder<out TModel, out TAlamoFileType> : IFileHolder
+    where TModel : notnull
     where TAlamoFileType : IAlamoFileType
 {
     /// <summary>

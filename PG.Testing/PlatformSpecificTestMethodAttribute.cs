@@ -10,18 +10,18 @@ namespace PG.Testing;
 
 public class PlatformSpecificTestMethodAttribute : TestMethodAttribute
 {
-    private readonly IEnumerable<OSPlatform> m_platforms;
+    private readonly IEnumerable<OSPlatform> _platforms;
 
     public PlatformSpecificTestMethodAttribute(params string[] platforms)
     {
-        m_platforms = platforms.Select(platformName => OSPlatform.Create(platformName.ToUpper()));
+        _platforms = platforms.Select(platformName => OSPlatform.Create(platformName.ToUpper()));
     }
 
     public override TestResult[] Execute(ITestMethod testMethod)
     {
-        var platformMatches = m_platforms.Any(RuntimeInformation.IsOSPlatform);
+        var platformMatches = _platforms.Any(RuntimeInformation.IsOSPlatform);
         return !platformMatches
-            ? new[] {new TestResult {Outcome = UnitTestOutcome.Inconclusive}}
+            ? new[] { new TestResult { Outcome = UnitTestOutcome.Inconclusive } }
             : base.Execute(testMethod);
     }
 }

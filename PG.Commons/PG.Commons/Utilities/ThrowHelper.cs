@@ -14,6 +14,33 @@ namespace PG.Commons.Utilities;
 public static class ThrowHelper
 {
     /// <summary>
+    /// Throws an exception <see cref="ArgumentException"/> that <paramref name="argument"/> is not sorted in the expected way.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the collection.</typeparam>
+    /// <param name="argument">The collection which is not sorted.</param>
+    /// <param name="paramName">The name of the parameter with which <paramref name="argument"/> corresponds.</param>
+    /// <exception cref="ArgumentException"><paramref name="argument"/> is not sorted.</exception>
+    [DoesNotReturn]
+    public static void ThrowArgumentNotSortedException<T>(IEnumerable<T> argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    {
+        throw new ArgumentException("Collection is not correctly sorted.", paramName);
+    }
+
+    /// <summary>Throws an exception if <paramref name="argument"/> is null or empty.</summary>
+    /// <param name="argument">The string argument to validate as non-null and non-empty.</param>
+    /// <param name="paramName">The name of the parameter with which <paramref name="argument"/> corresponds.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="argument"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="argument"/> is empty.</exception>
+#pragma warning disable CS8777 // Parameter must have a non-null value when exiting.
+    public static void ThrowIfNullOrEmpty([NotNull] string? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    {
+        if (string.IsNullOrEmpty(argument)) 
+            ThrowNullOrEmptyException(argument, paramName);
+    }
+#pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
+
+
+    /// <summary>
     /// Throws an exception if <paramref name="argument"/> is null, empty, or consists only of white-space characters.
     /// </summary>
     /// <param name="argument">The string argument to validate.</param>
@@ -36,17 +63,11 @@ public static class ThrowHelper
         throw new ArgumentException("The value cannot be an empty string or composed entirely of whitespace.", paramName);
     }
 
-
-    /// <summary>
-    /// Throws an exception <see cref="ArgumentException"/> that <paramref name="argument"/> is not sorted in the expected way.
-    /// </summary>
-    /// <typeparam name="T">The type of the elements of the collection.</typeparam>
-    /// <param name="argument">The collection which is not sorted.</param>
-    /// <param name="paramName">The name of the parameter with which <paramref name="argument"/> corresponds.</param>
-    /// <exception cref="ArgumentException"><paramref name="argument"/> is not sorted.</exception>
     [DoesNotReturn]
-    public static void ThrowArgumentNotSortedException<T>(IEnumerable<T> argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    private static void ThrowNullOrEmptyException(string? argument, string? paramName)
     {
-        throw new ArgumentException("Collection is not correctly sorted.", paramName);
+        if (argument is null)
+            throw new ArgumentNullException(paramName);
+        throw new ArgumentException("The value cannot be an empty string.", paramName);
     }
 }

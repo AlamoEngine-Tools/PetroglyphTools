@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ using BenchmarkDotNet.Jobs;
 
 namespace PG.Benchmarks;
 
+[ExcludeFromCodeCoverage]
 [SimpleJob(RuntimeMoniker.Net481)]
 [SimpleJob(RuntimeMoniker.Net80)]
 public class ContainsInvalidCharsBenchmark

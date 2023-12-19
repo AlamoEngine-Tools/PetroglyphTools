@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using PG.Commons.Hashing;
 
 namespace PG.Testing.Hashing;

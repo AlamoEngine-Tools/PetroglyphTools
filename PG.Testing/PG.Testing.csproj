@@ -16,4 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
     </ItemGroup>
+	<ItemGroup>
+		<ProjectCapability Remove="TestContainer" />
+	</ItemGroup>
 </Project>

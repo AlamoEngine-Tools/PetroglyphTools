@@ -4,6 +4,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace PG.Commons.Hashing;
@@ -12,7 +13,7 @@ namespace PG.Commons.Hashing;
 /// Represents a 32-bit Cyclic Redundancy Check (CRC32) checksum.
 /// </summary>
 [DebuggerDisplay("CRC: {_checksum}")]
-[Serializable]
+[StructLayout(LayoutKind.Sequential)]
 public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
 {
     // Important: By design, this must be the only field of this struct!

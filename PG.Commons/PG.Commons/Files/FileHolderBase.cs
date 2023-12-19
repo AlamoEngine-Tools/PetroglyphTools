@@ -18,6 +18,7 @@ namespace PG.Commons.Files;
 /// <typeparam name="TFileType">The alamo file type definition implementing <see cref="IAlamoFileType" /></typeparam>
 /// <typeparam name="TParam">The <see cref="IFileHolderParam" /> used during creation.</typeparam>
 public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObject, IFileHolder<TModel, TFileType>
+    where TModel : notnull
     where TParam : IFileHolderParam
     where TFileType : IAlamoFileType, new()
 {
@@ -75,9 +76,11 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
 
         // We do not use FileNameUtilities.IsValidFileName() cause don't want a custom PG as a dependency
         // We let concrete holders or other services the opportunity to do validation.
-        // This of course allows invalid file names (such as ".", "..", "\\", "/") to be used here, but the assumption is,
+        // This of course allows invalid file names (such as ".", "..", "\\", "/", "  ") to be used here, but the assumption is,
         // that reading or writing such a file will cause an exception anyway. 
-        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
+        // NB: We don't use NullOrWhiteSpace cause "\u00A0" (no-break space) and some others would cause an exception.
+        // However, such file names are valid on Linux and Windows.
+        ThrowHelper.ThrowIfNullOrEmpty(filePath);
 
         FilePath = filePath;
 

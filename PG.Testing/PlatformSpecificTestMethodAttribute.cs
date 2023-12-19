@@ -21,7 +21,7 @@ public class PlatformSpecificTestMethodAttribute : TestMethodAttribute
     {
         var platformMatches = _platforms.Any(RuntimeInformation.IsOSPlatform);
         return !platformMatches
-            ? new[] {new TestResult {Outcome = UnitTestOutcome.Inconclusive}}
+            ? new[] { new TestResult { Outcome = UnitTestOutcome.Inconclusive } }
             : base.Execute(testMethod);
     }
 }

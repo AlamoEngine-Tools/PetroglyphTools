@@ -71,7 +71,7 @@ public static class EncodingUtilities
         return encodingType == asciiType ||
                (asciiType.IsAssignableFrom(encodingType) && encodingType.Assembly == asciiType.Assembly);
     }
-
+    
     /// <summary>
     /// Encodes a string value.
     /// </summary>
@@ -112,7 +112,6 @@ public static class EncodingUtilities
             throw new ArgumentNullException(nameof(encoding));
         return EncodeString(encoding, value, encoding.GetMaxByteCount(value.Length));
     }
-
 
     /// <summary>
     /// Encodes a character sequence.

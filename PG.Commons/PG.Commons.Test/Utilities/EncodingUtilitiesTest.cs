@@ -17,8 +17,8 @@ public class EncodingUtilitiesTest
         Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString("", 0));
 
         encoding = Encoding.Unicode;
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(null!));
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(null!, 0));
+        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((string)null!));
+        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((string)null!, 0));
     }
 
     [TestMethod]
@@ -82,6 +82,12 @@ public class EncodingUtilitiesTest
     {
         Encoding encoding = null!;
         Assert.ThrowsException<ArgumentNullException>(() => encoding.GetByteCountPG(4));
+    }
+
+    [TestMethod]
+    public void Test__GetByteCountPG_NegativeCount()
+    {
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.ASCII.GetByteCountPG(-1));
     }
 
     [DataTestMethod]

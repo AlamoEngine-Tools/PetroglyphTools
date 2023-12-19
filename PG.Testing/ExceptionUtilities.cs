@@ -52,10 +52,10 @@ public static class ExceptionUtilities
     {
         var exception = Record(testCode);
         if (exception is null)
-            throw new AssertFailedException("Expected an exception but got null.");
+            throw new AssertFailedException("Expected an exception but none was thrown.");
         var exceptionType = exception.GetType();
         if (!exceptionTypes.Contains(exceptionType))
-            throw new AssertFailedException("Caught wrong exception.");
+            throw new AssertFailedException($"Caught wrong exception: {exceptionType.Name}");
     }
 
     public static Exception? Record(Action testCode)

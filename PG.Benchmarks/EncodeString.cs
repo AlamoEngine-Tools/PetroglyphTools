@@ -16,6 +16,7 @@ namespace PG.Benchmarks;
 public class EncodeString
 {
     [Params(
+        "",
        "string value with non-ascii chars öäü",
         "very short",
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore " +
@@ -47,6 +48,9 @@ public class EncodeString
         var encoding = _encoding;
         var value = StringValue.AsSpan();
 
+        if (value.IsEmpty)
+            return string.Empty;
+
         var buffer = count <= 256 ? stackalloc byte[count] : new byte[count];
 
 #if NET
@@ -54,7 +58,7 @@ public class EncodeString
         return encoding.GetString(buffer.Slice(0, bytesWritten));
 #else
 
-        fixed (char* pFileName = value)
+        fixed (char* pFileName = &value.GetPinnableReference())
         fixed (byte* pBuffer = buffer)
         {
             var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, count);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Utilities;
+using PG.Testing;
 
 namespace PG.Commons.Test.Utilities;
 
@@ -10,7 +11,7 @@ namespace PG.Commons.Test.Utilities;
 public class EncodingUtilitiesTest
 {
     [TestMethod]
-    public void Test__EncodeString_NullArgs()
+    public void Test__EncodeString_NullArgs_Throws()
     {
         Encoding encoding = null!;
         Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(""));
@@ -21,6 +22,13 @@ public class EncodingUtilitiesTest
         Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(null!, 0));
     }
 
+    [TestMethod]
+    public void Test__EncodeString_NegativeCount_Throws()
+    {
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.Unicode.EncodeString("123", -1));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.Unicode.EncodeString("123", int.MinValue));
+    }
+    
     [TestMethod]
     [DataRow("", "")]
     [DataRow("\0", "\0")]
@@ -54,11 +62,23 @@ public class EncodingUtilitiesTest
     [TestMethod]
     [DataRow("123", "123", 3)]
     [DataRow("123", "123", 4)]
+    [DataRow("", "", 0)]
+    [DataRow("", "", 1)]
     public void Test__EncodeString_Encode_CustomCount(string input, string expected, int count)
     {
         var encoding = Encoding.ASCII;
         var result = encoding.EncodeString(input, count);
         Assert.AreEqual(expected, result);
+    }
+
+    [TestMethod]
+    [DataRow("1", 0)]
+    [DataRow("123", 2)]
+    public void Test__EncodeString_Encode_CustomCountInvalid_Throws(string input, int count)
+    {
+        var encoding = Encoding.ASCII;
+        ExceptionUtilities.AssertThrows(new[] { typeof(ArgumentException), typeof(ArgumentNullException) },
+            () => encoding.EncodeString(input, count));
     }
 
     [TestMethod]
@@ -70,7 +90,7 @@ public class EncodingUtilitiesTest
     }
 
     [TestMethod]
-    public void Test__EncodeString_Encode_CountError()
+    public void Test__EncodeString_Encode_CountError_Throws()
     {
         var encoding = Encoding.Unicode;
         Assert.ThrowsException<ArgumentException>(() => encoding.EncodeString("123", 5));
@@ -78,10 +98,16 @@ public class EncodingUtilitiesTest
 
 
     [TestMethod]
-    public void Test__GetByteCountPG_NullArgs()
+    public void Test__GetByteCountPG_NullArgs_Throws()
     {
         Encoding encoding = null!;
         Assert.ThrowsException<ArgumentNullException>(() => encoding.GetByteCountPG(4));
+    }
+
+    [TestMethod]
+    public void Test__GetByteCountPG_NegativeCount_Throws()
+    {
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.ASCII.GetByteCountPG(-1));
     }
 
     [DataTestMethod]
@@ -111,7 +137,7 @@ public class EncodingUtilitiesTest
 
     [DataTestMethod]
     [DynamicData(nameof(NotSupportedEncodings), DynamicDataSourceType.Method)]
-    public void Test__GetByteCountPG_NotSupportedEncodings(Encoding encoding)
+    public void Test__GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
     {
         Assert.ThrowsException<NotSupportedException>(() => encoding.GetByteCountPG(4));
     }
@@ -121,9 +147,7 @@ public class EncodingUtilitiesTest
         return new[]
         {
             new object[] { Encoding.BigEndianUnicode },
-#if NET
-            new object[] { Encoding.Latin1 },
-#endif
+            new object[] { Encoding.GetEncoding(28591) }, // Latin1
             new object[] { Encoding.UTF32 },
             new object[] { Encoding.UTF8 },
             new object[] { Encoding.UTF7 },

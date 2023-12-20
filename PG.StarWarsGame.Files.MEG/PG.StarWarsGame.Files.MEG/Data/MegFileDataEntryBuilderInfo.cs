@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
@@ -35,15 +37,14 @@ public sealed class MegFileDataEntryBuilderInfo
     /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class with a data entry origin info and optional override parameters.
     /// </summary>
     /// <param name="originInfo">The origin info of the data entry.</param>
-    /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used.</param>
+    /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used; otherwise the current file path will be used.</param>
     /// <param name="fileSize">Pre-calculated size of the data entry. Parameter gets ignored when <paramref name="originInfo"/> holds an existing data entry.</param>
-    /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used.</param>
-    /// <exception cref="ArgumentException"><paramref name="originInfo"/> has invalid file path data.</exception>
+    /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used; otherwise the current encryption state path will be used.</param>
     /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty or contains only whitespace.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="originInfo"/> is <see langword="null"/>.</exception>
     public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo, string? overrideFilePath = null, uint? fileSize = null, bool? overrideEncrypted = null)
     {
-        if (overrideEncrypted is not null)
+        if (overrideFilePath is not null)
             Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(overrideFilePath);
 
         OriginInfo = originInfo ?? throw new ArgumentNullException(nameof(originInfo));
@@ -55,7 +56,37 @@ public sealed class MegFileDataEntryBuilderInfo
 
         Encrypted = GetEncryption(originInfo, overrideEncrypted);
     }
-    
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a data entry and a MEG file.
+    /// </summary>
+    /// <param name="megFile">The meg file.</param>
+    /// <param name="dataEntry">The data entry.</param>
+    /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used; otherwise the current file path will be used.</param>
+    /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used; otherwise the current encryption state path will be used.</param>
+    /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty or contains only whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="megFile"/> or <see paramref="dataEntry"/> is <see langword="null"/>.</exception>
+    public static MegFileDataEntryBuilderInfo FromEntry(IMegFile megFile, MegDataEntry dataEntry, string? overrideFilePath = null, bool? overrideEncrypted = null)
+    {
+        return new MegFileDataEntryBuilderInfo(
+            new MegDataEntryOriginInfo(new MegDataEntryLocationReference(megFile, dataEntry)), overrideFilePath, null, overrideEncrypted);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a local file.
+    /// </summary>
+    /// <param name="filePath">The local file path.</param>
+    /// <param name="filePathInMeg">When not <see langword="null"/>, the specified file path will be used; otherwise the current file path will be used.</param>
+    /// <param name="size">Optional, pre-calculated size of the data entry.</param>
+    /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
+    /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="filePathInMeg"/> is empty or contains only whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
+    public static MegFileDataEntryBuilderInfo FromFile(string filePath, string? filePathInMeg, uint? size = null, bool encrypt = false)
+    {
+        return new MegFileDataEntryBuilderInfo(
+            new MegDataEntryOriginInfo(filePath), filePathInMeg, size, encrypt);
+    }
+
     private static string GetFilePath(MegDataEntryOriginInfo originInfo, string? overrideFileName)
     {
         if (overrideFileName is not null)

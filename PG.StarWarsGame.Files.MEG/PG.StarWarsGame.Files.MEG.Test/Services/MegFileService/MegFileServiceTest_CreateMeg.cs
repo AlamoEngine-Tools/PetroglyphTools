@@ -29,11 +29,12 @@ public partial class MegFileServiceTest
     [TestMethod]
     public void Test_CreateEmptyMegArchive_Override()
     {
-        const string megFileName = "a.meg";
+        const string megFileName = "/a.meg";
         var metadataBytes = new byte[] { 0, 1, 2 };
 
         _fileSystem.AddFile(megFileName, null);
 
+        // Test throws
         Assert.ThrowsException<IOException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>(), false));
 
         CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>(), true);
@@ -45,9 +46,23 @@ public partial class MegFileServiceTest
     }
 
     [TestMethod]
+    public void Test_CreateEmptyMegArchive_CreateDirectories()
+    {
+        const string megFileName = "/test/a.meg";
+        var metadataBytes = new byte[] { 0, 1, 2 };
+        
+        Assert.IsFalse(_fileSystem.Directory.Exists("/test"));
+
+        CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>(), false);
+
+        Assert.IsTrue(_fileSystem.Directory.Exists("/test"));
+        Assert.IsTrue(_fileSystem.FileExists(megFileName));
+    }
+
+    [TestMethod]
     public void Test_CreateMegArchive_WithData()
     {
-        const string megFileName = "a.meg";
+        const string megFileName = "/a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 
@@ -77,7 +92,7 @@ public partial class MegFileServiceTest
     [DataRow(2u, 3u)]
     public void Test_CreateMegArchive_InvalidEntrySizeAndOffsets_Throws(uint size, uint offset)
     {
-        const string megFileName = "a.meg";
+        const string megFileName = "/a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 
@@ -97,9 +112,9 @@ public partial class MegFileServiceTest
     }
 
     [TestMethod]
-    public void Test_CreateMegArchive_MegFileExceeds4GB()
+    public void Test_CreateMegArchive_MegFileExceeds4GB_Throws()
     {
-        const string megFileName = "a.meg";
+        const string megFileName = "/a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 

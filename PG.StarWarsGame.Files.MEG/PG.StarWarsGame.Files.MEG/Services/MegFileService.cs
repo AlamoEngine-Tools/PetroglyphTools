@@ -7,11 +7,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
@@ -35,9 +38,10 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         if (builderInformation == null)
             throw new ArgumentNullException(nameof(builderInformation));
 
-        var megFilePath = megFileParameters.FilePath;
+        var megFilePath = FileSystem.Path.GetFullPath(megFileParameters.FilePath);
 
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(megFilePath, nameof(megFileParameters));
+        if (!overwrite && FileSystem.File.Exists(megFilePath))
+            throw new IOException($"The file '{megFilePath}' already exists.");
 
         var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megFileParameters.FileVersion)
             .BuildConstructingMegArchive(builderInformation);
@@ -45,20 +49,46 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
 
-        var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
+        // TODO: Use helper service, Create random file next to actual location so that we don't end up copying files across drives
+        var tempFile = FileSystem.Path.Combine(FileSystem.Path.GetTempPath(), FileSystem.Path.GetRandomFileName());
+        try
+        {
+            WriteMegFile(tempFile, metadata, constructionArchive);
 
-        using var fs = FileSystem.FileStream.New(megFilePath, fileMode, FileAccess.Write, FileShare.None);
+            var directory = FileSystem.Path.GetDirectoryName(megFilePath);
+            if (string.IsNullOrEmpty(directory))
+                throw new ArgumentException("File location does not point to a directory", nameof(megFilePath));
+            FileSystem.Directory.CreateDirectory(directory!);
+
+            FileSystem.File.Copy(tempFile, megFilePath, overwrite);
+        }
+        finally
+        {
+            try
+            {
+                FileSystem.File.Delete(tempFile);
+            }
+            catch (Exception e)
+            {
+                Logger.LogWarning(e, $"Unable to delete temporary MEG file '{tempFile}'. Reason: {e.Message}");
+            }
+        }
+    }
+
+    private void WriteMegFile(string tempFile, IMegFileMetadata metadata, IConstructingMegArchive constructingArchive)
+    {
+        using var fileStream = FileSystem.FileStream.New(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
 
 #if NETSTANDARD2_1_OR_GREATER || NET
-        fs.Write(metadata.Bytes);
+        fileStream.Write(metadata.Bytes);
 #else
-        fs.Write(metadata.Bytes, 0, metadata.Size);
+        fileStream.Write(metadata.Bytes, 0, metadata.Size);
 #endif
         long dataBytesWritten = metadata.Size;
 
         var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-        foreach (var file in constructionArchive)
+        foreach (var file in constructingArchive)
         {
             using var dataStream = streamFactory.GetDataStream(file.Location);
 
@@ -67,11 +97,11 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
                 throw new InvalidOperationException(
                     $"Actual data entry size '{dataStream.Length}' does not match expected value: {file.DataEntry.Location.Size}");
 
-            if (fs.Position != file.DataEntry.Location.Offset)
+            if (fileStream.Position != file.DataEntry.Location.Offset)
                 throw new InvalidOperationException(
-                    $"Actual file position '{fs.Position}' does not match expected entry offset: {file.DataEntry.Location.Offset}");
+                    $"Actual file position '{fileStream.Position}' does not match expected entry offset: {file.DataEntry.Location.Offset}");
 
-            dataStream.CopyTo(fs);
+            dataStream.CopyTo(fileStream);
 
             dataBytesWritten += dataStream.Length;
         }
@@ -81,9 +111,9 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         // The Archive itself is larger (Metadata + 4GB),
         // however the Metadata is still valid since no each part is within the uint32 range. 
         if (dataBytesWritten > uint.MaxValue)
-            ThrowHelper.ThrowMegExceeds4GigabyteException(megFilePath);
-        
-        Debug.Assert(dataBytesWritten == fs.Position);
+            ThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
+
+        Debug.Assert(dataBytesWritten == fileStream.Position);
     }
 
     /// <inheritdoc />

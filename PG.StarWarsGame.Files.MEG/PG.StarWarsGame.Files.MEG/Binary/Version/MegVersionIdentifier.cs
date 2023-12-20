@@ -12,16 +12,12 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
+internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(services), IMegVersionIdentifier
 {
-    public MegVersionIdentifier(IServiceProvider services) : base(services)
-    {
-    }
-
     /// <summary>
     /// This method is optimized in a way to retrieve the MEGs file version as efficient as possible.
     /// If an invalid MEG archive is detected a <see cref="BinaryCorruptedException"/> is thrown.
-    /// <b>However</b> this method does not completely verify whether the passed stream is a valid MEG archive or not.
+    /// <b>However</b>, this method does not completely verify whether the passed stream is a valid MEG archive or not.
     /// </summary>
     /// <param name="stream">The MEG archive stream</param>
     /// <param name="encrypted">Indicates whether the archive is encrypted or not.</param>
@@ -53,7 +49,7 @@ internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
             // In V2 and V3 id and flags are never equal, where they are in V1.
             // (However this is an assumption my Mike.NL)
             // Note: In V1 we *could* have the situation where we store as many files in the meg to coincidentally match the magic number.
-            // Thus we don't check for the magic number as that it would not gain us anything.
+            // Thus, we don't check for the magic number as that it would not gain us anything.
             if (flags == id)
                 return MegFileVersion.V1;
 
@@ -78,7 +74,7 @@ internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
 
             // So far the file could be either V2 or V3. 
             // Efficient approach to check the meg version: 
-            // For non empty meg files, we know the FileTable always starts at
+            // For non-empty meg files, we know the FileTable always starts at
             //
             //      fileTableStart = dataStart - n * 20     where n stands for the number of files. 
             //                                              The record size of the FileTable for V2 and V3 (unencrypted)
@@ -105,7 +101,7 @@ internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
             //
             //      If the values do not match we are a V2 case where the reading filenamesSize gave us some garbage.
             //      However, we could end up in a case where "the garbage" randomly caused the equation to match but we still have a V2 input file. 
-            //      Thus we parse the first and the last element of the FileTable and check its data for plausibility where
+            //      Thus, we parse the first and the last element of the FileTable and check its data for plausibility where
             //          flags       uint16      0
             //          crc32       uint32      (omitted)
             //          index       uint32      0 OR N - 1
@@ -176,7 +172,7 @@ internal class MegVersionIdentifier : ServiceBase, IMegVersionIdentifier
 
                 // The V3 check failed.
                 // There is a chance > 0% (as explained above) the archive looked like V3 but actually is V2.
-                // Thus we check again a V2 case.
+                // Thus, we check again a V2 case.
                 reader.BaseStream.Position = fileTableOffset;
 
                 if (CheckFirstAndLastRecord(reader, dataStart, numFiles, &FileRecordIsV2))

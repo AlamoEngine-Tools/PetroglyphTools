@@ -17,7 +17,7 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileService
 {
     /// <summary>
-    /// Packs a collection of files to a new *.MEG archive.
+    /// Creates MEG file from a collection of data entries.
     /// </summary>
     /// <remarks>
     /// Notes:

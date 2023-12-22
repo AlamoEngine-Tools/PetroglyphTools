@@ -86,7 +86,6 @@ public partial class MegFileServiceTest
         CollectionAssert.AreEqual(metadataBytes.Concat(entryBytes).ToList(), data);
     }
 
-
     [TestMethod]
     [DataRow(3u, 0u)]
     [DataRow(2u, 3u)]

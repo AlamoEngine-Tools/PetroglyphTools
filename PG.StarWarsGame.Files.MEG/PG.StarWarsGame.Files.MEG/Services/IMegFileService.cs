@@ -17,7 +17,7 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileService
 {
     /// <summary>
-    /// Creates MEG file from a collection of data entries.
+    /// Creates a MEG file from a collection of data entries. It's recommended to use <see cref="IMegBuilder"/> instead, as this provides more data validation.
     /// </summary>
     /// <remarks>
     /// Notes:
@@ -30,13 +30,12 @@ public interface IMegFileService
     /// </remarks>
     /// <param name="megFileParameters">The desired file properties of the new MEG archive.</param>
     /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
-    /// <param name="overwrite">When set to <see langword="true"/> existing files will be overwritten; otherwise the creation of the MEG file will cause an <see cref="IOException"/>.</param>
     /// <exception cref="ArgumentNullException"><paramref name="megFileParameters"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="megFileParameters"/> contains invalid data.</exception>
     /// <exception cref="IOException">The MEG file could not be created.</exception>
     /// <exception cref="FileNotFoundException">A data entry file was not found.</exception>
     /// <exception cref="NotSupportedException">This library does not support creating the desired MEG archive.</exception>
-    void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite);
+    void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation);
 
     /// <summary>
     /// Loads a *.MEG file's metadata into a <see cref="IMegFile" />.
@@ -44,11 +43,11 @@ public interface IMegFileService
     /// <param name="filePath">The MEG file path.</param>
     /// <returns>The MEG file's metadata.</returns>
     /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
-    /// <exception cref="BinaryCorruptedException">When <paramref name="filePath"/> could not be read as a MEG archive.</exception>
+    /// <exception cref="BinaryCorruptedException"><paramref name="filePath"/> is not a MEG archive.</exception>
     /// <exception cref="FileNotFoundException"><paramref name="filePath"/> is not found.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty.</exception>
-    /// <exception cref="InvalidOperationException">When trying to load an encrypted MEG archive.</exception>
+    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
     IMegFile Load(string filePath);
 
     /// <summary>
@@ -58,6 +57,6 @@ public interface IMegFileService
     /// <param name="encrypted">Indicates whether the .MEG archive is encrypted or not.</param>
     /// <returns>The version of the .MEG archive.</returns>
     /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid MEG archive.</exception>
-    /// <exception cref="FileNotFoundException">When <paramref name="file"/> was not found.</exception>
+    /// <exception cref="FileNotFoundException"><paramref name="file"/> is not found.</exception>
     MegFileVersion GetMegFileVersion(string file, out bool encrypted);
 }

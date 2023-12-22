@@ -7,14 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
@@ -28,8 +26,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 {
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
-    public void CreateMegArchive(MegFileHolderParam megFileParameters,
-        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
+    public void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
     {
         if (megFileParameters == null)
             throw new ArgumentNullException(nameof(megFileParameters));
@@ -37,11 +34,11 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         if (builderInformation == null)
             throw new ArgumentNullException(nameof(builderInformation));
 
+        if (megFileParameters.HasEncryption)
+            throw new NotImplementedException("Encrypted archives are currently not supported");
+
         var megFilePath = FileSystem.Path.GetFullPath(megFileParameters.FilePath);
-
-        if (!overwrite && FileSystem.File.Exists(megFilePath))
-            throw new IOException($"The file '{megFilePath}' already exists.");
-
+        
         var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megFileParameters.FileVersion)
             .BuildConstructingMegArchive(builderInformation);
 
@@ -50,36 +47,10 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
-
-        // TODO: Use helper service, Create random file next to actual location so that we don't end up copying files across drives
-        var tempFile = FileSystem.Path.Combine(FileSystem.Path.GetTempPath(), FileSystem.Path.GetRandomFileName());
-        try
-        {
-            WriteMegFile(tempFile, metadata, constructionArchive);
-
-            var directory = FileSystem.Path.GetDirectoryName(megFilePath);
-            if (string.IsNullOrEmpty(directory))
-                throw new ArgumentException("File location does not point to a directory", nameof(megFilePath));
-            FileSystem.Directory.CreateDirectory(directory!);
-
-            FileSystem.File.Copy(tempFile, megFilePath, overwrite);
-        }
-        finally
-        {
-            try
-            {
-                FileSystem.File.Delete(tempFile);
-            }
-            catch (Exception e)
-            {
-                Logger.LogWarning(e, $"Unable to delete temporary MEG file '{tempFile}'. Reason: {e.Message}");
-            }
-        }
-    }
-
-    private void WriteMegFile(string tempFile, IMegFileMetadata metadata, IConstructingMegArchive constructingArchive)
-    {
-        using var fileStream = FileSystem.FileStream.New(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+        
+        // We only support creating a new file here, so that we don't accidentally overwrite a file which we will be reading from.
+        // IMegBuilder supports overwriting files.
+        using var fileStream = FileSystem.FileStream.New(megFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
 
 #if NETSTANDARD2_1_OR_GREATER || NET
         fileStream.Write(metadata.Bytes);
@@ -90,7 +61,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
 
-        foreach (var file in constructingArchive)
+        foreach (var file in constructionArchive)
         {
             using var dataStream = streamFactory.GetDataStream(file.Location);
 

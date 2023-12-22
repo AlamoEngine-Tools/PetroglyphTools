@@ -55,9 +55,8 @@ public class MegFileServiceIntegrationTest
         };
 
         Assert.ThrowsException<FileNotInMegException>(() => _megFileService.CreateMegArchive(
-            new MegFileHolderParam { FilePath = newFileName, FileVersion = meg.FileVersion },
-            builderInfo,
-            false));
+            new MegFileHolderParam { FilePath = newFileName, FileVersion = meg.FileVersion }, 
+            builderInfo));
     }
 
     [TestMethod]
@@ -78,65 +77,64 @@ public class MegFileServiceIntegrationTest
 
         Assert.ThrowsException<FileNotFoundException>(() => _megFileService.CreateMegArchive(
             new MegFileHolderParam { FilePath = newFileName, FileVersion = meg.FileVersion },
-            builderInfo,
-            false));
+            builderInfo));
     }
 
-    [TestMethod]
-    public void Test_CreateMegArchive_RealFileSystem_OverrideCurrentMeg()
-    {
-        // Relative paths are OK for this test.
-        const string megFileName = "test.meg";
-        const string copyMeg = "copy.meg";
+    //[TestMethod]
+    //public void Test_CreateMegArchive_RealFileSystem_OverrideCurrentMeg()
+    //{
+    //    // Relative paths are OK for this test.
+    //    const string megFileName = "test.meg";
+    //    const string copyMeg = "copy.meg";
 
-        // This Test does not use the MockFileSystem but the actual FileSystem
-        var fs = new FileSystem();
+    //    // This Test does not use the MockFileSystem but the actual FileSystem
+    //    var fs = new FileSystem();
 
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(fs);
-        sc.AddSingleton<IChecksumService>(new ChecksumService());
-        MegDomain.RegisterServices(sc);
+    //    var sc = new ServiceCollection();
+    //    sc.AddSingleton<IFileSystem>(fs);
+    //    sc.AddSingleton<IChecksumService>(new ChecksumService());
+    //    MegDomain.RegisterServices(sc);
 
-        var megFileService = new MegFileService(sc.BuildServiceProvider());
+    //    var megFileService = new MegFileService(sc.BuildServiceProvider());
 
-        try
-        {
-            fs.File.WriteAllBytes(megFileName, MegTestConstants.CONTENT_MEG_FILE_V1);
-            fs.File.WriteAllBytes(copyMeg, MegTestConstants.CONTENT_MEG_FILE_V1);
+    //    try
+    //    {
+    //        fs.File.WriteAllBytes(megFileName, MegTestConstants.CONTENT_MEG_FILE_V1);
+    //        fs.File.WriteAllBytes(copyMeg, MegTestConstants.CONTENT_MEG_FILE_V1);
 
-            var meg = megFileService.Load(megFileName);
+    //        var meg = megFileService.Load(megFileName);
 
-            megFileService.CreateMegArchive(
-                new MegFileHolderParam { FilePath = meg.FilePath, FileVersion = meg.FileVersion },
-                meg.Archive.Select(e => MegFileDataEntryBuilderInfo.FromEntry(meg, e)),
-                true);
+    //        megFileService.CreateMegArchive(
+    //            new MegFileHolderParam { FilePath = meg.FilePath, FileVersion = meg.FileVersion },
+    //            meg.Archive.Select(e => MegFileDataEntryBuilderInfo.FromEntry(meg, e)),
+    //            true);
 
-            var actualBytes = fs.File.ReadAllBytes(megFileName);
-            var expectedBytes = fs.File.ReadAllBytes(copyMeg);
+    //        var actualBytes = fs.File.ReadAllBytes(megFileName);
+    //        var expectedBytes = fs.File.ReadAllBytes(copyMeg);
 
-            CollectionAssert.AreEqual(expectedBytes, actualBytes);
-        }
-        finally
-        {
-            // Make sure to delete the test files again.
-            try
-            {
-                fs.File.Delete(megFileName);
-            }
-            catch
-            {
-                // Ignore
-            }
-            try
-            {
-                fs.File.Delete(copyMeg);
-            }
-            catch
-            {
-                // Ignore
-            }
-        }
-    }
+    //        CollectionAssert.AreEqual(expectedBytes, actualBytes);
+    //    }
+    //    finally
+    //    {
+    //        // Make sure to delete the test files again.
+    //        try
+    //        {
+    //            fs.File.Delete(megFileName);
+    //        }
+    //        catch
+    //        {
+    //            // Ignore
+    //        }
+    //        try
+    //        {
+    //            fs.File.Delete(copyMeg);
+    //        }
+    //        catch
+    //        {
+    //            // Ignore
+    //        }
+    //    }
+    //}
 
     [TestMethod]
     public void Test_CreateMegArchive_MegWithEntriesOfSameNameButWithDifferentData()
@@ -164,7 +162,7 @@ public class MegFileServiceIntegrationTest
         };
 
         _megFileService.CreateMegArchive(
-            new MegFileHolderParam { FilePath = megFileName, FileVersion = MegFileVersion.V1 }, builderInfo, false);
+            new MegFileHolderParam { FilePath = megFileName, FileVersion = MegFileVersion.V1 }, builderInfo);
 
         var bytes = _fileSystem.File.ReadAllBytes(megFileName);
 
@@ -275,7 +273,7 @@ public class MegFileServiceIntegrationTest
         var builderInformation = meg.Archive.Select(e =>
             new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
 
-        _megFileService.CreateMegArchive(param, builderInformation, false);
+        _megFileService.CreateMegArchive(param, builderInformation);
 
         Assert.IsTrue(_fileSystem.FileExists(expectedData.NewMegFilePath));
 

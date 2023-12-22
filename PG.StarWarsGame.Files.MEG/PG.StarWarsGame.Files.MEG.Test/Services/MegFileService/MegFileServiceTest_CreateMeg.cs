@@ -19,44 +19,33 @@ public partial class MegFileServiceTest
     [TestMethod]
     public void Test_CreateMegArchive_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, new List<MegFileDataEntryBuilderInfo>(), false));
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "Path"}, null!, false));
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = null!}, new List<MegFileDataEntryBuilderInfo>(), false));
-        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = ""}, new List<MegFileDataEntryBuilderInfo>(), false));
-        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "   "}, new List<MegFileDataEntryBuilderInfo>(), false));
+        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "Path"}, null!));
+        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = null!}, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = ""}, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "   "}, new List<MegFileDataEntryBuilderInfo>()));
     }
 
     [TestMethod]
-    public void Test_CreateEmptyMegArchive_Override()
+    public void Test_CreateEmptyMegArchive_DoesNotOverride_Throws()
     {
         const string megFileName = "/a.meg";
         var metadataBytes = new byte[] { 0, 1, 2 };
 
         _fileSystem.AddFile(megFileName, null);
 
-        // Test throws
-        Assert.ThrowsException<IOException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>(), false));
-
-        CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>(), true);
-
-        Assert.IsTrue(_fileSystem.FileExists(megFileName));
-        var data = _fileSystem.File.ReadAllBytes(megFileName);
-        
-        CollectionAssert.AreEqual(metadataBytes, data);
+        Assert.ThrowsException<IOException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>()));
     }
 
     [TestMethod]
-    public void Test_CreateEmptyMegArchive_CreateDirectories()
+    public void Test_CreateEmptyMegArchive_DoesNotCreateDirectories_Throws()
     {
         const string megFileName = "/test/a.meg";
         var metadataBytes = new byte[] { 0, 1, 2 };
-        
+
         Assert.IsFalse(_fileSystem.Directory.Exists("/test"));
 
-        CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>(), false);
-
-        Assert.IsTrue(_fileSystem.Directory.Exists("/test"));
-        Assert.IsTrue(_fileSystem.FileExists(megFileName));
+        Assert.ThrowsException<DirectoryNotFoundException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>()));
     }
 
     [TestMethod]
@@ -78,7 +67,7 @@ public partial class MegFileServiceTest
         _streamFactory.Setup(sf => sf.GetDataStream(originInfo))
             .Returns(new MemoryStream(entryBytes));
 
-        CreateMegArchive(megFileName, metadataBytes, items, true);
+        CreateMegArchive(megFileName, metadataBytes, items);
 
         Assert.IsTrue(_fileSystem.FileExists(megFileName));
         var data = _fileSystem.File.ReadAllBytes(megFileName);
@@ -107,7 +96,7 @@ public partial class MegFileServiceTest
         _streamFactory.Setup(sf => sf.GetDataStream(originInfo))
             .Returns(new MemoryStream(entryBytes));
 
-        Assert.ThrowsException<InvalidOperationException>(() => CreateMegArchive(megFileName, metadataBytes, items, true));
+        Assert.ThrowsException<InvalidOperationException>(() => CreateMegArchive(megFileName, metadataBytes, items));
     }
 
     [TestMethod]
@@ -132,10 +121,10 @@ public partial class MegFileServiceTest
         _streamFactory.Setup(sf => sf.GetDataStream(originInfo))
             .Returns(fakeStream.Object);
 
-        Assert.ThrowsException<NotSupportedException>(() => CreateMegArchive(megFileName, metadataBytes, items, true));
+        Assert.ThrowsException<NotSupportedException>(() => CreateMegArchive(megFileName, metadataBytes, items));
     }
 
-    private void CreateMegArchive(string megFileName, byte[] metadataBytes, IList<VirtualMegDataEntryReference> items, bool overrideFile)
+    private void CreateMegArchive(string megFileName, byte[] metadataBytes, IList<VirtualMegDataEntryReference> items)
     {
         var fileParams = new MegFileHolderParam
         {
@@ -164,6 +153,6 @@ public partial class MegFileServiceTest
         _binaryServiceFactory.Setup(f => f.GetConverter(MegFileVersion.V2))
             .Returns(_megBinaryConverter.Object);
 
-        _megFileService.CreateMegArchive(fileParams, builderEntries, overrideFile);
+        _megFileService.CreateMegArchive(fileParams, builderEntries);
     }
 }

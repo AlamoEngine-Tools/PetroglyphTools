@@ -11,7 +11,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// Builder service to create MEG files.
+/// Service to create MEG files from local files or other MEG data entries ensuring custom validation and normalization rules.
 /// </summary>
 public interface IMegBuilder
 {

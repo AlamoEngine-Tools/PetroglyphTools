@@ -18,28 +18,10 @@ public partial class MegFileServiceTest
        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((string)null!, out _));
        Assert.ThrowsException<ArgumentException>(() => _megFileService.GetMegFileVersion("", out _));
        Assert.ThrowsException<ArgumentException>(() => _megFileService.GetMegFileVersion("   ", out _));
-       Assert.ThrowsException<ArgumentNullException>(() => _megFileService.GetMegFileVersion((Stream)null!, out _));
     }
 
     [TestMethod]
-    public void Test_GetMegFileVersion_FromStream()
-    {
-        _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
-
-        var data = new MemoryStream();
-        var encrypted = true;
-        _versionIdentifier.Setup(v => v.GetMegFileVersion(data, out encrypted)).Returns(MegFileVersion.V3);
-
-        var megVersion = _megFileService.GetMegFileVersion(data, out var isEncrypted);
-        Assert.IsTrue(isEncrypted);
-        Assert.AreEqual(MegFileVersion.V3, megVersion);
-        
-        // Check stream does not get disposed
-        Assert.IsTrue(data.CanRead);
-    }
-
-    [TestMethod]
-    public void Test_GetMegFileVersion_FromFile()
+    public void Test_GetMegFileVersion()
     {
         _fileSystem.AddFile("test.meg", new MockFileData("Some Data..."));
         _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);

@@ -10,7 +10,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Test.Files;
 
 [TestClass]
-public class MegFileHolderTest
+public class MegFileTest
 {
     private readonly Mock<IServiceProvider> _serviceProvider = new();
     private readonly MockFileSystem _fileSystem = new();
@@ -27,9 +27,9 @@ public class MegFileHolderTest
         var param = new MegFileHolderParam { FilePath = "test.meg" };
         var model = new Mock<IMegArchive>();
 
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileHolder(null!, param, _serviceProvider.Object));
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileHolder(model.Object, null!, _serviceProvider.Object));
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileHolder(model.Object, param, null!));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegFile(null!, param, _serviceProvider.Object));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegFile(model.Object, null!, _serviceProvider.Object));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegFile(model.Object, param, null!));
     }
 
     [TestMethod]
@@ -38,7 +38,7 @@ public class MegFileHolderTest
         var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V2};
         var model = new Mock<IMegArchive>().Object;
 
-        var holder = new MegFileHolder(model, param, _serviceProvider.Object);
+        var holder = new MegFile(model, param, _serviceProvider.Object);
 
         Assert.AreSame(model, holder.Content);
         Assert.AreSame(model, holder.Archive);
@@ -59,7 +59,7 @@ public class MegFileHolderTest
         var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3, Key = key, IV = iv};
         var model = new Mock<IMegArchive>().Object;
 
-        var holder = new MegFileHolder(model, param, _serviceProvider.Object);
+        var holder = new MegFile(model, param, _serviceProvider.Object);
 
         Assert.AreSame(model, holder.Content);
         Assert.AreEqual(MegFileVersion.V3, holder.FileVersion);
@@ -77,7 +77,7 @@ public class MegFileHolderTest
         var param = new MegFileHolderParam { FilePath = "test.meg", FileVersion = MegFileVersion.V3, IV = keyIv, Key = keyIv};
         var model = new Mock<IMegArchive>().Object;
 
-        var holder = new MegFileHolder(model, param, _serviceProvider.Object);
+        var holder = new MegFile(model, param, _serviceProvider.Object);
 
         // Alter the array reference;
         keyIv[0] = 0;
@@ -119,9 +119,9 @@ public class MegFileHolderTest
         var param2 = baseParam with { Key = validSize, IV = invalidSize };
         var param3 = baseParam with { Key = validSize, IV = validSize, FileVersion = MegFileVersion.V2 };
 
-        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param1, _serviceProvider.Object));
-        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param2, _serviceProvider.Object));
-        Assert.ThrowsException<ArgumentException>(() => new MegFileHolder(model, param3, _serviceProvider.Object));
+        Assert.ThrowsException<ArgumentException>(() => new MegFile(model, param1, _serviceProvider.Object));
+        Assert.ThrowsException<ArgumentException>(() => new MegFile(model, param2, _serviceProvider.Object));
+        Assert.ThrowsException<ArgumentException>(() => new MegFile(model, param3, _serviceProvider.Object));
     }
 }
 

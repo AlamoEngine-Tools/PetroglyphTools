@@ -26,45 +26,6 @@ public partial class MegFileServiceTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(FileNotFoundException))]
-    public void Test_Load__ThrowFileNotFound2()
-    {
-        _megFileService.Load("test.meg", ReadOnlySpan<byte>.Empty, ReadOnlySpan<byte>.Empty);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
-    public void Test_Load__ThrowNotSupported_Encrypted()
-    {
-        var encrypted = true;
-
-        var versionIdentifier = new Mock<IMegVersionIdentifier>();
-        versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted));
-
-        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(versionIdentifier.Object);
-
-        _fileSystem.AddEmptyFile("test.meg");
-
-        _megFileService.Load("test.meg");
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
-    public void Test_Load__ThrowNotSupported_NotEncrypted()
-    {
-        var encrypted = false;
-
-        var versionIdentifier = new Mock<IMegVersionIdentifier>();
-        versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted));
-
-        _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(versionIdentifier.Object);
-
-        _fileSystem.AddEmptyFile("test.meg");
-
-        _megFileService.Load("test.meg", ReadOnlySpan<byte>.Empty, ReadOnlySpan<byte>.Empty);
-    }
-
-    [TestMethod]
     [ExpectedException(typeof(BinaryCorruptedException))]
     public void Test_Load__SizeValidationFails()
     {

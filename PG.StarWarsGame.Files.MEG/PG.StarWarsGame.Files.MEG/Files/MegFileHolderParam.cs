@@ -18,7 +18,7 @@ public sealed record MegFileHolderParam : FileHolderParamBase, IDisposable
     private byte[]? _iv;
     private byte[]? _key;
 
-    /// <inheritdoc cref="MegFileHolder.FileVersion" />
+    /// <inheritdoc cref="MegFile.FileVersion" />
     public MegFileVersion FileVersion { get; init; }
 
     /// <summary>

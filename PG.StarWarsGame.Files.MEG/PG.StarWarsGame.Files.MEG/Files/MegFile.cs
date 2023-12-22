@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 ///     This class does not hold the actual data of the files packaged in a *.MEG file,
 ///     but all necessary meta-information to extract a requested file on-demand.
 /// </remarks>
-public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchive, MegAlamoFileType>, IMegFile
+internal sealed class MegFile : FileHolderBase<MegFileHolderParam, IMegArchive, MegAlamoFileType>, IMegFile
 {
     private byte[]? _keyValue;
     private byte[]? _ivValue;
@@ -62,7 +62,7 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
     public IMegArchive Archive => Content;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileHolder"/> class. 
+    /// Initializes a new instance of the <see cref="MegFile"/> class. 
     /// </summary>
     /// <remarks>
     /// It is safe to dispose the <paramref name="param"/> after an instance of this class has been created.
@@ -70,7 +70,7 @@ public sealed class MegFileHolder : FileHolderBase<MegFileHolderParam, IMegArchi
     /// <param name="model">The meg archive model.</param>
     /// <param name="param">The initialization parameters.</param>
     /// <param name="serviceProvider">The service provider for this instance.</param>
-    public MegFileHolder(IMegArchive model, MegFileHolderParam param, IServiceProvider serviceProvider) :
+    public MegFile(IMegArchive model, MegFileHolderParam param, IServiceProvider serviceProvider) :
         base(model, param, serviceProvider)
     {
         FileVersion = param.FileVersion;

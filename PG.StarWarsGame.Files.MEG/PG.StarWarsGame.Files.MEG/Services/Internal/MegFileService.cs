@@ -24,11 +24,10 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 ///     Initializes a new <see cref="MegFileService" /> class.
 /// </summary>
 /// <param name="services">The service provider for this instance.</param>
-public sealed class MegFileService(IServiceProvider services) : ServiceBase(services), IMegFileService
+internal sealed class MegFileService(IServiceProvider services) : ServiceBase(services), IMegFileService
 {
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
-    /// <inheritdoc />   
     public void CreateMegArchive(MegFileHolderParam megFileParameters,
         IEnumerable<MegFileDataEntryBuilderInfo> builderInformation, bool overwrite)
     {
@@ -119,59 +118,37 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         Debug.Assert(dataBytesWritten == fileStream.Position);
     }
 
-    /// <inheritdoc />
     public IMegFile Load(string filePath)
     {
-        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
 
-        var megVersion = Services.GetRequiredService<IMegVersionIdentifier>().GetMegFileVersion(fs, out var encrypted);
-
-        if (encrypted)
-            throw new InvalidOperationException("Cannot load an encrypted .MEG archive without encryption key.\r\n" +
-                                                "Use Load(string, ReadOnlySpan<byte>, ReadOnlySpan<byte>) instead.");
-
-        fs.Seek(0, SeekOrigin.Begin);
-
-        using var reader = BinaryServiceFactory.GetReader(megVersion);
-        using var param = new MegFileHolderParam
-        {
-            FilePath = filePath, // Is there a valid reason not to use an absolute path here?
-            FileVersion = megVersion,
-        };
-
-        return Load(reader, fs, megVersion, param);
-    }
-
-    /// <inheritdoc />
-    public IMegFile Load(string filePath, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
-    {
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         var megVersion = GetMegFileVersion(fs, out var encrypted);
 
-        if (!encrypted)
-            throw new InvalidOperationException("The given .MEG archive is not encrypted.\r\n" +
-                                                "Use Load(string) instead.");
-        
-        Debug.Assert(megVersion == MegFileVersion.V3);
+        if (encrypted)
+            throw new NotImplementedException("Encrypted archives are currently not supported");
 
-        throw new NotImplementedException("Encrypted archives are currently not supported");
+        using var param = new MegFileHolderParam
+        {
+            FilePath = filePath, // Is there a valid reason not to use an absolute path here?
+            FileVersion = megVersion
+        };
 
-        //fs.Seek(0, SeekOrigin.Begin);
+        //param.Validate();
 
-        //using var reader = BinaryServiceFactory.GetReader(key, iv);
-        //using var param = new MegFileHolderParam
-        //{
-        //    FilePath = filePath, // Is there a valid reason not to use an absolute path here?
-        //    FileVersion = megVersion,
-        //    Key = key.ToArray(),
-        //    IV = iv.ToArray()
-        //};
-        //return Load(reader, fs, megVersion, param);
+        fs.Seek(0, SeekOrigin.Begin);
+        var megMetadata = LoadAndValidateMetadata(fs, param);
+
+        var converter = BinaryServiceFactory.GetConverter(megVersion);
+        var megArchive = converter.BinaryToModel(megMetadata);
+        return new MegFile(megArchive, param, Services);
     }
 
-    private MegFileHolder Load(IMegFileBinaryReader binaryReader, Stream megStream, MegFileVersion megVersion, MegFileHolderParam param)
+    private IMegFileMetadata LoadAndValidateMetadata(Stream megStream, MegFileHolderParam param)
     {
+        using var binaryReader = BinaryServiceFactory.GetReader(param.FileVersion);
+
         var startPosition = megStream.Position;
         var megMetadata = binaryReader.ReadBinary(megStream);
         var endPosition = megStream.Position;
@@ -204,12 +181,9 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         if (!validationResult.IsValid)
             throw new BinaryCorruptedException($"Unable to read .MEG archive: {validationResult.Errors.First().ErrorMessage}");
 
-        var converter = BinaryServiceFactory.GetConverter(megVersion);
-        var megArchive = converter.BinaryToModel(megMetadata);
-        return new MegFileHolder(megArchive, param, Services);
+        return megMetadata;
     }
 
-    /// <inheritdoc />
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(file);
@@ -218,11 +192,8 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         return GetMegFileVersion(fs, out encrypted);
     }
 
-    /// <inheritdoc />
-    public MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted)
+    private MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted)
     {
-        if (stream is null)
-            throw new ArgumentNullException(nameof(stream));
         return Services.GetRequiredService<IMegVersionIdentifier>().GetMegFileVersion(stream, out encrypted);
     }
 }

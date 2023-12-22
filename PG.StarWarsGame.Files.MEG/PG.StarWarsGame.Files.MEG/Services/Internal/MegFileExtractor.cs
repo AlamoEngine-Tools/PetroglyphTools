@@ -11,17 +11,12 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <inheritdoc cref="IMegFileExtractor"/>
-public sealed class MegFileExtractor : ServiceBase,  IMegFileExtractor
+/// <summary>
+/// Initializes a new instance of the <see cref="MegFileExtractor"/> class.
+/// </summary>
+/// <param name="services">The service provider.</param>
+internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(services),  IMegFileExtractor
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MegFileExtractor"/> class.
-    /// </summary>
-    /// <param name="services">The service provider.</param>
-    public MegFileExtractor(IServiceProvider services) : base(services)
-    {
-    }
-
-
     /// <inheritdoc/>
     public string GetAbsoluteFilePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy)
     {

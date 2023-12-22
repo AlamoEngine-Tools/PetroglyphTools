@@ -35,7 +35,7 @@ internal sealed class MegDataStreamFactory(IServiceProvider serviceProvider)
 
         if (locationReference.DataEntry.Encrypted)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Encrypted archives are currently not supported");
         }
 
         return CreateDataStream(locationReference.MegFile.FilePath, locationReference.DataEntry.Location.Offset,

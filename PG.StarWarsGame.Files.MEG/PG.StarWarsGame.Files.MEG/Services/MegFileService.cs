@@ -46,6 +46,9 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megFileParameters.FileVersion)
             .BuildConstructingMegArchive(builderInformation);
 
+        if (constructionArchive.Encrypted)
+            throw new NotImplementedException("Encrypted archives are currently not supported");
+
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
 
@@ -145,24 +148,26 @@ public sealed class MegFileService(IServiceProvider services) : ServiceBase(serv
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         var megVersion = GetMegFileVersion(fs, out var encrypted);
-        
+
         if (!encrypted)
             throw new InvalidOperationException("The given .MEG archive is not encrypted.\r\n" +
                                                 "Use Load(string) instead.");
-
+        
         Debug.Assert(megVersion == MegFileVersion.V3);
 
-        fs.Seek(0, SeekOrigin.Begin);
+        throw new NotImplementedException("Encrypted archives are currently not supported");
 
-        using var reader = BinaryServiceFactory.GetReader(key, iv);
-        using var param = new MegFileHolderParam
-        {
-            FilePath = filePath, // Is there a valid reason not to use an absolute path here?
-            FileVersion = megVersion,
-            Key = key.ToArray(),
-            IV = iv.ToArray()
-        };
-        return Load(reader, fs, megVersion, param);
+        //fs.Seek(0, SeekOrigin.Begin);
+
+        //using var reader = BinaryServiceFactory.GetReader(key, iv);
+        //using var param = new MegFileHolderParam
+        //{
+        //    FilePath = filePath, // Is there a valid reason not to use an absolute path here?
+        //    FileVersion = megVersion,
+        //    Key = key.ToArray(),
+        //    IV = iv.ToArray()
+        //};
+        //return Load(reader, fs, megVersion, param);
     }
 
     private MegFileHolder Load(IMegFileBinaryReader binaryReader, Stream megStream, MegFileVersion megVersion, MegFileHolderParam param)

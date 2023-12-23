@@ -17,7 +17,7 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileService
 {
     /// <summary>
-    /// Creates a MEG file from a collection of data entries. It's recommended to use <see cref="IMegBuilder"/> instead, as this provides more data validation.
+    /// Creates a MEG file from a collection of data entries. It's recommended to use <see cref="IMegBuilder"/> instead, as this provides data validation and normalization.
     /// </summary>
     /// <remarks>
     /// Notes:

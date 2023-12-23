@@ -154,7 +154,6 @@ public readonly struct AddDataEntryToBuilderResult
     {
         if (status == AddDataEntryToBuilderState.Added)
             throw new ArgumentException(nameof(status));
-
         return new AddDataEntryToBuilderResult(status, null, null, message);
     }
 }

@@ -7,21 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PG.Commons.DataTypes;
-using PG.Commons.Utilities;
 
 namespace PG.Commons.Files;
 
-/// <summary>
-///     Wrapper around alamo file types that holds the file content in an accessible data structure.
-/// </summary>
-/// <typeparam name="TModel">The data model of the alamo file in a usable data format.</typeparam>
-/// <typeparam name="TFileType">The alamo file type definition implementing <see cref="IAlamoFileType" /></typeparam>
-/// <typeparam name="TParam">The <see cref="IFileHolderParam" /> used during creation.</typeparam>
-public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObject, IFileHolder<TModel, TFileType>
+/// <inheritdoc cref="IPetroglyphFileHolder{TModel,TFileInfo}"/>
+public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject, IPetroglyphFileHolder<TModel, TFileInfo>
     where TModel : notnull
-    where TParam : IFileHolderParam
-    where TFileType : IAlamoFileType, new()
+    where TFileInfo : PetroglyphFileInformation
 {
+    private TFileInfo? _internalFileInformation;
+
     /// <inheritdoc />
     public string Directory { get; }
 
@@ -29,7 +24,18 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
     public string FileName { get; }
 
     /// <inheritdoc />
-    public TFileType FileType { get; } = new();
+    public TFileInfo FileInformation
+    {
+        get
+        {
+            var originalParams = _internalFileInformation;
+            if (originalParams is null)
+                throw new ObjectDisposedException(GetType().Name);
+
+            // Return copy, so that we can safely dispose the returned instance without affecting the original value.
+            return originalParams with { };
+        }
+    }
 
     /// <inheritdoc />
     public TModel Content { get; }
@@ -53,13 +59,13 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
     protected internal IServiceProvider Services { get; }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="FileHolderBase{TParam,TModel,TFileType}" /> class.
+    ///     Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TParam}" /> class.
     /// </summary>
     /// <param name="model">The data model of this holder.</param>
     /// <param name="param">The creation param.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" /> for this instance.</param>
     /// <exception cref="ArgumentNullException">When any parameter is <see langword="null" />.</exception>
-    protected FileHolderBase(TModel model, TParam param, IServiceProvider serviceProvider)
+    protected PetroglyphFileHolder(TModel model, TFileInfo param, IServiceProvider serviceProvider)
     {
         if (model == null) 
             throw new ArgumentNullException(nameof(model));
@@ -70,26 +76,29 @@ public abstract class FileHolderBase<TParam, TModel, TFileType> : DisposableObje
         Services = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         FileSystem = serviceProvider.GetRequiredService<IFileSystem>();
         Logger = serviceProvider.GetService<ILoggerFactory>()?.CreateLogger(GetType()) ?? NullLogger.Instance;
+
+        // We do not use FileNameUtilities.IsValidFileName() cause don't want a custom PG as a dependency.
+        // Instead, we check whether given file is valid in general on the current filesystem.
+        var fileInfo = FileSystem.FileInfo.New(param.FilePath);
         
-
-        var filePath = param.FilePath;
-
-        // We do not use FileNameUtilities.IsValidFileName() cause don't want a custom PG as a dependency
-        // We let concrete holders or other services the opportunity to do validation.
-        // This of course allows invalid file names (such as ".", "..", "\\", "/", "  ") to be used here, but the assumption is,
-        // that reading or writing such a file will cause an exception anyway. 
-        // NB: We don't use NullOrWhiteSpace cause "\u00A0" (no-break space) and some others would cause an exception.
-        // However, such file names are valid on Linux and Windows.
-        ThrowHelper.ThrowIfNullOrEmpty(filePath);
-
-        FilePath = filePath;
+        FilePath = fileInfo.FullName;
 
         // Empty file names such as "Data/.meg" are allowed in general. Thus, we don't check for this constraint here.
         // The concrete holder can check for possible file name constraints.
-        FileName = FileSystem.Path.GetFileNameWithoutExtension(filePath);
+        FileName = fileInfo.Name;
 
         // Remember: For a file path "myfile.txt" the path is empty but not null.
-        Directory = FileSystem.Path.GetDirectoryName(filePath) ??
-                    throw new InvalidOperationException($"No directory found for file '{filePath}'");
+        Directory = fileInfo.DirectoryName ??
+                    throw new InvalidOperationException($"No directory found for file '{FilePath}'");
+
+        _internalFileInformation = param with { FilePath = FilePath };
+    }
+
+    /// <inheritdoc />
+    protected sealed override void DisposeManagedResources()
+    {
+        base.DisposeManagedResources();
+        _internalFileInformation?.Dispose();
+        _internalFileInformation = null!;
     }
 }

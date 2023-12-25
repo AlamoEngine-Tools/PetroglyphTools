@@ -19,5 +19,5 @@ public readonly struct DatAlamoFileType : IAlamoFileType
     public FileType Type => FileType.Binary;
 
     /// <inheritdoc />
-    public string FileExtension => "dat";
+    public string DefaultFileExtension => "dat";
 }

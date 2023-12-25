@@ -44,13 +44,13 @@ internal class DatFileService : ServiceBase, IDatFileService
         var fileInfo = FileSystem.FileInfo.New(absoluteFilePath);
         var extension = fileInfo.Extension;
         var fileType = new DatAlamoFileType();
-        if (!$".{fileType.FileExtension}".ToLower().Equals(extension.ToLower()))
+        if (!$".{fileType.DefaultFileExtension}".ToLower().Equals(extension.ToLower()))
         {
             Logger.LogInformation(
-                $"The provided file name {datFileName} does not end with the correct extension of \".{fileType.FileExtension}\".");
+                $"The provided file name {datFileName} does not end with the correct extension of \".{fileType.DefaultFileExtension}\".");
             if (fileInfo.Extension == string.Empty)
             {
-                absoluteFilePath = absoluteFilePath + "." + fileType.FileExtension;
+                absoluteFilePath = absoluteFilePath + "." + fileType.DefaultFileExtension;
             }
         }
 

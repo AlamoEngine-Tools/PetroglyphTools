@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.DAT.Files;
 ///     The provided holder for Petroglyph's <a href="https://modtools.petrolution.net/docs/DatFileFormat">.DAT files </a>.
 ///     <br />DAT files hold key-value pairs of strings that are used to localize the game.
 /// </summary>
-public interface IDatFile : IFileHolder<IReadOnlyList<DatFileEntry>, DatAlamoFileType>
+public interface IDatFile : IPetroglyphFileHolder<,,>
 {
     /// <summary>
     ///     Gets the sorting type of the DAT file's entries.

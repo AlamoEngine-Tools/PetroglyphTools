@@ -1,4 +1,6 @@
-namespace PG.Commons.Binary.File;
+using PG.Commons.Binary.File;
+
+namespace PG.Commons.Binary;
 
 /// <summary>
 ///     A builder that is capable of converting a generic file model to its <see cref="IBinaryFile"/>

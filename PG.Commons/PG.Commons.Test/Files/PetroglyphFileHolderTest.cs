@@ -34,7 +34,7 @@ public class PetroglyphFileHolderTest
         Assert.AreSame(sp.Object, holder.Services);
     }
 
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_LINUX)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
     [DataRow("/   ", "   ", "/", "/   ")]
     [DataRow("./   ", "   ", "/", "/   ")]
     //[DataRow("   ", "   ", "/", "/   ")]  // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
@@ -56,7 +56,7 @@ public class PetroglyphFileHolderTest
         }
     }
 
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_WINDOWS)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
     [DataRow("test.txt", "test.txt", "C:\\", "C:\\test.txt")]
     [DataRow("./test", "test", "C:\\", "C:\\test")]
     [DataRow("a/../test", "test", "C:\\", "C:\\test")]
@@ -95,7 +95,7 @@ public class PetroglyphFileHolderTest
             new TestFileHolder(model, new TestParam { FilePath = filePath }, sp.Object));
     }
 
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_LINUX)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
     [DataRow("test.txt", "test.txt", "/", "/test.txt")]
     [DataRow("./test", "test", "/", "/test")]
     [DataRow("a/../test", "test", "/", "/test")]
@@ -160,7 +160,7 @@ public class PetroglyphFileHolderTest
     }
 
 
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_WINDOWS)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
     [DataRow("   ", typeof(ArgumentException))]
     public void Test_Ctor_InvalidPath_Whitespace_Windows_Throws(string path, Type type)
     {

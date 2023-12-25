@@ -6,7 +6,7 @@ using PG.Commons.Files;
 namespace PG.StarWarsGame.Files.MEG.Files;
 
 ///<inheritdoc />
-public sealed record MegFileHolderParam : FileHolderParamBase
+public sealed record MegFileHolderParam : PetroglyphFileInformation
 {
     /// <inheritdoc cref="MegFileHolder.FileVersion" />
     public MegFileVersion FileVersion { get; init; }

@@ -15,11 +15,10 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 ///     This class does not hold all files that are packaged in a *.MEG file,
 ///     but all necessary meta-information to extract a given file on-demand.
 /// </remarks>
-public sealed class
-    MegFileHolder : FileHolderBase<MegFileHolderParam, IReadOnlyList<MegFileDataEntry>, MegAlamoFileType>, IMegFile
+public sealed class MegFileHolder : PetroglyphFileHolder<IReadOnlyList<MegFileDataEntry>, MegFileHolderParam>, IMegFile
 {
-    private byte[]? _keyValue;
-    private byte[]? _ivValue;
+    private byte[]? _keyValue = null!;
+    private byte[]? _ivValue = null!;
 
     /// <summary>
     ///     Gets the file version of the MEG file.
@@ -97,23 +96,6 @@ public sealed class
         megFileDataEntries = Content.Where(dataEntry => ContainsPathIgnoreCase(dataEntry.RelativeFilePath, fileName))
             .ToList();
         return megFileDataEntries.Any();
-    }
-
-    /// <inheritdoc />
-    protected override void DisposeManagedResources()
-    {
-        base.DisposeManagedResources();
-        if (_keyValue is not null)
-        {
-            Array.Clear(_keyValue, 0, _keyValue.Length);
-            _keyValue = null;
-        }
-
-        if (_ivValue is not null)
-        {
-            Array.Clear(_ivValue, 0, _ivValue.Length);
-            _ivValue = null;
-        }
     }
 
     private static bool ContainsPathIgnoreCase(string relativePath, string partFileName)

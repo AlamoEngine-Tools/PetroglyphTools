@@ -19,8 +19,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
-internal class MegFileBinaryServiceV1 : IBinaryFileConverter<MegMetadata, IMegFile, MegFileHolderParam>,
-    IBinaryFileReader<IMegFileMetadata>
+internal class MegFileBinaryServiceV1 : IBinaryFileReader<IMegFileMetadata>
 {
     public IMegFileMetadata ReadBinary(Stream byteStream)
     {

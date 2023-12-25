@@ -32,8 +32,8 @@ public static class BinaryReaderUtilities
     /// <param name="encoding">The encoding used to produce the string.</param>
     /// <param name="isZeroTerminated">When set to <see langword="true"/>, any possible null terminators ('\0') are removed from the end of the result. Default is <see langword="false"/>.</param>
     /// <returns>The string being read.</returns>
-    /// <exception cref="ArgumentNullException">A argument is <see langword="null"/>.</exception>
-    /// <exception cref="IndexOutOfRangeException">The number of bytes read, mismatched the expected number of bytes.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="reader"/> or <paramref name="encoding"/> is <see langword="null"/>.</exception>
+    /// <exception cref="IndexOutOfRangeException">The number of bytes read, mismatches the expected number of bytes.</exception>
     public static string ReadString(this BinaryReader reader, int length, Encoding encoding, bool isZeroTerminated = false)
     {
         if (reader is null) 

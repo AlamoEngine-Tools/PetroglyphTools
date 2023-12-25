@@ -13,7 +13,7 @@ public class ChecksumServiceTest
     {
         var checksumService = new ChecksumService();
         Assert.ThrowsException<ArgumentNullException>(() => checksumService.GetChecksum(null!, Encoding.ASCII));
-        Assert.ThrowsException<ArgumentNullException>(() => checksumService.GetChecksum("", null));
+        Assert.ThrowsException<ArgumentNullException>(() => checksumService.GetChecksum("", null!));
     }
 
 

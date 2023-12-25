@@ -12,48 +12,44 @@ namespace PG.Commons.Hashing;
 public class ChecksumService : IChecksumService
 {
     /// <inheritdoc/>
-    public unsafe Crc32 GetChecksum(string s, Encoding encoding)
+    public unsafe Crc32 GetChecksum(string value, Encoding encoding)
     {
-        if (s == null)
-            throw new ArgumentNullException(nameof(s));
+        if (value == null)
+            throw new ArgumentNullException(nameof(value));
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
 
-        Span<byte> buffer;
+        Span<byte> stringBytes;
 
-        if (s.Length > 256)
+        var stringSpan = value.AsSpan();
+
+        if (stringSpan.IsEmpty)
+            return new Crc32(0);
+
+        var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
+
+        if (maxByteSize > 256)
         {
 #if NETSTANDARD2_1_OR_GREATER || NET
-            var stringSpan = s.AsSpan();
-            var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
-
-            var b = new byte[maxByteSize].AsSpan();
-            var nb = encoding.GetBytes(stringSpan, b);
-            buffer = b.Slice(0, nb);
+            var buff = new byte[maxByteSize].AsSpan();
+            var nb = encoding.GetBytes(stringSpan, buff);
+            stringBytes = buff.Slice(0, nb);
 #else
-            buffer = encoding.GetBytes(s).AsSpan();
+            stringBytes = encoding.GetBytes(value).AsSpan();
 #endif
         }
         else
         {
-            var stringSpan = s.AsSpan();
-            var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
-
-            if (stringSpan.IsEmpty)
-                buffer = Span<byte>.Empty;
-            else
+            var buff = stackalloc byte[maxByteSize];
+            fixed (char* sp = stringSpan)
             {
-                var buff = stackalloc byte[maxByteSize];
-                fixed (char* sp = &stringSpan.GetPinnableReference())
-                {
-                    var a = encoding.GetBytes(sp, s.Length, buff, maxByteSize);
-                    buffer = new Span<byte>(buff, a);
-                }
+                var a = encoding.GetBytes(sp, stringSpan.Length, buff, maxByteSize);
+                stringBytes = new Span<byte>(buff, a);
             }
         }
 
         Span<byte> checksum = stackalloc byte[sizeof(Crc32)];
-        System.IO.Hashing.Crc32.Hash(buffer, checksum);
+        System.IO.Hashing.Crc32.Hash(stringBytes, checksum);
         return new Crc32(checksum);
     }
 }

@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace PG.Commons.Binary;
 
 /// <summary>
-///  An <see cref="Exception" /> that is thrown when PG binary file is corrupted.
+///  The exception that is thrown when a Petroglyph binary file is corrupted.
 /// </summary>
 [ExcludeFromCodeCoverage]
 public sealed class BinaryCorruptedException : Exception

@@ -56,7 +56,7 @@ public static class StringUtilities
     /// </summary>
     /// <param name="value">The string to validate.</param>
     /// <returns>The actual length of the value in characters.</returns>
-    /// <exception cref="ArgumentException">When the string was too long.</exception>
+    /// <exception cref="ArgumentException">The string is too long.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ushort ValidateStringCharLengthUInt16(ReadOnlySpan<char> value)
     {

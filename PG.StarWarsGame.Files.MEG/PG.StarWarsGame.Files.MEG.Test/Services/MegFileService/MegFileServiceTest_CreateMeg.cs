@@ -20,10 +20,8 @@ public partial class MegFileServiceTest
     public void Test_CreateMegArchive_Throws()
     {
         Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, new List<MegFileDataEntryBuilderInfo>()));
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "Path"}, null!));
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = null!}, new List<MegFileDataEntryBuilderInfo>()));
-        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = ""}, new List<MegFileDataEntryBuilderInfo>()));
-        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileHolderParam{ FilePath = "   "}, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileInformation("Path", MegFileVersion.V1), null!)); 
+        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileInformation("   ", MegFileVersion.V1), new List<MegFileDataEntryBuilderInfo>()));
     }
 
     [TestMethod]
@@ -126,11 +124,7 @@ public partial class MegFileServiceTest
 
     private void CreateMegArchive(string megFileName, byte[] metadataBytes, IList<VirtualMegDataEntryReference> items)
     {
-        var fileParams = new MegFileHolderParam
-        {
-            FilePath = megFileName,
-            FileVersion = MegFileVersion.V2
-        };
+        var fileParams = new MegFileInformation(megFileName, MegFileVersion.V2);
         var builderEntries = new List<MegFileDataEntryBuilderInfo>();
 
         var constructingArchive = new Mock<IConstructingMegArchive>();

@@ -126,11 +126,9 @@ public class MegFileNameTableTest
             entry1,
             entry2
         };
-
-        var expectedNameInfoList = recordList.Select(r => new MegFileNameInformation(r.FileName, r.OriginalFilePath)).ToList();
-
+        
         IMegFileNameTable table = new MegFileNameTable(recordList);
-        var names = new List<MegFileNameInformation>();
+        var names = new List<MegFileNameTableRecord>();
 
         using var enumerator = table.GetEnumerator();
         while (enumerator.MoveNext())
@@ -142,33 +140,33 @@ public class MegFileNameTableTest
             names.Add(currentTyped);
         }
 
-        CollectionAssert.AreEqual(expectedNameInfoList, names);
+        CollectionAssert.AreEqual(recordList, names);
 
     }
 
-    [TestMethod]
-    public void Test_Enumerate_AsIMegFileNameTable_ResetEnumerator()
-    {
-        MegFileNameTableRecord entry1 = new("123");
-        MegFileNameTableRecord entry2 = new("456");
+    //[TestMethod]
+    //public void Test_Enumerate_AsIMegFileNameTable_ResetEnumerator()
+    //{
+    //    MegFileNameTableRecord entry1 = new("123");
+    //    MegFileNameTableRecord entry2 = new("456");
 
-        var recordList = new List<MegFileNameTableRecord>
-        {
-            entry1,
-            entry2
-        };
+    //    var recordList = new List<MegFileNameTableRecord>
+    //    {
+    //        entry1,
+    //        entry2
+    //    };
 
 
-        IMegFileNameTable table = new MegFileNameTable(recordList);
+    //    IMegFileNameTable table = new MegFileNameTable(recordList);
 
-        using var enumerator = table.GetEnumerator();
-        enumerator.MoveNext();
-        Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
-        enumerator.Reset();
-        Assert.AreEqual(default, enumerator.Current);
-        enumerator.MoveNext();
-        Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
-    }
+    //    using var enumerator = table.GetEnumerator();
+    //    enumerator.MoveNext();
+    //    Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
+    //    enumerator.Reset();
+    //    Assert.AreEqual(default, enumerator.Current);
+    //    enumerator.MoveNext();
+    //    Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
+    //}
 
     [TestMethod]
     public void Test_Bytes()

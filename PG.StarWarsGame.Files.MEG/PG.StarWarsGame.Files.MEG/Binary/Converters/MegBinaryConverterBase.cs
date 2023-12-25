@@ -57,7 +57,7 @@ internal abstract class MegBinaryConverterBase<TMegMetadata>(IServiceProvider se
             var fileSize = fileDescriptor.FileSize;
             var fileNameIndex = fileDescriptor.FileNameIndex;
             var fileName = binary.FileNameTable[fileNameIndex].FileName;
-            var originalFilePath = binary.FileNameTable[fileNameIndex].OriginalFileName;
+            var originalFilePath = binary.FileNameTable[fileNameIndex].OriginalFilePath;
 
             var location = new MegDataEntryLocation(fileOffset, fileSize);
 

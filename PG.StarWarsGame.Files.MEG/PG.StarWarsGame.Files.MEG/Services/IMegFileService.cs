@@ -35,7 +35,7 @@ public interface IMegFileService
     /// <exception cref="IOException">The MEG file could not be created.</exception>
     /// <exception cref="FileNotFoundException">A data entry file was not found.</exception>
     /// <exception cref="NotSupportedException">This library does not support creating the desired MEG archive.</exception>
-    void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation);
+    void CreateMegArchive(MegFileInformation megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation);
 
     /// <summary>
     /// Loads a *.MEG file's metadata into a <see cref="IMegFile" />.

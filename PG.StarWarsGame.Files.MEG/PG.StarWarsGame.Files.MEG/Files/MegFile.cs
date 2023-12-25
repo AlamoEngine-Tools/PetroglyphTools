@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using PG.Commons.Files;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 
@@ -13,51 +12,8 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 ///     This class does not hold the actual data of the files packaged in a *.MEG file,
 ///     but all necessary meta-information to extract a requested file on-demand.
 /// </remarks>
-internal sealed class MegFile : FileHolderBase<MegFileHolderParam, IMegArchive, MegAlamoFileType>, IMegFile
+internal sealed class MegFile : PetroglyphFileHolder<IMegArchive, MegFileInformation>, IMegFile
 {
-    private byte[]? _keyValue;
-    private byte[]? _ivValue;
-
-    /// <summary>
-    ///     Gets the file version of the MEG file.
-    /// </summary>
-    public MegFileVersion FileVersion { get; }
-
-    /// <summary>
-    ///     Gets a copy of the 16 byte long initialization vector (IV) used for encryption or <see langword="null" /> if the file is not
-    ///     encrypted.
-    /// </summary>
-    public byte[]? IV
-    {
-        [return: NotNullIfNotNull(nameof(_ivValue))]
-        get
-        {
-            if (_ivValue is null)
-                return null;
-            return (byte[])_ivValue.Clone();
-        }
-    }
-
-    /// <summary>
-    ///     Gets a copy of the AES-128 encryption key used for encryption or <see langword="null" /> if the file is not encrypted.
-    /// </summary>
-    public byte[]? Key
-    {
-        [return: NotNullIfNotNull(nameof(_keyValue))]
-        get
-        {
-            if (_keyValue is null)
-                return null;
-            return (byte[])_keyValue.Clone();
-        }
-    }
-
-
-    /// <summary>
-    ///     Gets a value indicating whether the MEG file is encrypted.
-    /// </summary>
-    public bool HasEncryption => Key != null && IV != null;
-
     /// <inheritdoc/>
     public IMegArchive Archive => Content;
 
@@ -70,49 +26,8 @@ internal sealed class MegFile : FileHolderBase<MegFileHolderParam, IMegArchive, 
     /// <param name="model">The meg archive model.</param>
     /// <param name="param">The initialization parameters.</param>
     /// <param name="serviceProvider">The service provider for this instance.</param>
-    public MegFile(IMegArchive model, MegFileHolderParam param, IServiceProvider serviceProvider) :
+    public MegFile(IMegArchive model, MegFileInformation param, IServiceProvider serviceProvider) :
         base(model, param, serviceProvider)
     {
-        FileVersion = param.FileVersion;
-
-        var key = (byte[]?)param.Key?.Clone();
-        var iv = (byte[]?)param.IV?.Clone();
-
-        if (param.HasEncryption)
-        {
-            if (param.FileVersion != MegFileVersion.V3)
-                throw new ArgumentException("Encrypted MEG files must be of version V3");
-
-            if (!IsValidKeyOrIVSize(key))
-                throw new ArgumentException("Specified key is not a valid size for MEG encryption.", nameof(key));
-            if (!IsValidKeyOrIVSize(iv))
-                throw new ArgumentException("Specified IV is not a valid size for MEG encryption.", nameof(iv));
-        }
-
-        _keyValue = key;
-        _ivValue = iv;
-    }
-
-    /// <inheritdoc/>
-    protected override void DisposeManagedResources()
-    {
-        base.DisposeManagedResources();
-        if (_keyValue is not null)
-        {
-            Array.Clear(_keyValue, 0, _keyValue.Length);
-            _keyValue = null;
-        }
-
-        if (_ivValue is not null)
-        {
-            Array.Clear(_ivValue, 0, _ivValue.Length);
-            _ivValue = null;
-        }
-    }
-
-    private static bool IsValidKeyOrIVSize(ReadOnlySpan<byte> data)
-    {
-        var bitLength = data.Length * 8L;
-        return bitLength == 128;
     }
 }

@@ -104,6 +104,7 @@ public partial class MegFileServiceTest
     [TestMethod]
     public void Test_Load()
     {
+        const string megFileName = "test.meg";
         const string fileData = "some random data";
         const MegFileVersion version = MegFileVersion.V2;
 
@@ -138,17 +139,17 @@ public partial class MegFileServiceTest
         _megBinaryConverter.Setup(c => c.BinaryToModel(metadata.Object))
             .Returns(megArchive.Object);
 
-        _fileSystem.AddFile("test.meg", new MockFileData(fileData));
+        _fileSystem.AddFile(megFileName, new MockFileData(fileData));
 
-        var megFile = _megFileService.Load("test.meg");
+        var megFile = _megFileService.Load(megFileName);
 
         Assert.AreSame(megArchive.Object, megFile.Content);
 
-        Assert.AreEqual(megFile.FileVersion, version);
-        Assert.IsFalse(megFile.HasEncryption);
-        Assert.AreEqual("test", megFile.FileName);
-        Assert.AreEqual("test.meg", megFile.FilePath);
-        Assert.AreEqual("", megFile.Directory);
+        Assert.AreEqual(megFile.FileInformation.FileVersion, version);
+        Assert.IsFalse(megFile.FileInformation.HasEncryption);
+        Assert.AreEqual(megFileName, megFile.FileName);
+        Assert.AreEqual(_fileSystem.Path.GetFullPath(megFileName), megFile.FilePath);
+        Assert.AreEqual(_fileSystem.Path.GetDirectoryName(_fileSystem.Path.GetFullPath(megFileName)), megFile.Directory);
 
         _versionIdentifier.Verify(r => r.GetMegFileVersion(It.IsAny<Stream>(), out encrypted), Times.Once);
         _megBinaryReader.Verify(r => r.ReadBinary(It.IsAny<Stream>()), Times.Once);

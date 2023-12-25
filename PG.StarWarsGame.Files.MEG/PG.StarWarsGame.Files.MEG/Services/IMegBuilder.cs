@@ -81,14 +81,14 @@ public interface IMegBuilder
     /// <param name="fileParams">The file parameters of the to be created MEG file.</param>
     /// <param name="overwrite">When set to <see langword="true"/> an existing MEG file will be overwritten; otherwise an <see cref="IOException"/> is thrown if the file already exists.</param>
     /// <exception cref="ArgumentNullException"><paramref name="fileParams"/> is <see langword="null"/>.</exception>
-    void Build(MegFileHolderParam fileParams, bool overwrite);
+    void Build(MegFileInformation fileParams, bool overwrite);
 
     /// <summary>
-    /// Checks whether a <see cref="MegFileHolderParam"/> is valid for this instance.
+    /// Checks whether a <see cref="MegFileInformation"/> is valid for this instance.
     /// </summary>
     /// <param name="fileParams">The file parameters to check.</param>
     /// <returns><see langword="true"/> if the file parameters are valid; otherwise, <see langword="false"/>.</returns>
-    bool AreFileParamsValid(MegFileHolderParam fileParams);
+    bool AreFileParamsValid(MegFileInformation fileParams);
 }
 
 /// <summary>

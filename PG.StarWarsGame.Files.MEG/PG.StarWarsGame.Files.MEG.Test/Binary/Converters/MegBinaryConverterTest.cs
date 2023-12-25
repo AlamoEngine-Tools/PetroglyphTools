@@ -120,7 +120,7 @@ public abstract class MegBinaryConverterTest
         {
             var nameEntry = binary.FileNameTable[i];
             Assert.AreEqual(model[i].FilePath, nameEntry.FileName);
-            Assert.AreEqual(model[i].OriginalFilePath, nameEntry.OriginalFileName);
+            Assert.AreEqual(model[i].OriginalFilePath, nameEntry.OriginalFilePath);
         }
 
         for (var i = 0; i < binary.FileTable.Count; i++)

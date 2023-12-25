@@ -55,8 +55,7 @@ public class MegFileServiceIntegrationTest
         };
 
         Assert.ThrowsException<FileNotInMegException>(() => _megFileService.CreateMegArchive(
-            new MegFileHolderParam { FilePath = newFileName, FileVersion = meg.FileVersion }, 
-            builderInfo));
+            new MegFileInformation(newFileName, meg.FileInformation.FileVersion), builderInfo));
     }
 
     [TestMethod]
@@ -76,8 +75,7 @@ public class MegFileServiceIntegrationTest
         };
 
         Assert.ThrowsException<FileNotFoundException>(() => _megFileService.CreateMegArchive(
-            new MegFileHolderParam { FilePath = newFileName, FileVersion = meg.FileVersion },
-            builderInfo));
+            new MegFileInformation(newFileName, meg.FileInformation.FileVersion), builderInfo));
     }
 
     //[TestMethod]
@@ -105,7 +103,7 @@ public class MegFileServiceIntegrationTest
     //        var meg = megFileService.Load(megFileName);
 
     //        megFileService.CreateMegArchive(
-    //            new MegFileHolderParam { FilePath = meg.FilePath, FileVersion = meg.FileVersion },
+    //            new MegFileInformation { FilePath = meg.FilePath, FileVersion = meg.FileVersion },
     //            meg.Archive.Select(e => MegFileDataEntryBuilderInfo.FromEntry(meg, e)),
     //            true);
 
@@ -161,8 +159,7 @@ public class MegFileServiceIntegrationTest
             MegFileDataEntryBuilderInfo.FromFile("2.txt", "file")
         };
 
-        _megFileService.CreateMegArchive(
-            new MegFileHolderParam { FilePath = megFileName, FileVersion = MegFileVersion.V1 }, builderInfo);
+        _megFileService.CreateMegArchive(new MegFileInformation(megFileName, MegFileVersion.V1), builderInfo);
 
         var bytes = _fileSystem.File.ReadAllBytes(megFileName);
 
@@ -262,13 +259,10 @@ public class MegFileServiceIntegrationTest
             Assert.AreEqual(expected, entry.FilePath);
         }
 
-        using var param = new MegFileHolderParam
-        {
-            FilePath = expectedData.NewMegFilePath,
-            FileVersion = expectedData.NewMegFileVersion,
-            Key = expectedData.NewKey,
-            IV = expectedData.NewIV
-        };
+        using var param = new MegFileInformation(
+            expectedData.NewMegFilePath, 
+            expectedData.NewMegFileVersion,
+            expectedData.EncryptionData);
 
         var builderInformation = meg.Archive.Select(e =>
             new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
@@ -279,7 +273,7 @@ public class MegFileServiceIntegrationTest
 
         var createdVersion = _megFileService.GetMegFileVersion(expectedData.NewMegFilePath, out var newEncrypted);
         Assert.AreEqual(expectedData.NewMegFileVersion, createdVersion);
-        Assert.AreEqual(expectedData.NewKey is null, !newEncrypted);
+        Assert.AreEqual(expectedData.EncryptionData is null, !newEncrypted);
 
 
         var actualBytes = _fileSystem.File.ReadAllBytes(expectedData.NewMegFilePath);
@@ -298,13 +292,13 @@ public class MegFileServiceIntegrationTest
     {
         Assert.IsNotNull(meg);
         Assert.AreEqual(expectedData.MegFileCount, meg.Content.Count);
-        Assert.AreEqual(expectedData.IsMegFileVersion, meg.FileVersion);
+        Assert.AreEqual(expectedData.IsMegFileVersion, meg.FileInformation.FileVersion);
         Assert.AreEqual(expectedData.EntryNames.Count, meg.Archive.Count);
 
         if (isNewMeg)
-            Assert.AreEqual(expectedData.NewKey is null, !meg.HasEncryption);
+            Assert.AreEqual(expectedData.EncryptionData is null, !meg.FileInformation.HasEncryption);
         else
-            Assert.AreEqual(expectedData.IsMegEncrypted, meg.HasEncryption);
+            Assert.AreEqual(expectedData.IsMegEncrypted, meg.FileInformation.HasEncryption);
 
         for (var i = 0; i < meg.Archive.Count; i++)
         {
@@ -331,9 +325,7 @@ public class MegFileServiceIntegrationTest
 
         public MegFileVersion NewMegFileVersion { get; init; }
 
-        public byte[]? NewKey { get; init; }
-
-        public byte[]? NewIV { get; init; }
+        public MegEncryptionData? EncryptionData { get; init; }
     }
 
 

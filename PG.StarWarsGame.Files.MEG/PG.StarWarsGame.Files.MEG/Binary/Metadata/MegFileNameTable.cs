@@ -9,20 +9,11 @@ using PG.Commons.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
-internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<MegFileNameTableRecord>
+internal class MegFileNameTable : BinaryBase, IMegFileNameTable
 {
     private readonly IReadOnlyList<MegFileNameTableRecord> _megFileNameTableRecords;
 
     public MegFileNameTableRecord this[int i] => _megFileNameTableRecords[i];
-
-    MegFileNameInformation IReadOnlyList<MegFileNameInformation>.this[int i]
-    {
-        get
-        {
-            var entry = _megFileNameTableRecords[i];
-            return new MegFileNameInformation(entry.FileName, entry.OriginalFilePath);
-        }
-    }
 
     public int Count => _megFileNameTableRecords.Count;
 
@@ -55,9 +46,9 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
         return bytes.ToArray();
     }
 
-    IEnumerator<MegFileNameInformation> IEnumerable<MegFileNameInformation>.GetEnumerator()
+    IEnumerator<MegFileNameTableRecord> IEnumerable<MegFileNameTableRecord>.GetEnumerator()
     {
-        return new MegFileNameInformationEnumerator(_megFileNameTableRecords);
+        return _megFileNameTableRecords.GetEnumerator();
     }
 
     public IEnumerator<MegFileNameTableRecord> GetEnumerator()
@@ -68,56 +59,5 @@ internal class MegFileNameTable : BinaryBase, IMegFileNameTable, IEnumerable<Meg
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
-    }
-    
-    private struct MegFileNameInformationEnumerator : IEnumerator<MegFileNameInformation>
-    {
-        private readonly IReadOnlyList<MegFileNameTableRecord> _list;
-
-        private int _position;
-        private MegFileNameTableRecord _currentRecord;
-
-        readonly object IEnumerator.Current => Current;
-
-        public readonly MegFileNameInformation Current
-        {
-            get
-            {
-                var currentRecord = _currentRecord;
-                if (currentRecord.Equals(default(MegFileNameTableRecord)))
-                    return default;
-                return new MegFileNameInformation(currentRecord.FileName, currentRecord.OriginalFilePath);
-            }
-        }
-
-        internal MegFileNameInformationEnumerator(IReadOnlyList<MegFileNameTableRecord> list)
-        {
-            _list = list;
-            _position = 0;
-            _currentRecord = default!;
-        }
-
-        public bool MoveNext()
-        {
-            if (_position < _list.Count)
-            {
-                _currentRecord = _list[_position];
-                ++_position;
-                return true;
-            }
-            _position = _list.Count + 1;
-            _currentRecord = default!;
-            return false;
-        }
-
-        public void Reset()
-        {
-            _currentRecord = default!;
-            _position = 0;
-        }
-
-        public readonly void Dispose()
-        {
-        }
     }
 }

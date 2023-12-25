@@ -26,7 +26,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 {
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
-    public void CreateMegArchive(MegFileHolderParam megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
+    public void CreateMegArchive(MegFileInformation megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
     {
         if (megFileParameters == null)
             throw new ArgumentNullException(nameof(megFileParameters));
@@ -34,7 +34,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         if (builderInformation == null)
             throw new ArgumentNullException(nameof(builderInformation));
 
-        if (megFileParameters.HasEncryption)
+        if (megFileParameters.EncryptionData is not null)
             throw new NotImplementedException("Encrypted archives are currently not supported");
 
         var megFilePath = FileSystem.Path.GetFullPath(megFileParameters.FilePath);
@@ -100,13 +100,9 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         if (encrypted)
             throw new NotImplementedException("Encrypted archives are currently not supported");
 
-        using var param = new MegFileHolderParam
-        {
-            FilePath = filePath, // Is there a valid reason not to use an absolute path here?
-            FileVersion = megVersion
-        };
 
-        //param.Validate();
+        // Is there a valid reason not to use an absolute path here?
+        using var param = new MegFileInformation(filePath, megVersion);
 
         fs.Seek(0, SeekOrigin.Begin);
         var megMetadata = LoadAndValidateMetadata(fs, param);
@@ -116,7 +112,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         return new MegFile(megArchive, param, Services);
     }
 
-    private IMegFileMetadata LoadAndValidateMetadata(Stream megStream, MegFileHolderParam param)
+    private IMegFileMetadata LoadAndValidateMetadata(Stream megStream, MegFileInformation param)
     {
         using var binaryReader = BinaryServiceFactory.GetReader(param.FileVersion);
 

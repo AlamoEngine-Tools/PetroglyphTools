@@ -8,12 +8,8 @@ using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
-internal class DatFileWriter : ServiceBase, IDatFileWriter
+internal class DatFileWriter(IServiceProvider services) : ServiceBase(services), IDatFileWriter
 {
-    public DatFileWriter(IServiceProvider services) : base(services)
-    {
-    }
-
     public void WriteBinary(string absoluteTargetFilePath, IDatFileMetadata model)
     {
         string directory = FileSystem.Path.GetDirectoryName(absoluteTargetFilePath) ??

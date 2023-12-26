@@ -2,32 +2,25 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.Binary;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class KeyTableRecord : IBinary, IComparable<KeyTableRecord>
+internal sealed class KeyTableRecord : IDatKey, IComparable<KeyTableRecord>
 {
-    private Crc32 Crc32 => ChecksumService.Instance.GetChecksum(Key, DatFileConstants.TextKeyEncoding);
-
-    public KeyTableRecord(string key)
-    {
-        Key = key.Replace("\0", string.Empty);
-    }
-
-    public KeyTableRecord(byte[] bytes, long index, long stringLength)
-    {
-        char[] chars =
-            DatFileConstants.TextKeyEncoding.GetChars(bytes, Convert.ToInt32(index), Convert.ToInt32(stringLength));
-        Key = new string(chars);
-    }
+    public Crc32 Crc32 { get; }
 
     public string Key { get; }
 
     public byte[] Bytes => DatFileConstants.TextKeyEncoding.GetBytes(Key);
 
     public int Size => Bytes.Length;
+
+    public KeyTableRecord(string key, Crc32 checksum)
+    {
+        Key = key.Replace("\0", string.Empty);
+        Crc32 = checksum;
+    }
 
     public int CompareTo(KeyTableRecord? other)
     {

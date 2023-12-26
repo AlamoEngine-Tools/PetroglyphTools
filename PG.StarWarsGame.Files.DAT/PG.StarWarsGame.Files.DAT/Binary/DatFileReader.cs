@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -41,11 +43,13 @@ internal class DatFileReader : ServiceBase, IDatFileReader
 
         var valueTable = new ValueTable(valueRecords);
         var keyRecords = new List<KeyTableRecord>();
+        var checksumService = Services.GetRequiredService<IChecksumService>();
         for (var i = 0; i < header.RecordCount; i++)
         {
             byte[] keyBytes = reader.ReadBytes((int)indexTable[i].KeyLength);
             string key = DatFileConstants.TextKeyEncoding.GetString(keyBytes);
-            keyRecords.Add(new KeyTableRecord(key));
+            var crc = checksumService.GetChecksum(key, DatFileConstants.TextKeyEncoding);
+            keyRecords.Add(new KeyTableRecord(key, crc));
         }
 
         var keyTable = new KeyTable(keyRecords);

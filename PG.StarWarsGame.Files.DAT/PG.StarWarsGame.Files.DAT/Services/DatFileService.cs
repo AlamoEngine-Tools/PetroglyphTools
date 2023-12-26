@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Extensions.Logging;
 using PG.Commons.Common.Exceptions;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -15,20 +14,14 @@ using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Services;
 
-internal class DatFileService : ServiceBase, IDatFileService
+internal class DatFileService(IServiceProvider services) : ServiceBase(services), IDatFileService
 {
-    public DatFileService(IServiceProvider services) : base(services)
-    {
-    }
-
-    public void StoreDatFile(string datFileName, string targetDirectory, IEnumerable<DatFileEntry> entries,
-        DatFileType datFileType)
+    public void StoreDatFile(string datFileName, string targetDirectory, IEnumerable<DatFileEntry> entries, DatFileType datFileType)
     {
         ThrowHelper.ThrowIfNullOrWhiteSpace(datFileName);
         ThrowHelper.ThrowIfNullOrWhiteSpace(targetDirectory);
 
-        // ReSharper disable once PossibleMultipleEnumeration
-        var entryList = entries.ToList();
+        IList<DatFileEntry> entryList = entries.ToList();
 
         if (!entryList.Any())
         {
@@ -41,32 +34,19 @@ internal class DatFileService : ServiceBase, IDatFileService
         }
 
         var absoluteFilePath = FileSystem.Path.Combine(targetDirectory, datFileName);
-        var fileInfo = FileSystem.FileInfo.New(absoluteFilePath);
-        var extension = fileInfo.Extension;
-        var fileType = new DatAlamoFileType();
-        if (!$".{fileType.DefaultFileExtension}".ToLower().Equals(extension.ToLower()))
-        {
-            Logger.LogInformation(
-                $"The provided file name {datFileName} does not end with the correct extension of \".{fileType.DefaultFileExtension}\".");
-            if (fileInfo.Extension == string.Empty)
-            {
-                absoluteFilePath = absoluteFilePath + "." + fileType.DefaultFileExtension;
-            }
-        }
 
         if (datFileType == DatFileType.OrderedByCrc32)
         {
-            entryList.Sort();
+            entryList = Crc32Utilities.SortByCrc32(entryList);
         }
 
-        // ReSharper disable once PossibleMultipleEnumeration
-        var datHolder = new DatFileHolder(entryList.AsReadOnly(),
-            new DatFileHolderParam() { FilePath = absoluteFilePath, Order = datFileType }, Services);
+        var datModel = new DatModel(entryList, datFileType);
 
         var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??
                                                  throw new LibraryInitialisationException(
-                                                     $"No implementation could be found for {nameof(IDatFileConverter)}."));
-        factory.GetWriter().WriteBinary(absoluteFilePath, factory.GetConverter().FromHolder(datHolder));
+                                                     $"No implementation could be found for {nameof(IDatBinaryConverter)}."));
+        
+        factory.GetWriter().WriteBinary(absoluteFilePath, factory.GetConverter().ModelToBinary(datModel));
     }
 
     public IDatFile LoadDatFile(string filePath)
@@ -78,10 +58,14 @@ internal class DatFileService : ServiceBase, IDatFileService
 
         var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??
                                                  throw new LibraryInitialisationException(
-                                                     $"No implementation could be found for {nameof(IDatFileConverter)}."));
-        return factory.GetConverter()
-            .ToHolder(new DatFileHolderParam() { FilePath = filePath },
-                factory.GetReader().ReadBinary(FileSystem.FileStream.New(filePath, FileMode.Open)));
+                                                     $"No implementation could be found for {nameof(IDatBinaryConverter)}."));
+
+        var fileInfo = new DatFileInformation { FilePath = filePath };
+
+        var datModel =  factory.GetConverter()
+            .BinaryToModel(factory.GetReader().ReadBinary(FileSystem.FileStream.New(filePath, FileMode.Open)));
+
+        return new DatFileHolder(datModel, fileInfo, Services);
     }
 
     public DatFileType PeekDatFileType(string filePath)
@@ -93,7 +77,7 @@ internal class DatFileService : ServiceBase, IDatFileService
 
         var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??
                                                  throw new LibraryInitialisationException(
-                                                     $"No implementation could be found for {nameof(IDatFileConverter)}."));
+                                                     $"No implementation could be found for {nameof(IDatBinaryConverter)}."));
         var reader = (DatFileReader)factory.GetReader();
         return reader.PeekFileType(FileSystem.FileStream.New(filePath, FileMode.Open));
     }

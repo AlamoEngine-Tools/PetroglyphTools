@@ -22,7 +22,7 @@ public static class DatDomain
             .AddSingleton<IDatFileService>(sp => new DatFileService(sp))
             .AddSingleton<IDatBinaryServiceFactory>(sp => new DatBinaryServiceFactory(sp))
             .AddTransient<IDatFileReader>(sp => new DatFileReader(sp))
-            .AddTransient<IDatFileConverter>(sp => new DatFileConverter(sp))
+            .AddTransient<IDatBinaryConverter>(sp => new DatBinaryConverter(sp))
             .AddTransient<IDatFileWriter>(sp => new DatFileWriter(sp))
             ;
     }

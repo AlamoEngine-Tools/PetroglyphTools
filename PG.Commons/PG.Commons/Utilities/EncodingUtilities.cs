@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Runtime.InteropServices;
+
 #if !NETSTANDARD2_1_OR_GREATER
 using System.Diagnostics;
 #endif
@@ -71,7 +73,7 @@ public static class EncodingUtilities
         return encodingType == asciiType ||
                (asciiType.IsAssignableFrom(encodingType) && encodingType.Assembly == asciiType.Assembly);
     }
-    
+
     /// <summary>
     /// Encodes a string value.
     /// </summary>
@@ -108,7 +110,7 @@ public static class EncodingUtilities
     /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
     public static string EncodeString(this Encoding encoding, ReadOnlySpan<char> value)
     {
-        if (encoding == null) 
+        if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
         return EncodeString(encoding, value, encoding.GetMaxByteCount(value.Length));
     }
@@ -150,4 +152,27 @@ public static class EncodingUtilities
         }
 #endif
     }
+
+
+#if !NETSTANDARD2_1_OR_GREATER && !NET
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="encoding"></param>
+    /// <param name="value"></param>
+    /// <param name="destination"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static unsafe int GetBytes(this Encoding encoding, ReadOnlySpan<char> value, Span<byte> destination)
+    {
+        if (encoding == null)
+            throw new ArgumentNullException(nameof(encoding));
+
+        fixed (char* charsPtr = &MemoryMarshal.GetReference(value))
+        fixed (byte* bytesPtr = &MemoryMarshal.GetReference(destination))
+        {
+            return encoding.GetBytes(charsPtr, value.Length, bytesPtr, destination.Length);
+        }
+    }
+#endif
 }

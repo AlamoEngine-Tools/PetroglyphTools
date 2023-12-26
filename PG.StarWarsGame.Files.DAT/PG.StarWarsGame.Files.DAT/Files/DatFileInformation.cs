@@ -6,8 +6,8 @@ using PG.Commons.Files;
 namespace PG.StarWarsGame.Files.DAT.Files;
 
 /// <inheritdoc cref="PetroglyphFileInformation" />
-public sealed record DatFileHolderParam : PetroglyphFileInformation
+public sealed record DatFileInformation : PetroglyphFileInformation
 {
-    /// <inheritdoc cref="DatFileHolder.Order" />
+    /// <inheritdoc cref="IDatModel.Order" />
     public DatFileType Order { get; init; }
 }

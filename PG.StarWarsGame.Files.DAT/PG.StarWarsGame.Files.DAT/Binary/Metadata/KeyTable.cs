@@ -9,12 +9,13 @@ using PG.Commons.Binary;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class KeyTable : BinaryBase, IKeyTable, IEnumerable<KeyTableRecord>
+internal sealed class KeyTable : BinaryBase, IKeyTable
 {
     private readonly IReadOnlyList<KeyTableRecord> _keyTableRecords;
 
-    public KeyTableRecord this[int i] => _keyTableRecords[i];
-    string IKeyTable.this[int i] => _keyTableRecords[i].Key;
+    public int Count => _keyTableRecords.Count;
+
+    public KeyTableRecord this[int index] => _keyTableRecords[index];
 
     public KeyTable(IList<KeyTableRecord> keyTableRecords)
     {
@@ -30,14 +31,9 @@ internal sealed class KeyTable : BinaryBase, IKeyTable, IEnumerable<KeyTableReco
     protected override byte[] ToBytesCore()
     {
         var bytes = new List<byte>(Size);
-        foreach (KeyTableRecord? keyTableRecord in _keyTableRecords)
+        foreach (var keyTableRecord in _keyTableRecords)
             bytes.AddRange(keyTableRecord.Bytes);
         return bytes.ToArray();
-    }
-
-    IEnumerator<string> IEnumerable<string>.GetEnumerator()
-    {
-        return _keyTableRecords.Select(x => x.Key).GetEnumerator();
     }
 
     public IEnumerator<KeyTableRecord> GetEnumerator()

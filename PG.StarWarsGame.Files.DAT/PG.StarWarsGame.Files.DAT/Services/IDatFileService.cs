@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
-using PG.Commons.Services;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 
@@ -12,7 +11,7 @@ namespace PG.StarWarsGame.Files.DAT.Services;
 ///     A service to load and create Petroglyph's
 ///     <a href="https://modtools.petrolution.net/docs/DatFileFormat"> .DAT files</a>
 /// </summary>
-public interface IDatFileService : IService
+public interface IDatFileService
 {
     /// <summary>
     ///     Takes a list of <see cref="DatFileEntry" />s and packs them into a DAT file.

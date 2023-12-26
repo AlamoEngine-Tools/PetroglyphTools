@@ -3,7 +3,7 @@
 
 using System;
 using PG.Commons.Binary;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 

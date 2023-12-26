@@ -31,7 +31,7 @@ internal sealed class IndexTable : BinaryBase, IIndexTable, IEnumerable<IndexTab
     protected override byte[] ToBytesCore()
     {
         var bytes = new List<byte>(Size);
-        foreach (IndexTableRecord? record in _indexTableRecords) bytes.AddRange(record.Bytes);
+        foreach (var record in _indexTableRecords) bytes.AddRange(record.Bytes);
         return bytes.ToArray();
     }
 

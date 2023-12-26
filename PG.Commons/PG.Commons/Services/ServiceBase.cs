@@ -13,7 +13,7 @@ namespace PG.Commons.Services;
 /// <summary>
 /// Base class for services.
 /// </summary>
-public abstract class ServiceBase : DisposableObject, IService
+public abstract class ServiceBase : DisposableObject
 {
     /// <summary>
     /// The logger of this service.<br/>

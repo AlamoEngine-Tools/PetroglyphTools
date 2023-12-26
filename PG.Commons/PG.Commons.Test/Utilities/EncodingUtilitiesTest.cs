@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Utilities;
@@ -10,6 +11,53 @@ namespace PG.Commons.Test.Utilities;
 [TestClass]
 public class EncodingUtilitiesTest
 {
+
+#if NETFRAMEWORK
+
+    [TestMethod]
+    public void Test_GetBytes_Throws()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() => EncodingUtilities.GetBytes(null!, "".AsSpan(), Span<byte>.Empty));
+
+        var encodings = Encoding.GetEncodings().Select(x => Encoding.GetEncoding(x.Name));
+
+        foreach (var encoding in encodings)
+        {
+            Assert.ThrowsException<ArgumentNullException>(() =>
+            {
+                encoding.GetBytes((string)null!);
+            });
+
+            Assert.ThrowsException<ArgumentNullException>(() =>
+            {
+                encoding.GetBytes(((string)null).AsSpan(), new byte[] { 10 }.AsSpan());
+            });
+        }
+    }
+
+    [TestMethod]
+    [DataRow("")]
+    [DataRow("\0")]
+    [DataRow("  ")]
+    [DataRow("123")]
+    [DataRow("üöä")]
+    [DataRow("123ü")]
+    [DataRow("😅")]
+    public void Test_GetBytes(string data)
+    {
+        var encodings = Encoding.GetEncodings().Select(x => Encoding.GetEncoding(x.Name));
+
+        foreach (var encoding in encodings)
+        {
+            var expectedBytes = encoding.GetBytes(data);
+            var actualBytes = new byte[encoding.GetMaxByteCount(data.Length)].AsSpan();
+            var n = encoding.GetBytes(data.AsSpan(), actualBytes);
+            CollectionAssert.AreEqual(expectedBytes, actualBytes.Slice(0, n).ToArray());
+        }
+    }
+
+#endif
+
     [TestMethod]
     public void Test__EncodeString_NullArgs_Throws()
     {

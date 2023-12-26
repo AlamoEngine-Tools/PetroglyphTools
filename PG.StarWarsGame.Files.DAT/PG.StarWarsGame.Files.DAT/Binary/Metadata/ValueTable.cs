@@ -30,7 +30,7 @@ internal sealed class ValueTable : BinaryBase, IValueTable, IEnumerable<ValueTab
     protected override byte[] ToBytesCore()
     {
         var bytes = new List<byte>(Size);
-        foreach (ValueTableRecord? valueTableRecord in _valueTableRecords)
+        foreach (var valueTableRecord in _valueTableRecords)
             bytes.AddRange(valueTableRecord.Bytes);
         return bytes.ToArray();
     }

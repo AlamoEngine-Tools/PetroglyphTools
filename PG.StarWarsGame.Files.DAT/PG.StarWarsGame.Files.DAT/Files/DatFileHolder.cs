@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.DAT.Files;
 public sealed class DatFileHolder : PetroglyphFileHolder<IDatModel, DatFileInformation>, IDatFile
 {
     /// <inheritdoc />
-    public DatFileHolder(IDatModel model, DatFileInformation param, IServiceProvider serviceProvider) : base(model, param, serviceProvider)
+    public DatFileHolder(IDatModel model, DatFileInformation fileInfo, IServiceProvider serviceProvider) : base(model, fileInfo, serviceProvider)
     {
     }
 }

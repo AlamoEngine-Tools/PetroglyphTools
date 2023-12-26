@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+#if NETSTANDARD2_0 || NETFRAMEWORK
 using System.Runtime.InteropServices;
-
-#if !NETSTANDARD2_1_OR_GREATER
-using System.Diagnostics;
 #endif
 
 namespace PG.Commons.Utilities;
@@ -139,30 +137,25 @@ public static class EncodingUtilities
 
         var buffer = maxByteCount <= 256 ? stackalloc byte[maxByteCount] : new byte[maxByteCount];
 
-#if NETSTANDARD2_1_OR_GREATER || NET
         var bytesWritten = encoding.GetBytes(value, buffer);
+
+#if NETSTANDARD2_1_OR_GREATER || NET
         return encoding.GetString(buffer.Slice(0, bytesWritten));
 #else
-        fixed (char* pFileName = value)
-        fixed (byte* pBuffer = buffer)
-        {
-            var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, maxByteCount);
-            Debug.Assert(bytesWritten <= maxByteCount);
+        fixed (byte* pBuffer = &MemoryMarshal.GetReference(buffer))
             return encoding.GetString(pBuffer, bytesWritten);
-        }
 #endif
     }
 
-
-#if !NETSTANDARD2_1_OR_GREATER && !NET
+#if NETSTANDARD2_0 || NETFRAMEWORK
     /// <summary>
-    /// 
+    /// Encodes a set of characters into a sequence of bytes.
     /// </summary>
-    /// <param name="encoding"></param>
-    /// <param name="value"></param>
-    /// <param name="destination"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="encoding">The encoding to use.</param>
+    /// <param name="value">The span containing the set of characters to encode.</param>
+    /// <param name="destination">The byte span to hold the encoded bytes.</param>
+    /// <returns>The number of encoded bytes.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langword="null"/>.</exception>
     public static unsafe int GetBytes(this Encoding encoding, ReadOnlySpan<char> value, Span<byte> destination)
     {
         if (encoding == null)

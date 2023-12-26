@@ -41,7 +41,7 @@ public class MegFileExtractorTest
 
 
 
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_WINDOWS)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
     [TestMethod]
     [DataRow("a.txt", "new", true, "C:\\new\\a.txt")]
     [DataRow("path/a.txt", "new", true, "C:\\new\\path\\a.txt")]
@@ -64,7 +64,7 @@ public class MegFileExtractorTest
         Assert.AreEqual(expectedPath, path);
     }
 
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_LINUX)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
     [TestMethod]
     [DataRow("a.txt", "new", true, "/new/a.txt")]
     [DataRow("path/a.txt", "new", true, "/new/path/a.txt")]
@@ -237,7 +237,7 @@ public class MegFileExtractorTest
         CollectionAssert.AreEqual(megFileData, actualFileData);
     }
 
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_WINDOWS)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
     [ExpectedException(typeof(ArgumentException))]
     [DataRow("c:/")]
     [DataRow("c:")]
@@ -253,7 +253,7 @@ public class MegFileExtractorTest
     }
 
     [ExpectedException(typeof(ArgumentException))]
-    [PlatformSpecificTestMethod(TestConstants.PLATFORM_LINUX)]
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
     [DataRow("/")]
     public void Test_ExtractData_Throws_IllegalPath_Linux(string filePathWhereToExtract)
     {

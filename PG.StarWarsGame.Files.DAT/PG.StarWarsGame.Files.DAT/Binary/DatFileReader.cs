@@ -26,9 +26,9 @@ internal class DatFileReader : ServiceBase, IDatFileReader
         var indexTableRecords = new List<IndexTableRecord>();
         for (var i = 0; i < header.RecordCount; i++)
         {
-            uint rawCrc32 = reader.ReadUInt32();
-            uint valueLength = reader.ReadUInt32();
-            uint keyLength = reader.ReadUInt32();
+            var rawCrc32 = reader.ReadUInt32();
+            var valueLength = reader.ReadUInt32();
+            var keyLength = reader.ReadUInt32();
             indexTableRecords.Add(new IndexTableRecord(new Crc32(rawCrc32), keyLength, valueLength));
         }
 
@@ -36,8 +36,8 @@ internal class DatFileReader : ServiceBase, IDatFileReader
         var valueRecords = new List<ValueTableRecord>();
         for (var i = 0; i < header.RecordCount; i++)
         {
-            byte[] valueBytes = reader.ReadBytes((int)indexTable[i].ValueLength);
-            string value = DatFileConstants.TextValueEncoding.GetString(valueBytes);
+            var valueBytes = reader.ReadBytes((int)indexTable[i].ValueLength);
+            var value = DatFileConstants.TextValueEncoding.GetString(valueBytes);
             valueRecords.Add(new ValueTableRecord(value));
         }
 
@@ -46,8 +46,8 @@ internal class DatFileReader : ServiceBase, IDatFileReader
         var checksumService = Services.GetRequiredService<IChecksumService>();
         for (var i = 0; i < header.RecordCount; i++)
         {
-            byte[] keyBytes = reader.ReadBytes((int)indexTable[i].KeyLength);
-            string key = DatFileConstants.TextKeyEncoding.GetString(keyBytes);
+            var keyBytes = reader.ReadBytes((int)indexTable[i].KeyLength);
+            var key = DatFileConstants.TextKeyEncoding.GetString(keyBytes);
             var crc = checksumService.GetChecksum(key, DatFileConstants.TextKeyEncoding);
             keyRecords.Add(new KeyTableRecord(key, crc));
         }
@@ -65,15 +65,15 @@ internal class DatFileReader : ServiceBase, IDatFileReader
         var indexTableRecords = new List<IndexTableRecord>();
         for (var i = 0; i < header.RecordCount; i++)
         {
-            uint rawCrc32 = reader.ReadUInt32();
-            uint valueLength = reader.ReadUInt32();
-            uint keyLength = reader.ReadUInt32();
+            var rawCrc32 = reader.ReadUInt32();
+            var valueLength = reader.ReadUInt32();
+            var keyLength = reader.ReadUInt32();
             indexTableRecords.Add(new IndexTableRecord(new Crc32(rawCrc32), keyLength, valueLength));
         }
 
-        DatFileType fileType = DatFileType.OrderedByCrc32;
+        var fileType = DatFileType.OrderedByCrc32;
         Crc32? currentCrc = null;
-        foreach (IndexTableRecord record in indexTableRecords)
+        foreach (var record in indexTableRecords)
         {
             if (currentCrc is null)
             {

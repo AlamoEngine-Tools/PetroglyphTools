@@ -29,8 +29,8 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
         
         for (var i = 0; i < model.Count; i++)
         {
-            string value = (string.IsNullOrWhiteSpace(model[i].Value) ? "" : model[i].Value) ?? "";
-            string key = model[i].Key.Replace("\0", string.Empty);
+            var value = (string.IsNullOrWhiteSpace(model[i].Value) ? "" : model[i].Value) ?? "";
+            var key = model[i].Key.Replace("\0", string.Empty);
 
 
             var keyChecksum = checksumService.GetChecksum(key, DatFileConstants.TextKeyEncoding);
@@ -77,7 +77,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
     public IDatModel BinaryToModel(IDatFileMetadata binary)
     {
         var isSorted = true;
-        Crc32 currentCrc = binary.IndexTable[0].Crc32;
+        var currentCrc = binary.IndexTable[0].Crc32;
         for (var i = 1; i < binary.RecordNumber; i++)
         {
             if (binary.IndexTable[i].Crc32 > currentCrc)

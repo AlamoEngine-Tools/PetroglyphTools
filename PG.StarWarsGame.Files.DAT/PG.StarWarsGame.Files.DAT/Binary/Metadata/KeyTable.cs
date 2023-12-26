@@ -31,7 +31,7 @@ internal sealed class KeyTable : BinaryBase, IKeyTable
     protected override byte[] ToBytesCore()
     {
         var bytes = new List<byte>(Size);
-        foreach (KeyTableRecord? keyTableRecord in _keyTableRecords)
+        foreach (var keyTableRecord in _keyTableRecords)
             bytes.AddRange(keyTableRecord.Bytes);
         return bytes.ToArray();
     }

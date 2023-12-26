@@ -26,7 +26,7 @@ internal sealed class ValueTableRecord : IBinary
 
     public ValueTableRecord(byte[] bytes, long index, long stringLength)
     {
-        char[] chars =
+        var chars =
             DatFileConstants.TextValueEncoding.GetChars(bytes, Convert.ToInt32(index),
                 Convert.ToInt32(stringLength * 2));
         Value = new string(chars);

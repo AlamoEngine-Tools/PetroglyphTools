@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace PG.Commons.Utilities;
@@ -32,14 +34,11 @@ public static class StringUtilities
         var size = encoding.GetByteCount(value);   
 #else
         int size;
-        if (value.Length == 0)
-            size = 0;
-        else
+        unsafe
         {
-            unsafe
+            fixed (char* charsPtr = &MemoryMarshal.GetReference(value))
             {
-                fixed (char* cp = value)
-                    size = encoding.GetByteCount(cp, value.Length);
+                size = encoding.GetByteCount(charsPtr, value.Length);
             }
         }
 #endif
@@ -56,7 +55,7 @@ public static class StringUtilities
     /// </summary>
     /// <param name="value">The string to validate.</param>
     /// <returns>The actual length of the value in characters.</returns>
-    /// <exception cref="ArgumentException">When the string was too long.</exception>
+    /// <exception cref="ArgumentException">The string is too long.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ushort ValidateStringCharLengthUInt16(ReadOnlySpan<char> value)
     {

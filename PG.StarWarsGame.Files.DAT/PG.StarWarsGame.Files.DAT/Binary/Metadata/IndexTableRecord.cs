@@ -3,23 +3,17 @@
 
 using System;
 using System.Buffers.Binary;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class IndexTableRecord : IDatRecordDescriptor, IComparable<IndexTableRecord>
+internal sealed class IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength) : IDatRecordDescriptor, IComparable<IndexTableRecord>
 {
-    public Crc32 Crc32 { get; }
-    public uint KeyLength { get; }
-    public uint ValueLength { get; }
+    public Crc32 Crc32 { get; } = crc32;
 
+    public uint KeyLength { get; } = keyLength;
 
-    public IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength)
-    {
-        Crc32 = crc32;
-        KeyLength = keyLength;
-        ValueLength = valueLength;
-    }
+    public uint ValueLength { get; } = valueLength;
 
     public byte[] Bytes
     {
@@ -38,7 +32,7 @@ internal sealed class IndexTableRecord : IDatRecordDescriptor, IComparable<Index
         }
     }
 
-    public int Size { get; } = sizeof(uint) * 3;
+    public int Size => sizeof(uint) * 3;
 
     public int CompareTo(IndexTableRecord? other)
     {

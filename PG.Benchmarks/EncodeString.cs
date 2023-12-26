@@ -4,7 +4,7 @@ using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 #if NETFRAMEWORK
-using System.Diagnostics;
+using System.Runtime.InteropServices;
 #endif
 
 namespace PG.Benchmarks;
@@ -16,7 +16,7 @@ namespace PG.Benchmarks;
 public class EncodeString
 {
     [Params(
-        "",
+       "",
        "string value with non-ascii chars öäü",
         "very short",
         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore " +
@@ -37,12 +37,14 @@ public class EncodeString
     [Benchmark(Baseline = true)]
     public string Simplest()
     {
-        var bytes = _encoding.GetBytes(StringValue);
-        return _encoding.GetString(bytes);
+        var encoding = _encoding;
+
+        var bytes = encoding.GetBytes(StringValue);
+        return encoding.GetString(bytes);
     }
 
     [Benchmark]
-    public unsafe string New()
+    public unsafe string Current()
     {
         var count = _byteCount;
         var encoding = _encoding;
@@ -57,14 +59,24 @@ public class EncodeString
         var bytesWritten = encoding.GetBytes(value, buffer);
         return encoding.GetString(buffer.Slice(0, bytesWritten));
 #else
-
-        fixed (char* pFileName = &value.GetPinnableReference())
-        fixed (byte* pBuffer = buffer)
-        {
-            var bytesWritten = encoding.GetBytes(pFileName, value.Length, pBuffer, count);
-            Debug.Assert(bytesWritten <= count);
+        var bytesWritten = GetBytes(encoding, value, buffer);
+        fixed (byte* pBuffer = &MemoryMarshal.GetReference(buffer))
             return encoding.GetString(pBuffer, bytesWritten);
-        }
 #endif
     }
+
+
+#if !NETSTANDARD2_1_OR_GREATER && !NET
+    public static unsafe int GetBytes(Encoding encoding, ReadOnlySpan<char> value, Span<byte> destination)
+    {
+        if (encoding == null)
+            throw new ArgumentNullException(nameof(encoding));
+
+        fixed (char* charsPtr = &MemoryMarshal.GetReference(value))
+        fixed (byte* bytesPtr = &MemoryMarshal.GetReference(destination))
+        {
+            return encoding.GetBytes(charsPtr, value.Length, bytesPtr, destination.Length);
+        }
+    }
+#endif
 }

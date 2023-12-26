@@ -7,7 +7,6 @@ using PG.Commons.Binary;
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
 internal sealed class DatFile : BinaryBase, IDatFileMetadata
-
 {
     internal DatHeader Header { get; }
     internal IndexTable IndexTable { get; }

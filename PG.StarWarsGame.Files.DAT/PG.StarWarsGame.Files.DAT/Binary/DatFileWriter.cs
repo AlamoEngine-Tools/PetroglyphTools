@@ -8,21 +8,17 @@ using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
-internal class DatFileWriter : ServiceBase, IDatFileWriter
+internal class DatFileWriter(IServiceProvider services) : ServiceBase(services), IDatFileWriter
 {
-    public DatFileWriter(IServiceProvider services) : base(services)
-    {
-    }
-
     public void WriteBinary(string absoluteTargetFilePath, IDatFileMetadata model)
     {
-        string directory = FileSystem.Path.GetDirectoryName(absoluteTargetFilePath) ??
-                           throw new ArgumentException(
-                               $"No valid directory could be extracted from the provided path {absoluteTargetFilePath}",
-                               nameof(absoluteTargetFilePath));
+        var directory = FileSystem.Path.GetDirectoryName(absoluteTargetFilePath) ??
+                        throw new ArgumentException(
+                            $"No valid directory could be extracted from the provided path {absoluteTargetFilePath}",
+                            nameof(absoluteTargetFilePath));
         FileSystem.Directory.CreateDirectory(directory);
-        using FileSystemStream stream = FileSystem.File.Create(absoluteTargetFilePath);
-        byte[] data = model.Bytes;
+        using var stream = FileSystem.File.Create(absoluteTargetFilePath);
+        var data = model.Bytes;
         stream.Write(data, 0, data.Length);
     }
 }

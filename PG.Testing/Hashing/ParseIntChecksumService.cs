@@ -5,9 +5,9 @@ namespace PG.Testing.Hashing;
 
 public class ParseIntChecksumService : IChecksumService
 {
-    public Crc32 GetChecksum(string s, Encoding encoding)
+    public Crc32 GetChecksum(string value, Encoding encoding)
     {
-        var value = int.Parse(s);
-        return new Crc32(value);
+        var intValue = int.Parse(value);
+        return new Crc32(intValue);
     }
 }

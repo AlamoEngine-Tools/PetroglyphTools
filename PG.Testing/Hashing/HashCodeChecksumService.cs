@@ -5,8 +5,8 @@ namespace PG.Testing.Hashing;
 
 public class HashCodeChecksumService : IChecksumService
 {
-    public Crc32 GetChecksum(string s, Encoding encoding)
+    public Crc32 GetChecksum(string value, Encoding encoding)
     {
-        return new Crc32(s.GetHashCode());
+        return new Crc32(value.GetHashCode());
     }
 }

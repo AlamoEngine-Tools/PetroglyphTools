@@ -73,6 +73,19 @@ public sealed class MegFileDataEntryBuilderInfo
     }
 
     /// <summary>
+    /// Creates a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a data entry reference.
+    /// </summary>
+    /// <param name="dataEntryReference">The data entry reference.</param>
+    /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used; otherwise the current file path will be used.</param>
+    /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used; otherwise the current encryption state path will be used.</param>
+    /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty or contains only whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="dataEntryReference"/> or <see paramref="dataEntry"/> is <see langword="null"/>.</exception>
+    public static MegFileDataEntryBuilderInfo FromEntryReference(MegDataEntryLocationReference dataEntryReference, string? overrideFilePath = null, bool? overrideEncrypted = null)
+    {
+        return new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(dataEntryReference), overrideFilePath, null, overrideEncrypted);
+    }
+
+    /// <summary>
     /// Creates a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a local file.
     /// </summary>
     /// <param name="filePath">The local file path.</param>

@@ -60,4 +60,10 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
     {
         return HashCode.Combine(MegFile, DataEntry);
     }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return $"{MegFile.FilePath}::{DataEntry.FilePath}";
+    }
 }

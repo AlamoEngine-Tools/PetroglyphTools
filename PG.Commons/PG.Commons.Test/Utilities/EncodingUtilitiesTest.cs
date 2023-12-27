@@ -11,29 +11,27 @@ namespace PG.Commons.Test.Utilities;
 [TestClass]
 public class EncodingUtilitiesTest
 {
-
-#if NETFRAMEWORK
-
-    [TestMethod]
-    public void Test_GetBytes_Throws()
+    private void ForEachEncoding(Action<Encoding> action)
     {
-        Assert.ThrowsException<ArgumentNullException>(() => EncodingUtilities.GetBytes(null!, "".AsSpan(), Span<byte>.Empty));
-
         var encodings = Encoding.GetEncodings().Select(x => Encoding.GetEncoding(x.Name));
-
         foreach (var encoding in encodings)
         {
-            Assert.ThrowsException<ArgumentNullException>(() =>
+            try
             {
-                encoding.GetBytes((string)null!);
-            });
-
-            Assert.ThrowsException<ArgumentNullException>(() =>
+                action(encoding);
+            }
+            catch
             {
-                encoding.GetBytes(((string)null).AsSpan(), new byte[] { 10 }.AsSpan());
-            });
+                Console.WriteLine($"Failed for encoding '{encoding}'");
+                throw;
+            }
         }
     }
+
+
+    #region .NET Framework Extensions
+
+    // Enabled for .NET Core too, to make sure both runtimes behave the same.
 
     [TestMethod]
     [DataRow("")]
@@ -45,18 +43,81 @@ public class EncodingUtilitiesTest
     [DataRow("😅")]
     public void Test_GetBytes(string data)
     {
-        var encodings = Encoding.GetEncodings().Select(x => Encoding.GetEncoding(x.Name));
-
-        foreach (var encoding in encodings)
+        ForEachEncoding(encoding =>
         {
             var expectedBytes = encoding.GetBytes(data);
             var actualBytes = new byte[encoding.GetMaxByteCount(data.Length)].AsSpan();
             var n = encoding.GetBytes(data.AsSpan(), actualBytes);
             CollectionAssert.AreEqual(expectedBytes, actualBytes.Slice(0, n).ToArray());
-        }
+        });
     }
 
+    [TestMethod]
+    public void Test_GetBytes_DefaultSpan()
+    {
+        ForEachEncoding(e =>
+        {
+            var bytes = new byte[] { 1, 2 };
+            var n = e.GetBytes(default, bytes);
+
+            Assert.AreEqual(0, n);
+            // Check that bytes is unaltered
+            CollectionAssert.AreEqual(new byte[] { 1, 2 }, bytes);
+        });
+    }
+
+    [TestMethod]
+    [DataRow("")]
+    [DataRow("\0")]
+    [DataRow("  ")]
+    [DataRow("123")]
+    [DataRow("üöä")]
+    [DataRow("123ü")]
+    [DataRow("😅")]
+    public void Test_GetByteCount(string data)
+    {
+        ForEachEncoding(e =>
+        {
+            var actualCount = e.GetByteCount(data);
+            Assert.AreEqual(actualCount, e.GetByteCount(data.AsSpan()));
+        });
+    }
+
+    [TestMethod]
+    public void Test_GetByteCount_DefaultSpan()
+    {
+        ForEachEncoding(e =>
+        {
+            Assert.AreEqual(0, e.GetByteCount(default(ReadOnlySpan<char>)));
+        });
+    }
+
+#if NETFRAMEWORK
+    [TestMethod]
+    public void Test_GetString_DefaultSpan()
+    {
+        ForEachEncoding(e =>
+        {
+            // Force compiler to use EncodingUtilities instead of implicit casting to byte[]
+            Assert.AreEqual(string.Empty, EncodingUtilities.GetString(e, default(ReadOnlySpan<byte>)));
+        });
+    }
+
+    [TestMethod]
+    public void Test_GetString()
+    {
+        // Force compiler to use EncodingUtilities instead of implicit casting to byte[]
+        Assert.AreEqual("\0", EncodingUtilities.GetString(Encoding.ASCII, new byte[] { 00 }.AsSpan()));
+        Assert.AreEqual("012", EncodingUtilities.GetString(Encoding.ASCII, "012"u8.ToArray().AsSpan()));
+        Assert.AreEqual("?", EncodingUtilities.GetString(Encoding.ASCII, new byte[] { 255 }.AsSpan()));
+    }
 #endif
+
+
+
+    #endregion
+
+    #region EncodeString
 
     [TestMethod]
     public void Test__EncodeString_NullArgs_Throws()
@@ -65,20 +126,36 @@ public class EncodingUtilitiesTest
         Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(""));
         Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString("", 0));
 
-        encoding = Encoding.Unicode;
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((string)null!));
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((ReadOnlySpan<char>)null!));
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((string)null!, 0));
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString((ReadOnlySpan<char>)null!, 0));
+        ForEachEncoding(e =>
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => e.EncodeString((string)null!));
+            Assert.ThrowsException<ArgumentNullException>(() => e.EncodeString((string)null!, 0));
+        });
     }
 
     [TestMethod]
     public void Test__EncodeString_NegativeCount_Throws()
     {
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.Unicode.EncodeString("123", -1));
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.Unicode.EncodeString("123", int.MinValue));
+        ForEachEncoding(e =>
+        {
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => e.EncodeString("123", -1));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => e.EncodeString("123", int.MinValue));
+
+        });
     }
-    
+
+    [TestMethod]
+    public void Test__EncodeString_DefaultSpan()
+    {
+        var encodings = Encoding.GetEncodings().Select(x => Encoding.GetEncoding(x.Name));
+
+        foreach (var encoding in encodings)
+        {
+            Assert.AreEqual(string.Empty, encoding.EncodeString(default(ReadOnlySpan<char>)));
+            Assert.AreEqual(string.Empty, encoding.EncodeString((default(ReadOnlySpan<char>)), 5));
+        }
+    }
+
     [TestMethod]
     [DataRow("", "")]
     [DataRow("\0", "\0")]
@@ -127,7 +204,7 @@ public class EncodingUtilitiesTest
     public void Test__EncodeString_Encode_CustomCountInvalid_Throws(string input, int count)
     {
         var encoding = Encoding.ASCII;
-        ExceptionUtilities.AssertThrows(new[] { typeof(ArgumentException), typeof(ArgumentNullException) },
+        ExceptionUtilities.AssertThrows([typeof(ArgumentException), typeof(ArgumentNullException)],
             () => encoding.EncodeString(input, count));
     }
 
@@ -142,10 +219,70 @@ public class EncodingUtilitiesTest
     [TestMethod]
     public void Test__EncodeString_Encode_CountError_Throws()
     {
-        var encoding = Encoding.Unicode;
-        Assert.ThrowsException<ArgumentException>(() => encoding.EncodeString("123", 5));
+        ForEachEncoding(e =>
+        {
+            var actualCount = e.GetByteCount("123");
+            Assert.ThrowsException<ArgumentException>(() => e.EncodeString("123", actualCount - 1));
+        });
     }
 
+    #endregion
+
+    #region GetBytesReadOnly
+
+    [TestMethod]
+    public void Test_GetBytesReadOnly_DefaultSpan()
+    {
+        ForEachEncoding(e =>
+        {
+            var bufferBytes = new byte[] { 1, 2 };
+
+            var bytes = e.GetBytesReadOnly(default, bufferBytes);
+
+            Assert.IsTrue(bytes.IsEmpty);
+            // Check that bytes is unaltered
+            CollectionAssert.AreEqual(new byte[] { 1, 2 }, bufferBytes);
+        });
+    }
+
+    [TestMethod]
+    [DataRow("", DisplayName = "Empty")]
+    [DataRow("\0", DisplayName = "ASCII NUL")]
+    [DataRow("  ")]
+    [DataRow("123")]
+    [DataRow("üöä")]
+    [DataRow("123ü")]
+    [DataRow("😅")]
+    public void Test_GetBytesReadOnly(string? input)
+    {
+        ForEachEncoding(e =>
+        {
+            var expectedBytes = e.GetBytes(input);
+
+            var maxByteCount = input is null ? 5 : e.GetByteCount(input) + 5;
+            var buffer = new byte[maxByteCount].AsSpan();
+            var stringBytes = e.GetBytesReadOnly(input.AsSpan(), buffer);
+            CollectionAssert.AreEqual(expectedBytes, stringBytes.ToArray());
+        });
+    }
+
+    [TestMethod]
+    public void Test_GetBytesReadOnly_BufferMutationChangesResult()
+    {
+        var encoding = Encoding.ASCII;
+        Span<byte> buffer = stackalloc byte[10];
+        var roSpan = encoding.GetBytesReadOnly("123".AsSpan(), buffer);
+
+        CollectionAssert.AreEqual("123"u8.ToArray(), roSpan.ToArray());
+
+        buffer.Clear();
+
+        Assert.IsTrue(roSpan.ToArray().All(x => x == 0));
+    }
+
+    #endregion
+
+    #region GetByteCountPG
 
     [TestMethod]
     public void Test__GetByteCountPG_NullArgs_Throws()
@@ -167,20 +304,22 @@ public class EncodingUtilitiesTest
         Assert.AreEqual(expectedBytesCount, encoding.GetByteCountPG(charCount));
     }
 
+    #endregion
+
     private static IEnumerable<object[]> EncodingTestData()
     {
         return new[]
         {
-            new object[] { Encoding.Unicode, 0, 0 },
-            new object[] { Encoding.Unicode, 1, 2 },
-            new object[] { Encoding.Unicode, 2, 4 },
-            new object[] { Encoding.Unicode, 3, 6 },
-            new object[] { Encoding.Unicode, 256, 512 },
+            [Encoding.Unicode, 0, 0],
+            [Encoding.Unicode, 1, 2],
+            [Encoding.Unicode, 2, 4],
+            [Encoding.Unicode, 3, 6],
+            [Encoding.Unicode, 256, 512],
 
-            new object[] { Encoding.ASCII, 0, 0 },
-            new object[] { Encoding.ASCII, 1, 1 },
-            new object[] { Encoding.ASCII, 2, 2 },
-            new object[] { Encoding.ASCII, 3, 3 },
+            [Encoding.ASCII, 0, 0],
+            [Encoding.ASCII, 1, 1],
+            [Encoding.ASCII, 2, 2],
+            [Encoding.ASCII, 3, 3],
             new object[] { Encoding.ASCII, 256, 256 },
         };
     }
@@ -196,21 +335,17 @@ public class EncodingUtilitiesTest
     {
         return new[]
         {
-            new object[] { Encoding.BigEndianUnicode },
-            new object[] { Encoding.GetEncoding(28591) }, // Latin1
-            new object[] { Encoding.UTF32 },
-            new object[] { Encoding.UTF8 },
-            new object[] { Encoding.UTF7 },
-            new object[] { new MyAsciiEncoding() },
+            [Encoding.BigEndianUnicode],
+            [Encoding.GetEncoding(28591)], // Latin1
+            [Encoding.UTF32],
+            [Encoding.UTF8],
+            [Encoding.UTF7],
+            [new MyAsciiEncoding()],
             new object[] { new MyUnicodeEncoding() },
         };
     }
 
-    internal sealed class MyAsciiEncoding : ASCIIEncoding
-    {
-    }
+    internal sealed class MyAsciiEncoding : ASCIIEncoding;
 
-    internal sealed class MyUnicodeEncoding : UnicodeEncoding
-    {
-    }
+    internal sealed class MyUnicodeEncoding : UnicodeEncoding;
 }

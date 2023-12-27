@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PG.Commons.Utilities;
 
-public static partial class EncodingUtilities
+public static partial class EncodingExtensions
 {
     /// <summary>
     /// Encodes into a span of bytes a set of characters from the specified read-only span.

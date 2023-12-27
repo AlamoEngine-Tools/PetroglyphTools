@@ -7,7 +7,7 @@ namespace PG.Commons.Utilities;
 /// <summary>
 /// Provides PG specific extension methods to the <see cref="Encoding"/> type.
 /// </summary>
-public static partial class EncodingUtilities
+public static partial class EncodingExtensions
 {
     /// <summary>
     ///     Gets the number of bytes required for encoding a given number of characters.

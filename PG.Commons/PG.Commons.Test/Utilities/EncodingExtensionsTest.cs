@@ -9,7 +9,7 @@ using PG.Testing;
 namespace PG.Commons.Test.Utilities;
 
 [TestClass]
-public class EncodingUtilitiesTest
+public class EncodingExtensionsTest
 {
     private void ForEachEncoding(Action<Encoding> action)
     {
@@ -98,18 +98,18 @@ public class EncodingUtilitiesTest
     {
         ForEachEncoding(e =>
         {
-            // Force compiler to use EncodingUtilities instead of implicit casting to byte[]
-            Assert.AreEqual(string.Empty, EncodingUtilities.GetString(e, default(ReadOnlySpan<byte>)));
+            // Force compiler to use EncodingExtensions instead of implicit casting to byte[]
+            Assert.AreEqual(string.Empty, EncodingExtensions.GetString(e, default(ReadOnlySpan<byte>)));
         });
     }
 
     [TestMethod]
     public void Test_GetString()
     {
-        // Force compiler to use EncodingUtilities instead of implicit casting to byte[]
-        Assert.AreEqual("\0", EncodingUtilities.GetString(Encoding.ASCII, new byte[] { 00 }.AsSpan()));
-        Assert.AreEqual("012", EncodingUtilities.GetString(Encoding.ASCII, "012"u8.ToArray().AsSpan()));
-        Assert.AreEqual("?", EncodingUtilities.GetString(Encoding.ASCII, new byte[] { 255 }.AsSpan()));
+        // Force compiler to use EncodingExtensions instead of implicit casting to byte[]
+        Assert.AreEqual("\0", EncodingExtensions.GetString(Encoding.ASCII, new byte[] { 00 }.AsSpan()));
+        Assert.AreEqual("012", EncodingExtensions.GetString(Encoding.ASCII, "012"u8.ToArray().AsSpan()));
+        Assert.AreEqual("?", EncodingExtensions.GetString(Encoding.ASCII, new byte[] { 255 }.AsSpan()));
     }
 #endif
 

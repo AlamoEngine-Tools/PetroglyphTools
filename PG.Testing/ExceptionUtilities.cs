@@ -10,25 +10,22 @@ namespace PG.Testing;
 
 public static class ExceptionUtilities
 {
-    public static void AssertDoesNotThrowException<T>(Func<T> action)
-    {
-        AssertDoesNotThrowException(() =>
-        {
-            action();
-        });
-    }
-
-    public static void AssertDoesNotThrowException(Action action)
+    public static T AssertDoesNotThrowException<T>(Func<T> action)
     {
         try
         {
-            action();
+            return action();
         }
         catch (Exception e)
         {
             throw new AssertFailedException(
                 $"Expected no exception to be thrown but got '{e.GetType().Name}' instead", e);
         }
+    }
+
+    public static void AssertDoesNotThrowException(Action action)
+    {
+        AssertDoesNotThrowException(() => action);
     }
 
     public static void AssertThrowsException<T>(Type type, Func<T> action)

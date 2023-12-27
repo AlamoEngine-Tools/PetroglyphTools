@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-#if NETSTANDARD2_0 || NETFRAMEWORK
-using System.Runtime.InteropServices;
-#endif
 
 namespace PG.Commons.Utilities;
 
 /// <summary>
 /// Provides PG specific extension methods to the <see cref="Encoding"/> type.
 /// </summary>
-public static class EncodingUtilities
+public static partial class EncodingUtilities
 {
     /// <summary>
     ///     Gets the number of bytes required for encoding a given number of characters.
@@ -81,6 +78,8 @@ public static class EncodingUtilities
     /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
     public static string EncodeString(this Encoding encoding, string value)
     {
+        if (value == null) 
+            throw new ArgumentNullException(nameof(value));
         return EncodeString(encoding, value.AsSpan());
     }
 
@@ -96,76 +95,63 @@ public static class EncodingUtilities
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxByteCount"/> is negative.</exception>
     public static string EncodeString(this Encoding encoding, string value, int maxByteCount)
     {
+        if (value == null) 
+            throw new ArgumentNullException(nameof(value));
+
         return EncodeString(encoding, value.AsSpan(), maxByteCount);
     }
 
     /// <summary>
     /// Encodes a character sequence.
     /// </summary>
-    /// <param name="value">The character sequence to encode.</param>
+    /// <param name="value">The span of characters to encode.</param>
     /// <param name="encoding">The encoding to use.</param>
     /// <returns>The encoded string.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langword="null"/>.</exception>
     public static string EncodeString(this Encoding encoding, ReadOnlySpan<char> value)
     {
-        if (encoding == null)
+        if (encoding == null) 
             throw new ArgumentNullException(nameof(encoding));
+
         return EncodeString(encoding, value, encoding.GetMaxByteCount(value.Length));
     }
 
     /// <summary>
     /// Encodes a character sequence.
     /// </summary>
-    /// <param name="value">The character sequence to encode.</param>
+    /// <param name="value">The span of characters to encode.</param>
     /// <param name="maxByteCount">Maximum bytes required for encoding.</param>
     /// <param name="encoding">The encoding to use.</param>
     /// <returns>The encoded string.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> or <paramref name="value"/>is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="maxByteCount"/> is less than actually required.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxByteCount"/> is negative.</exception>
     public static unsafe string EncodeString(this Encoding encoding, ReadOnlySpan<char> value, int maxByteCount)
     {
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
-        if (value == null)
-            throw new ArgumentNullException(nameof(value));
         if (maxByteCount < 0)
             throw new ArgumentOutOfRangeException(nameof(maxByteCount), "value must not be negative.");
 
-        if (value.IsEmpty)
-            return string.Empty;
-
         var buffer = maxByteCount <= 256 ? stackalloc byte[maxByteCount] : new byte[maxByteCount];
-
-        var bytesWritten = encoding.GetBytes(value, buffer);
-
-#if NETSTANDARD2_1_OR_GREATER || NET
-        return encoding.GetString(buffer.Slice(0, bytesWritten));
-#else
-        fixed (byte* pBuffer = &MemoryMarshal.GetReference(buffer))
-            return encoding.GetString(pBuffer, bytesWritten);
-#endif
+        var stringBytes = encoding.GetBytesReadOnly(value, buffer);
+        return encoding.GetString(stringBytes);
     }
 
-#if NETSTANDARD2_0 || NETFRAMEWORK
     /// <summary>
-    /// Encodes a set of characters into a sequence of bytes.
+    /// Encodes into a read-only span of bytes a set of characters from the specified read-only span.
     /// </summary>
+    /// <remarks>
+    /// The returned read-only span is sliced from <paramref name="inputBuffer"/>.
+    /// This means, modifying <paramref name="inputBuffer"/> might also modify the returned read-only span. 
+    /// </remarks>
     /// <param name="encoding">The encoding to use.</param>
-    /// <param name="value">The span containing the set of characters to encode.</param>
-    /// <param name="destination">The byte span to hold the encoded bytes.</param>
-    /// <returns>The number of encoded bytes.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langword="null"/>.</exception>
-    public static unsafe int GetBytes(this Encoding encoding, ReadOnlySpan<char> value, Span<byte> destination)
+    /// <param name="value">The span of characters to encode.</param>
+    /// <param name="inputBuffer">The byte span to hold the encoded bytes.</param>
+    /// <returns>The read-only byte span that holds the encoded bytes.</returns>
+    public static ReadOnlySpan<byte> GetBytesReadOnly(this Encoding encoding, ReadOnlySpan<char> value, Span<byte> inputBuffer)
     {
-        if (encoding == null)
-            throw new ArgumentNullException(nameof(encoding));
-
-        fixed (char* charsPtr = &MemoryMarshal.GetReference(value))
-        fixed (byte* bytesPtr = &MemoryMarshal.GetReference(destination))
-        {
-            return encoding.GetBytes(charsPtr, value.Length, bytesPtr, destination.Length);
-        }
+        var pathBytesWritten = encoding.GetBytes(value, inputBuffer);
+        return inputBuffer.Slice(0, pathBytesWritten);
     }
-#endif
 }

@@ -26,7 +26,7 @@ public class ChecksumServiceTest
     [DataRow("", 0)]
     [DataRow("Gcum8qzFZ1xYTTzY1N9avqWRM1q3qk22sfANKZykb8YGIb3fm1znkEPytzwk3qbzhwkIOlTVsC3dGde0vMxqcS6lF2wQi3rI7oMaJMdVdwkvYSf2zNU2qUBDXF1wGgHhhqeMvE6X479nKlsPFjjKG2AHRYqfOQttbZ8AW4n7p5wkrP2ScL08KGLls8vuZ8TXigsiySnBMqOX9SThW7IAApIn60NGiFNZtsC4FrhUXkLhuvDLtO9NyvdVMNLf5Z7iacGWSGrcTI0w9PrUBxFETwy3M2klGlvUM2P3kpvZzigYpPgo7wkicm7IclUbVjrBv2nLtzFDzXDtg2nP5RTXkPLtFEoeTMK1Y9nH6U9omcikyW92lyfUgh60fYWXIPsPwiCmS9K3jBcOz9V07T5HARtJmQFU9Z6nTwRRszzDqHs9KbWVV9cnCJ7bdPX2T3bS5O0lHnlVGhWYhiS5Il3lBJSyzuRLZ3N6OhO8uJ2gdGImN1hg928JRE132s0tOWGx", 1080801695)]
     // This test method accepts long so that we can interpret expectedChecksum as either uint or int.
-    public void Test_GetChecksum(string value, long expectedChecksum)
+    public void Test_GetChecksum_String(string value, long expectedChecksum)
     {
         var crc = new ChecksumService().GetChecksum(value, Encoding.ASCII);
         Assert.AreEqual((int)expectedChecksum, (int)crc);
@@ -34,7 +34,7 @@ public class ChecksumServiceTest
     }
 
     [TestMethod]
-    public void Test_GetChecksum_Encoding_Ambiguity()
+    public void Test_GetChecksum_String_Encoding_Ambiguity()
     {
         var checksumService = new ChecksumService();
         var crc1 = checksumService.GetChecksum("Ä", Encoding.ASCII);
@@ -43,11 +43,22 @@ public class ChecksumServiceTest
     }
 
     [TestMethod]
-    public void Test_GetChecksum_Encoding_NoAmbiguity()
+    public void Test_GetChecksum_String_Encoding_NoAmbiguity()
     {
         var checksumService = new ChecksumService();
         var crc1 = checksumService.GetChecksum("Ä", Encoding.Unicode);
         var crc2 = checksumService.GetChecksum("ü", Encoding.Unicode);
         Assert.AreNotEqual(crc1, crc2);
+    }
+
+    [TestMethod]
+    public void Test_GetChecksum_Span()
+    {
+        var checksumService = new ChecksumService();
+        var crc = checksumService.GetChecksum(default);
+        Assert.AreEqual(default, crc);
+
+        crc = checksumService.GetChecksum(new byte[] { 1, 2, 3, 4 });
+        Assert.AreEqual(3057449933, (uint)crc);
     }
 }

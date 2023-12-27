@@ -64,7 +64,7 @@ public static class BinaryReaderUtilities
             var bytes = reader.ReadBytes(length);
             if (bytes.Length != length)
                 throw new IndexOutOfRangeException("The number of bytes read, mismatched the expected number of bytes.");
-            result = encoding.GetString(bytes);
+            result = encoding.GetString(bytes.AsSpan());
         }
 
         if (isZeroTerminated)

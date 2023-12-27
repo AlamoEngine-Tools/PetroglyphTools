@@ -12,11 +12,18 @@ namespace PG.Commons.Hashing;
 public interface IChecksumService
 {
     /// <summary>
-    /// Computes the CRC32 checksum for a given not nullable <see langword="string"/> as <see langword="uint"/>. 
+    /// Computes the CRC-32 hash of the provided string.
     /// </summary>
-    /// <param name="value">string to get the checksum for</param>
-    /// <param name="encoding">The encoding to be used for </param>
-    /// <returns>The CRC32 checksum.</returns>
+    /// <param name="value">The string to get the CRC32 hash for.</param>
+    /// <param name="encoding">The encoding to use for interpreting the string value.</param>
+    /// <returns>The CRC32 hash of the provided string.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="value"/> or <paramref name="encoding"/> is <see langword="null"/>.</exception>
     Crc32 GetChecksum(string value, Encoding encoding);
+
+    /// <summary>
+    /// Computes the CRC-32 hash of the provided data.
+    /// </summary>
+    /// <param name="data">The data to hash.</param>
+    /// <returns>The CRC32 hash of the provided data.</returns>
+    Crc32 GetChecksum(ReadOnlySpan<byte> data);
 }

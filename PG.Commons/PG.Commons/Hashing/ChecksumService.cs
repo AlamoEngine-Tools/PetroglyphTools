@@ -3,6 +3,7 @@
 
 using System;
 using System.Text;
+using PG.Commons.Utilities;
 
 namespace PG.Commons.Hashing;
 
@@ -19,37 +20,22 @@ public class ChecksumService : IChecksumService
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
 
-        Span<byte> stringBytes;
-
         var stringSpan = value.AsSpan();
-
-        if (stringSpan.IsEmpty)
-            return new Crc32(0);
 
         var maxByteSize = encoding.GetMaxByteCount(stringSpan.Length);
 
-        if (maxByteSize > 256)
-        {
-#if NETSTANDARD2_1_OR_GREATER || NET
-            var buff = new byte[maxByteSize].AsSpan();
-            var nb = encoding.GetBytes(stringSpan, buff);
-            stringBytes = buff.Slice(0, nb);
-#else
-            stringBytes = encoding.GetBytes(value).AsSpan();
-#endif
-        }
-        else
-        {
-            var buff = stackalloc byte[maxByteSize];
-            fixed (char* sp = stringSpan)
-            {
-                var a = encoding.GetBytes(sp, stringSpan.Length, buff, maxByteSize);
-                stringBytes = new Span<byte>(buff, a);
-            }
-        }
+        var buffer = maxByteSize > 256 ? new byte[maxByteSize] : stackalloc byte[maxByteSize];
 
+        var bytesToHash = encoding.GetBytesReadOnly(stringSpan, buffer);
+
+        return GetChecksum(bytesToHash);
+    }
+
+    /// <inheritdoc/>
+    public unsafe Crc32 GetChecksum(ReadOnlySpan<byte> data)
+    {
         Span<byte> checksum = stackalloc byte[sizeof(Crc32)];
-        System.IO.Hashing.Crc32.Hash(stringBytes, checksum);
+        System.IO.Hashing.Crc32.Hash(data, checksum);
         return new Crc32(checksum);
     }
 }

@@ -120,7 +120,7 @@ public class EncodingExtensionsTest
     #region EncodeString
 
     [TestMethod]
-    public void Test__EncodeString_NullArgs_Throws()
+    public void Test_EncodeString_NullArgs_Throws()
     {
         Encoding encoding = null!;
         Assert.ThrowsException<ArgumentNullException>(() => encoding.EncodeString(""));
@@ -134,7 +134,7 @@ public class EncodingExtensionsTest
     }
 
     [TestMethod]
-    public void Test__EncodeString_NegativeCount_Throws()
+    public void Test_EncodeString_NegativeCount_Throws()
     {
         ForEachEncoding(e =>
         {
@@ -145,7 +145,7 @@ public class EncodingExtensionsTest
     }
 
     [TestMethod]
-    public void Test__EncodeString_DefaultSpan()
+    public void Test_EncodeString_DefaultSpan()
     {
         var encodings = Encoding.GetEncodings().Select(x => Encoding.GetEncoding(x.Name));
 
@@ -164,7 +164,7 @@ public class EncodingExtensionsTest
     [DataRow("üöä", "???")]
     [DataRow("123ü", "123?")]
     [DataRow("😅", "??")]
-    public void Test__EncodeString_EncodeASCII(string input, string expected)
+    public void Test_EncodeString_EncodeASCII(string input, string expected)
     {
         var encoding = Encoding.ASCII;
         var result = encoding.EncodeString(input);
@@ -179,7 +179,7 @@ public class EncodingExtensionsTest
     [DataRow("üöä", "üöä")]
     [DataRow("123ü", "123ü")]
     [DataRow("😅", "😅")]
-    public void Test__EncodeString_EncodeUnicode(string input, string expected)
+    public void Test_EncodeString_EncodeUnicode(string input, string expected)
     {
         var encoding = Encoding.Unicode;
         var result = encoding.EncodeString(input);
@@ -191,7 +191,7 @@ public class EncodingExtensionsTest
     [DataRow("123", "123", 4)]
     [DataRow("", "", 0)]
     [DataRow("", "", 1)]
-    public void Test__EncodeString_Encode_CustomCount(string input, string expected, int count)
+    public void Test_EncodeString_Encode_CustomCount(string input, string expected, int count)
     {
         var encoding = Encoding.ASCII;
         var result = encoding.EncodeString(input, count);
@@ -201,7 +201,7 @@ public class EncodingExtensionsTest
     [TestMethod]
     [DataRow("1", 0)]
     [DataRow("123", 2)]
-    public void Test__EncodeString_Encode_CustomCountInvalid_Throws(string input, int count)
+    public void Test_EncodeString_Encode_CustomCountInvalid_Throws(string input, int count)
     {
         var encoding = Encoding.ASCII;
         ExceptionUtilities.AssertThrows([typeof(ArgumentException), typeof(ArgumentNullException)],
@@ -209,7 +209,7 @@ public class EncodingExtensionsTest
     }
 
     [TestMethod]
-    public void Test__EncodeString_Encode_LongString()
+    public void Test_EncodeString_Encode_LongString()
     {
         var encoding = Encoding.ASCII;
         var result = encoding.EncodeString(new string('a', 512));
@@ -217,7 +217,7 @@ public class EncodingExtensionsTest
     }
 
     [TestMethod]
-    public void Test__EncodeString_Encode_CountError_Throws()
+    public void Test_EncodeString_Encode_CountError_Throws()
     {
         ForEachEncoding(e =>
         {
@@ -285,23 +285,30 @@ public class EncodingExtensionsTest
     #region GetByteCountPG
 
     [TestMethod]
-    public void Test__GetByteCountPG_NullArgs_Throws()
+    public void Test_GetByteCountPG_NullArgs_Throws()
     {
         Encoding encoding = null!;
         Assert.ThrowsException<ArgumentNullException>(() => encoding.GetByteCountPG(4));
     }
 
     [TestMethod]
-    public void Test__GetByteCountPG_NegativeCount_Throws()
+    public void Test_GetByteCountPG_NegativeCount_Throws()
     {
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.ASCII.GetByteCountPG(-1));
     }
 
     [DataTestMethod]
     [DynamicData(nameof(EncodingTestData), DynamicDataSourceType.Method)]
-    public void Test__GetByteCountPG(Encoding encoding, int charCount, int expectedBytesCount)
+    public void Test_GetByteCountPG(Encoding encoding, int charCount, int expectedBytesCount)
     {
         Assert.AreEqual(expectedBytesCount, encoding.GetByteCountPG(charCount));
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(NotSupportedEncodings), DynamicDataSourceType.Method)]
+    public void Test_GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
+    {
+        Assert.ThrowsException<NotSupportedException>(() => encoding.GetByteCountPG(4));
     }
 
     #endregion
@@ -322,13 +329,6 @@ public class EncodingExtensionsTest
             [Encoding.ASCII, 3, 3],
             new object[] { Encoding.ASCII, 256, 256 },
         };
-    }
-
-    [DataTestMethod]
-    [DynamicData(nameof(NotSupportedEncodings), DynamicDataSourceType.Method)]
-    public void Test__GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
-    {
-        Assert.ThrowsException<NotSupportedException>(() => encoding.GetByteCountPG(4));
     }
 
     private static IEnumerable<object[]> NotSupportedEncodings()

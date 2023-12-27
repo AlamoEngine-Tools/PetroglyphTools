@@ -14,13 +14,13 @@ public class ServiceBaseTest
 {
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
-    public void Test__Ctor_ThrowsNullArg()
+    public void Test_Ctor_ThrowsNullArg()
     {
         _ = new MyService(null!);
     }
 
     [TestMethod]
-    public void Test__Ctor_SetupProperties()
+    public void Test_Ctor_SetupProperties()
     {
         var fs = new MockFileSystem();
         var loggerMock = new Mock<ILogger>();
@@ -37,7 +37,7 @@ public class ServiceBaseTest
     }
 
     [TestMethod]
-    public void Test__Ctor_NullLogger()
+    public void Test_Ctor_NullLogger()
     {
         var fs = new MockFileSystem();
         var spMock = new Mock<IServiceProvider>();

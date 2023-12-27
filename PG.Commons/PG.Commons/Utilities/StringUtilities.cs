@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Drawing;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace PG.Commons.Utilities;
@@ -30,18 +28,7 @@ public static class StringUtilities
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
 
-#if NETSTANDARD2_1_OR_GREATER || NET
         var size = encoding.GetByteCount(value);   
-#else
-        int size;
-        unsafe
-        {
-            fixed (char* charsPtr = &MemoryMarshal.GetReference(value))
-            {
-                size = encoding.GetByteCount(charsPtr, value.Length);
-            }
-        }
-#endif
 
         if (size is < 0 or > ushort.MaxValue)
             throw new ArgumentException($"The value is longer than the expected {ushort.MaxValue} characters.", nameof(value));

@@ -28,7 +28,7 @@ public class DatBinaryConverterTest
     }
 
     [TestMethod]
-    public void Test__ToHolder__ValidModelCreatesValidHolder()
+    public void Test_ToHolder__ValidModelCreatesValidHolder()
     {
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
         var binaryModel = new DatFile(

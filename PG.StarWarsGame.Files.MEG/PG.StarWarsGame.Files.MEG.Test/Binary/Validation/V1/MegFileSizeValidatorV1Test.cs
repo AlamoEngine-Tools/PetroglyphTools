@@ -7,6 +7,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Binary.Validation.V1;
+using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation.V1;
 
@@ -46,7 +47,7 @@ public class MegFileSizeValidatorV1Test
         var header = new MegHeader(1, 1);
         var nameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
-            new("A")
+            MegFileNameTableRecordTest.CreateNameRecord("A")
         });
         var fileTable = new MegFileTable(new List<MegFileTableRecord>
         {
@@ -73,8 +74,8 @@ public class MegFileSizeValidatorV1Test
         var header = new MegHeader(2, 2);
         var nameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
-            new("A"),
-            new("B")
+            MegFileNameTableRecordTest.CreateNameRecord("A"),
+            MegFileNameTableRecordTest.CreateNameRecord("B")
         });
         var fileTable = new MegFileTable(new List<MegFileTableRecord>
         {

@@ -32,7 +32,7 @@ public class MegFileNameTableTest
     [TestMethod]
     public void Test_Size_One_Entry()
     {
-        MegFileNameTableRecord entry = new("abc");
+        MegFileNameTableRecord entry = MegFileNameTableRecordTest.CreateNameRecord("abc");
         var table = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
             entry
@@ -43,7 +43,7 @@ public class MegFileNameTableTest
     [TestMethod]
     public void Test_Size_2_Entries()
     {
-        MegFileNameTableRecord entry = new("abc");
+        MegFileNameTableRecord entry = MegFileNameTableRecordTest.CreateNameRecord("abc");
         var table = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
             entry,
@@ -55,8 +55,8 @@ public class MegFileNameTableTest
     [TestMethod]
     public void IFileNameTable_Test_Index()
     {
-        MegFileNameTableRecord entry1 = new("123");
-        MegFileNameTableRecord entry2 = new("456");
+        MegFileNameTableRecord entry1 = MegFileNameTableRecordTest.CreateNameRecord("123");
+        MegFileNameTableRecord entry2 = MegFileNameTableRecordTest.CreateNameRecord("456");
         var table = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
             entry1,
@@ -78,8 +78,8 @@ public class MegFileNameTableTest
     [TestMethod]
     public void IFileNameTable_Test_Enumerate()
     {
-        MegFileNameTableRecord entry1 = new("123");
-        MegFileNameTableRecord entry2 = new("456");
+        MegFileNameTableRecord entry1 = MegFileNameTableRecordTest.CreateNameRecord("123");
+        MegFileNameTableRecord entry2 = MegFileNameTableRecordTest.CreateNameRecord("456");
 
         var recordList = new List<MegFileNameTableRecord>
         {
@@ -98,8 +98,8 @@ public class MegFileNameTableTest
     [TestMethod]
     public void IFileNameTable_Test_EnumerateAsIEnumerable()
     {
-        MegFileNameTableRecord entry1 = new("123");
-        MegFileNameTableRecord entry2 = new("456");
+        MegFileNameTableRecord entry1 = MegFileNameTableRecordTest.CreateNameRecord("123");
+        MegFileNameTableRecord entry2 = MegFileNameTableRecordTest.CreateNameRecord("456");
 
         var recordList = new List<MegFileNameTableRecord>
         {
@@ -118,8 +118,8 @@ public class MegFileNameTableTest
     [TestMethod]
     public void Test_Enumerate_AsIMegFileNameTable()
     {
-        MegFileNameTableRecord entry1 = new("123");
-        MegFileNameTableRecord entry2 = new("456");
+        MegFileNameTableRecord entry1 = MegFileNameTableRecordTest.CreateNameRecord("123");
+        MegFileNameTableRecord entry2 = MegFileNameTableRecordTest.CreateNameRecord("456");
 
         var recordList = new List<MegFileNameTableRecord>
         {
@@ -144,35 +144,11 @@ public class MegFileNameTableTest
 
     }
 
-    //[TestMethod]
-    //public void Test_Enumerate_AsIMegFileNameTable_ResetEnumerator()
-    //{
-    //    MegFileNameTableRecord entry1 = new("123");
-    //    MegFileNameTableRecord entry2 = new("456");
-
-    //    var recordList = new List<MegFileNameTableRecord>
-    //    {
-    //        entry1,
-    //        entry2
-    //    };
-
-
-    //    IMegFileNameTable table = new MegFileNameTable(recordList);
-
-    //    using var enumerator = table.GetEnumerator();
-    //    enumerator.MoveNext();
-    //    Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
-    //    enumerator.Reset();
-    //    Assert.AreEqual(default, enumerator.Current);
-    //    enumerator.MoveNext();
-    //    Assert.AreEqual(table[0].FileName, enumerator.Current.FileName);
-    //}
-
     [TestMethod]
     public void Test_Bytes()
     {
-        MegFileNameTableRecord entry1 = new("a");
-        MegFileNameTableRecord entry2 = new("b");
+        var entry1 = MegFileNameTableRecordTest.CreateNameRecord("a");
+        var entry2 = MegFileNameTableRecordTest.CreateNameRecord("b");
         var table = new MegFileNameTable(new List<MegFileNameTableRecord>
         {
             entry1,

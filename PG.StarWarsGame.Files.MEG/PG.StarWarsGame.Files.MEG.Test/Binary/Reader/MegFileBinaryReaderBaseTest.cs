@@ -9,6 +9,7 @@ using Moq;
 using Moq.Protected;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
+using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader;
 
@@ -55,7 +56,7 @@ public class MegFileBinaryReaderBaseTest
             CallBase = true
         };
 
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("A") });
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
         var megHeader = new Mock<IMegHeader>();
         var fileTable = new Mock<IMegFileTable>();
 
@@ -84,7 +85,7 @@ public class MegFileBinaryReaderBaseTest
             CallBase = true
         };
 
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("A") });
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
         var megHeader = new Mock<IMegHeader>();
         var fileTable = new Mock<IMegFileTable>();
 

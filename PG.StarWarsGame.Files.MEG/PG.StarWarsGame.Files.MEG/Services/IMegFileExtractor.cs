@@ -45,6 +45,13 @@ public interface IMegFileExtractor
     ///     result := path(<paramref name="dataEntry"/>)
     /// </code>
     ///
+    /// <br/>
+    /// 
+    /// This method does not ensure whether the returned path is valid on the current file system e.g, containing illegal characters.
+    ///
+    /// <br/>
+    /// <br/>
+    /// 
     /// <b>Security Note:</b>
     /// This method does <b>not</b> ensure whether the returned absolute path leaves <paramref name="rootPath"/>, nor the returned path is valid on the target system.
     /// It's the consumers responsibility to prevent path traversals.

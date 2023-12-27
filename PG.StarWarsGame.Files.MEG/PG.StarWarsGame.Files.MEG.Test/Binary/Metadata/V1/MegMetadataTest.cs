@@ -22,7 +22,7 @@ public class MegMetadataTest
 
 
         var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
-            { new("123") });
+            { MegFileNameTableRecordTest.CreateNameRecord("123") });
         Assert.ThrowsException<ArgumentNullException>(() =>
             new MegMetadata(default, fileNameTable, null!));
     }
@@ -35,12 +35,12 @@ public class MegMetadataTest
         var fileTable1 = new MegFileTable(new List<MegFileTableRecord>
             { new(default, 0, 0, 0, 0) });
         var fileNameTable1 = new MegFileNameTable(new List<MegFileNameTableRecord>
-            { new("123") });
+            { MegFileNameTableRecordTest.CreateNameRecord("123") });
         var fileNameTable2 = new MegFileNameTable(new List<MegFileNameTableRecord>
-           {
-               new("123"),
-               new("456")
-           });
+        {
+            MegFileNameTableRecordTest.CreateNameRecord("123"),
+            MegFileNameTableRecordTest.CreateNameRecord("456")
+        });
 
         Assert.ThrowsException<ArgumentException>(() => new MegMetadata(header2, fileNameTable1, fileTable1));
         Assert.ThrowsException<ArgumentException>(() => new MegMetadata(header1, fileNameTable2, fileTable1));
@@ -52,7 +52,7 @@ public class MegMetadataTest
     {
         new MegMetadata(
             new MegHeader(1, 1),
-            new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") }),
+            new MegFileNameTable(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("123") }),
             new MegFileTable(new List<MegFileTableRecord> { default }));
 
         Assert.IsTrue(true);
@@ -62,7 +62,7 @@ public class MegMetadataTest
     public void Test_SizeBytes_WithContent()
     {
         var header = new MegHeader(1, 1);
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { new("123") });
+        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("123") });
         var fileTable = new MegFileTable(new List<MegFileTableRecord> { default });
 
         var metadata = new MegMetadata(header, fileNameTable, fileTable);

@@ -44,20 +44,21 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
 
-        // We use Latin1 encoding here, so that we can stay compatible with Mike.NL's tools. 
+        // NB: We use Latin1 encoding here, so that we can stay compatible with Mike.NL's tools. 
         // Since MegFileNameTableRecord properly encodes the string, this is safe.
         var encoding = MegFileConstants.ExtendedMegEntryPathEncoding;
+
         for (uint i = 0; i < header.FileNumber; i++)
         {
             var fileNameLength = binaryReader.ReadUInt16();
 
-            // Reading the string as ASCII has the potential of creating PG/Windows
-            // illegal file names due to the replacement character '?'. 
-            // At this stage we don't check for sanity in order to read .MEG files created by other tools, such as Mike's MEG Editor.
-            // See also MegFileNameTableRecord.cs
-            var fileName = binaryReader.ReadString(fileNameLength, encoding);
+            // Reading the string as ASCII has the potential of creating PG/Windows illegal file names due to the replacement character '?'. 
+            // However, in order to stay compatible with Mike's MEG Editor we don't validate file paths here.
+            // Extracting such files, without their name changed, will cause an exception. This is by design.
+            var originalFileName = binaryReader.ReadString(fileNameLength, encoding);
+            var asciiFileName = MegFileConstants.MegDataEntryPathEncoding.EncodeString(originalFileName);
 
-            fileNameTable.Add(new MegFileNameTableRecord(fileName));
+            fileNameTable.Add(new MegFileNameTableRecord(asciiFileName, originalFileName));
         }
 
         return new MegFileNameTable(fileNameTable);

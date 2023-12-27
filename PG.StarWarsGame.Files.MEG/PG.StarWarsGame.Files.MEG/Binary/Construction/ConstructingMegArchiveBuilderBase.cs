@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
@@ -73,6 +74,8 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         var entryInfoList = new List<MegDataEntryBinaryInformation>();
         var checksumService = Services.GetRequiredService<IChecksumService>();
 
+        var megEncoding = MegFileConstants.MegDataEntryPathEncoding;
+
         foreach (var builderInfo in builderEntries)
         {
             if (builderInfo.Encrypted)
@@ -81,21 +84,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             fileNameTableSize += MegFileNameTableRecord.GetRecordSize(builderInfo.FilePath);
             fileTableSize += GetFileDescriptorSize(builderInfo.Encrypted);
 
-            var megEncoding = MegFileConstants.MegDataEntryPathEncoding;
-
-            var encodedFilePath = MegFilePathUtilities.EncodeMegFilePath(builderInfo.FilePath, megEncoding);
-            MegFilePathUtilities.ValidateFilePathCharacterLength(encodedFilePath);
-            var crc = checksumService.GetChecksum(encodedFilePath, megEncoding);
-            var dataSizes = GetDataSize(builderInfo);
-
-            var itemInfo = new MegDataEntryBinaryInformation(
-                crc,
-                encodedFilePath,
-                dataSizes,
-                builderInfo.Encrypted,
-                builderInfo.FilePath,
-                builderInfo.OriginInfo);
-
+            var itemInfo = CreateBinaryInformation(builderInfo, megEncoding, checksumService);
             entryInfoList.Add(itemInfo);
         }
 
@@ -104,6 +93,34 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         metadataSize += fileTableSize;
 
         return new MegFileBinaryInformation(metadataSize, FileVersion, encryptMeg, entryInfoList);
+    }
+
+    private MegDataEntryBinaryInformation CreateBinaryInformation(MegFileDataEntryBuilderInfo builderInfo, Encoding encoding, IChecksumService checksumService)
+    {
+        var originalFilePath = builderInfo.FilePath;
+
+        var maxBytes = encoding.GetByteCountPG(originalFilePath.Length);
+        var pathBytesBuffer = maxBytes > 256 ? new byte[maxBytes] : stackalloc byte[maxBytes];
+
+        // Encoding the paths as ASCII has the potential of creating PG/Windows illegal file names due to the replacement character '?'. 
+        // Extracting such files, without their name changed, will cause an exception.
+        // However, we don't check such things here, as it's not the problem of this library, but for the calling code.
+        var pathBytes = encoding.GetBytesReadOnly(originalFilePath.AsSpan(), pathBytesBuffer);
+
+        var encodedFilePath = encoding.GetString(pathBytes);
+        MegFilePathUtilities.ValidateFilePathCharacterLength(encodedFilePath);
+
+        var crc = checksumService.GetChecksum(pathBytes);
+
+        var dataSizes = GetDataSize(builderInfo);
+
+        return new MegDataEntryBinaryInformation(
+            crc,
+            encodedFilePath,
+            dataSizes,
+            builderInfo.Encrypted,
+            originalFilePath,
+            builderInfo.OriginInfo);
     }
 
     private MegDataEntrySize GetDataSize(MegFileDataEntryBuilderInfo builderInfo)

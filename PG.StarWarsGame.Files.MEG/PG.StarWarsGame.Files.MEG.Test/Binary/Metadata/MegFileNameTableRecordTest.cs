@@ -4,6 +4,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
+using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
@@ -11,63 +12,68 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 public class MegFileNameTableRecordTest
 {
     [TestMethod]
-    [DataRow("")]
-    [DataRow("   ")]
-    public void Ctor_Test__ThrowsArgumentException(string fileName)
+    [DataRow("", "org")]
+    [DataRow("   ", "org")]
+    [DataRow("path", "")]
+    public void Ctor_Test__ThrowsArgumentException(string fileName, string originalFileName)
     {
-        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fileName));
+        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fileName, originalFileName));
     }
 
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileNameTableRecord(null!));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegFileNameTableRecord(null!, "org"));
+        Assert.ThrowsException<ArgumentNullException>(() => new MegFileNameTableRecord("path", null!));
     }
 
     [TestMethod]
     public void Ctor_Test__ThrowsArgumentException()
     {
         var fn = new string('a', ushort.MaxValue + 1);
-        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fn));
+        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fn, "org"));
+    }
+
+    [TestMethod]
+    public void Ctor_Test_OriginalPath()
+    {
+        const string expectedOrgPath = "someUnusualStringÜöä😅";
+        var record = ExceptionUtilities.AssertDoesNotThrowException(() => new MegFileNameTableRecord("path", expectedOrgPath));
+        Assert.AreEqual("path", record.FileName);
+        Assert.AreEqual(expectedOrgPath, record.OriginalFilePath);
     }
 
     [TestMethod]
     [DataRow("abc", 2 + 3)]
     [DataRow("abc123", 2 + 6)]
-    [DataRow("üöä", 2 + 3)]
-    [DataRow("©", 2 + 1)]
-    [DataRow("🍔", 2 + 2)] // Long byte emojii
-    [DataRow("❓", 2 + 1)] // Short byte emojii
     public void Ctor_Test_Size(string fileName, int expectedSize)
     {
-        var record = new MegFileNameTableRecord(fileName);
+        var record = new MegFileNameTableRecord(fileName, "org");
         Assert.AreEqual(expectedSize, record.Size);
     }
 
     [TestMethod]
-    [DataRow("abc", "abc")]
-    [DataRow("abc_def", "abc_def")]
-    [DataRow("abc123", "abc123")]
-    [DataRow("üöä", "???")]
-    [DataRow("©", "?")]
-    [DataRow("🍔", "??")] // Long byte emojii
-    [DataRow("❓", "?")] // Short byte emojii
-    [DataRow("a\u0160", "a?")] // ALT+0160
-    public void Test_FileNameGetEncoded(string fileName, string expectedName)
+    [DataRow("üöä")]
+    [DataRow("©")]
+    [DataRow("🍔")] // Long byte emojii
+    [DataRow("❓")] // Short byte emojii
+    [DataRow("a\u00A0")] 
+    public void Test_NonAsciiPath_Throws(string fileName)
     {
-        var record = new MegFileNameTableRecord(fileName);
-        Assert.AreEqual(expectedName, record.FileName);
-        Assert.AreEqual(fileName, record.OriginalFilePath);
+        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fileName, "org"));
     }
 
     [TestMethod]
     [DataRow("a", new byte[] { 0x1, 0x0, 0x61 })]
     [DataRow("ab", new byte[] { 0x2, 0x0, 0x61, 0x62 })]
-    [DataRow("aü", new byte[] { 0x2, 0x0, 0x61, 0x3F })]
-    [DataRow("aß", new byte[] { 0x2, 0x0, 0x61, 0x3F })]
     public void Test_GetBytes(string fileName, byte[] expectedBytes)
     {
-        var record = new MegFileNameTableRecord(fileName);
+        var record = new MegFileNameTableRecord(fileName, "org");
         CollectionAssert.AreEqual(expectedBytes, record.Bytes);
+    }
+
+    internal static MegFileNameTableRecord CreateNameRecord(string path, string? orgPath = null)
+    {
+        return new MegFileNameTableRecord(path, orgPath ?? path);
     }
 }

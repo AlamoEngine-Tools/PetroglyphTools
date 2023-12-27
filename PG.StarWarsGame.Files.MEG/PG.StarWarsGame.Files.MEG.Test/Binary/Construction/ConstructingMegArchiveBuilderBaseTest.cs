@@ -5,7 +5,6 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
@@ -114,15 +113,8 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     [TestMethod]
     public void Test_BuildConstructingMegArchive_NonASCIITreatment()
     {
-        var expectedCrc = new Crc32(123);
+        var expectedCrc = new Crc32(63+63+63); // 63 == '?'
         
-        var mockChecksumService = new Mock<IChecksumService>();
-        mockChecksumService.Setup(cs => cs.GetChecksum("???", Encoding.ASCII))
-            .Returns(expectedCrc);
-        
-        _serviceProviderMock.Setup(sp => sp.GetService(typeof(IChecksumService)))
-            .Returns(mockChecksumService.Object);
-
         var service = CreateService(_serviceProviderMock.Object);
 
         var meg = new Mock<IMegFile>();
@@ -264,7 +256,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             // Expected
             new List<ExpectedEntryData>
             {
-                new("0", new Crc32(0),3, fileNameAndFileTableSize + 0)
+                new("0", new Crc32(48),3, fileNameAndFileTableSize + 0)
             }
         );
     }
@@ -287,9 +279,9 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             // Expected
             new List<ExpectedEntryData>
             {
-                new("0", new Crc32(0), 3, fileNameAndFileTableSize + 0),
-                new("0", new Crc32(0), 6, fileNameAndFileTableSize + 3),
-                new("1", new Crc32(1), 1, fileNameAndFileTableSize + 3 + 6),
+                new("0", new Crc32(48), 3, fileNameAndFileTableSize + 0),
+                new("0", new Crc32(48), 6, fileNameAndFileTableSize + 3),
+                new("1", new Crc32(49), 1, fileNameAndFileTableSize + 3 + 6),
             }
         );
     }
@@ -310,8 +302,8 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             // Expected
             new List<ExpectedEntryData>
             {
-                new("0", new Crc32(0),0, fileNameAndFileTableSize + 0),
-                new("1", new Crc32(1),0, fileNameAndFileTableSize + 0),
+                new("0", new Crc32(48),0, fileNameAndFileTableSize + 0),
+                new("1", new Crc32(49),0, fileNameAndFileTableSize + 0),
             }
         );
     }
@@ -333,9 +325,9 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             // Expected
             new List<ExpectedEntryData>
             {
-                new("1", new Crc32(1),0, fileNameAndFileTableSize + 0),
-                new("2", new Crc32(2),0, fileNameAndFileTableSize + 0),
-                new("3", new Crc32(3),3, fileNameAndFileTableSize + 0),
+                new("1", new Crc32(49),0, fileNameAndFileTableSize + 0),
+                new("2", new Crc32(50),0, fileNameAndFileTableSize + 0),
+                new("3", new Crc32(51),3, fileNameAndFileTableSize + 0),
             }
         );
     }
@@ -357,9 +349,9 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             // Expected
             new List<ExpectedEntryData>
             {
-                new("1", new Crc32(1),3, fileNameAndFileTableSize + 0),
-                new("2", new Crc32(2),0, fileNameAndFileTableSize + 3),
-                new("3", new Crc32(3),0, fileNameAndFileTableSize + 3),
+                new("1", new Crc32(49),3, fileNameAndFileTableSize + 0),
+                new("2", new Crc32(50),0, fileNameAndFileTableSize + 3),
+                new("3", new Crc32(51),0, fileNameAndFileTableSize + 3),
             }
         );
     }
@@ -381,9 +373,9 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             // Expected
             new List<ExpectedEntryData>
             {
-                new("1", new Crc32(1),3, fileNameAndFileTableSize + 0),
-                new("2", new Crc32(2),0, fileNameAndFileTableSize + 3),
-                new("3", new Crc32(3),3, fileNameAndFileTableSize + 3),
+                new("1", new Crc32(49),3, fileNameAndFileTableSize + 0),
+                new("2", new Crc32(50),0, fileNameAndFileTableSize + 3),
+                new("3", new Crc32(51),3, fileNameAndFileTableSize + 3),
             }
         );
     }

@@ -17,7 +17,7 @@ public class FileNameUtilitiesTest
     [DataRow("LPT12")]
     [DataRow("COM12")]
     [DataRow("NUL.txt")] // Though it's not recommend by MS, it's actually allowed to use this name in explorer
-    public void Test__IsValidFileName_CorrectFileNames(string fileName)
+    public void Test_IsValidFileName_CorrectFileNames(string fileName)
     {
         Assert.IsTrue(FileNameUtilities.IsValidFileName(fileName, out var result));
         Assert.AreEqual(FileNameUtilities.FileNameValidationResult.Success,result);
@@ -76,7 +76,7 @@ public class FileNameUtilitiesTest
     [DataRow("LPT7", FileNameUtilities.FileNameValidationResult.WindowsReserved)]
     [DataRow("LPT8", FileNameUtilities.FileNameValidationResult.WindowsReserved)]
     [DataRow("LPT9", FileNameUtilities.FileNameValidationResult.WindowsReserved)]
-    public void Test__IsValidFileName_InvalidFileNames(string fileName, FileNameUtilities.FileNameValidationResult expectedResult)
+    public void Test_IsValidFileName_InvalidFileNames(string fileName, FileNameUtilities.FileNameValidationResult expectedResult)
     {
         Assert.IsFalse(FileNameUtilities.IsValidFileName(fileName, out var result));
         Assert.AreEqual(expectedResult, result);

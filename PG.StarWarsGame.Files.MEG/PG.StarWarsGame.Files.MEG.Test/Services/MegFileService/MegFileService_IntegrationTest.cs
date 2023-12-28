@@ -42,8 +42,8 @@ public class MegFileServiceIntegrationTest
         const string megFileName = "/test.meg";
         const string newFileName = "/new.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.CONTENT_MEG_FILE_V1));
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.CONTENT_MEG_FILE_V1));
+        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
+        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
 
         var meg = _megFileService.Load(megFileName);
         var dummyMeg = new Mock<IMegFile>();
@@ -64,8 +64,8 @@ public class MegFileServiceIntegrationTest
         const string megFileName = "/test.meg";
         const string newFileName = "/new.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.CONTENT_MEG_FILE_V1));
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.CONTENT_MEG_FILE_V1));
+        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
+        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
 
         var meg = _megFileService.Load(megFileName);
 
@@ -175,7 +175,7 @@ public class MegFileServiceIntegrationTest
     {
         const string megFileName = "/test.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.CONTENT_MEG_FILE_V1));
+        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
 
         var expectedData = new ExpectedMegTestData
         {

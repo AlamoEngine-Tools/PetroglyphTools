@@ -29,7 +29,7 @@ public class MegFileSizeValidatorV1IntegrationTest
     [TestMethod]
     public void Test__ValidateCore_CorrectSize()
     {
-        var data = new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1);
+        var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
         var metadata = _binaryReader.ReadBinary(data);
 
         var sizeInfo = new MegBinaryValidationInformation
@@ -50,7 +50,7 @@ public class MegFileSizeValidatorV1IntegrationTest
     [DataRow(1, 0)]
     public void Test__ValidateCore_IncorrectSize(int offsetBytesRead, int offsetArchiveSize)
     {
-        var data = new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1);
+        var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
         var metadata = _binaryReader.ReadBinary(data);
 
         var sizeInfo = new MegBinaryValidationInformation

@@ -1,7 +1,7 @@
 using System;
 using PG.StarWarsGame.Files.MEG.Binary;
 
-namespace PG.StarWarsGame.Files.MEG.Services.Builders;
+namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// A <see cref="IMegBuilder"/> which normalizes and encodes entry paths.

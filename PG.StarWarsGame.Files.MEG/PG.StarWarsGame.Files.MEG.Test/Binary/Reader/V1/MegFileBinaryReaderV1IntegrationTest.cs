@@ -85,7 +85,7 @@ public class MegFileBinaryReaderV1IntegrationTest
     [TestMethod]
     public void Test__ReadBinary_TwoFiles2()
     {
-        var megMetadata = _binaryReader.ReadBinary(new MemoryStream(MegTestConstants.CONTENT_MEG_FILE_V1));
+        var megMetadata = _binaryReader.ReadBinary(new MemoryStream(MegTestConstants.ContentMegFileV1));
 
         Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].FileName);
         Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].OriginalFilePath);

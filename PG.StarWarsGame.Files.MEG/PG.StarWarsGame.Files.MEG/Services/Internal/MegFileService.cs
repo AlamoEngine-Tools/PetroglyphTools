@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
@@ -19,39 +20,39 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <inheritdoc cref="IMegFileService" />
 /// <summary>
-///     Initializes a new <see cref="MegFileService" /> class.
+///  Initializes a new <see cref="MegFileService" /> class.
 /// </summary>
 /// <param name="services">The service provider for this instance.</param>
 internal sealed class MegFileService(IServiceProvider services) : ServiceBase(services), IMegFileService
 {
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
-    public void CreateMegArchive(MegFileInformation megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
+    public void CreateMegArchive(FileSystemStream fileStream, MegFileVersion fileVersion, MegEncryptionData? encryptionData, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
     {
-        if (megFileParameters == null)
-            throw new ArgumentNullException(nameof(megFileParameters));
+        if (fileStream == null)
+            throw new ArgumentNullException(nameof(fileStream));
 
         if (builderInformation == null)
             throw new ArgumentNullException(nameof(builderInformation));
 
-        if (megFileParameters.EncryptionData is not null)
-            throw new NotImplementedException("Encrypted archives are currently not supported");
-
-        var megFilePath = FileSystem.Path.GetFullPath(megFileParameters.FilePath);
-        
-        var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megFileParameters.FileVersion)
+        var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(fileVersion)
             .BuildConstructingMegArchive(builderInformation);
 
         if (constructionArchive.Encrypted)
             throw new NotImplementedException("Encrypted archives are currently not supported");
 
+        if (constructionArchive.Encrypted)
+        {
+            if (encryptionData is null)
+                throw new NotSupportedException("Creating an encrypted MEG archive requires encryption key.");
+            if (fileVersion == MegFileVersion.V3)
+                throw new NotSupportedException("Creating an encrypted MEG archive requires the MEG version to be V3.");
+        }
+
+
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
         
-        // We only support creating a new file here, so that we don't accidentally overwrite a file which we might still read from.
-        // IMegBuilder supports overwriting files, by first creating a copy.
-        using var fileStream = FileSystem.FileStream.New(megFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-
 #if NETSTANDARD2_1_OR_GREATER || NET
         fileStream.Write(metadata.Bytes);
 #else
@@ -93,28 +94,28 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
 
-        using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var fullPath = FileSystem.Path.GetFullPath(filePath);
+
+        using var fs = FileSystem.FileStream.New(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         var megVersion = GetMegFileVersion(fs, out var encrypted);
 
         if (encrypted)
             throw new NotImplementedException("Encrypted archives are currently not supported");
 
-
-        // Is there a valid reason not to use an absolute path here?
-        using var param = new MegFileInformation(filePath, megVersion);
+        using var megFileInfo = new MegFileInformation(fullPath, megVersion);
 
         fs.Seek(0, SeekOrigin.Begin);
-        var megMetadata = LoadAndValidateMetadata(fs, param);
+        var megMetadata = LoadAndValidateMetadata(fs, megFileInfo);
 
         var converter = BinaryServiceFactory.GetConverter(megVersion);
         var megArchive = converter.BinaryToModel(megMetadata);
-        return new MegFile(megArchive, param, Services);
+        return new MegFile(megArchive, megFileInfo, Services);
     }
 
-    private IMegFileMetadata LoadAndValidateMetadata(Stream megStream, MegFileInformation param)
+    private IMegFileMetadata LoadAndValidateMetadata(Stream megStream, MegFileInformation megFileInfo)
     {
-        using var binaryReader = BinaryServiceFactory.GetReader(param.FileVersion);
+        using var binaryReader = BinaryServiceFactory.GetReader(megFileInfo.FileVersion);
 
         var startPosition = megStream.Position;
         var megMetadata = binaryReader.ReadBinary(megStream);
@@ -134,7 +135,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         // The Archive itself is larger (Metadata + 4GB),
         // however the Metadata is still valid since no each part is within the uint32 range. 
         if (actualMegSize > uint.MaxValue)
-            ThrowHelper.ThrowMegExceeds4GigabyteException(param.FilePath);
+            ThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
 
         var validator = Services.GetRequiredService<IMegBinaryValidator>();
 

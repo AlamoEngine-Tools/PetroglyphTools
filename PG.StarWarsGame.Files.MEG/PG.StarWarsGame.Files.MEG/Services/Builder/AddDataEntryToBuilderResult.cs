@@ -2,7 +2,7 @@ using System;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
-namespace PG.StarWarsGame.Files.MEG.Services.Builders;
+namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// Status information whether a file or data entry was added to an <see cref="IMegBuilder"/>.

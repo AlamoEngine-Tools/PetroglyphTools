@@ -4,11 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
-using PG.StarWarsGame.Files.MEG.Services.Builders;
+using PG.StarWarsGame.Files.MEG.Services.Builder;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -18,7 +19,8 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 public interface IMegFileService
 {
     /// <summary>
-    /// Creates a MEG file from a collection of data entries. It's recommended to use <see cref="IMegBuilder"/> instead, as this provides data validation and normalization.
+    /// Creates a MEG file from a collection of data entries and writes it to a specified file stream.
+    /// It's recommended to use <see cref="IMegBuilder"/> instead, as this provides data validation and normalization.
     /// </summary>
     /// <remarks>
     /// Notes:
@@ -29,14 +31,15 @@ public interface IMegFileService
     /// <br/>
     /// - The items of <paramref name="builderInformation"/> will be correctly sorted by this operation.
     /// </remarks>
-    /// <param name="megFileParameters">The desired file properties of the new MEG archive.</param>
+    /// <param name="fileStream">The destination file stream to write the MEG archive to.</param>
+    /// <param name="fileVersion">The MEG file version to use.</param>
+    /// <param name="encryptionData">Optional encryption data.</param>
     /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="megFileParameters"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="megFileParameters"/> contains invalid data.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="fileStream"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
     /// <exception cref="IOException">The MEG file could not be created.</exception>
     /// <exception cref="FileNotFoundException">A data entry file was not found.</exception>
-    /// <exception cref="NotSupportedException">This library does not support creating the desired MEG archive.</exception>
-    void CreateMegArchive(MegFileInformation megFileParameters, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation);
+    /// <exception cref="NotSupportedException">This library does not support creating the MEG archive from the specified arguments.</exception>
+    void CreateMegArchive(FileSystemStream fileStream, MegFileVersion fileVersion, MegEncryptionData? encryptionData, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation);
 
     /// <summary>
     /// Loads a *.MEG file's metadata into a <see cref="IMegFile" />.

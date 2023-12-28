@@ -1,6 +1,6 @@
 using System;
 
-namespace PG.StarWarsGame.Files.MEG.Services.Builders;
+namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// A primitive <see cref="IMegBuilder"/> which neither performs path normalization nor encoding.

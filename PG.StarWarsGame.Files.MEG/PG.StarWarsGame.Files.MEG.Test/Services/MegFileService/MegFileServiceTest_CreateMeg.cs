@@ -31,7 +31,7 @@ public partial class MegFileServiceTest
         var metadataBytes = new byte[] { 0, 1, 2 };
 
         _fileSystem.AddFile(megFileName, null);
-
+        
         Assert.ThrowsException<IOException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>()));
     }
 

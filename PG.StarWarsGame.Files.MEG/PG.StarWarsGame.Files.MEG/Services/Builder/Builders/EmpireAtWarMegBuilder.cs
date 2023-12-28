@@ -1,6 +1,6 @@
 using System;
 
-namespace PG.StarWarsGame.Files.MEG.Services.Builders;
+namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// A <see cref="IMegBuilder"/> for building MEG files which are safe to use for the

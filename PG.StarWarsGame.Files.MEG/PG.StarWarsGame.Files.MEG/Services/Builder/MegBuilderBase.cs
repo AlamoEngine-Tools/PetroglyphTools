@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -8,7 +10,7 @@ using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 
-namespace PG.StarWarsGame.Files.MEG.Services.Builders;
+namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// Base class for a <see cref="IMegBuilder"/> service providing the fundamental implementations.
@@ -27,9 +29,25 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     public abstract bool OverwritesDuplicateEntries { get; }
 
     /// <summary>
-    /// 
+    /// Gets a value indicating whether file size information shall be retrieved when adding local file-based data entries.
     /// </summary>
-    protected virtual bool AutomaticallyAddFileSizes => false;
+    public virtual bool AutomaticallyAddFileSizes => false;
+
+    /// <summary>
+    /// Gets the file information validator for this <see cref="IMegBuilder"/>.
+    /// </summary>
+    /// <remarks>
+    /// By default, a validator instance is used which performs specification-level checks only.
+    /// </remarks>
+    protected virtual IValidator<MegBuilderFileInformationValidationData> FileInformationValidator => DefaultFileInformationValidator.Instance;
+
+    /// <summary>
+    /// Gets the data entry validator for this <see cref="IMegBuilder"/>.
+    /// </summary>
+    /// <remarks>
+    /// By default, a validator instance is used which performs no validation checks.
+    /// </remarks>
+    protected virtual IValidator<MegFileDataEntryBuilderInfo> DataEntryValidator => AlwaysValidDataEntryValidator.Instance;
 
     /// <inheritdoc/>
     public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries => new List<MegFileDataEntryBuilderInfo>(_dataEntries.Values);
@@ -45,6 +63,8 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// <inheritdoc/>
     public AddDataEntryToBuilderResult AddFile(string filePath, string filePathInMeg, bool encrypt = false)
     {
+        ThrowIfDisposed();
+
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePathInMeg);
 
@@ -71,11 +91,13 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
     /// <inheritdoc/>
     public AddDataEntryToBuilderResult AddEntry(
-        MegDataEntryLocationReference entryReference, 
+        MegDataEntryLocationReference entryReference,
         string? overridePathInMeg = null,
         bool? overrideEncrypt = null)
     {
-        if (entryReference == null) 
+        ThrowIfDisposed();
+
+        if (entryReference == null)
             throw new ArgumentNullException(nameof(entryReference));
 
         var filePath = overridePathInMeg ?? entryReference.DataEntry.FilePath;
@@ -90,7 +112,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
         if (!entryReference.Exists)
             return AddDataEntryToBuilderResult.FromEntryNotFound(entryReference);
-        
+
         return AddBuilderInfo(filePath,
             actualFilePath => MegFileDataEntryBuilderInfo.FromEntryReference(entryReference, actualFilePath, encrypt));
     }
@@ -102,45 +124,79 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     }
 
     /// <inheritdoc/>
-    public void Build(MegFileInformation fileParams, bool overwrite)
+    public void Clear()
     {
-        if (!ValidateFileInformation(fileParams))
-            throw new NotSupportedException("The passed file information are not valid or supported by this builder.");
+        _dataEntries.Clear();
+    }
 
+    /// <inheritdoc/>
+    public void Build(MegFileInformation fileInformation, bool overwrite)
+    {
+        ThrowIfDisposed();
 
+        if (fileInformation == null)
+            throw new ArgumentNullException(nameof(fileInformation));
+
+        if (fileInformation.HasEncryption)
+        {
+            throw new NotImplementedException("Encryption is currently not supported.");
+        }
+
+        // Prevent races by creating getting a copy of the current state
         var dataEntries = DataEntries;
 
+        var validationResult = FileInformationValidator.Validate(new(fileInformation, dataEntries));
+        if (!validationResult.IsValid)
+            throw new NotSupportedException($"Provided file parameters are not valid for this builder: {validationResult}");
+
+        var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
+
+        if (!overwrite && fileInfo.Exists)
+            throw new IOException($"The file '{fileInfo.FullName}' already exists.");
+
+        // TODO: Throw on null
+        fileInfo.Directory?.Create();
+
+        // TODO: Create hidden temp file properly
+        var tempFile = fileInfo.FullName + ".tmp";
+
         var megService = Services.GetRequiredService<IMegFileService>();
-
-        megService.CreateMegArchive(fileParams, dataEntries);
-
-        throw new NotImplementedException();
+        try
+        {
+            using (var fileStream = FileSystem.FileStream.New(tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, dataEntries);
+            }
+            // TODO: Move with overwrite
+            FileSystem.File.Move(tempFile, fileInfo.FullName);
+        }
+        finally
+        {
+            try
+            {
+                FileSystem.File.Delete(tempFile);
+            }
+            catch
+            {
+                // Ignore
+            }
+        }
     }
 
     /// <summary>
-    /// When overridden, checks whether the passed file information are valid for this <see cref="IMegBuilder"/>.
+    /// Checks whether the passed file information are valid for this <see cref="IMegBuilder"/>.
     /// </summary>
     /// <remarks>
     /// The default implementation does not validate and always returns <see langword="true"/>.
     /// </remarks>
-    /// <param name="fileParams">The file information to validate</param>
+    /// <param name="fileInformation">The file information to validate</param>
     /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    public virtual bool ValidateFileInformation(MegFileInformation fileParams)
+    /// <exception cref="ArgumentNullException"><paramref name="fileInformation"/> is <see langword="null"/>.</exception>
+    public bool ValidateFileInformation(MegFileInformation fileInformation)
     {
-        return true;
-    }
-
-    /// <summary>
-    /// Gets called when a builder info is about to get added to this <see cref="IMegBuilder"/>.
-    /// When overridden allows to validate the builder info and reject adding it.
-    /// </summary>
-    /// <param name="infoToAdd">The info that is about to get added.</param>
-    /// <param name="notAddedMessage">An optional message that is returned when <paramref name="infoToAdd"/> shall not be added.</param>
-    /// <returns><see langword="true"/> if the builder info can be added; otherwise, <see langword="false"/>.</returns>
-    protected bool OnAdding(MegFileDataEntryBuilderInfo infoToAdd, out string? notAddedMessage)
-    {
-        notAddedMessage = string.Empty;
-        return true;
+        if (fileInformation == null)
+            throw new ArgumentNullException(nameof(fileInformation));
+        return FileInformationValidator.Validate(new(fileInformation, DataEntries)).IsValid;
     }
 
     /// <summary>
@@ -156,6 +212,13 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     {
         message = null;
         return true;
+    }
+
+    /// <inheritdoc/>
+    protected override void DisposeManagedResources()
+    {
+        base.DisposeManagedResources();
+        _dataEntries.Clear();
     }
 
     private AddDataEntryToBuilderResult AddBuilderInfo(string filePath, Func<string, MegFileDataEntryBuilderInfo> createBuilderInfo)
@@ -182,8 +245,9 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
         var infoToAdd = createBuilderInfo(actualFilePath);
 
-        if (!OnAdding(infoToAdd, out var reasonMessage))
-            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry, reasonMessage);
+        var entryValidation = DataEntryValidator.Validate(infoToAdd);
+        if (!entryValidation.IsValid)
+            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry, entryValidation.ToString());
 
         _dataEntries[actualFilePath] = infoToAdd;
 
@@ -194,5 +258,35 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     {
         var encoding = MegFileConstants.MegDataEntryPathEncoding;
         return encoding.EncodeString(actualFilePath, encoding.GetByteCountPG(actualFilePath.Length));
+    }
+
+
+    /// <summary>
+    /// Validates a specified <see cref="MegFileInformation"/> is compliant to the MEG specification.
+    /// </summary>
+    protected internal class DefaultFileInformationValidator : AbstractValidator<MegBuilderFileInformationValidationData>
+    {
+        /// <summary>
+        /// Gets a singleton instance of the <see cref="DefaultFileInformationValidator"/> class.
+        /// </summary>
+        public static readonly DefaultFileInformationValidator Instance = new();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DefaultFileInformationValidator()
+        {
+        }
+    }
+
+    /// <summary>
+    /// This class always passes the validation of a <see cref="MegFileDataEntryBuilderInfo"/>.
+    /// </summary>
+    protected internal class AlwaysValidDataEntryValidator : AbstractValidator<MegFileDataEntryBuilderInfo>
+    {
+        /// <summary>
+        /// Gets a singleton instance of the <see cref="AlwaysValidDataEntryValidator"/> class.
+        /// </summary>
+        public static readonly AlwaysValidDataEntryValidator Instance = new();
     }
 }

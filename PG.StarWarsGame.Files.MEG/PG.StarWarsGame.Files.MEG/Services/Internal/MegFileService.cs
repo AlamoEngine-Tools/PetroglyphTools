@@ -48,8 +48,8 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
         
-        // We only support creating a new file here, so that we don't accidentally overwrite a file which we will be reading from.
-        // IMegBuilder supports overwriting files.
+        // We only support creating a new file here, so that we don't accidentally overwrite a file which we might still read from.
+        // IMegBuilder supports overwriting files, by first creating a copy.
         using var fileStream = FileSystem.FileStream.New(megFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
 
 #if NETSTANDARD2_1_OR_GREATER || NET

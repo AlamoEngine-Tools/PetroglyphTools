@@ -12,8 +12,7 @@ public sealed class MegEncryptionData : IDisposable
     private byte[]? _ivValue;
 
     /// <summary>
-    ///     Gets a copy of the 16 byte long initialization vector (IV) used for encryption or <see langword="null" /> if the file is not
-    ///     encrypted.
+    /// Gets a copy of the 16 byte long initialization vector (IV).
     /// </summary>
     public byte[] IV
     {
@@ -27,7 +26,7 @@ public sealed class MegEncryptionData : IDisposable
     }
 
     /// <summary>
-    ///     Gets a copy of the AES-128 encryption key used for encryption or <see langword="null" /> if the file is not encrypted.
+    /// Gets a copy of the AES-128 encryption key used for encryption.
     /// </summary>
     public byte[] Key
     {
@@ -41,11 +40,14 @@ public sealed class MegEncryptionData : IDisposable
     }
 
     /// <summary>
-    /// 
+    /// Initializes a new instance of the <see cref="MegEncryptionData"/> class with the required encryption keys.
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="iv"></param>
-    /// <exception cref="ArgumentException"></exception>
+    /// <remarks>
+    /// Both, key and initialization vector, must be 128 bit long.
+    /// </remarks>
+    /// <param name="key">The encryption key.</param>
+    /// <param name="iv">The initialization vector.</param>
+    /// <exception cref="ArgumentException">The key size for <paramref name="key"/> or <paramref name="iv"/> is invalid.</exception>
     public MegEncryptionData(ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
     {
         if (!IsValidKeyOrIVSize(key))
@@ -55,18 +57,6 @@ public sealed class MegEncryptionData : IDisposable
 
         _keyValue = key.ToArray();
         _ivValue = iv.ToArray();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public MegEncryptionData Copy()
-    {
-        if (_keyValue is null || _ivValue is null)
-            throw new ObjectDisposedException(GetType().Name);
-
-        return new MegEncryptionData(_keyValue, _ivValue);
     }
 
     /// <inheritdoc/>
@@ -83,6 +73,14 @@ public sealed class MegEncryptionData : IDisposable
             Array.Clear(_ivValue, 0, _ivValue.Length);
             _ivValue = null;
         }
+    }
+
+    internal MegEncryptionData Copy()
+    {
+        if (_keyValue is null || _ivValue is null)
+            throw new ObjectDisposedException(GetType().Name);
+
+        return new MegEncryptionData(_keyValue, _ivValue);
     }
 
     private static bool IsValidKeyOrIVSize(ReadOnlySpan<byte> data)

@@ -95,9 +95,9 @@ public interface IMegBuilder
     void Build(MegFileInformation fileParams, bool overwrite);
 
     /// <summary>
-    /// Checks whether a <see cref="MegFileInformation"/> is valid for this instance.
+    /// Checks whether the specified file information are valid for this builder.
     /// </summary>
     /// <param name="fileParams">The file parameters to check.</param>
-    /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    bool AreFileParamsValid(MegFileInformation fileParams);
+    /// <returns><see langword="true"/> if the specified file information are valid; otherwise, <see langword="false"/>.</returns>
+    bool ValidateFileInformation(MegFileInformation fileParams);
 }

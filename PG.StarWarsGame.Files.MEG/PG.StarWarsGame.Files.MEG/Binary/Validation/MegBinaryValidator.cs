@@ -15,7 +15,7 @@ internal sealed class MegBinaryValidator : AbstractValidator<IMegBinaryValidatio
             throw new ArgumentNullException(nameof(serviceProvider));
 
         // We cannot add a validator that checks whether the string file name matches the CRC32,
-        // cause that would cause incompatibility with MIKE's tool as he allows non-ASCII chars while we do not.
+        // because that would cause incompatibility with MIKE's tool as he allows non-ASCII chars while we do not.
         // This of course makes Mike's meg technically invalid, be we should allow situation.
         // Tool's are free to handle this on their own.
 

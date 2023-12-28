@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -103,9 +104,15 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// <inheritdoc/>
     public void Build(MegFileInformation fileParams, bool overwrite)
     {
-        if (!AreFileParamsValid(fileParams))
+        if (!ValidateFileInformation(fileParams))
             throw new NotSupportedException("The passed file information are not valid or supported by this builder.");
 
+
+        var dataEntries = DataEntries;
+
+        var megService = Services.GetRequiredService<IMegFileService>();
+
+        megService.CreateMegArchive(fileParams, dataEntries);
 
         throw new NotImplementedException();
     }
@@ -118,7 +125,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// </remarks>
     /// <param name="fileParams">The file information to validate</param>
     /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    public virtual bool AreFileParamsValid(MegFileInformation fileParams)
+    public virtual bool ValidateFileInformation(MegFileInformation fileParams)
     {
         return true;
     }

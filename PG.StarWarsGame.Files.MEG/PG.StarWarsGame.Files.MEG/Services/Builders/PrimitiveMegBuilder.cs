@@ -3,22 +3,24 @@ using System;
 namespace PG.StarWarsGame.Files.MEG.Services.Builders;
 
 /// <summary>
-/// A primitive <see cref="IMegBuilder"/> which performs not path normalization or encoding. 
+/// A primitive <see cref="IMegBuilder"/> which neither performs path normalization nor encoding.
+/// <br/>
+/// Duplicate entries get overwritten.
 /// </summary>
 /// <remarks>
 /// Using this instance may produce MEG archives which are not compatible to PG games.
 /// </remarks>
 public sealed class PrimitiveMegBuilder : MegBuilderBase
 {
-    /// <remarks>This instance never normalizes entry paths.</remarks>
+    /// <remarks>This builder never normalizes entry paths.</remarks>
     /// <inheritdoc/>
     public override bool NormalizesEntryPaths => false;
 
-    /// <remarks>This instance never encodes entry paths.</remarks>
+    /// <remarks>This builder never encodes entry paths.</remarks>
     /// <inheritdoc/>
     public override bool EncodesEntryPaths => false;
 
-    /// <remarks>This instance always overrides duplicate entries.</remarks>
+    /// <remarks>This builder always overrides duplicate entries.</remarks>
     /// <inheritdoc/>
     public override bool OverwritesDuplicateEntries => true;
 

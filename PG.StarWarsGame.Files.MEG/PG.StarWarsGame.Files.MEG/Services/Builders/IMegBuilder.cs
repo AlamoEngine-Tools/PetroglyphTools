@@ -56,9 +56,7 @@ public interface IMegBuilder
     /// <param name="encrypt">Indicates whether the data entry shall be encrypted.</param>
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="filePathInMeg"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="filePathInMeg"/> is empty</exception>
-    /// <exception cref="ArgumentException"><paramref name="filePath"/> is not a valid path.</exception>
-    /// <exception cref="ArgumentException"><paramref name="filePathInMeg"/> consists only of whitespace characters.</exception>
+    /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="filePathInMeg"/> is empty.</exception>
     AddDataEntryToBuilderResult AddFile(string filePath, string filePathInMeg, bool encrypt = false);
 
     /// <summary>
@@ -72,7 +70,7 @@ public interface IMegBuilder
     /// <param name="overrideEncrypt">When not <see langword="null"/>, the specified encryption information is used; otherwise the encryption state of the data entry is used.</param>
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="entryReference"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="overridePathInMeg"/> is empty or consists only of whitespace characters.</exception>
+    /// <exception cref="ArgumentException"><paramref name="overridePathInMeg"/> is empty.</exception>
     AddDataEntryToBuilderResult AddEntry(MegDataEntryLocationReference entryReference, string? overridePathInMeg = null,
         bool? overrideEncrypt = null);
 

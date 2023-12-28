@@ -45,9 +45,12 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     public AddDataEntryToBuilderResult AddFile(string filePath, string filePathInMeg, bool encrypt = false)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
-        
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePathInMeg);
+
         if (encrypt)
+        {
             throw new NotImplementedException("Encryption is currently not supported.");
+        }
 
         var fileInfo = FileSystem.FileInfo.New(filePath);
         if (!FileSystem.File.Exists(filePath))
@@ -75,10 +78,14 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
             throw new ArgumentNullException(nameof(entryReference));
 
         var filePath = overridePathInMeg ?? entryReference.DataEntry.FilePath;
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+
         var encrypt = overrideEncrypt ?? entryReference.DataEntry.Encrypted;
 
         if (encrypt)
+        {
             throw new NotImplementedException("Encryption is currently not supported.");
+        }
 
         if (!entryReference.Exists)
             return AddDataEntryToBuilderResult.FromEntryNotFound(entryReference);
@@ -130,16 +137,18 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     }
 
     /// <summary>
-    /// When overridden, checks whether the passed file information are valid for this <see cref="IMegBuilder"/>.
+    /// When overridden, normalizes specified file path string.
     /// </summary>
     /// <remarks>
-    /// The default implementation does not normalize the path and returns <paramref name="filePath"/> unchanged.
+    /// The default implementation does not normalize the path and leaves <paramref name="filePath"/> unchanged.
     /// </remarks>
-    /// <param name="filePath">The file path to validate.</param>
-    /// <returns>The normalized file path.</returns>
-    protected virtual string NormalizePath(string filePath)
+    /// <param name="filePath">The file path to normalize.</param>
+    /// <param name="message">Optional error message if normalization failed or <paramref name="filePath"/> is not supported.</param>
+    /// <returns><see langword="true"/> if <paramref name="filePath"/> was successfully normalized; otherwise, <see langword="false"/>.</returns>
+    protected virtual bool NormalizePath(ref string filePath, out string? message)
     {
-        return filePath;
+        message = null;
+        return true;
     }
 
     private AddDataEntryToBuilderResult AddBuilderInfo(string filePath, Func<string, MegFileDataEntryBuilderInfo> createBuilderInfo)
@@ -148,12 +157,15 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
         var actualFilePath = filePath;
 
-        if (NormalizesEntryPaths)
-            actualFilePath = NormalizePath(actualFilePath);
-        if (EncodesEntryPaths)
-            actualFilePath = EncodePath(actualFilePath);
+        if (!NormalizePath(ref actualFilePath, out var message))
+        {
+            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
+        }
 
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(actualFilePath);
+
+        if (EncodesEntryPaths)
+            actualFilePath = EncodePath(actualFilePath);
 
         if (_dataEntries.TryGetValue(actualFilePath, out var currentInfo))
         {

@@ -2,10 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PG.Commons.Common.Exceptions;
 
 /// <inheritdoc />
+[ExcludeFromCodeCoverage]
 public class LibraryInitialisationException : Exception
 {
     /// <inheritdoc />

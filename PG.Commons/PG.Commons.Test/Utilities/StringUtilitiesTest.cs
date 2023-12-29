@@ -54,14 +54,18 @@ public class StringUtilitiesTest
     }
 
     [TestMethod]
+    [DataRow(null)]
     [DataRow("testö")]
     [DataRow("testÖ")]
     [DataRow("test\u00A0")]
     [DataRow("\uFFFFtest")]
     [DataRow("\u2122test")]
-    public void Test_ValidateIsAsciiOnly_Throws(string data)
+    public void Test_ValidateIsAsciiOnly_Throws(string? data)
     {
-        Assert.ThrowsException<ArgumentException>(() => StringUtilities.ValidateIsAsciiOnly(data.AsSpan()));
+        if (data is null)
+            Assert.ThrowsException<ArgumentNullException>(() => StringUtilities.ValidateIsAsciiOnly(data.AsSpan()));
+        else
+            Assert.ThrowsException<ArgumentException>(() => StringUtilities.ValidateIsAsciiOnly(data.AsSpan()));
     }
 
     [TestMethod]

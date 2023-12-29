@@ -7,8 +7,8 @@ using PG.StarWarsGame.Files.MEG.Data.Archives;
 namespace PG.StarWarsGame.Files.MEG.Files;
 
 /// <summary>
-///     The provided holder for Petroglyph's
-///     <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG files</a>.
+///     The provided holder for a Petroglyph
+///     <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG file</a>.
 ///     *.MEG or Mega files are a proprietary archive type bundling files together in a RAM friendly way.
 /// </summary>
 public interface IMegFile : IPetroglyphFileHolder<IMegArchive, MegFileInformation>

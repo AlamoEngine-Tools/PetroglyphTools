@@ -12,7 +12,7 @@ using PG.StarWarsGame.Files.DAT.Data;
 namespace PG.StarWarsGame.Files.DAT.Files;
 
 /// <summary>
-///     The provided holder for Petroglyph's <a href="https://modtools.petrolution.net/docs/DatFileFormat">.DAT files </a>.
+///     The provided holder for a Petroglyph <a href="https://modtools.petrolution.net/docs/DatFileFormat">.DAT file</a>.
 ///     <br />DAT files hold key-value pairs of strings that are used to localize the game.
 /// </summary>
 public interface IDatFile : IPetroglyphFileHolder<IDatModel, DatFileInformation>;

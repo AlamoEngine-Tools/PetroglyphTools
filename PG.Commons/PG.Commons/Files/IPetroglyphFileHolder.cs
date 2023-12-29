@@ -6,7 +6,7 @@ using System;
 namespace PG.Commons.Files;
 
 /// <summary>
-/// A generic wrapper around petroglyph game files that holds the file content in an accessible data structure as well as other file information.
+/// A generic wrapper around Petroglyph game files that holds the file content in an accessible data structure as well as other file information.
 /// </summary>
 /// <typeparam name="TModel">The type of the content this file holds.</typeparam>
 /// <typeparam name="TFileInfo">The type of the file information.</typeparam>

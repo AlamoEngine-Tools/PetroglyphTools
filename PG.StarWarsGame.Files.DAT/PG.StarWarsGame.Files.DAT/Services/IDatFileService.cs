@@ -8,7 +8,7 @@ using PG.StarWarsGame.Files.DAT.Files;
 namespace PG.StarWarsGame.Files.DAT.Services;
 
 /// <summary>
-///     A service to load and create Petroglyph's
+///     A service to load and create Petroglyph
 ///     <a href="https://modtools.petrolution.net/docs/DatFileFormat"> .DAT files</a>
 /// </summary>
 public interface IDatFileService

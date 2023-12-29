@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -44,54 +45,59 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
     public string FilePath { get; }
 
     /// <summary>
-    ///     The logger of this service.
+    /// The logger of this service.
     /// </summary>
     protected internal ILogger Logger { get; }
 
     /// <summary>
-    ///     The file system implementation to be used.
+    /// The file system implementation to be used.
     /// </summary>
     protected internal IFileSystem FileSystem { get; }
 
     /// <summary>
-    ///     The service provider.
+    /// The service provider.
     /// </summary>
     protected internal IServiceProvider Services { get; }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TParam}" /> class.
+    /// Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TParam}" /> class.
     /// </summary>
     /// <param name="model">The data model of this holder.</param>
-    /// <param name="param">The creation param.</param>
+    /// <param name="fileInformation">The creation param.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" /> for this instance.</param>
-    /// <exception cref="ArgumentNullException">When any parameter is <see langword="null" />.</exception>
-    protected PetroglyphFileHolder(TModel model, TFileInfo param, IServiceProvider serviceProvider)
+    /// <exception cref="ArgumentNullException"><paramref name="model"/> or <paramref name="fileInformation"/> or <paramref name="serviceProvider"/> is <see langword="null" />.</exception>
+    /// <exception cref="FileNotFoundException">The underlying file of the <see cref="IPetroglyphFileHolder{TModel,TFileInfo}"/> does not exist.</exception>
+    protected PetroglyphFileHolder(TModel model, TFileInfo fileInformation, IServiceProvider serviceProvider)
     {
         if (model == null) 
             throw new ArgumentNullException(nameof(model));
-        if (param == null) 
-            throw new ArgumentNullException(nameof(param));
+        if (fileInformation == null) 
+            throw new ArgumentNullException(nameof(fileInformation));
 
         Content = model;
         Services = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         FileSystem = serviceProvider.GetRequiredService<IFileSystem>();
         Logger = serviceProvider.GetService<ILoggerFactory>()?.CreateLogger(GetType()) ?? NullLogger.Instance;
 
-        // We do not use FileNameUtilities.IsValidFileName() cause don't want a custom PG as a dependency.
-        // Instead, we check whether given file is valid in general on the current filesystem.
-        var fileInfo = FileSystem.FileInfo.New(param.FilePath);
+        var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
+
+        // We got a path with trailing path separator which is treated as a directory path.
+        if (string.IsNullOrEmpty(fileInfo.Name))
+            throw new ArgumentException($"The specified path '{fileInfo.FullName}' is not a valid file path.");
+
+        FileName = fileInfo.Name;
+
+        // This also already ensures that file name is not null or empty.
+        if (!fileInfo.Exists)
+            throw new FileNotFoundException($"MEG file '{fileInfo.FullName}' not found.", fileInfo.FullName);
         
         FilePath = fileInfo.FullName;
 
-        // Empty file names such as "Data/.meg" are allowed in general. Thus, we don't check for this constraint here.
-        // The concrete holder can check for possible file name constraints.
-        FileName = fileInfo.Name;
-
-        // Remember: For a file path "myfile.txt" the path is empty but not null.
         Directory = fileInfo.DirectoryName ??
                     throw new InvalidOperationException($"No directory found for file '{FilePath}'");
 
-        _internalFileInformation = param with { FilePath = FilePath };
+        // Create a copy with the full file path.
+        _internalFileInformation = fileInformation with { FilePath = FilePath };
     }
 
     /// <inheritdoc />

@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Common.Exceptions;
+using PG.Commons;
 using PG.Commons.Services;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;

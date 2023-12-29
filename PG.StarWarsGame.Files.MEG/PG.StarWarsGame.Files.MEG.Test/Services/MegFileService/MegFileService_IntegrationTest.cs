@@ -54,9 +54,9 @@ public class MegFileServiceIntegrationTest
             MegFileDataEntryBuilderInfo.FromEntry(dummyMeg.Object, meg.Archive[0])
         };
 
-        Assert.ThrowsException<FileNotFoundException>(() =>
+        Assert.ThrowsException<FileNotInMegException>(() =>
         {
-            using var fs = _fileSystem.FileStream.New(newFileName, FileMode.Create);
+            using var fs = _fileSystem.File.OpenWrite(newFileName);
             _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
         });
     }
@@ -78,7 +78,7 @@ public class MegFileServiceIntegrationTest
         };
         Assert.ThrowsException<FileNotFoundException>(() =>
         {
-            using var fs = _fileSystem.FileStream.New(newFileName, FileMode.Create);
+            using var fs = _fileSystem.File.OpenWrite(newFileName);
             _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
         });
     }

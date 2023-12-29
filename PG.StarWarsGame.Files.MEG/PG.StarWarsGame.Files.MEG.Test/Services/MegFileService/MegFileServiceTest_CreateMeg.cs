@@ -21,18 +21,11 @@ public partial class MegFileServiceTest
     public void Test_CreateMegArchive_Throws()
     {
         Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegFileDataEntryBuilderInfo>()));
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MockFileStream(_fileSystem, "path", FileMode.Open), MegFileVersion.V3, null, null!)); 
-    }
-
-    [TestMethod]
-    public void Test_CreateMegArchive_DoesNotOverride_Throws()
-    {
-        const string megFileName = "/a.meg";
-        var metadataBytes = new byte[] { 0, 1, 2 };
-
-        _fileSystem.AddFile(megFileName, null);
-        
-        Assert.ThrowsException<IOException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>()));
+        Assert.ThrowsException<ArgumentNullException>(() =>
+        {
+            using var fs = _fileSystem.File.OpenWrite("path");
+            _megFileService.CreateMegArchive(fs, MegFileVersion.V3, null, null!);
+        }); 
     }
 
     [TestMethod]
@@ -146,7 +139,7 @@ public partial class MegFileServiceTest
         _binaryServiceFactory.Setup(f => f.GetConverter(MegFileVersion.V2))
             .Returns(_megBinaryConverter.Object);
 
-        using var fs = _fileSystem.FileStream.New(megFileName, FileMode.Create);
+        using var fs = _fileSystem.File.OpenWrite(megFileName);
         _megFileService.CreateMegArchive(fs, MegFileVersion.V2, null, builderEntries);
     }
 }

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Common.Exceptions;
 using PG.Commons.Services;
 
@@ -11,22 +12,16 @@ internal class DatBinaryServiceFactory(IServiceProvider services) : ServiceBase(
 {
     public IDatFileReader GetReader()
     {
-        return (IDatFileReader)(Services.GetService(typeof(IDatFileReader)) ??
-                                throw new LibraryInitialisationException(
-                                    $"No implementation could be found for {nameof(IDatFileReader)}."));
+        return Services.GetService<IDatFileReader>() ?? throw new LibraryInitialisationException(typeof(IDatFileReader));
     }
 
     public IDatBinaryConverter GetConverter()
     {
-        return (IDatBinaryConverter)(Services.GetService(typeof(IDatBinaryConverter)) ??
-                                   throw new LibraryInitialisationException(
-                                       $"No implementation could be found for {nameof(IDatBinaryConverter)}."));
+        return Services.GetService<IDatBinaryConverter>() ?? throw new LibraryInitialisationException(typeof(IDatBinaryConverter));
     }
 
     public IDatFileWriter GetWriter()
     {
-        return (IDatFileWriter)(Services.GetService(typeof(IDatFileWriter)) ??
-                                throw new LibraryInitialisationException(
-                                    $"No implementation could be found for {nameof(IDatFileWriter)}."));
+        return Services.GetService<IDatFileWriter>() ?? throw new LibraryInitialisationException(typeof(IDatFileWriter));
     }
 }

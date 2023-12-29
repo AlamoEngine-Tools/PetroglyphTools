@@ -11,7 +11,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// A service to load and create Petroglyph's <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG files</a>
+/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG files</a>
 /// </summary>
 public interface IMegFileService
 {

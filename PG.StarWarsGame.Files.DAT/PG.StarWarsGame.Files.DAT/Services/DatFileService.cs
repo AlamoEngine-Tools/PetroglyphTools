@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Common.Exceptions;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -16,6 +17,10 @@ namespace PG.StarWarsGame.Files.DAT.Services;
 
 internal class DatFileService(IServiceProvider services) : ServiceBase(services), IDatFileService
 {
+    private IDatBinaryServiceFactory BinaryServiceFactory { get; } = 
+        services.GetService<IDatBinaryServiceFactory>() ??
+        throw new LibraryInitialisationException(typeof(IDatBinaryServiceFactory));
+
     public void StoreDatFile(string datFileName, string targetDirectory, IEnumerable<DatFileEntry> entries, DatFileType datFileType)
     {
         ThrowHelper.ThrowIfNullOrWhiteSpace(datFileName);
@@ -42,11 +47,7 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
 
         var datModel = new DatModel(entryList, datFileType);
 
-        var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??
-                                                 throw new LibraryInitialisationException(
-                                                     $"No implementation could be found for {nameof(IDatBinaryConverter)}."));
-        
-        factory.GetWriter().WriteBinary(absoluteFilePath, factory.GetConverter().ModelToBinary(datModel));
+        BinaryServiceFactory.GetWriter().WriteBinary(absoluteFilePath, BinaryServiceFactory.GetConverter().ModelToBinary(datModel));
     }
 
     public IDatFile LoadDatFile(string filePath)
@@ -56,14 +57,10 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
             throw new ArgumentException($"The file {filePath} does not exist.", nameof(filePath));
         }
 
-        var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??
-                                                 throw new LibraryInitialisationException(
-                                                     $"No implementation could be found for {nameof(IDatBinaryConverter)}."));
-
         var fileInfo = new DatFileInformation { FilePath = filePath };
 
-        var datModel =  factory.GetConverter()
-            .BinaryToModel(factory.GetReader().ReadBinary(FileSystem.FileStream.New(filePath, FileMode.Open)));
+        var datModel = BinaryServiceFactory.GetConverter()
+            .BinaryToModel(BinaryServiceFactory.GetReader().ReadBinary(FileSystem.FileStream.New(filePath, FileMode.Open)));
 
         return new DatFileHolder(datModel, fileInfo, Services);
     }
@@ -75,10 +72,8 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
             throw new ArgumentException($"The file {filePath} does not exist.", nameof(filePath));
         }
 
-        var factory = (IDatBinaryServiceFactory)(Services.GetService(typeof(IDatBinaryServiceFactory)) ??
-                                                 throw new LibraryInitialisationException(
-                                                     $"No implementation could be found for {nameof(IDatBinaryConverter)}."));
-        var reader = (DatFileReader)factory.GetReader();
+        var reader = BinaryServiceFactory.GetReader();
+
         return reader.PeekFileType(FileSystem.FileStream.New(filePath, FileMode.Open));
     }
 }

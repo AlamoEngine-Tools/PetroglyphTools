@@ -39,6 +39,8 @@ public class MegFileTest
         var param = new MegFileInformation(name, MegFileVersion.V2);
         var model = new Mock<IMegArchive>().Object;
 
+        _fileSystem.AddEmptyFile(name);
+
         var megFile = new MegFile(model, param, _serviceProvider.Object);
 
         Assert.AreSame(model, megFile.Content);
@@ -62,6 +64,8 @@ public class MegFileTest
         var param = new MegFileInformation("test.meg", MegFileVersion.V3, encData);
         var model = new Mock<IMegArchive>().Object;
 
+        _fileSystem.AddEmptyFile("test.meg");
+
         var megFile = new MegFile(model, param, _serviceProvider.Object);
 
         Assert.AreSame(model, megFile.Content);
@@ -81,6 +85,8 @@ public class MegFileTest
         
         var param = new MegFileInformation("test.meg", MegFileVersion.V3, encData);
         var model = new Mock<IMegArchive>().Object;
+
+        _fileSystem.AddEmptyFile("test.meg");
 
         var megFile = new MegFile(model, param, _serviceProvider.Object);
 

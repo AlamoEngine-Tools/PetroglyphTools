@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
@@ -31,6 +32,9 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// <summary>
     /// Gets a value indicating whether file size information shall be retrieved when adding local file-based data entries.
     /// </summary>
+    /// <remarks>
+    /// By default, local files size are not determined.
+    /// </remarks>
     public virtual bool AutomaticallyAddFileSizes => false;
 
     /// <summary>
@@ -130,6 +134,13 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     }
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// <paramref name="fileInformation"/> may specify relative or absolute path information.
+    /// Relative path information is interpreted as relative to the current working directory.
+    /// <br/>
+    /// <br/>
+    /// Any and all directories specified in <paramref name="fileInformation"/> are created, unless they already exist or unless some part of path is invalid.
+    /// </remarks>
     public void Build(MegFileInformation fileInformation, bool overwrite)
     {
         ThrowIfDisposed();
@@ -151,14 +162,19 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
         var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
 
-        if (!overwrite && fileInfo.Exists)
-            throw new IOException($"The file '{fileInfo.FullName}' already exists.");
+        // file path points to a directory
+        if (string.IsNullOrEmpty(fileInfo.Name) || fileInfo.Directory is null)
+            throw new ArgumentException("Specified file information contains an invalid file path.", nameof(fileInformation));
 
-        // TODO: Throw on null
-        fileInfo.Directory?.Create();
+        var fullPath = fileInfo.FullName;
+
+        if (!overwrite && fileInfo.Exists)
+            throw new IOException($"The file '{fullPath}' already exists.");
+
+        fileInfo.Directory.Create();
 
         // TODO: Create hidden temp file properly
-        var tempFile = fileInfo.FullName + ".tmp";
+        var tempFile = fullPath + ".tmp";
 
         var megService = Services.GetRequiredService<IMegFileService>();
         try
@@ -168,7 +184,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
                 megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, dataEntries);
             }
             // TODO: Move with overwrite
-            FileSystem.File.Move(tempFile, fileInfo.FullName);
+            FileSystem.File.Move(tempFile, fullPath);
         }
         finally
         {
@@ -272,10 +288,19 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         public static readonly DefaultFileInformationValidator Instance = new();
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="DefaultFileInformationValidator"/> class with rules for ensuring MEG specification
+        /// compliant <see cref="MegFileInformation"/>.
         /// </summary>
+        /// <remarks>
+        /// <see cref="MegFileInformation"/> are considered <b>not</b> to be compliant if the MEG is encrypted but the version is not V3.
+        /// </remarks>
         public DefaultFileInformationValidator()
         {
+            RuleFor(x => x.FileInformation).NotNull();
+            RuleFor(x => x.DataEntries).NotNull();
+            RuleFor(x => x.FileInformation.FileVersion)
+                .Must(v => v == MegFileVersion.V3)
+                .When(x => x.DataEntries.Any(d => d.Encrypted));
         }
     }
 

@@ -48,6 +48,8 @@ public class PetroglyphFileHolderTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
+        fs.AddEmptyFile(filePath);
+
         var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, sp.Object);
 
         if (expectedFileName is not null)
@@ -99,7 +101,9 @@ public class PetroglyphFileHolderTest
         var model = new object();
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
-        
+
+        fs.AddEmptyFile(filePath);
+
         var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, sp.Object);
 
         if (expectedFileName is not null)

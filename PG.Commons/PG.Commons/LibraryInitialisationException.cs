@@ -2,9 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+
 using System.Diagnostics.CodeAnalysis;
 
-namespace PG.Commons.Common.Exceptions;
+namespace PG.Commons;
 
 /// <summary>
 /// Represents an error that occurs when a PetroglyphTools library was not initialized correctly.
@@ -34,8 +35,8 @@ public class LibraryInitialisationException : Exception
     /// about a requested service for which no implementation has been registered.
     /// </summary>
     /// <param name="serviceType">The type of the missing service.</param>
-    public LibraryInitialisationException(Type serviceType) 
-        : base($"No service implementation could be found for {serviceType.GetType().Name}.")
+    public LibraryInitialisationException(Type serviceType)
+        : base($"No service implementation could be found for {serviceType.Name}.")
     {
     }
 }

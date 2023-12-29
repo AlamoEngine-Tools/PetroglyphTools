@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -19,13 +20,12 @@ public partial class MegFileServiceTest
     [TestMethod]
     public void Test_CreateMegArchive_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, new List<MegFileDataEntryBuilderInfo>()));
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MegFileInformation("Path", MegFileVersion.V1), null!)); 
-        Assert.ThrowsException<ArgumentException>(() => _megFileService.CreateMegArchive(new MegFileInformation("   ", MegFileVersion.V1), new List<MegFileDataEntryBuilderInfo>()));
+        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(new MockFileStream(_fileSystem, "path", FileMode.Open), MegFileVersion.V3, null, null!)); 
     }
 
     [TestMethod]
-    public void Test_CreateEmptyMegArchive_DoesNotOverride_Throws()
+    public void Test_CreateMegArchive_DoesNotOverride_Throws()
     {
         const string megFileName = "/a.meg";
         var metadataBytes = new byte[] { 0, 1, 2 };
@@ -36,7 +36,7 @@ public partial class MegFileServiceTest
     }
 
     [TestMethod]
-    public void Test_CreateEmptyMegArchive_DoesNotCreateDirectories_Throws()
+    public void Test_CreateMegArchive_DoesNotCreateDirectories_Throws()
     {
         const string megFileName = "/test/a.meg";
         var metadataBytes = new byte[] { 0, 1, 2 };
@@ -124,7 +124,6 @@ public partial class MegFileServiceTest
 
     private void CreateMegArchive(string megFileName, byte[] metadataBytes, IList<VirtualMegDataEntryReference> items)
     {
-        var fileParams = new MegFileInformation(megFileName, MegFileVersion.V2);
         var builderEntries = new List<MegFileDataEntryBuilderInfo>();
 
         var constructingArchive = new Mock<IConstructingMegArchive>();
@@ -147,6 +146,7 @@ public partial class MegFileServiceTest
         _binaryServiceFactory.Setup(f => f.GetConverter(MegFileVersion.V2))
             .Returns(_megBinaryConverter.Object);
 
-        _megFileService.CreateMegArchive(fileParams, builderEntries);
+        using var fs = _fileSystem.FileStream.New(megFileName, FileMode.Create);
+        _megFileService.CreateMegArchive(fs, MegFileVersion.V2, null, builderEntries);
     }
 }

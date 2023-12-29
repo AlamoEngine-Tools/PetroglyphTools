@@ -54,8 +54,11 @@ public class MegFileServiceIntegrationTest
             MegFileDataEntryBuilderInfo.FromEntry(dummyMeg.Object, meg.Archive[0])
         };
 
-        Assert.ThrowsException<FileNotInMegException>(() => _megFileService.CreateMegArchive(
-            new MegFileInformation(newFileName, meg.FileInformation.FileVersion), builderInfo));
+        Assert.ThrowsException<FileNotFoundException>(() =>
+        {
+            using var fs = _fileSystem.FileStream.New(newFileName, FileMode.Create);
+            _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
+        });
     }
 
     [TestMethod]
@@ -73,9 +76,11 @@ public class MegFileServiceIntegrationTest
         {
             MegFileDataEntryBuilderInfo.FromFile("notFound.txt", null)
         };
-
-        Assert.ThrowsException<FileNotFoundException>(() => _megFileService.CreateMegArchive(
-            new MegFileInformation(newFileName, meg.FileInformation.FileVersion), builderInfo));
+        Assert.ThrowsException<FileNotFoundException>(() =>
+        {
+            using var fs = _fileSystem.FileStream.New(newFileName, FileMode.Create);
+            _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
+        });
     }
 
     //[TestMethod]
@@ -159,7 +164,10 @@ public class MegFileServiceIntegrationTest
             MegFileDataEntryBuilderInfo.FromFile("2.txt", "file")
         };
 
-        _megFileService.CreateMegArchive(new MegFileInformation(megFileName, MegFileVersion.V1), builderInfo);
+        using (var fs = _fileSystem.File.OpenWrite(megFileName))
+        {
+            _megFileService.CreateMegArchive(fs, MegFileVersion.V1, null, builderInfo);
+        }
 
         var bytes = _fileSystem.File.ReadAllBytes(megFileName);
 
@@ -267,7 +275,10 @@ public class MegFileServiceIntegrationTest
         var builderInformation = meg.Archive.Select(e =>
             new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
 
-        _megFileService.CreateMegArchive(param, builderInformation);
+        using (var fs = _fileSystem.File.OpenWrite(expectedData.NewMegFilePath))
+        {
+            _megFileService.CreateMegArchive(fs, expectedData.NewMegFileVersion, expectedData.EncryptionData, builderInformation);
+        }
 
         Assert.IsTrue(_fileSystem.FileExists(expectedData.NewMegFilePath));
 

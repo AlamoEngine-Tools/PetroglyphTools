@@ -18,8 +18,8 @@ public static class ExceptionUtilities
         }
         catch (Exception e)
         {
-            throw new AssertFailedException(
-                $"Expected no exception to be thrown but got '{e.GetType().Name}' instead", e);
+            Assert.Fail($"Expected no exception to be thrown but got '{e.GetType().Name}' instead", e);
+            return default;
         }
     }
 

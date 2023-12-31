@@ -1,5 +1,4 @@
 using System;
-using PG.StarWarsGame.Files.MEG.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -16,6 +15,14 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// </summary>
     public string BaseDirectory { get; }
 
+    /// <remarks>This builder always overrides duplicate entries.</remarks>
+    /// <inheritdoc/>
+    public override bool OverwritesDuplicateEntries => true;
+
+    /// <remarks>This builder automatically determines file sizes for local file-based entries.</remarks>
+    /// <inheritdoc/>
+    public override bool AutomaticallyAddFileSizes => true;
+
     /// <remarks>
     /// This builder normalizes entry paths by the following rules:
     /// <code>
@@ -25,19 +32,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// </code>
     /// </remarks>
     /// <inheritdoc/>
-    public override bool NormalizesEntryPaths => true;
-
-    /// <remarks>This builder encodes entry paths using <see cref="MegFileConstants.MegDataEntryPathEncoding"/>.</remarks>
-    /// <inheritdoc/>
-    public override bool EncodesEntryPaths => true;
-
-    /// <remarks>This builder always overrides duplicate entries.</remarks>
-    /// <inheritdoc/>
-    public override bool OverwritesDuplicateEntries => true;
-
-    /// <remarks>This builder automatically determines file sizes for local file-based entries.</remarks>
-    /// <inheritdoc/>
-    public override bool AutomaticallyAddFileSizes => true;
+    public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class.
@@ -64,11 +59,5 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(path);
 
         return path;
-    }
-
-    /// <inheritdoc/>
-    protected override bool NormalizePath(ref string filePath, out string? message)
-    {
-        return base.NormalizePath(ref filePath, out message);
     }
 }

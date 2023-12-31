@@ -12,18 +12,6 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// </remarks>
 public sealed class PrimitiveMegBuilder : MegBuilderBase
 {
-    /// <remarks>This builder never normalizes entry paths.</remarks>
-    /// <inheritdoc/>
-    public override bool NormalizesEntryPaths => false;
-
-    /// <remarks>This builder never encodes entry paths.</remarks>
-    /// <inheritdoc/>
-    public override bool EncodesEntryPaths => false;
-
-    /// <remarks>This builder always overrides duplicate entries.</remarks>
-    /// <inheritdoc/>
-    public override bool OverwritesDuplicateEntries => true;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PrimitiveMegBuilder"/> class.
     /// </summary>

@@ -24,5 +24,9 @@ public enum AddDataEntryToBuilderState
     /// <summary>
     /// The file or data entry was not added because the normalization of the file path failed.
     /// </summary>
-    FailedNormalization
+    FailedNormalization,
+    /// <summary>
+    /// The file entry was not added because the source file is larger than 4GB.
+    /// </summary>
+    EntryFileTooLarge
 }

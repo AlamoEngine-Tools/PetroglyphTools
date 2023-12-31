@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using FluentValidation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -24,14 +25,6 @@ public interface IMegBuilder
     bool NormalizesEntryPaths { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the <see cref="IMegBuilder"/> encodes a data entry's path before adding it.
-    /// </summary>
-    /// <remarks>
-    /// Path encoding is performed after normalization.
-    /// </remarks>
-    bool EncodesEntryPaths { get; }
-
-    /// <summary>
     /// Gets a value indicating whether the <see cref="IMegBuilder"/> overwrites an already existing data entry with the new version when trying to a data entry
     /// or does not add the new data entry.
     /// </summary>
@@ -43,13 +36,28 @@ public interface IMegBuilder
     /// <summary>
     /// Gets a collection of all data entries which shall be packed to a .MEG file.
     /// </summary>
-    public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries { get; }
+    IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries { get; }
+
+    /// <summary>
+    /// Gets the data entry validator for this <see cref="IMegBuilder"/>.
+    /// </summary>
+    IValidator<MegFileDataEntryBuilderInfo> DataEntryValidator { get; }
+
+    /// <summary>
+    /// Gets the file information validator for this <see cref="IMegBuilder"/>.
+    /// </summary>
+    IValidator<MegBuilderFileInformationValidationData> FileInformationValidator { get; }
+
+    /// <summary>
+    /// Gets the data entry path normalizer or <see langword="null"/> if no normalizer is specified.
+    /// </summary>
+    IMegDataEntryPathNormalizer? DataEntryPathNormalizer { get; }
 
     /// <summary>
     /// Adds a local file as a data entry to the <see cref="IMegBuilder"/> and returns a status information to indicate whether the entry was successfully added. 
     /// </summary>
     /// <remarks>
-    /// The actual data entry's file path might be different to <paramref name="filePathInMeg"/> depending whether this <see cref="IMegBuilder"/> normalizes path before adding, or not.
+    /// The actual data entry's file path might be different to <paramref name="filePathInMeg"/> due to optional normalization and mandatory encoding.
     /// </remarks>
     /// <param name="filePath">The local path to the file which get added as an data entry.</param>
     /// <param name="filePathInMeg">The desired file path of the data entry inside the MEG archive.</param>

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -21,13 +23,17 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     private readonly Dictionary<string, MegFileDataEntryBuilderInfo> _dataEntries = new();
 
     /// <inheritdoc/>
-    public abstract bool NormalizesEntryPaths { get; }
+    [MemberNotNullWhen(true, nameof(DataEntryPathNormalizer))]
+    public bool NormalizesEntryPaths => DataEntryPathNormalizer is not null;
 
     /// <inheritdoc/>
-    public abstract bool EncodesEntryPaths { get; }
+    public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries => new List<MegFileDataEntryBuilderInfo>(_dataEntries.Values);
 
+    /// <remarks>
+    /// By default, duplicates get overwritten.
+    /// </remarks>
     /// <inheritdoc/>
-    public abstract bool OverwritesDuplicateEntries { get; }
+    public virtual bool OverwritesDuplicateEntries => true;
 
     /// <summary>
     /// Gets a value indicating whether file size information shall be retrieved when adding local file-based data entries.
@@ -37,24 +43,23 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// </remarks>
     public virtual bool AutomaticallyAddFileSizes => false;
 
-    /// <summary>
-    /// Gets the file information validator for this <see cref="IMegBuilder"/>.
-    /// </summary>
     /// <remarks>
     /// By default, a validator instance is used which performs specification-level checks only.
     /// </remarks>
-    protected virtual IValidator<MegBuilderFileInformationValidationData> FileInformationValidator => DefaultFileInformationValidator.Instance;
+    /// <inheritdoc/>
+    public virtual IValidator<MegBuilderFileInformationValidationData> FileInformationValidator => DefaultFileInformationValidator.Instance;
 
-    /// <summary>
-    /// Gets the data entry validator for this <see cref="IMegBuilder"/>.
-    /// </summary>
     /// <remarks>
     /// By default, a validator instance is used which performs no validation checks.
     /// </remarks>
-    protected virtual IValidator<MegFileDataEntryBuilderInfo> DataEntryValidator => AlwaysValidDataEntryValidator.Instance;
-
     /// <inheritdoc/>
-    public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries => new List<MegFileDataEntryBuilderInfo>(_dataEntries.Values);
+    public virtual IValidator<MegFileDataEntryBuilderInfo> DataEntryValidator => NotNullDataEntryValidator.Instance;
+
+    /// <remarks>
+    /// By default, no normalizer is specified.
+    /// </remarks>
+    /// <inheritdoc/>
+    public virtual IMegDataEntryPathNormalizer? DataEntryPathNormalizer => null;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegBuilderBase"/> class.
@@ -72,20 +77,15 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePathInMeg);
 
-        if (encrypt)
-        {
-            throw new NotImplementedException("Encryption is currently not supported.");
-        }
-
         var fileInfo = FileSystem.FileInfo.New(filePath);
-        if (!FileSystem.File.Exists(filePath))
+        if (!fileInfo.Exists)
             return AddDataEntryToBuilderResult.FromFileNotFound(fileInfo.FullName);
 
         long? fileSize = AutomaticallyAddFileSizes ? fileInfo.Length : null;
         if (fileSize > uint.MaxValue)
         {
-            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
-                $"Source file '{fileInfo.FullName}' larger than 4GB.");
+            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.EntryFileTooLarge,
+                $"Source file '{fileInfo.FullName}' is larger than 4GB.");
         }
 
         return AddBuilderInfo(filePathInMeg,
@@ -108,11 +108,6 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
 
         var encrypt = overrideEncrypt ?? entryReference.DataEntry.Encrypted;
-
-        if (encrypt)
-        {
-            throw new NotImplementedException("Encryption is currently not supported.");
-        }
 
         if (!entryReference.Exists)
             return AddDataEntryToBuilderResult.FromEntryNotFound(entryReference);
@@ -145,16 +140,16 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     {
         ThrowIfDisposed();
 
-        if (fileInformation == null)
+        if (fileInformation is null)
             throw new ArgumentNullException(nameof(fileInformation));
-
-        if (fileInformation.HasEncryption)
-        {
-            throw new NotImplementedException("Encryption is currently not supported.");
-        }
 
         // Prevent races by creating getting a copy of the current state
         var dataEntries = DataEntries;
+
+        if (dataEntries.Any(e => e.Encrypted))
+        {
+            throw new NotImplementedException("Encryption is currently not supported.");
+        }
 
         var validationResult = FileInformationValidator.Validate(new(fileInformation, dataEntries));
         if (!validationResult.IsValid)
@@ -163,6 +158,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
 
         // file path points to a directory
+        // NB: This is not a full inclusive check. We leave it up to the file system to throw exceptions if something is still invalid.
         if (string.IsNullOrEmpty(fileInfo.Name) || fileInfo.Directory is null)
             throw new ArgumentException("Specified file information contains an invalid file path.", nameof(fileInformation));
 
@@ -215,21 +211,6 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         return FileInformationValidator.Validate(new(fileInformation, DataEntries)).IsValid;
     }
 
-    /// <summary>
-    /// When overridden, normalizes specified file path string.
-    /// </summary>
-    /// <remarks>
-    /// The default implementation does not normalize the path and leaves <paramref name="filePath"/> unchanged.
-    /// </remarks>
-    /// <param name="filePath">The file path to normalize.</param>
-    /// <param name="message">Optional error message if normalization failed or <paramref name="filePath"/> is not supported.</param>
-    /// <returns><see langword="true"/> if <paramref name="filePath"/> was successfully normalized; otherwise, <see langword="false"/>.</returns>
-    protected virtual bool NormalizePath(ref string filePath, out string? message)
-    {
-        message = null;
-        return true;
-    }
-
     /// <inheritdoc/>
     protected override void DisposeManagedResources()
     {
@@ -243,15 +224,12 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
         var actualFilePath = filePath;
 
-        if (!NormalizePath(ref actualFilePath, out var message))
-        {
+        if (NormalizesEntryPaths && !DataEntryPathNormalizer.TryNormalizePath(ref actualFilePath, out var message))
             return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
-        }
 
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(actualFilePath);
 
-        if (EncodesEntryPaths)
-            actualFilePath = EncodePath(actualFilePath);
+        actualFilePath = EncodePath(actualFilePath);
 
         if (_dataEntries.TryGetValue(actualFilePath, out var currentInfo))
         {
@@ -298,20 +276,28 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         {
             RuleFor(x => x.FileInformation).NotNull();
             RuleFor(x => x.DataEntries).NotNull();
-            RuleFor(x => x.FileInformation.FileVersion)
-                .Must(v => v == MegFileVersion.V3)
+            RuleFor(x => x.FileInformation)
+                .Must(i => i.FileVersion == MegFileVersion.V3 && i.EncryptionData is not null)
                 .When(x => x.DataEntries.Any(d => d.Encrypted));
         }
     }
 
     /// <summary>
-    /// This class always passes the validation of a <see cref="MegFileDataEntryBuilderInfo"/>.
+    /// A validator that checks the passed <see cref="MegFileDataEntryBuilderInfo"/> is not <see langword="null"/>.
     /// </summary>
-    protected internal class AlwaysValidDataEntryValidator : AbstractValidator<MegFileDataEntryBuilderInfo>
+    protected internal sealed class NotNullDataEntryValidator : AbstractValidator<MegFileDataEntryBuilderInfo>
     {
         /// <summary>
-        /// Gets a singleton instance of the <see cref="AlwaysValidDataEntryValidator"/> class.
+        /// Gets a singleton instance of the <see cref="NotNullDataEntryValidator"/> class.
         /// </summary>
-        public static readonly AlwaysValidDataEntryValidator Instance = new();
+        public static readonly NotNullDataEntryValidator Instance = new();
+        
+        /// <inheritdoc/>
+        public override ValidationResult Validate(ValidationContext<MegFileDataEntryBuilderInfo> context)
+        {
+            if (context.InstanceToValidate is null)
+                return new ValidationResult(new[] { new ValidationFailure("MegFileDataEntryBuilderInfo", "MegFileDataEntryBuilderInfo cannot be null") });
+            return base.Validate(context);
+        }
     }
 }

@@ -13,6 +13,7 @@
       <None Remove="Resources\Files\v1_empty.meg" />
       <None Remove="Resources\Files\v2_2_files_data.meg" />
       <None Remove="Resources\Files\v3n_2_files_data.meg" />
+      <None Remove="Services\Builder\MegBuilderBaseTest.cs~RF11bba75.TMP" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">

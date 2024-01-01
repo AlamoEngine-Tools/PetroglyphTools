@@ -32,6 +32,7 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// Initializes a new instance of the <see cref="NormalizingMegBuilder"/> class.
     /// </summary>
     /// <param name="services">The service provider.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public NormalizingMegBuilder(IServiceProvider services) : base(services)
     {
     }

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -12,6 +10,7 @@ using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -47,13 +46,13 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// By default, a validator instance is used which performs specification-level checks only.
     /// </remarks>
     /// <inheritdoc/>
-    public virtual IValidator<MegBuilderFileInformationValidationData> FileInformationValidator => DefaultFileInformationValidator.Instance;
+    public virtual IFileInformationValidator FileInformationValidator => DefaultFileInformationValidator.Instance;
 
     /// <remarks>
     /// By default, a validator instance is used which performs no validation checks.
     /// </remarks>
     /// <inheritdoc/>
-    public virtual IValidator<MegFileDataEntryBuilderInfo> DataEntryValidator => NotNullDataEntryValidator.Instance;
+    public virtual IBuilderInfoValidator DataEntryValidator => NotNullDataEntryValidator.Instance;
 
     /// <remarks>
     /// By default, no normalizer is specified.
@@ -252,52 +251,5 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     {
         var encoding = MegFileConstants.MegDataEntryPathEncoding;
         return encoding.EncodeString(actualFilePath, encoding.GetByteCountPG(actualFilePath.Length));
-    }
-
-
-    /// <summary>
-    /// Validates a specified <see cref="MegFileInformation"/> is compliant to the MEG specification.
-    /// </summary>
-    protected internal class DefaultFileInformationValidator : AbstractValidator<MegBuilderFileInformationValidationData>
-    {
-        /// <summary>
-        /// Gets a singleton instance of the <see cref="DefaultFileInformationValidator"/> class.
-        /// </summary>
-        public static readonly DefaultFileInformationValidator Instance = new();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultFileInformationValidator"/> class with rules for ensuring MEG specification
-        /// compliant <see cref="MegFileInformation"/>.
-        /// </summary>
-        /// <remarks>
-        /// <see cref="MegFileInformation"/> are considered <b>not</b> to be compliant if the MEG is encrypted but the version is not V3.
-        /// </remarks>
-        public DefaultFileInformationValidator()
-        {
-            RuleFor(x => x.FileInformation).NotNull();
-            RuleFor(x => x.DataEntries).NotNull();
-            RuleFor(x => x.FileInformation)
-                .Must(i => i.FileVersion == MegFileVersion.V3 && i.EncryptionData is not null)
-                .When(x => x.DataEntries.Any(d => d.Encrypted));
-        }
-    }
-
-    /// <summary>
-    /// A validator that checks the passed <see cref="MegFileDataEntryBuilderInfo"/> is not <see langword="null"/>.
-    /// </summary>
-    protected internal sealed class NotNullDataEntryValidator : AbstractValidator<MegFileDataEntryBuilderInfo>
-    {
-        /// <summary>
-        /// Gets a singleton instance of the <see cref="NotNullDataEntryValidator"/> class.
-        /// </summary>
-        public static readonly NotNullDataEntryValidator Instance = new();
-        
-        /// <inheritdoc/>
-        public override ValidationResult Validate(ValidationContext<MegFileDataEntryBuilderInfo> context)
-        {
-            if (context.InstanceToValidate is null)
-                return new ValidationResult(new[] { new ValidationFailure("MegFileDataEntryBuilderInfo", "MegFileDataEntryBuilderInfo cannot be null") });
-            return base.Validate(context);
-        }
     }
 }

@@ -16,6 +16,7 @@ public sealed class PrimitiveMegBuilder : MegBuilderBase
     /// Initializes a new instance of the <see cref="PrimitiveMegBuilder"/> class.
     /// </summary>
     /// <param name="services">The service provider.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public PrimitiveMegBuilder(IServiceProvider services) : base(services)
     {
     }

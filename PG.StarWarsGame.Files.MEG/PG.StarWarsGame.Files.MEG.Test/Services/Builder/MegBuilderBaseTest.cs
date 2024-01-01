@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
-using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,6 +15,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using PG.Testing;
 
@@ -25,8 +24,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 [TestClass]
 public class MegBuilderBaseTest
 {
-    private readonly Mock<IValidator<MegFileDataEntryBuilderInfo>> _entryValidator = new();
-    private readonly Mock<IValidator<MegBuilderFileInformationValidationData>> _infoValidator = new();
+    private readonly Mock<IBuilderInfoValidator> _entryValidator = new();
+    private readonly Mock<IFileInformationValidator> _infoValidator = new();
     private readonly Mock<IMegDataEntryPathNormalizer> _normalizer = new();
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IMegFileService> _megFileService = new();
@@ -976,8 +975,8 @@ public class MegBuilderBaseTest
         bool overwrite,
         bool addFileSize,
         IMegDataEntryPathNormalizer? normalizer,
-        IValidator<MegFileDataEntryBuilderInfo> entryValidator,
-        IValidator<MegBuilderFileInformationValidationData> fileInformationValidator,
+        IBuilderInfoValidator entryValidator,
+        IFileInformationValidator fileInformationValidator,
         IServiceProvider services)
         : MegBuilderBase(services)
     {
@@ -987,8 +986,8 @@ public class MegBuilderBaseTest
 
         public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer { get; } = normalizer;
 
-        public override IValidator<MegFileDataEntryBuilderInfo> DataEntryValidator { get; } = entryValidator;
+        public override IBuilderInfoValidator DataEntryValidator { get; } = entryValidator;
 
-        public override IValidator<MegBuilderFileInformationValidationData> FileInformationValidator { get; } = fileInformationValidator;
+        public override IFileInformationValidator FileInformationValidator { get; } = fileInformationValidator;
     }
 }

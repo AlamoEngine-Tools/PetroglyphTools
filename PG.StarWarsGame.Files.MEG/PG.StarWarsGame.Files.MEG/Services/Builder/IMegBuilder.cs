@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using FluentValidation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -41,12 +41,12 @@ public interface IMegBuilder
     /// <summary>
     /// Gets the data entry validator for this <see cref="IMegBuilder"/>.
     /// </summary>
-    IValidator<MegFileDataEntryBuilderInfo> DataEntryValidator { get; }
+    IBuilderInfoValidator DataEntryValidator { get; }
 
     /// <summary>
     /// Gets the file information validator for this <see cref="IMegBuilder"/>.
     /// </summary>
-    IValidator<MegBuilderFileInformationValidationData> FileInformationValidator { get; }
+    IFileInformationValidator FileInformationValidator { get; }
 
     /// <summary>
     /// Gets the data entry path normalizer or <see langword="null"/> if no normalizer is specified.

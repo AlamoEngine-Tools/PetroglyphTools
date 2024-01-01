@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 public abstract class PetroglyphGameMegBuilder : MegBuilderBase
 {
     /// <summary>
-    /// TODO
+    /// Gets the base directory used for creating relative paths.
     /// </summary>
     public string BaseDirectory { get; }
 
@@ -35,25 +35,28 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class.
+    /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class with a specified game path.
     /// </summary>
-    /// <param name="baseDirectory"></param>
+    /// <remarks>
+    /// <paramref name="baseDirectory"/> usually is a game's or mod's ./DATA/ directory, however it can be set to any other directory.
+    /// </remarks>
+    /// <param name="baseDirectory">The path for this <see cref="PetroglyphGameMegBuilder"/>.</param>
     /// <param name="services">The service provider.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> or <paramref name="services"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
-        if (baseDirectory == null) 
+        if (string.IsNullOrEmpty(baseDirectory)) 
             throw new ArgumentNullException(nameof(baseDirectory));
         BaseDirectory = FileSystem.Path.GetFullPath(baseDirectory);
     }
 
     /// <summary>
-    /// 
+    /// Returns a relative path from a path and the <see cref="BaseDirectory"/> of this instance.
     /// </summary>
     /// <remarks>The returned path is not normalized by the rules of this instance.</remarks>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    /// <exception cref="NotSupportedException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <param name="path">A path to get the relative path from.</param>
+    /// <returns>The relative path.</returns>
     public string ResolveEntryPath(string path)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(path);

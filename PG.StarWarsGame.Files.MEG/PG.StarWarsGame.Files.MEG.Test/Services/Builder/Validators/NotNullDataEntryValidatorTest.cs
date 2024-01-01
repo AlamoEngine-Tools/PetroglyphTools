@@ -1,28 +1,37 @@
 ﻿using System.Collections.Generic;
-using FluentValidation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
-using PG.StarWarsGame.Files.MEG.Services.Builder;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
 [TestClass]
-public class NotNullDataEntryValidatorTest : ValidatorTestSuite<MegFileDataEntryBuilderInfo>
+public class NotNullDataEntryValidatorTest
 {
-    protected override IValidator<MegFileDataEntryBuilderInfo> CreateValidator()
+    [TestMethod]
+    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method)]
+    public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        return MegBuilderBase.NotNullDataEntryValidator.Instance;
+        var validator = NotNullDataEntryValidator.Instance;
+        Assert.IsTrue(validator.Validate(builderInfo).IsValid);
     }
 
-    protected override IEnumerable<ValidatorTestData<MegFileDataEntryBuilderInfo>> GetValidCases()
+    [TestMethod]
+    [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method)]
+    public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        yield return new ValidatorTestData<MegFileDataEntryBuilderInfo>(
-            new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path")), "Test_NotNull");
+        var validator = NotNullDataEntryValidator.Instance;
+        Assert.IsFalse(validator.Validate(builderInfo).IsValid);
     }
 
-    protected override IEnumerable<ValidatorTestData<MegFileDataEntryBuilderInfo>> GetInvalidCases()
+    public static IEnumerable<object[]> ValidTestData()
     {
-        yield return new ValidatorTestData<MegFileDataEntryBuilderInfo>(null!, "Test_Null");
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))];
+    }
+
+    public static IEnumerable<object[]> InvalidTestData()
+    {
+        yield return [null];
     }
 }

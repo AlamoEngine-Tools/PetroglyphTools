@@ -1,12 +1,13 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using PG.Commons.DataTypes;
 
 namespace PG.StarWarsGame.Files.MEG.Files;
 
 /// <summary>
-/// 
+/// Stores an AES-CBC 128-bit encryption key and initialization vector.
 /// </summary>
-public sealed class MegEncryptionData : IDisposable
+public sealed class MegEncryptionData : DisposableObject
 {
     private byte[]? _keyValue;
     private byte[]? _ivValue;
@@ -60,8 +61,9 @@ public sealed class MegEncryptionData : IDisposable
     }
 
     /// <inheritdoc/>
-    public void Dispose()
+    protected override void DisposeManagedResources()
     {
+        base.DisposeManagedResources();
         if (_keyValue is not null)
         {
             Array.Clear(_keyValue, 0, _keyValue.Length);

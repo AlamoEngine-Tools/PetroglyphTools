@@ -23,6 +23,7 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     /// <summary>
     /// Gets a value indicating whether an <see cref="IMegFile"/> is encrypted.
     /// </summary>
+    [MemberNotNullWhen(true, nameof(EncryptionData))]
     public bool HasEncryption => EncryptionData is not null;
 
     /// <summary>

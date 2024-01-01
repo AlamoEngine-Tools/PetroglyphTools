@@ -46,8 +46,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
-        if (string.IsNullOrEmpty(baseDirectory)) 
-            throw new ArgumentNullException(nameof(baseDirectory));
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
         BaseDirectory = FileSystem.Path.GetFullPath(baseDirectory);
     }
 

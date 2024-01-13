@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Services;
+using PG.StarWarsGame.Files.MEG.Services.Builder;
 
 namespace PG.StarWarsGame.Files.MEG;
 
@@ -24,6 +25,8 @@ public static class MegDomain
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
         serviceCollection.AddSingleton<IMegDataStreamFactory>(sp => new MegDataStreamFactory(sp));
         serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(sp => new VirtualMegArchiveBuilder());
+
+        serviceCollection.AddSingleton<IDataEntryPathResolver>(sp => new PetroglyphRelativeDataEntryPathResolver());
         
         serviceCollection.AddTransient<IMegBinaryValidator>(sp => new MegBinaryValidator(sp));
         serviceCollection.AddTransient<IFileTableValidator>(_ => new MegFileTableValidator());

@@ -1,4 +1,5 @@
 using System;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -26,7 +27,7 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// Note: Path operators ("./" or "../") will <b>not</b> get resolved.
     /// </remarks>
     /// <inheritdoc/>
-    public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer { get; }
+    public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer => DefaultDataEntryPathNormalizer.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NormalizingMegBuilder"/> class.

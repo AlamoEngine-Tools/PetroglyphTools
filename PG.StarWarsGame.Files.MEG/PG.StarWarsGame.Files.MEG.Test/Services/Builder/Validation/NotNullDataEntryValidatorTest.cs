@@ -4,7 +4,7 @@ using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
+namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
 [TestClass]
 public class NotNullDataEntryValidatorTest

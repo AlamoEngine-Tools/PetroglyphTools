@@ -19,6 +19,13 @@ public abstract class MegBuilderTestSuite
 
     protected abstract MegBuilderBase CreateBuilder(IServiceProvider serviceProvider);
 
+    protected virtual IServiceProvider CreateServiceProvider()
+    {
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(FileSystem);
+        return sc.BuildServiceProvider();
+    }
+
     [TestMethod]
     public void Test_Ctor_Throws()
     {
@@ -28,9 +35,7 @@ public abstract class MegBuilderTestSuite
     [TestMethod]
     public void Test_Ctor()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(FileSystem);
-        var builder = CreateBuilder(sc.BuildServiceProvider());
+        var builder = CreateBuilder(CreateServiceProvider());
 
         Assert.AreEqual(ExpectedFileInfoValidatorType, builder.FileInformationValidator.GetType());
         Assert.AreEqual(ExpectedDataEntryValidatorType, builder.DataEntryValidator.GetType());

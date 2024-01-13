@@ -1,6 +1,6 @@
 using System;
 
-namespace PG.StarWarsGame.Files.MEG.Services.Builder;
+namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 /// <summary>
 /// Base class for an <see cref="IMegDataEntryPathNormalizer"/>.

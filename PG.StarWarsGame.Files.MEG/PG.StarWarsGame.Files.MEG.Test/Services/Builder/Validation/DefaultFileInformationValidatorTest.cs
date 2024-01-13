@@ -6,7 +6,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
+namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
 [TestClass]
 public class DefaultFileInformationValidatorTest
@@ -46,7 +46,7 @@ public class DefaultFileInformationValidatorTest
         ];
         yield return
         [
-            CreateData(new MegFileInformation("path", MegFileVersion.V3, CreateRandomEncryptionData()), 
+            CreateData(new MegFileInformation("path", MegFileVersion.V3, CreateRandomEncryptionData()),
             [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];
     }

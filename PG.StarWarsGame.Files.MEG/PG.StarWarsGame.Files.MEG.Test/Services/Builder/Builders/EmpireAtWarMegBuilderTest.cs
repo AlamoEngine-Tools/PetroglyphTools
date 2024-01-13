@@ -8,10 +8,8 @@ using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
 [TestClass]
-public class EmpireAtWarMegBuilderTest : MegBuilderTestSuite
+public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 {
-    public const string BasePath = "/Games/Petroglyph/corruption/";
-
     protected override Type ExpectedFileInfoValidatorType => typeof(DefaultFileInformationValidator);
     protected override Type ExpectedDataEntryValidatorType => typeof(NotNullDataEntryValidator);
     protected override Type? ExpectedDataEntryPathNormalizerType => null;
@@ -26,15 +24,6 @@ public class EmpireAtWarMegBuilderTest : MegBuilderTestSuite
     protected override MegBuilderBase CreateBuilder(IServiceProvider serviceProvider)
     {
         return CreateEaWBuilder(serviceProvider);
-    }
-
-    [TestMethod]
-    public new void Test_Ctor_Throws()
-    {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(FileSystem); 
-        Assert.ThrowsException<ArgumentNullException>(() => new EmpireAtWarMegBuilder(null!, sc.BuildServiceProvider()));
-        Assert.ThrowsException<ArgumentException>(() => new EmpireAtWarMegBuilder("", sc.BuildServiceProvider()));
     }
 
     [TestMethod]

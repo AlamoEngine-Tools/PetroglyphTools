@@ -1,4 +1,6 @@
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -10,6 +12,8 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// </summary>
 public abstract class PetroglyphGameMegBuilder : MegBuilderBase
 {
+    private readonly IDataEntryPathResolver _pathResolver;
+
     /// <summary>
     /// Gets the base directory used for creating relative paths.
     /// </summary>
@@ -28,11 +32,11 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <code>
     /// - Upper cases all characters using the invariant culture.
     /// - Replaces path separators ('/' or '\') by the current system's default separator, which is '\' on Windows and '/' on Linux/macOS.
-    /// - Resolves path operators ("./" or "../") and rejects entries which traverse out of <see cref="BaseDirectory"/>.
+    /// - Path operators ("." or "..") get rejected.
     /// </code>
     /// </remarks>
     /// <inheritdoc/>
-    public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer { get; }
+    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => PetroglyphDataEntryPathNormalizer.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class with a specified game path.
@@ -47,19 +51,28 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
-        BaseDirectory = FileSystem.Path.GetFullPath(baseDirectory);
+        BaseDirectory = FileSystem.DirectoryInfo.New(baseDirectory).FullName;
+        _pathResolver = services.GetRequiredService<IDataEntryPathResolver>();
     }
 
     /// <summary>
     /// Returns a relative path from a path and the <see cref="BaseDirectory"/> of this instance.
+    /// Returns <see langword="null"/> if <paramref name="path"/> is invalid or not a part of <see cref="BaseDirectory"/>.
+    /// <br/>
+    /// <br/>
+    /// For example:
+    /// <br/>
+    /// <code>"file.txt" --> "file.txt"</code>
+    /// <code>"xml/file.txt" --> "xml/file.txt"</code>
+    /// <code>"/gameBasePath/xml/file.xml" --> "xml/file.xml"</code>
+    /// <code>"/NOTgamePath/xml/file.xml" --> null</code>
+    /// <code>"../xml/file.xml" --> null</code>
     /// </summary>
-    /// <remarks>The returned path is not normalized by the rules of this instance.</remarks>
+    /// <remarks>The returned path is neither normalized nor validated by the rules of this instance.</remarks>
     /// <param name="path">A path to get the relative path from.</param>
     /// <returns>The relative path.</returns>
-    public string ResolveEntryPath(string path)
+    public string? ResolveEntryPath(string path)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(path);
-
-        return path;
+        return _pathResolver.ResolvePath(path, BaseDirectory);
     }
 }

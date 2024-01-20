@@ -1,4 +1,5 @@
 using System;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -8,6 +9,16 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// </summary>
 public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public override IBuilderInfoValidator DataEntryValidator => EmpireAtWarMegDataEntryValidator.Instance;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public override IMegFileInformationValidator MegFileInformationValidator => EmpireAtWarMegFileInformationValidator.Instance;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarMegBuilder"/> class with a specified game path.
     /// </summary>

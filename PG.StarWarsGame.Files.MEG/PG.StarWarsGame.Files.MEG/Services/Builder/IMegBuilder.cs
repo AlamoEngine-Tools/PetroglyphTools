@@ -47,7 +47,7 @@ public interface IMegBuilder
     /// <summary>
     /// Gets the file information validator for this <see cref="IMegBuilder"/>.
     /// </summary>
-    IFileInformationValidator FileInformationValidator { get; }
+    IMegFileInformationValidator MegFileInformationValidator { get; }
 
     /// <summary>
     /// Gets the data entry path normalizer or <see langword="null"/> if no normalizer is specified.

@@ -9,13 +9,13 @@ using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
 [TestClass]
-public class DefaultFileInformationValidatorTest
+public class DefaultMegFileInformationValidatorTest
 {
     [TestMethod]
     [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method)]
     public void TestValid(MegBuilderFileInformationValidationData builderInfo)
     {
-        var validator = DefaultFileInformationValidator.Instance;
+        var validator = DefaultMegFileInformationValidator.Instance;
         Assert.IsTrue(validator.Validate(builderInfo).IsValid);
     }
 
@@ -23,7 +23,7 @@ public class DefaultFileInformationValidatorTest
     [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method)]
     public void TestInvalid(MegBuilderFileInformationValidationData builderInfo)
     {
-        var validator = DefaultFileInformationValidator.Instance;
+        var validator = DefaultMegFileInformationValidator.Instance;
         Assert.IsFalse(validator.Validate(builderInfo).IsValid);
     }
 

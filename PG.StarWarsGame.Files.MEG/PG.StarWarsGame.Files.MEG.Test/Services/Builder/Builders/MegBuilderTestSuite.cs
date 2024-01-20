@@ -19,25 +19,30 @@ public abstract class MegBuilderTestSuite
 
     protected abstract MegBuilderBase CreateBuilder(IServiceProvider serviceProvider);
 
-    protected virtual IServiceProvider CreateServiceProvider()
+    protected virtual void SetupServiceCollection(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddSingleton<IFileSystem>(FileSystem);
+    }
+
+    protected IServiceProvider CreateServiceProvider()
     {
         var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(FileSystem);
+        SetupServiceCollection(sc);
         return sc.BuildServiceProvider();
     }
 
     [TestMethod]
-    public void Test_Ctor_Throws()
+    public void MegBuilderTestSuite_Test_Ctor_Throws()
     {
         Assert.ThrowsException<ArgumentNullException>(() => CreateBuilder(null!));
     }
 
     [TestMethod]
-    public void Test_Ctor()
+    public void MegBuilderTestSuite_Test_Ctor()
     {
         var builder = CreateBuilder(CreateServiceProvider());
 
-        Assert.AreEqual(ExpectedFileInfoValidatorType, builder.FileInformationValidator.GetType());
+        Assert.AreEqual(ExpectedFileInfoValidatorType, builder.MegFileInformationValidator.GetType());
         Assert.AreEqual(ExpectedDataEntryValidatorType, builder.DataEntryValidator.GetType());
         Assert.AreEqual(ExpectedDataEntryPathNormalizerType, builder.DataEntryPathNormalizer?.GetType());
         Assert.AreEqual(ExpectedOverwritesDuplicates, builder.OverwritesDuplicateEntries);

@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -39,6 +40,11 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => PetroglyphDataEntryPathNormalizer.Instance;
 
     /// <summary>
+    /// 
+    /// </summary>
+    public override IMegFileInformationValidator MegFileInformationValidator => PetroglyphMegFileInformationValidator.Instance;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class with a specified game path.
     /// </summary>
     /// <remarks>
@@ -73,6 +79,13 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <returns>The relative path.</returns>
     public string? ResolveEntryPath(string path)
     {
-        return _pathResolver.ResolvePath(path, BaseDirectory);
+        try
+        {
+            return _pathResolver.ResolvePath(path, BaseDirectory);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

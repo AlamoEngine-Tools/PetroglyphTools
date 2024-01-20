@@ -26,7 +26,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 public class MegBuilderBaseTest
 {
     private readonly Mock<IBuilderInfoValidator> _entryValidator = new();
-    private readonly Mock<IFileInformationValidator> _infoValidator = new();
+    private readonly Mock<IMegFileInformationValidator> _infoValidator = new();
     private readonly Mock<IMegDataEntryPathNormalizer> _normalizer = new();
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IMegFileService> _megFileService = new();
@@ -43,7 +43,7 @@ public class MegBuilderBaseTest
         var builder = builderMock.Object;
 
         Assert.IsNotNull(builder.DataEntryValidator);
-        Assert.IsNotNull(builder.FileInformationValidator);
+        Assert.IsNotNull(builder.MegFileInformationValidator);
 
         Assert.IsNull(builder.DataEntryPathNormalizer);
         Assert.IsFalse(builder.NormalizesEntryPaths);
@@ -68,7 +68,7 @@ public class MegBuilderBaseTest
             Assert.IsFalse(builder.NormalizesEntryPaths);
         }
         Assert.IsNotNull(builder.DataEntryValidator);
-        Assert.IsNotNull(builder.FileInformationValidator);
+        Assert.IsNotNull(builder.MegFileInformationValidator);
 
         Assert.AreEqual(overwrite, builder.OverwritesDuplicateEntries);
         Assert.AreEqual(addFileSize, builder.AutomaticallyAddFileSizes);
@@ -977,7 +977,7 @@ public class MegBuilderBaseTest
         bool addFileSize,
         IMegDataEntryPathNormalizer? normalizer,
         IBuilderInfoValidator entryValidator,
-        IFileInformationValidator fileInformationValidator,
+        IMegFileInformationValidator megFileInformationValidator,
         IServiceProvider services)
         : MegBuilderBase(services)
     {
@@ -989,6 +989,6 @@ public class MegBuilderBaseTest
 
         public override IBuilderInfoValidator DataEntryValidator { get; } = entryValidator;
 
-        public override IFileInformationValidator FileInformationValidator { get; } = fileInformationValidator;
+        public override IMegFileInformationValidator MegFileInformationValidator { get; } = megFileInformationValidator;
     }
 }

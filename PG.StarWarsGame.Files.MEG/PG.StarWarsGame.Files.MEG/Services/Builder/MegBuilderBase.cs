@@ -47,7 +47,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// By default, a validator instance is used which performs specification-level checks only.
     /// </remarks>
     /// <inheritdoc/>
-    public virtual IFileInformationValidator FileInformationValidator => DefaultFileInformationValidator.Instance;
+    public virtual IMegFileInformationValidator MegFileInformationValidator => DefaultMegFileInformationValidator.Instance;
 
     /// <remarks>
     /// By default, a validator instance is used which performs no validation checks.
@@ -151,7 +151,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
             throw new NotImplementedException("Encryption is currently not supported.");
         }
 
-        var validationResult = FileInformationValidator.Validate(new(fileInformation, dataEntries));
+        var validationResult = MegFileInformationValidator.Validate(new(fileInformation, dataEntries));
         if (!validationResult.IsValid)
             throw new NotSupportedException($"Provided file parameters are not valid for this builder: {validationResult}");
 
@@ -208,7 +208,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     {
         if (fileInformation == null)
             throw new ArgumentNullException(nameof(fileInformation));
-        return FileInformationValidator.Validate(new(fileInformation, DataEntries)).IsValid;
+        return MegFileInformationValidator.Validate(new(fileInformation, DataEntries)).IsValid;
     }
 
     /// <inheritdoc/>

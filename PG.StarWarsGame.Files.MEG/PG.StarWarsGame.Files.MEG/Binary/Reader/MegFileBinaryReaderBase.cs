@@ -43,10 +43,12 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
     protected internal virtual MegFileNameTable BuildFileNameTable(BinaryReader binaryReader, TMegHeader header)
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
+        
+        var normalEncoding = MegFileConstants.MegDataEntryPathEncoding;
 
         // NB: We use Latin1 encoding here, so that we can stay compatible with Mike.NL's tools. 
         // Since MegFileNameTableRecord properly encodes the string, this is safe.
-        var encoding = MegFileConstants.ExtendedMegEntryPathEncoding;
+        var extendedEncoding = MegFileConstants.ExtendedMegEntryPathEncoding;
 
         for (uint i = 0; i < header.FileNumber; i++)
         {
@@ -55,8 +57,8 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
             // Reading the string as ASCII has the potential of creating PG/Windows illegal file names due to the replacement character '?'. 
             // However, in order to stay compatible with Mike's MEG Editor we don't validate file paths here.
             // Extracting such files, without their name changed, will cause an exception. This is by design.
-            var originalFileName = binaryReader.ReadString(fileNameLength, encoding);
-            var asciiFileName = MegFileConstants.MegDataEntryPathEncoding.EncodeString(originalFileName);
+            var originalFileName = binaryReader.ReadString(fileNameLength, extendedEncoding);
+            var asciiFileName = normalEncoding.EncodeString(originalFileName);
 
             fileNameTable.Add(new MegFileNameTableRecord(asciiFileName, originalFileName));
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +18,7 @@ using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using PG.Testing;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
@@ -97,7 +97,7 @@ public class MegBuilderBaseTest
         var entries = builder.DataEntries;
         Assert.AreEqual(0, entries.Count);
 
-        _fileSystem.AddEmptyFile("file.txt");
+        _fileSystem.Initialize().WithFile("file.txt");
 
         builder.AddFile("file.txt", "file.txt");
 
@@ -121,7 +121,7 @@ public class MegBuilderBaseTest
         var entries = builder.DataEntries;
         Assert.AreEqual(0, entries.Count);
 
-        _fileSystem.AddEmptyFile("file.txt");
+        _fileSystem.Initialize().WithFile("file.txt");
 
         builder.AddFile("file.txt", "file.txt");
 
@@ -140,7 +140,9 @@ public class MegBuilderBaseTest
         var entries = builder.DataEntries;
         Assert.AreEqual(0, entries.Count);
 
-        _fileSystem.AddEmptyFile("file.txt");
+        _fileSystem.Initialize();
+
+        _fileSystem.Initialize().WithFile("file.txt");
 
         var result = builder.AddFile("file.txt", "file.txt");
 
@@ -159,7 +161,7 @@ public class MegBuilderBaseTest
         var entries = builder.DataEntries;
         Assert.AreEqual(0, entries.Count);
 
-        _fileSystem.AddEmptyFile("file.txt");
+        _fileSystem.Initialize().WithFile("file.txt");
 
         builder.AddFile("file.txt", "file.txt");
 
@@ -191,7 +193,7 @@ public class MegBuilderBaseTest
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         var builder = CreateBuilder(false, false, false);
         Assert.ThrowsException<ArgumentNullException>(() => builder.ValidateFileInformation(null!));
@@ -224,7 +226,7 @@ public class MegBuilderBaseTest
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         var builder = CreateBuilder(false, false, false);
 
@@ -240,7 +242,7 @@ public class MegBuilderBaseTest
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         var builder = CreateBuilder(false, false, false);
 
@@ -272,7 +274,7 @@ public class MegBuilderBaseTest
 
         var inputEntryPath = "path/file.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         string? normalizerMessage = null;
 
@@ -304,7 +306,7 @@ public class MegBuilderBaseTest
 
         var inputEntryPath = "path/file.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         string? normalizerMessage = null;
 
@@ -334,7 +336,7 @@ public class MegBuilderBaseTest
 
         var inputEntryPath = "path/fileWithNonAsciiÖ.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         string? normalizerMessage = null;
 
@@ -362,8 +364,8 @@ public class MegBuilderBaseTest
         const string otherFileToAdd = "file2.txt";
         const string inputEntryPath = "path/file.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
-        _fileSystem.AddEmptyFile(otherFileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(otherFileToAdd);
 
         var builder = CreateBuilder(false, false, false);
 
@@ -389,8 +391,8 @@ public class MegBuilderBaseTest
 
         const string expectedEncodedEntry = "path/fileWithNonAscii?.txt";
 
-        _fileSystem.AddEmptyFile(file);
-        _fileSystem.AddEmptyFile(otherFile);
+        _fileSystem.Initialize().WithFile(file);
+        _fileSystem.Initialize().WithFile(otherFile);
 
         var builder = CreateBuilder(true, false, false);
 
@@ -418,7 +420,7 @@ public class MegBuilderBaseTest
         const string inputEntryPath = "path/fileWithNonAsciiÖ.txt";
         const string expectedEncodedEntry = "path/fileWithNonAscii?.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         var builder = CreateBuilder(false, false, false);
 
@@ -444,7 +446,7 @@ public class MegBuilderBaseTest
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
 
-        _fileSystem.AddFile(fileToAdd, new MockFileData([1, 2, 3, 4, 5]));
+        _fileSystem.Initialize().WithFile(fileToAdd).Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
 
         var builder = CreateBuilder(false, true, false);
 
@@ -691,7 +693,7 @@ public class MegBuilderBaseTest
     {
         const string fileToAdd = "file1.txt";
 
-        _fileSystem.AddEmptyFile(fileToAdd);
+        _fileSystem.Initialize().WithFile(fileToAdd);
 
         var entry = MegDataEntryTest.CreateEntry(entryPath, default, default, false, null);
         var archive = new MegArchive(new List<MegDataEntry>
@@ -725,7 +727,7 @@ public class MegBuilderBaseTest
 
         const string expectedEncodedEntry = "path/fileWithNonAscii?.txt";
 
-        _fileSystem.AddEmptyFile(file);
+        _fileSystem.Initialize().WithFile(file);
 
         var entry = MegDataEntryTest.CreateEntry("file.txt", default, default, false, null);
         var archive = new MegArchive(new List<MegDataEntry>
@@ -823,7 +825,7 @@ public class MegBuilderBaseTest
         CollectionAssert.AreEqual(expectedData, _fileSystem.File.ReadAllBytes(fileInfo.FilePath));
         Assert.AreNotEqual(string.Empty, tempFilePath);
         Assert.AreNotEqual(tempFilePath, fileInfo.FilePath);
-        Assert.IsFalse(_fileSystem.FileExists(tempFilePath));
+        Assert.IsFalse(_fileSystem.File.Exists(tempFilePath));
     }
 
     [TestMethod]
@@ -850,7 +852,7 @@ public class MegBuilderBaseTest
 
         Assert.ThrowsException<IOException>(() => builder.Build(fileInfo, false));
 
-        Assert.IsFalse(_fileSystem.FileExists(tempFilePath));
+        Assert.IsFalse(_fileSystem.File.Exists(tempFilePath));
     }
 
     [TestMethod]
@@ -858,7 +860,7 @@ public class MegBuilderBaseTest
     {
         var fileInfo = new MegFileInformation("a.meg", MegFileVersion.V1);
 
-        _fileSystem.AddEmptyFile("a.meg");
+        _fileSystem.Initialize().WithFile("a.meg");
 
         var builder = CreateBuilder(false, false, false);
         

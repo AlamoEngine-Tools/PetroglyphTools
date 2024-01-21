@@ -1,14 +1,13 @@
 using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
-
+using Testably.Abstractions.Testing;
 using static PG.StarWarsGame.Files.MEG.Test.Data.Entries.MegDataEntryTest;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
@@ -158,20 +157,20 @@ public class MegFileExtractorTest
     public void Test_ExtractData_NoOverwrite()
     {
         var megFileData = new byte[] { 1, 2, 3, 4 };
-        _fileSystem.AddEmptyFile("a.meg");
-        
+        _fileSystem.Initialize().WithFile("a.meg");
+
         var entry = CreateEntry("file.txt");
         var meg = new Mock<IMegFile>();
         var location = new MegDataEntryLocationReference(meg.Object, entry);
 
-        Assert.IsFalse(_fileSystem.FileExists("file.txt"));
+        Assert.IsFalse(_fileSystem.File.Exists("file.txt"));
 
         _streamFactory.Setup(f => f.GetDataStream(location)).Returns(new MemoryStream(megFileData));
 
         var extracted = _extractor.ExtractFile(location, "file.txt", false);
         
         Assert.IsTrue(extracted);
-        Assert.IsTrue(_fileSystem.FileExists("file.txt"));
+        Assert.IsTrue(_fileSystem.File.Exists("file.txt"));
 
         var actualFileData = _fileSystem.File.ReadAllBytes("file.txt");
         CollectionAssert.AreEqual(megFileData, actualFileData);
@@ -195,9 +194,9 @@ public class MegFileExtractorTest
         var megFileData = new byte[] { 1, 2, 3, 4 };
 
         var existingFileData = new byte[] { 4, 3, 2, 1 };
-        _fileSystem.AddFile("file.txt", new MockFileData(existingFileData));
+        _fileSystem.Initialize().WithFile("file.txt").Which(m => m.HasBytesContent(existingFileData));
 
-        _fileSystem.AddEmptyFile("a.meg");
+        _fileSystem.Initialize().WithFile("a.meg");
 
         CollectionAssert.AreEqual(existingFileData, _fileSystem.File.ReadAllBytes("file.txt"));
 
@@ -219,7 +218,7 @@ public class MegFileExtractorTest
     {
         var megFileData = new byte[] { 1, 2, 3, 4 };
 
-        _fileSystem.AddEmptyFile("a.meg");
+        _fileSystem.Initialize().WithFile("a.meg");
 
         var filePathWhereToExtract = "new/file.txt";
 
@@ -243,7 +242,7 @@ public class MegFileExtractorTest
     [DataRow("c:")]
     public void Test_ExtractData_Throws_IllegalPath_Windows(string filePathWhereToExtract)
     {
-        _fileSystem.AddEmptyFile("a.meg");
+        _fileSystem.Initialize().WithFile("a.meg");
 
         var entry = CreateEntry("path");
         var meg = new Mock<IMegFile>();
@@ -257,7 +256,7 @@ public class MegFileExtractorTest
     [DataRow("/")]
     public void Test_ExtractData_Throws_IllegalPath_Linux(string filePathWhereToExtract)
     {
-        _fileSystem.AddEmptyFile("a.meg");
+        _fileSystem.Initialize().WithFile("a.meg");
 
         var entry = CreateEntry("path");
         var meg = new Mock<IMegFile>();

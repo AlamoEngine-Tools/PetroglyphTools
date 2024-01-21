@@ -50,7 +50,7 @@ public class MegDataStreamFactoryTest
     [TestMethod]
     public void Test_GetFileData_OriginInfo_File()
     {
-        _fileSystem.AddFile("test.txt", new MockFileData(new byte[] { 1, 2, 3 }));
+        _fileSystem.Initialize().WithFile("test.txt").Which(m => m.HasBytesContent([1,2,3]));
 
         var originInfo = new MegDataEntryOriginInfo("test.txt");
         var stream = _streamFactory.GetDataStream(originInfo);
@@ -64,7 +64,7 @@ public class MegDataStreamFactoryTest
     [TestMethod]
     public void Test_GetFileData_OriginInfo_LocationReference()
     {
-        _fileSystem.AddFile("a.meg", new MockFileData(new byte[] { 1, 2, 3, 4, 5 }));
+        _fileSystem.Initialize().WithFile("a.meg").Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
 
         var entry = MegDataEntryTest.CreateEntry("file.txt", offset: 1, size: 2);
 
@@ -89,7 +89,7 @@ public class MegDataStreamFactoryTest
     [TestMethod]
     public void Test_GetFileData_LocationReference_Throws_FileNotInMeg()
     {
-        _fileSystem.AddEmptyFile("a.meg");
+        _fileSystem.Initialize().WithFile("a.meg");
         var entry = MegDataEntryTest.CreateEntry("file.txt");
 
         var archive = new Mock<IMegArchive>();
@@ -124,7 +124,7 @@ public class MegDataStreamFactoryTest
     [TestMethod]
     public void Test_GetFileData_LocationReference_EmptyDataFile()
     {
-        _fileSystem.AddEmptyFile("a.meg");
+        _fileSystem.Initialize().WithFile("a.meg");
         var entry = MegDataEntryTest.CreateEntry("file.txt", offset: 2, size: 0);
 
         var archive = new Mock<IMegArchive>();
@@ -143,7 +143,7 @@ public class MegDataStreamFactoryTest
     [TestMethod]
     public void Test_GetFileData_LocationReference_File()
     {
-        _fileSystem.AddFile("a.meg", new MockFileData(new byte[] { 1, 2, 3, 4, 5 }));
+        _fileSystem.Initialize().WithFile("a.meg").Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
 
         var entry = MegDataEntryTest.CreateEntry("file.txt", offset: 1, size: 2);
 

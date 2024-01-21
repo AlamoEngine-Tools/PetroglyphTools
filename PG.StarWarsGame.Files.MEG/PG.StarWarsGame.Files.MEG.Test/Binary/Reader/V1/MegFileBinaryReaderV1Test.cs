@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Binary;
@@ -13,6 +12,7 @@ using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 

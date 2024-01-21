@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,6 +9,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Test.Files;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
@@ -24,7 +24,7 @@ public class EmpireAtWarMegBuilder_IntegrationTest
     public void Setup()
     {
         var gamePath = "/game/corruption/data";
-        _fileSystem.AddDirectory(gamePath);
+        _fileSystem.Initialize().WithSubdirectory(gamePath);
 
         _serviceProvider = CreateServiceProvider();
 
@@ -42,7 +42,7 @@ public class EmpireAtWarMegBuilder_IntegrationTest
     [TestMethod]
     public void Test_BuildMeg()
     {
-        _fileSystem.AddFile("entry.txt", new MockFileData("test"));
+        _fileSystem.Initialize().WithFile("entry.txt").Which(m =>  m.HasStringContent("test"));
 
         var entry1 = _eawMegBuilder.ResolveEntryPath("entry1.txt");
         var entry2 = _eawMegBuilder.ResolveEntryPath("/game/corruption/data/xml/entry2.txt");
@@ -75,7 +75,7 @@ public class EmpireAtWarMegBuilder_IntegrationTest
 
         _eawMegBuilder.Build(new MegFileInformation("new.meg", MegFileVersion.V1), false);
 
-        Assert.IsTrue(_fileSystem.FileExists("new.meg"));
+        Assert.IsTrue(_fileSystem.File.Exists("new.meg"));
 
         var megFileService = _serviceProvider.GetRequiredService<IMegFileService>();
         var meg = megFileService.Load("new.meg");

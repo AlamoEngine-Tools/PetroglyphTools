@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,6 +15,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using PG.Testing;
 using PG.Testing.Hashing;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Construction;
 
@@ -146,7 +146,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     public void Test_BuildConstructingMegArchive_GetSizeAtRuntime()
     {
         var testData = "test data";
-        _fileSystem.AddFile("A", testData);
+        _fileSystem.Initialize().WithFile("A").Which(m => m.HasStringContent(testData));
         var service = CreateService(_serviceProviderMock.Object);
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
         {
@@ -176,8 +176,11 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             if (entry.Encrypted)
                 throw new InvalidOperationException("Test does not support encryption");
 
-            if (entry.OriginInfo.IsLocalFile) 
-                _fileSystem.AddFile(entry.OriginInfo.FilePath, TestUtility.GetRandomStringOfLength((int)entry.Size));
+            if (entry.OriginInfo.IsLocalFile)
+            {
+                _fileSystem.Initialize().WithFile(entry.OriginInfo.FilePath)
+                    .Which(m => m.HasStringContent(TestUtility.GetRandomStringOfLength((int)entry.Size)));
+            }
         }
         
         var service = CreateService(_serviceProviderMock.Object);

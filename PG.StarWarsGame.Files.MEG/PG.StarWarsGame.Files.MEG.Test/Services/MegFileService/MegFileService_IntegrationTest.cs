@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,6 +13,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
@@ -42,8 +42,7 @@ public class MegFileServiceIntegrationTest
         const string megFileName = "/test.meg";
         const string newFileName = "/new.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
+        _fileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
         var meg = _megFileService.Load(megFileName);
         var dummyMeg = new Mock<IMegFile>();
@@ -67,8 +66,7 @@ public class MegFileServiceIntegrationTest
         const string megFileName = "/test.meg";
         const string newFileName = "/new.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
+        _fileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
         var meg = _megFileService.Load(megFileName);
 
@@ -155,9 +153,10 @@ public class MegFileServiceIntegrationTest
             52, 53, 54 // 456
         };
 
-        _fileSystem.AddFile("1.txt", new MockFileData("123"));
-        _fileSystem.AddFile("2.txt", new MockFileData("456"));
-        
+
+        _fileSystem.Initialize().WithFile("1.txt").Which(m => m.HasStringContent("123"));
+        _fileSystem.Initialize().WithFile("2.txt").Which(m => m.HasStringContent("456"));
+
         var builderInfo = new List<MegFileDataEntryBuilderInfo>
         {
             MegFileDataEntryBuilderInfo.FromFile("1.txt", "file"),
@@ -183,7 +182,7 @@ public class MegFileServiceIntegrationTest
     {
         const string megFileName = "/test.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(MegTestConstants.ContentMegFileV1));
+        _fileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
         var expectedData = new ExpectedMegTestData
         {
@@ -208,7 +207,8 @@ public class MegFileServiceIntegrationTest
         const string megFileName = "/test.meg";
         const string megResource = "Files.v1_empty.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(TestUtility.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
+        _fileSystem.Initialize().WithFile(megFileName)
+            .Which(m => m.HasBytesContent(TestUtility.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
 
         var expectedData = new ExpectedMegTestData
         {
@@ -229,7 +229,8 @@ public class MegFileServiceIntegrationTest
         const string megFileName = "/test.meg";
         const string megResource = "Files.v1_2_files_with_extended_ascii_name.meg";
 
-        _fileSystem.AddFile(megFileName, new MockFileData(TestUtility.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
+        _fileSystem.Initialize().WithFile(megFileName)
+            .Which(m => m.HasBytesContent(TestUtility.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
 
         var expectedData = new ExpectedMegTestData
         {
@@ -280,7 +281,7 @@ public class MegFileServiceIntegrationTest
             _megFileService.CreateMegArchive(fs, expectedData.NewMegFileVersion, expectedData.EncryptionData, builderInformation);
         }
 
-        Assert.IsTrue(_fileSystem.FileExists(expectedData.NewMegFilePath));
+        Assert.IsTrue(_fileSystem.File.Exists(expectedData.NewMegFilePath));
 
         var createdVersion = _megFileService.GetMegFileVersion(expectedData.NewMegFilePath, out var newEncrypted);
         Assert.AreEqual(expectedData.NewMegFileVersion, createdVersion);

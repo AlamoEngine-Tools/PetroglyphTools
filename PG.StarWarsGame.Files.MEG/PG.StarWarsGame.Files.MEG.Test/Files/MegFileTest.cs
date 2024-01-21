@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Files;
 
@@ -39,7 +39,7 @@ public class MegFileTest
         var param = new MegFileInformation(name, MegFileVersion.V2);
         var model = new Mock<IMegArchive>().Object;
 
-        _fileSystem.AddEmptyFile(name);
+        _fileSystem.Initialize().WithFile("test.meg");
 
         var megFile = new MegFile(model, param, _serviceProvider.Object);
 
@@ -64,7 +64,7 @@ public class MegFileTest
         var param = new MegFileInformation("test.meg", MegFileVersion.V3, encData);
         var model = new Mock<IMegArchive>().Object;
 
-        _fileSystem.AddEmptyFile("test.meg");
+        _fileSystem.Initialize().WithFile("test.meg");
 
         var megFile = new MegFile(model, param, _serviceProvider.Object);
 
@@ -86,7 +86,7 @@ public class MegFileTest
         var param = new MegFileInformation("test.meg", MegFileVersion.V3, encData);
         var model = new Mock<IMegArchive>().Object;
 
-        _fileSystem.AddEmptyFile("test.meg");
+        _fileSystem.Initialize().WithFile("test.meg");
 
         var megFile = new MegFile(model, param, _serviceProvider.Object);
 

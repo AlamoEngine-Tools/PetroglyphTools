@@ -59,7 +59,7 @@ public partial class MegFileServiceTest
 
         CreateMegArchive(megFileName, metadataBytes, items);
 
-        Assert.IsTrue(_fileSystem.FileExists(megFileName));
+        Assert.IsTrue(_fileSystem.File.Exists(megFileName));
         var data = _fileSystem.File.ReadAllBytes(megFileName);
 
         CollectionAssert.AreEqual(metadataBytes.Concat(entryBytes).ToList(), data);

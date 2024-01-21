@@ -1,10 +1,10 @@
 using System;
 using System.IO;
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Files;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
@@ -23,7 +23,7 @@ public partial class MegFileServiceTest
     [TestMethod]
     public void Test_GetMegFileVersion()
     {
-        _fileSystem.AddFile("test.meg", new MockFileData("Some Data..."));
+        _fileSystem.Initialize().WithFile("test.meg").Which(manipulator => manipulator.HasStringContent("Some Data..."));
         _serviceProvider.Setup(s => s.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
         var encrypted = true;
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(MegFileVersion.V3);

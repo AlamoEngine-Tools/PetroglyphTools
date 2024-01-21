@@ -10,6 +10,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
@@ -39,8 +40,8 @@ public partial class MegFileServiceTest
 
         _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
             .Returns(new ValidationResult(new List<ValidationFailure> { new("Fail", "Fail") }));
-        
-        _fileSystem.AddEmptyFile("test.meg");
+
+        _fileSystem.Initialize().WithFile("test.meg");
 
         _megFileService.Load("test.meg");
     }
@@ -63,7 +64,7 @@ public partial class MegFileServiceTest
 
         _megBinaryReader.Setup(r => r.ReadBinary(It.IsAny<Stream>())).Throws<InvalidOperationException>();
 
-        _fileSystem.AddFile("test.meg", new MockFileData(fileData));
+        _fileSystem.Initialize().WithFile("test.meg").Which(m => m.HasStringContent(fileData));
 
         Assert.ThrowsException<InvalidOperationException>(() => _megFileService.Load("test.meg"));
 
@@ -93,7 +94,7 @@ public partial class MegFileServiceTest
 
         _megBinaryReader.Setup(r => r.ReadBinary(It.IsAny<Stream>())).Returns(metadata.Object);
 
-        _fileSystem.AddFile("test.meg", new MockFileData(fileData));
+        _fileSystem.Initialize().WithFile("test.meg").Which(m => m.HasStringContent(fileData));
         
         Assert.ThrowsException<BinaryCorruptedException>(() => _megFileService.Load("test.meg"));
 
@@ -138,7 +139,7 @@ public partial class MegFileServiceTest
         _megBinaryConverter.Setup(c => c.BinaryToModel(metadata.Object))
             .Returns(megArchive.Object);
 
-        _fileSystem.AddFile(megFileName, new MockFileData(fileData));
+        _fileSystem.Initialize().WithFile(megFileName).Which(m => m.HasStringContent(fileData));
 
         var megFile = _megFileService.Load(megFileName);
 

@@ -9,7 +9,7 @@ public class PetroglyphGameMegBuilderBaseTest : PetroglyphGameMegBuilderTest
 {
     protected override PetroglyphGameMegBuilder CreatePetroBuilder(string basePath, IServiceProvider serviceProvider)
     {
-        return new TestPetroglyphGameMegBuilder(BasePath, serviceProvider);
+        return new TestPetroglyphGameMegBuilder(basePath, serviceProvider);
     }
 
     private class TestPetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services)

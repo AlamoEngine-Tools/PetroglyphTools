@@ -40,10 +40,24 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <inheritdoc/>
     public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => PetroglyphDataEntryPathNormalizer.Instance;
 
+    /// <inheritdoc cref="PetroDataEntryValidator"/>
+    public sealed override IBuilderInfoValidator DataEntryValidator => PetroDataEntryValidator;
+
+
+    /// <inheritdoc cref="PetroMegFileInformationValidator"/>
+    public sealed override IMegFileInformationValidator MegFileInformationValidator => PetroMegFileInformationValidator;
+
     /// <summary>
-    /// 
+    /// Validates data entries to be compliant to a Petroglyph game.
+    /// Also, data entries with rooted paths or path operates (".", "..") are not allowed.
     /// </summary>
-    public override IMegFileInformationValidator MegFileInformationValidator => PetroglyphMegFileInformationValidator.Instance;
+    protected abstract PetroglyphMegDataEntryValidator PetroDataEntryValidator { get; }
+
+    /// <summary>
+    /// Validates file information to be compliant to a Petroglyph game
+    /// </summary>
+    protected abstract PetroglyphMegFileInformationValidator PetroMegFileInformationValidator { get; }
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class with a specified game path.

@@ -3,18 +3,30 @@ using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
+using Microsoft.Extensions.DependencyInjection;
+using System.IO.Abstractions;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
 [TestClass]
 public class EmpireAtWarMegDataEntryValidatorTest
 {
+    private EmpireAtWarMegDataEntryValidator _validator;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(new MockFileSystem());
+        _validator = new EmpireAtWarMegDataEntryValidator(sc.BuildServiceProvider());
+    }
+
     [TestMethod]
     [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method)]
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        var validator = EmpireAtWarMegDataEntryValidator.Instance;
-        Assert.IsTrue(validator.Validate(builderInfo).IsValid);
+        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
     }
 
     [TestMethod]
@@ -23,8 +35,7 @@ public class EmpireAtWarMegDataEntryValidatorTest
     [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method)]
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        var validator = EmpireAtWarMegDataEntryValidator.Instance;
-        Assert.IsFalse(validator.Validate(builderInfo).IsValid);
+        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()

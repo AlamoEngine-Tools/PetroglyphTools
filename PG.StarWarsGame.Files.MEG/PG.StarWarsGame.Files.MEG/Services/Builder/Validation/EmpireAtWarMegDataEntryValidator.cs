@@ -1,3 +1,5 @@
+using System;
+
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
@@ -8,13 +10,7 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
     /// <summary>
     /// 
     /// </summary>
-    public new static readonly EmpireAtWarMegDataEntryValidator Instance = new();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public EmpireAtWarMegDataEntryValidator()
+    public EmpireAtWarMegDataEntryValidator(IServiceProvider serviceProvider) : base(serviceProvider)
     {
-        
     }
 }

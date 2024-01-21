@@ -9,20 +9,20 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 [TestClass]
 public class NotNullDataEntryValidatorTest
 {
+    private readonly NotNullDataEntryValidator _validator = new();
+
     [TestMethod]
     [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method)]
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        var validator = NotNullDataEntryValidator.Instance;
-        Assert.IsTrue(validator.Validate(builderInfo).IsValid);
+        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
     }
 
     [TestMethod]
     [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method)]
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        var validator = NotNullDataEntryValidator.Instance;
-        Assert.IsFalse(validator.Validate(builderInfo).IsValid);
+        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()

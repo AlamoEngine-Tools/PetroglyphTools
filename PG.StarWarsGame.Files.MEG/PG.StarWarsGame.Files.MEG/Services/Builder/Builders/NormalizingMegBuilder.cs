@@ -27,7 +27,7 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// Note: Path operators ("./" or "../") will <b>not</b> get resolved.
     /// </remarks>
     /// <inheritdoc/>
-    public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer => DefaultDataEntryPathNormalizer.Instance;
+    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => DefaultDataEntryPathNormalizer.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NormalizingMegBuilder"/> class.

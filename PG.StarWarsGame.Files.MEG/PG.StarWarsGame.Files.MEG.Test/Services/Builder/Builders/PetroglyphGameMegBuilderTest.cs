@@ -61,7 +61,7 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestSuite
     public void Test_ResolveEntryPath()
     {
         var builder = CreatePetroBuilder(BasePath, CreateServiceProvider());
-        EntryPathResolver.Setup(r => r.ResolvePath(BasePath, "somePath")).Returns("someReturn");
+        EntryPathResolver.Setup(r => r.ResolvePath("somePath", builder.BaseDirectory)).Returns("someReturn");
         Assert.AreEqual("someReturn", builder.ResolveEntryPath("somePath"));
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions.TestingHelpers;
 using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

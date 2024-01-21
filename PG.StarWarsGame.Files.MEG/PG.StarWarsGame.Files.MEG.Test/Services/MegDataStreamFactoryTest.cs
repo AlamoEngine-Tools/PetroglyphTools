@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -9,6 +8,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Utilities.FileSystem;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -57,7 +58,11 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
-        BaseDirectory = FileSystem.DirectoryInfo.New(baseDirectory).FullName;
+
+        baseDirectory = FileSystem.Path.EnsureTrailingSeparator(baseDirectory);
+
+        var di = FileSystem.DirectoryInfo.New(baseDirectory);
+        BaseDirectory = di.FullName;
         _pathResolver = services.GetRequiredService<IDataEntryPathResolver>();
     }
 

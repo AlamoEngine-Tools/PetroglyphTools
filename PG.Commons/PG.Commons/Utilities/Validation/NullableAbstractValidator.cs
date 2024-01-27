@@ -8,7 +8,7 @@ namespace PG.Commons.Utilities.Validation;
 /// but returns the appropriate <see cref="ValidationResult"/> based on the configuration of this instance.
 /// </summary>
 /// <typeparam name="T">The type of the object being validated</typeparam>
-public abstract class NullableAbstractValidator<T> : AbstractValidator<T?>
+public abstract class NullableAbstractValidator<T> : AbstractValidator<T>
 {
     /// <summary>
     /// Gets a value indicating the objects validated by this <see cref="NullableAbstractValidator{T}"/> are allowed to be <see langword="null"/>.
@@ -16,7 +16,7 @@ public abstract class NullableAbstractValidator<T> : AbstractValidator<T?>
     protected abstract bool IsValueNullable { get; }
 
     /// <inheritdoc />
-    public override ValidationResult Validate(ValidationContext<T?> context)
+    public override ValidationResult Validate(ValidationContext<T> context)
     {
         if (context.InstanceToValidate is null)
         {

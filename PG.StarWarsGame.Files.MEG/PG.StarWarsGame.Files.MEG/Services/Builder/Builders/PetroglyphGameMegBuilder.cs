@@ -29,16 +29,22 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <inheritdoc/>
     public override bool AutomaticallyAddFileSizes => true;
 
+    /// <summary>
+    /// Gets the data entry path normalizer.
+    /// </summary>
     /// <remarks>
     /// This builder normalizes entry paths by the following rules:
     /// <code>
     /// - Upper cases all characters using the invariant culture.
-    /// - Replaces path separators ('/' or '\') by the current system's default separator, which is '\' on Windows and '/' on Linux/macOS.
-    /// - Path operators ("." or "..") get rejected.
+    /// - Replaces path separators ('/' or '\') to the Windows path separator, which is '\'.
     /// </code>
+    /// <br/>
+    /// Note: Path operators ("./" or "../") will <b>not</b> get resolved.
+    /// <br/>
+    /// Note: As the normalized path will always have the backslash as path operator ('\'),
+    /// on Linux systems the path cannot be treated correctly anymore.
     /// </remarks>
-    /// <inheritdoc/>
-    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => PetroglyphDataEntryPathNormalizer.Instance;
+    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer { get; }
 
     /// <inheritdoc cref="PetroDataEntryValidator"/>
     public sealed override IBuilderInfoValidator DataEntryValidator => PetroDataEntryValidator;
@@ -58,7 +64,6 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// </summary>
     protected abstract PetroglyphMegFileInformationValidator PetroMegFileInformationValidator { get; }
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class with a specified game path.
     /// </summary>
@@ -71,6 +76,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
+        DataEntryPathNormalizer = services.GetRequiredService<PetroglyphDataEntryPathNormalizer>();
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
 
         baseDirectory = FileSystem.Path.EnsureTrailingSeparator(baseDirectory);
@@ -93,7 +99,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <code>"/NOTgamePath/xml/file.xml" --> null</code>
     /// <code>"../xml/file.xml" --> null</code>
     /// </summary>
-    /// <remarks>The returned path is neither normalized nor validated by the rules of this instance.</remarks>
+    /// <remarks>The returned path is neither fully normalized nor validated by the rules of this instance.</remarks>
     /// <param name="path">A path to get the relative path from.</param>
     /// <returns>The relative path.</returns>
     public string? ResolveEntryPath(string path)

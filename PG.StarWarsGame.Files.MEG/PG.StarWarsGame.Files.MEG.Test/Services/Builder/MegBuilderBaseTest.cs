@@ -468,6 +468,7 @@ public class MegBuilderBaseTest
         var sc = new ServiceCollection();
         sc.AddSingleton(_ => fs.Object);
         sc.AddSingleton(_ => _megFileService.Object);
+        sc.AddSingleton(_ => _infoValidator.Object);
 
         // Default Validator always passes
         _entryValidator.Setup(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()))

@@ -1,31 +1,48 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using System;
+using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Files;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
 [TestClass]
-public class DefaultMegFileInformationValidatorTest
+public class PetroglyphMegFileInformationValidatorTest
 {
+    private TestPetroglyphMegFileInformationValidator _validator;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(new MockFileSystem());
+        _validator = new TestPetroglyphMegFileInformationValidator(sc.BuildServiceProvider());
+    }
+
+
     [TestMethod]
     [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
     public void TestValid(MegBuilderFileInformationValidationData builderInfo)
     {
-        var validator = DefaultMegFileInformationValidator.Instance;
-        Assert.IsTrue(validator.Validate(builderInfo).IsValid);
+        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
     }
 
     [TestMethod]
+    [DynamicData(nameof(InvalidTestData), typeof(DefaultMegFileInformationValidatorTest), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
     [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
     public void TestInvalid(MegBuilderFileInformationValidationData builderInfo)
     {
-        var validator = DefaultMegFileInformationValidator.Instance;
-        Assert.IsFalse(validator.Validate(builderInfo).IsValid);
+        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()
@@ -48,7 +65,7 @@ public class DefaultMegFileInformationValidatorTest
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData()),
-            [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
+                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];
     }
 
@@ -56,22 +73,7 @@ public class DefaultMegFileInformationValidatorTest
     {
         yield return
         [
-            CreateData(new MegFileInformation("path", MegFileVersion.V1),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
-        ];
-        yield return
-        [
-            CreateData(new MegFileInformation("path", MegFileVersion.V2),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
-        ];
-        yield return
-        [
-            CreateData(new MegFileInformation("path", MegFileVersion.V3),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
-        ];
-        yield return
-        [
-            CreateData(new MegFileInformation("path", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData()),
+            CreateData(new MegFileInformation(new string('a', 261), MegFileVersion.V1),
                 [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
         ];
     }
@@ -92,4 +94,7 @@ public class DefaultMegFileInformationValidatorTest
 
         return $"{methodInfo.Name} (Path={filePath}, Version={fileInfo?.FileVersion}, Encrypted={fileInfo?.HasEncryption}, Entries={info?.DataEntries.Count})";
     }
+
+    class TestPetroglyphMegFileInformationValidator(IServiceProvider serviceProvider)
+        : PetroglyphMegFileInformationValidator(serviceProvider);
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
@@ -17,18 +18,19 @@ public class PetroglyphGameMegBuilderBaseTest : PetroglyphGameMegBuilderTest
         return new TestPetroglyphGameMegBuilder(basePath, serviceProvider);
     }
 
-    private class TestPetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services)
+    private class TestPetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) 
         : PetroglyphGameMegBuilder(baseDirectory, services)
     {
         protected override PetroglyphMegDataEntryValidator PetroDataEntryValidator { get; } =
             new TestPetroglyphMegDataEntryValidator(services);
 
-        protected override PetroglyphMegFileInformationValidator PetroMegFileInformationValidator =>
-            new TestPetroglyphMegFileInformationValidator();
+        protected override PetroglyphMegFileInformationValidator PetroMegFileInformationValidator { get; } =
+            new TestPetroglyphMegFileInformationValidator(services);
     }
 
     private class TestPetroglyphMegDataEntryValidator(IServiceProvider serviceProvider)
         : PetroglyphMegDataEntryValidator(serviceProvider);
 
-    private class TestPetroglyphMegFileInformationValidator : PetroglyphMegFileInformationValidator;
+    private class TestPetroglyphMegFileInformationValidator(IServiceProvider serviceProvider)
+        : PetroglyphMegFileInformationValidator(serviceProvider);
 }

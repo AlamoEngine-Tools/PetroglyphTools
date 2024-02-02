@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -8,9 +9,9 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 [TestClass]
 public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBase
 {
-    protected override IMegDataEntryPathNormalizer CreateNormalizer()
+    protected override IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider)
     {
-        return new DefaultDataEntryPathNormalizer();
+        return new DefaultDataEntryPathNormalizer(serviceProvider);
     }
 
     [TestMethod]

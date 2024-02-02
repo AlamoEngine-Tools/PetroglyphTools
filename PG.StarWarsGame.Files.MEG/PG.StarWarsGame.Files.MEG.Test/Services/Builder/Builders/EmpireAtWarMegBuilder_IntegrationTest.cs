@@ -4,6 +4,8 @@ using System.IO.Abstractions;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PG.Commons.Hashing;
+using PG.Commons.Utilities.FileSystem;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
@@ -35,6 +37,7 @@ public class EmpireAtWarMegBuilder_IntegrationTest
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
+        sc.AddSingleton<IChecksumService>(new ChecksumService());
         MegDomain.RegisterServices(sc);
         return sc.BuildServiceProvider();
     }
@@ -48,8 +51,8 @@ public class EmpireAtWarMegBuilder_IntegrationTest
         var entry2 = _eawMegBuilder.ResolveEntryPath("/game/corruption/data/xml/entry2.txt");
         var entry3 = _eawMegBuilder.ResolveEntryPath("/other/corruption/data/xml/entry3.txt");
 
-        Assert.AreEqual("entry1", entry1);
-        Assert.AreEqual("xml/entry2.txt", entry2);
+        Assert.AreEqual("entry1.txt", entry1);
+        Assert.AreEqual(_fileSystem.Path.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifySlashes = true }), entry2);
         Assert.IsNull(entry3);
 
         var result1 = _eawMegBuilder.AddFile("entry.txt", entry1);
@@ -64,7 +67,7 @@ public class EmpireAtWarMegBuilder_IntegrationTest
         Assert.IsFalse(result2a.Added);
         Assert.IsFalse(result3.Added);
 
-        Assert.AreEqual("ENTRY.TXT", result1.AddedBuilderInfo!.FilePath);
+        Assert.AreEqual("ENTRY1.TXT", result1.AddedBuilderInfo!.FilePath);
         Assert.AreEqual("XML\\ENTRY2.TXT", result2.AddedBuilderInfo!.FilePath);
 
         Assert.AreEqual(2, _eawMegBuilder.DataEntries.Count);
@@ -82,7 +85,7 @@ public class EmpireAtWarMegBuilder_IntegrationTest
 
         Assert.AreEqual(2, meg.Archive.Count);
 
-        var packedEntry1 = meg.Archive.First(x => x.FilePath.Equals("ENTRY.TXT"));
+        var packedEntry1 = meg.Archive.First(x => x.FilePath.Equals("ENTRY1.TXT"));
         var packedEntry2 = meg.Archive.First(x => x.FilePath.Equals("XML\\ENTRY2.TXT"));
 
         Assert.IsNotNull(packedEntry1);
@@ -95,6 +98,8 @@ public class EmpireAtWarMegBuilder_IntegrationTest
         using var ms = new MemoryStream();
         entry1Data.CopyTo(ms);
         entry2Data.CopyTo(ms);
+
+        ms.Position = 0;
 
         var dataString = new StreamReader(ms).ReadToEnd();
         Assert.AreEqual("testtest",dataString);

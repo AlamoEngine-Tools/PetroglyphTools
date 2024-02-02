@@ -17,7 +17,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
     {
         base.SetupServiceCollection(serviceCollection);
         serviceCollection.AddSingleton(sp => new EmpireAtWarMegDataEntryValidator(sp));
-        serviceCollection.AddSingleton(_ => new EmpireAtWarMegFileInformationValidator());
+        serviceCollection.AddSingleton(sp => new EmpireAtWarMegFileInformationValidator(sp));
     }
 
     private EmpireAtWarMegBuilder CreateEaWBuilder(IServiceProvider serviceProvider)

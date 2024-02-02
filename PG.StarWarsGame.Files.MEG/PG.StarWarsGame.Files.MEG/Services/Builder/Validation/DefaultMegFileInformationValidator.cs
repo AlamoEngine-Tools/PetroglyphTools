@@ -7,7 +7,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// Validates a specified <see cref="MegFileInformation"/> is compliant to the MEG specification.
 /// </summary>
-public class DefaultMegFileInformationValidator : AbstractValidator<MegBuilderFileInformationValidationData>, IMegFileInformationValidator
+public sealed class DefaultMegFileInformationValidator : AbstractValidator<MegBuilderFileInformationValidationData>, IMegFileInformationValidator
 {
     /// <summary>
     /// Gets a singleton instance of the <see cref="DefaultMegFileInformationValidator"/> class.
@@ -21,8 +21,11 @@ public class DefaultMegFileInformationValidator : AbstractValidator<MegBuilderFi
     /// <remarks>
     /// <see cref="MegFileInformation"/> are considered <b>not</b> to be compliant if the MEG is encrypted but the version is not V3.
     /// </remarks>
-    private protected DefaultMegFileInformationValidator()
+    private DefaultMegFileInformationValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        ClassLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(x => x.FileInformation).NotNull();
         RuleFor(x => x.DataEntries).NotNull();
         RuleFor(x => x)

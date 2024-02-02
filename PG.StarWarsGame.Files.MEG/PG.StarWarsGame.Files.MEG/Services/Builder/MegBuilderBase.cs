@@ -29,10 +29,10 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// <inheritdoc/>
     public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries => new List<MegFileDataEntryBuilderInfo>(_dataEntries.Values);
 
+    /// <inheritdoc/>
     /// <remarks>
     /// By default, duplicates get overwritten.
     /// </remarks>
-    /// <inheritdoc/>
     public virtual bool OverwritesDuplicateEntries => true;
 
     /// <summary>
@@ -43,22 +43,23 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// </remarks>
     public virtual bool AutomaticallyAddFileSizes => false;
 
+    /// <inheritdoc/>
     /// <remarks>
     /// By default, a validator instance is used which performs specification-level checks only.
     /// </remarks>
-    /// <inheritdoc/>
-    public virtual IMegFileInformationValidator MegFileInformationValidator => DefaultMegFileInformationValidator.Instance;
+    public virtual IMegFileInformationValidator MegFileInformationValidator =>
+        DefaultMegFileInformationValidator.Instance;
 
+    /// <inheritdoc/>
     /// <remarks>
     /// By default, a validator instance is used which performs no validation checks.
     /// </remarks>
-    /// <inheritdoc/>
     public virtual IBuilderInfoValidator DataEntryValidator => NotNullDataEntryValidator.Instance;
 
+    /// <inheritdoc/>
     /// <remarks>
     /// By default, no normalizer is specified.
     /// </remarks>
-    /// <inheritdoc/>
     public virtual IMegDataEntryPathNormalizer? DataEntryPathNormalizer => null;
 
     /// <summary>

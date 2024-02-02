@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
@@ -18,5 +19,11 @@ public class NormalizingMegBuilderTest : MegBuilderTestSuite
     protected override MegBuilderBase CreateBuilder(IServiceProvider serviceProvider)
     {
         return new NormalizingMegBuilder(serviceProvider);
+    }
+
+    protected override void SetupServiceCollection(IServiceCollection serviceCollection)
+    {
+        base.SetupServiceCollection(serviceCollection);
+        serviceCollection.AddSingleton(sp => new DefaultDataEntryPathNormalizer(sp));
     }
 }

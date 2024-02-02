@@ -1,16 +1,20 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.IO.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.Testing;
+using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
 public abstract class DataEntryPathNormalizerTestBase
 {
-    protected abstract IMegDataEntryPathNormalizer CreateNormalizer();
+    protected abstract IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider);
 
-    public void TestNormalizePathFails(string source)
+    protected void TestNormalizePathFails(string source)
     {
-        var normalizer = CreateNormalizer();
+        var normalizer = CreateNormalizer(CreateServiceProvider());
 
         ExceptionUtilities.AssertThrowsAny(() => normalizer.NormalizePath(source));
 
@@ -19,9 +23,9 @@ public abstract class DataEntryPathNormalizerTestBase
         Assert.IsFalse(success);
     }
 
-    public void TestNormalizePathPasses(string source, string expected)
+    protected void TestNormalizePathPasses(string source, string expected)
     {
-        var normalizer = CreateNormalizer();
+        var normalizer = CreateNormalizer(CreateServiceProvider());
 
         var actual = normalizer.NormalizePath(source);
         Assert.AreEqual(expected, actual);
@@ -30,5 +34,12 @@ public abstract class DataEntryPathNormalizerTestBase
         var success = normalizer.TryNormalizePath(ref copy, out _);
         Assert.IsTrue(success);
         Assert.AreEqual(copy, expected);
+    }
+
+    private IServiceProvider CreateServiceProvider()
+    {
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(new MockFileSystem());
+        return sc.BuildServiceProvider();
     }
 }

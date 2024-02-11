@@ -59,6 +59,7 @@ public class MegFileExtractorTest
 
     public void Test_GetAbsoluteFilePath_Windows(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
+        _serviceProvider.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(new FileSystem());
         var path = _extractor.GetAbsoluteFilePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
         Assert.AreEqual(expectedPath, path);
     }

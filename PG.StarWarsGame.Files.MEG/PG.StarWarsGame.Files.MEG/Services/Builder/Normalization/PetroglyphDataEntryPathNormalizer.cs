@@ -22,7 +22,7 @@ public sealed class PetroglyphDataEntryPathNormalizer : MegDataEntryPathNormaliz
         return FileSystem.Path.Normalize(filePath,
             new PathNormalizeOptions
             {
-                UnifySlashes = true, SeparatorKind = PathSeparatorKind.Windows,
+                UnifySlashes = true, SeparatorKind = DirectorySeparatorKind.Windows,
                 UnifyCase = UnifyCasingKind.UpperCaseForce
             });
     }

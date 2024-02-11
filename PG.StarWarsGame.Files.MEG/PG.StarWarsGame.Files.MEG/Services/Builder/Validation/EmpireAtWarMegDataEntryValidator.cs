@@ -21,7 +21,7 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
         RuleFor(info => info.FilePath).Must(path =>
         {
             var normalized = FileSystem.Path.Normalize(path,
-                new PathNormalizeOptions { UnifySlashes = true, SeparatorKind = PathSeparatorKind.Windows });
+                new PathNormalizeOptions { UnifySlashes = true, SeparatorKind = DirectorySeparatorKind.Windows });
             if (!normalized.Equals(path))
                 return false;
 

@@ -27,7 +27,10 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
 
             try
             {
-                var fileName = FileSystem.Path.GetFileName(path);
+                var systemNormalized = FileSystem.Path.Normalize(path,
+                    new PathNormalizeOptions { UnifySlashes = true });
+
+                var fileName = FileSystem.Path.GetFileName(systemNormalized);
                 return FileNameUtilities.IsValidFileName(fileName, out _);
             }
             catch (Exception )

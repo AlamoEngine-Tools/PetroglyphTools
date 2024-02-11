@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PG.Commons.Utilities.FileSystem;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.Testing;
 using FileSystem = System.IO.Abstractions.FileSystem;
@@ -11,13 +12,14 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 public class PetroglyphRelativeDataEntryPathResolverTest
 {
     private PetroglyphRelativeDataEntryPathResolver _pathResolver;
+    private readonly IFileSystem _fileSystem = new FileSystem();
 
     [TestInitialize]
     public void Setup()
     {
         var sc = new ServiceCollection();
         // Use the real file system here
-        sc.AddSingleton<IFileSystem>(new FileSystem());
+        sc.AddSingleton(_fileSystem);
         _pathResolver = new PetroglyphRelativeDataEntryPathResolver(sc.BuildServiceProvider());
     }
 
@@ -38,12 +40,18 @@ public class PetroglyphRelativeDataEntryPathResolverTest
     [DataRow("/Games/Petroglyph/corruption/test", "test")]
     [DataRow("/Games/Petroglyph/corruption/test/", null)]
     [DataRow("/Games/Petroglyph/corruption1/test", null)]
-    public void Test_ResolveEntryPath_Relative(string path, string expectedEntryPath)
+    public void Test_ResolveEntryPath_Relative(string path, string? expectedEntryPath)
     {
         const string basePath = "/Games/Petroglyph/corruption/";
 
+
+        var normalizedExpected = expectedEntryPath is not null
+            ? _fileSystem.Path.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifySlashes = true })
+            : expectedEntryPath;
+
+
         var actualEntryPath = _pathResolver.ResolvePath(path, basePath);
-        Assert.AreEqual(expectedEntryPath, actualEntryPath);
+        Assert.AreEqual(normalizedExpected, actualEntryPath);
     }
 
     [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]

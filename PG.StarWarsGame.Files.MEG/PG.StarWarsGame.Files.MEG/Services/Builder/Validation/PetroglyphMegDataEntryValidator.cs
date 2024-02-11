@@ -40,14 +40,21 @@ public abstract class PetroglyphMegDataEntryValidator : NullableAbstractValidato
             {
                 if (FileSystem.Path.HasTrailingPathSeparator(path))
                     return false;
+
+                // On Linux this is ':' which conveniently also forbids things like "C:/" too.
+                // On Windows this is ';'
+                if (path.IndexOf(FileSystem.Path.PathSeparator) != -1)
+                    return false;
                 
                 try
                 {
-                    if (FileSystem.Path.IsPathRooted(path))
-                        return false;
-
                     var normalized = FileSystem.Path
                         .Normalize(path, new PathNormalizeOptions { UnifySlashes = true, TrimTrailingSeparator = true });
+
+                    if (FileSystem.Path.IsPathRooted(normalized))
+                        return false;
+
+
                     var fullNormalized = FileSystem.Path.GetFullPath(normalized);
 
                     var currentDirectory = FileSystem.Path.GetFullPath(FileSystem.Directory.GetCurrentDirectory());

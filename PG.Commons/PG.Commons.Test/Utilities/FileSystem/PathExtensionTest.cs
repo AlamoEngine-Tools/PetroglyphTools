@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Utilities.FileSystem;
 using PG.Testing;
 
 namespace PG.Commons.Test.Utilities.FileSystem;
 
-// Based on https://github.com/dotnet/roslyn/ and https://github.com/NuGet/NuGet.Client/
+// Based on https://github.com/dotnet/roslyn/ and
+// https://github.com/NuGet/NuGet.Client/ and
+// https://github.com/dotnet/runtime
 [TestClass]
 public class PathExtensionTest
 {
@@ -90,18 +93,14 @@ public class PathExtensionTest
         Assert.AreEqual(expected, _fileSystem.Path.HasTrailingPathSeparator(input.AsSpan()));
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
+    [TestMethod]
     [DynamicData(nameof(NormalizeTestDataSource), DynamicDataSourceType.Method)]
-    public void Test_Normalize_Windows(NormalizeTestData testData)
+    public void Test_Normalize(NormalizeTestData testData)
     {
-        Assert.AreEqual(testData.ExpectedWindows, _fileSystem.Path.Normalize(testData.Input, testData.Options));
-    }
-
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
-    [DynamicData(nameof(NormalizeTestDataSource), DynamicDataSourceType.Method)]
-    public void Test_Normalize_Linux(NormalizeTestData testData)
-    {
-        Assert.AreEqual(testData.ExpectedLinux, _fileSystem.Path.Normalize(testData.Input, testData.Options));
+        var result = _fileSystem.Path.Normalize(testData.Input, testData.Options);
+        Assert.AreEqual(
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? testData.ExpectedWindows : testData.ExpectedLinux,
+            result);
     }
 
     [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
@@ -138,14 +137,56 @@ public class PathExtensionTest
     [DataRow(@"C:\a", @"C:\ab", @"..\ab")]
     [DataRow(@"C:\", @"\\LOCALHOST\Share\b", @"\\LOCALHOST\Share\b")]
     [DataRow(@"\\LOCALHOST\Share\a", @"\\LOCALHOST\Share\b", @"..\b")]
-    public void Test_GetRelativePathEx_Windows(string root, string path, string expected)
+    // Tests which don't exist from .NET runtime
+    [DataRow(@"C:\a", @"C:\a\.\.", @".")]
+    public void Test_GetRelativePathEx_FromAbsolute_Windows(string root, string path, string expected)
     {
         var result = _fileSystem.Path.GetRelativePathEx(root, path);
         Assert.AreEqual(expected, result);
 
         Assert.AreEqual(
-            _fileSystem.Path.GetFullPath(path),
-            _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(_fileSystem.Path.GetFullPath(root), result)));
+            _fileSystem.Path.GetFullPath(path).TrimEnd(_fileSystem.Path.DirectorySeparatorChar),
+            _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(_fileSystem.Path.GetFullPath(root), result)).TrimEnd(_fileSystem.Path.DirectorySeparatorChar),
+            StringComparer.OrdinalIgnoreCase);
+
+    }
+
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
+    [DataRow(@"C:\a", @"b", @"b")]
+    [DataRow(@"C:\a", @"a\b", @"a\b")]
+    [DataRow(@"C:\a", @"a\..\b", @"a\..\b")]
+    public void Test_GetRelativePathEx_FromRelative_Windows(string root, string path, string expected)
+    {
+        var result = _fileSystem.Path.GetRelativePathEx(root, path);
+        Assert.AreEqual(expected, result);
+    }
+
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
+    public void Test_GetRelativePathEx_FromDriveRelative_Windows()
+    {
+        var root = @"C:\a";
+        var path = @"C:a";
+        var result = _fileSystem.Path.GetRelativePathEx(root, path);
+        var rootLength = _fileSystem.Path.GetPathRoot(root).Length;
+        Assert.AreEqual(@"..\"+  _fileSystem.Path.GetFullPath(path).Substring(rootLength), result);
+
+
+        root = @"C:\a\b";
+        path = @"C:a";
+        result = _fileSystem.Path.GetRelativePathEx(root, path);
+        rootLength = _fileSystem.Path.GetPathRoot(root).Length;
+        Assert.AreEqual(@"..\..\" + _fileSystem.Path.GetFullPath(path).Substring(rootLength), result);
+
+
+        root = @"C:\a\b";
+        path = @"D:a";
+        result = _fileSystem.Path.GetRelativePathEx(root, path);
+        Assert.AreEqual(@"D:\a", result);
+
+        root = @"D:\a";
+        path = @"C:a";
+        result = _fileSystem.Path.GetRelativePathEx(root, path);
+        Assert.AreEqual(_fileSystem.Path.Combine(_fileSystem.Path.GetFullPath(path)), result);
     }
 
     [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
@@ -163,14 +204,29 @@ public class PathExtensionTest
     [DataRow(@"/a", @"/A/", @"../A/")]
     [DataRow(@"/a/", @"/A", @"../A")]
     [DataRow(@"/a/", @"/A/b", @"../A/b")]
-    public void Test_GetRelativePathEx_Linux(string root, string path, string expected)
+    [DataRow(@"/a", @"/A/", @"../A/")]
+    [DataRow(@"/a/", @"/A", @"../A")]
+    [DataRow(@"/a/", @"/A/b", @"../A/b")]
+    // Tests which don't exist from .NET runtime
+    [DataRow(@"/a", @"/a/./.", @".")]
+    public void Test_GetRelativePathEx_FromAbsolute_Linux(string root, string path, string expected)
     {
         var result = _fileSystem.Path.GetRelativePathEx(root, path);
         Assert.AreEqual(expected, result);
 
         Assert.AreEqual(
-            _fileSystem.Path.GetFullPath(path),
-            _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(_fileSystem.Path.GetFullPath(root), result)));
+            _fileSystem.Path.GetFullPath(path).TrimEnd(_fileSystem.Path.DirectorySeparatorChar),
+            _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(_fileSystem.Path.GetFullPath(root), result)).TrimEnd(_fileSystem.Path.DirectorySeparatorChar),
+            StringComparer.Ordinal);
+    }
+
+    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
+    [DataRow("/a", "a", "a")]
+    [DataRow("/a/b", "a/b", "a/b")]
+    public void Test_GetRelativePathEx_FromRelative_Linux(string root, string path, string expected)
+    {
+        var result = _fileSystem.Path.GetRelativePathEx(root, path);
+        Assert.AreEqual(expected, result);
     }
 
 
@@ -288,7 +344,7 @@ public class PathExtensionTest
                     new PathNormalizeOptions
                     {
                         UnifySlashes = true,
-                        SeparatorKind = PathSeparatorKind.Linux
+                        SeparatorKind = DirectorySeparatorKind.Linux
                     }
             }
         ];
@@ -300,7 +356,7 @@ public class PathExtensionTest
                     new PathNormalizeOptions
                     {
                         UnifySlashes = true,
-                        SeparatorKind = PathSeparatorKind.Windows
+                        SeparatorKind = DirectorySeparatorKind.Windows
                     }
             }
         ];
@@ -352,10 +408,32 @@ public class PathExtensionTest
         [
             new NormalizeTestData
             {
-                Input = "a/b\\C//\\", ExpectedLinux = "a/b\\C", ExpectedWindows = "a/b\\C", Options =
+                Input = "a/b\\C//\\", ExpectedLinux = "a/b\\C//\\", ExpectedWindows = "a/b\\C", Options =
                     new PathNormalizeOptions
                     {
                         TrimTrailingSeparator = true
+                    }
+            }
+        ];
+        yield return
+        [
+            new NormalizeTestData
+            {
+                Input = "a/b\\C//\\", ExpectedLinux = "a/b\\C", ExpectedWindows = "a/b\\C", Options =
+                    new PathNormalizeOptions
+                    {
+                        TrimTrailingSeparator = true, SeparatorKind = DirectorySeparatorKind.Windows,
+                    }
+            }
+        ];
+        yield return
+        [
+            new NormalizeTestData
+            {
+                Input = "a/b\\C//\\", ExpectedLinux = "a/b\\C//\\", ExpectedWindows = "a/b\\C//\\", Options =
+                    new PathNormalizeOptions
+                    {
+                        TrimTrailingSeparator = true, SeparatorKind = DirectorySeparatorKind.Linux,
                     }
             }
         ];

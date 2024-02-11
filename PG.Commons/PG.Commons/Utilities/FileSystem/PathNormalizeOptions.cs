@@ -11,12 +11,12 @@ public record PathNormalizeOptions
     public bool UnifySlashes { get; init; }
 
     /// <summary>
-    /// 
+    /// Gets or sets a value how directory separators shall be treated. Default is <see cref="DirectorySeparatorKind.System"/>.
     /// </summary>
-    public PathSeparatorKind SeparatorKind { get; init; }
+    public DirectorySeparatorKind SeparatorKind { get; init; }
 
     /// <summary>
-    /// 
+    /// Gets or sets a value which casing option to apply. Default is <see cref="UnifyCasingKind.None"/>.
     /// </summary>
     public UnifyCasingKind UnifyCase { get; init; }
 

@@ -33,10 +33,35 @@ public static class PathExtensions
     private static readonly Lazy<bool> IsFileSystemCaseInsensitive = new(CheckIfFileSystemIsCaseInsensitive);
 
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsAnyDirectorySeparatorWindows(char c)
+    {
+        return c is '\\' or '/';
+    }
 
-    /// <summary>
-    /// True if the character is any recognized root separator character.
-    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsAnyDirectorySeparatorLinux(char c)
+    {
+        return c is '/';
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsAnyDirectorySeparator(char c, DirectorySeparatorKind separatorKind)
+    {
+        switch (separatorKind)
+        {
+            case DirectorySeparatorKind.System:
+                return IsAnyDirectorySeparator(c);
+            case DirectorySeparatorKind.Linux:
+                return IsAnyDirectorySeparatorLinux(c);
+            case DirectorySeparatorKind.Windows:
+                return IsAnyDirectorySeparatorWindows(c);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(separatorKind), separatorKind, null);
+        }
+    }
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsAnyDirectorySeparator(char c)
     {
@@ -49,6 +74,11 @@ public static class PathExtensions
     /// <param name="_"></param>
     /// <param name="input">The path to append a path separator to, if required.</param>
     public static string EnsureTrailingSeparator(this IPath _, string input)
+    {
+        return EnsureTrailingSeparatorInternal(input);
+    }
+
+    private static string EnsureTrailingSeparatorInternal(string input)
     {
         if (input.Length == 0 || IsAnyDirectorySeparator(input[input.Length - 1]))
             return input;
@@ -63,7 +93,7 @@ public static class PathExtensions
         if (!hasPrimarySlash && hasAlternateSlash)
             return input + AltDirectorySeparatorChar;
 
-        // If there are no slashes or they are inconsistent, use the current platform's primary slash.
+        // If there are no slashes, or they are inconsistent, use the current platform's primary slash.
         return input + DirectorySeparatorChar;
     }
 
@@ -78,7 +108,7 @@ public static class PathExtensions
     {
         if (path == null) 
             throw new ArgumentNullException(nameof(path));
-        return HasTrailingPathSeparator(_, path.AsSpan());
+        return HasTrailingPathSeparatorInternal(path.AsSpan());
     }
 
     /// <summary>
@@ -89,6 +119,11 @@ public static class PathExtensions
     /// <returns><see langowrd="true"/> if <paramref name="value"/> end with a path separator; otherwise, <see langowrd="false"/>.</returns>
     public static bool HasTrailingPathSeparator(this IPath _, ReadOnlySpan<char> value)
     {
+        return HasTrailingPathSeparatorInternal(value);
+    }
+
+    private static bool HasTrailingPathSeparatorInternal(ReadOnlySpan<char> value)
+    {
         if (value.Length == 0)
             return false;
         var last = value[value.Length - 1];
@@ -97,27 +132,32 @@ public static class PathExtensions
 
 
     /// <summary>
-    /// Returns a relative path from a path to given root.
+    /// Returns a relative path from a path to given root
+    /// or <paramref name="path"/> if <paramref name="path"/> is not rooted.
     /// </summary>
-    /// <param name="_"></param>
+    /// <param name="fsPath">The file system's path instance.</param>
     /// <param name="root">The root path the result should be relative to. This path is always considered to be a directory.</param>
     /// <param name="path">The destination path.</param>
     /// <returns>The relative path, or path if the paths don't share the same root.</returns>
-    public static string GetRelativePathEx(this IPath _, string root, string path)
+    /// <remarks>This method behaves differently to .NET Core <c>Path.GetRelativePath(string, string)</c>
+    /// if <paramref name="path"/> is not rooted.
+    /// </remarks>
+    public static string GetRelativePathEx(this IPath fsPath, string root, string path)
     {
-        var relativePath = string.Empty;
+        var endsWithTrailingPathSeparator = HasTrailingPathSeparatorInternal(path.AsSpan());
+
+        if (!fsPath.IsPathRooted(path))
+            return path;
 
         // Root should always be absolute
-        root = _.GetFullPath(root);
-
+        root = fsPath.GetFullPath(root);
         root = TrimTrailingSeparators(root.AsSpan());
-        path = TrimTrailingSeparators(path.AsSpan());
 
-        if (IsChildPath(root, path))
-            return GetRelativeChildPath(root, path);
+        path = fsPath.GetFullPath(path);
+        var trimmedPath = TrimTrailingSeparators(path.AsSpan());
 
         var rootParts = GetPathParts(root);
-        var pathParts = GetPathParts(path);
+        var pathParts = GetPathParts(trimmedPath);
 
         if (rootParts.Length == 0 || pathParts.Length == 0)
             return path;
@@ -125,9 +165,10 @@ public static class PathExtensions
         var index = 0;
 
         // find index where full path diverges from base path
-        for (; index < rootParts.Length; index++)
+        var maxSearchIndex = Math.Min(rootParts.Length, pathParts.Length);
+        for (; index < maxSearchIndex; index++)
         {
-            if (!PathsEqual(_, rootParts[index], pathParts[index]))
+            if (!PathsEqual(rootParts[index], pathParts[index]))
                 break;
         }
 
@@ -136,6 +177,8 @@ public static class PathExtensions
         if (index == 0)
             return path;
 
+        var relativePath = string.Empty;
+
         // add backup notation for remaining base path levels beyond the index
         var remainingParts = rootParts.Length - index;
         if (remainingParts > 0)
@@ -143,57 +186,40 @@ public static class PathExtensions
             for (var i = 0; i < remainingParts; i++) 
                 relativePath = relativePath + ParentRelativeDirectory + DirectorySeparatorStr;
         }
+        
+        if (index < pathParts.Length)
+        {
+            // add the rest of the full path parts
+            for (var i = index; i < pathParts.Length; i++)
+                relativePath = CombinePathsUnchecked(relativePath, pathParts[i]);
 
-        // add the rest of the full path parts
-        for (var i = index; i < pathParts.Length; i++) 
-            relativePath = CombinePathsUnchecked(relativePath, pathParts[i]);
+            if (endsWithTrailingPathSeparator)
+                relativePath = EnsureTrailingSeparatorInternal(relativePath);
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(relativePath))
+                relativePath = TrimTrailingSeparators(relativePath.AsSpan());
+        }
 
+
+        if (relativePath == string.Empty)
+            return ThisDirectory;
         return relativePath;
-    }
-
-    private static bool IsChildPath(string parentPath, string childPath)
-    {
-        return parentPath.Length > 0
-               && childPath.Length > parentPath.Length
-               && PathsEqual(childPath, parentPath, parentPath.Length)
-               && (IsAnyDirectorySeparator(parentPath[parentPath.Length - 1]) || IsAnyDirectorySeparator(childPath[parentPath.Length]));
-    }
-
-    private static string GetRelativeChildPath(string parentPath, string childPath)
-    {
-        var relativePath = childPath.Substring(parentPath.Length);
-
-        // trim any leading separators left over after removing leading root
-        var start = ConsumeDirectorySeparators(relativePath, relativePath.Length, 0);
-        if (start > 0) 
-            relativePath = relativePath.Substring(start);
-
-        return relativePath;
-    }
-
-    private static int ConsumeDirectorySeparators(string path, int length, int i)
-    {
-        while (i < length && IsAnyDirectorySeparator(path[i])) 
-            i++;
-
-        return i;
     }
 
     private static string[] GetPathParts(string path)
     {
         var pathParts = path.Split(PathChars);
 
-        //// remove references to self directories ('.')
-        //if (pathParts.Contains(ThisDirectory)) 
-        //    pathParts = pathParts.Where(s => s != ThisDirectory).ToArray();
+        // remove references to self directories ('.')
+        if (pathParts.Contains(ThisDirectory))
+            pathParts = pathParts.Where(s => s != ThisDirectory).ToArray();
 
         return pathParts;
     }
 
-    /// <summary>
-    /// True if the two paths are the same.
-    /// </summary>
-    internal static bool PathsEqual(this IPath _, string path1, string path2)
+    private static bool PathsEqual(string path1, string path2)
     {
         return PathsEqual(path1, path2, Math.Max(path1.Length, path2.Length));
     }
@@ -231,16 +257,16 @@ public static class PathExtensions
     /// <remarks>
     /// Only works on Windows. For Linux systems, this method will always return <see langword="false"/>.
     /// </remarks>
-    /// <param name="_"></param>
+    /// <param name="fsPath">The file system's path instance.</param>
     /// <param name="path">The path to check.</param>
     /// <returns>Return <see langword="true"/> if <paramref name="path"/> is absolute to a drive; otherwise, <see langword="false"/>.</returns>
-    public static bool IsDriveAbsolute(this IPath _, string path)
+    public static bool IsDriveAbsolute(this IPath fsPath, string path)
     {
         // Implementation based on Path.Windows.cs from the .NET repository
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             return false;
 
-        if (!_.IsPathRooted(path))
+        if (!fsPath.IsPathRooted(path))
             return false;
 
         if (path.Length < 3)
@@ -258,16 +284,16 @@ public static class PathExtensions
     /// <remarks>
     /// Only works on Windows. For Linux systems, this method will always return <see langword="false"/>.
     /// </remarks>
-    /// <param name="_"></param>
+    /// <param name="fsPath">The file system's path instance.</param>
     /// <param name="path">The path to check.</param>
     /// <returns>Return <see langword="true"/> if <paramref name="path"/> is relative, but not absolute to a drive; otherwise, <see langword="false"/>.</returns>
-    public static bool IsDriveRelative(this IPath _, string path)
+    public static bool IsDriveRelative(this IPath fsPath, string path)
     {
         // Implementation based on Path.Windows.cs from the .NET repository
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             return false;
 
-        if (!_.IsPathRooted(path))
+        if (!fsPath.IsPathRooted(path))
             return false;
 
         if (path.Length < 2)
@@ -300,18 +326,18 @@ public static class PathExtensions
     {
         ThrowHelper.ThrowIfNullOrEmpty(path);
 
-        // Only do for PathSeparatorKind.System, cause for other kinds it will be done at the very end anyway.
-        if (options.UnifySlashes && options.SeparatorKind == PathSeparatorKind.System)
-            path = GetPathWithDirectorySeparator(path, options.SeparatorKind);
+        // Only do for DirectorySeparatorKind.System, cause for other kinds it will be done at the very end anyway.
+        if (options.UnifySlashes && options.SeparatorKind == DirectorySeparatorKind.System)
+            path = GetPathWithDirectorySeparator(path, DirectorySeparatorKind.System);
 
         if (options.TrimTrailingSeparator)
-            path = TrimTrailingSeparators(path.AsSpan());
+            path = TrimTrailingSeparators(path.AsSpan(), options.SeparatorKind);
 
         path = NormalizeCasing(path, options.UnifyCase);
 
         // NB: As previous steps may add new separators (such as GetFullPath) we need to re-apply slash normalization
-        // if the desired PathSeparatorKind is not PathSeparatorKind.System
-        if (options.UnifySlashes && options.SeparatorKind != PathSeparatorKind.System) 
+        // if the desired DirectorySeparatorKind is not DirectorySeparatorKind.System
+        if (options.UnifySlashes && options.SeparatorKind != DirectorySeparatorKind.System) 
             path = GetPathWithDirectorySeparator(path, options.SeparatorKind);
 
         return path;
@@ -335,25 +361,25 @@ public static class PathExtensions
         throw new ArgumentOutOfRangeException(nameof(casing));
     }
 
-    private static string TrimTrailingSeparators(ReadOnlySpan<char> s)
+    private static string TrimTrailingSeparators(ReadOnlySpan<char> s, DirectorySeparatorKind separatorKind = DirectorySeparatorKind.System) 
     {
         var lastSeparator = s.Length;
-        while (lastSeparator > 0 && IsAnyDirectorySeparator(s[lastSeparator - 1]))
+        while (lastSeparator > 0 && IsAnyDirectorySeparator(s[lastSeparator - 1], separatorKind))
             lastSeparator -= 1;
         if (lastSeparator != s.Length)
             s = s.Slice(0, lastSeparator);
         return s.ToString();
     }
 
-    private static string GetPathWithDirectorySeparator(string path, PathSeparatorKind separatorKind)
+    private static string GetPathWithDirectorySeparator(string path, DirectorySeparatorKind separatorKind)
     {
         switch (separatorKind)
         {
-            case PathSeparatorKind.System:
+            case DirectorySeparatorKind.System:
                 return IsUnixLikePlatform ? GetPathWithForwardSlashes(path) : GetPathWithBackSlashes(path);
-            case PathSeparatorKind.Windows:
+            case DirectorySeparatorKind.Windows:
                 return GetPathWithBackSlashes(path);
-            case PathSeparatorKind.Linux:
+            case DirectorySeparatorKind.Linux:
                 return GetPathWithForwardSlashes(path);
             default:
                 throw new ArgumentOutOfRangeException(nameof(separatorKind));
@@ -361,8 +387,10 @@ public static class PathExtensions
     }
 
 
-    private static string CombinePathsUnchecked(string root, string? relativePath)
+    private static string CombinePathsUnchecked(string root, string relativePath)
     {
+        if (root == string.Empty)
+            return relativePath;
         var c = root[root.Length - 1];
         if (!IsAnyDirectorySeparator(c) && c != VolumeSeparatorChar)
         {

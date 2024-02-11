@@ -49,7 +49,7 @@ public class MegFileExtractorTest
     [DataRow("../a.txt", "D:\\new\\", true, "D:\\a.txt")]
     [DataRow("D:\\new\\..\\a.txt", "new", true, "D:\\a.txt")]
     [DataRow("/a.txt", "D:/new", true, "C:\\a.txt")] // Note that /a.txt is rooted but not absolute (on Windows).
-    //[DataRow("D:a.txt", "D:/new", true, "D:/a.txt")] // There is a bug in System.IO.Abstraction that prevents testing case. https://github.com/TestableIO/System.IO.Abstractions/issues/1044
+    [DataRow("D:a.txt", "D:/new", true, "D:\\a.txt")]
     [DataRow("a.txt", "new", false, "C:\\new\\a.txt")]
     [DataRow("path/a.txt", "new", false, "C:\\new\\a.txt")]
     [DataRow("../a.txt", "new", false, "C:\\new\\a.txt")]

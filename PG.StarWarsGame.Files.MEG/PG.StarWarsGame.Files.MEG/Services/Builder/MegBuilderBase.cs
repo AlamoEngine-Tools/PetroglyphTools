@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
+using PG.Commons.Utilities.FileSystem;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
@@ -170,30 +171,12 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
         fileInfo.Directory.Create();
 
-        // TODO: Create hidden temp file properly
-        var tempFile = fullPath + ".tmp";
-
         var megService = Services.GetRequiredService<IMegFileService>();
-        try
-        {
-            using (var fileStream = FileSystem.FileStream.New(tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-            {
-                megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, dataEntries);
-            }
-            // TODO: Move with overwrite
-            FileSystem.File.Move(tempFile, fullPath);
-        }
-        finally
-        {
-            try
-            {
-                FileSystem.File.Delete(tempFile);
-            }
-            catch
-            {
-                // Ignore
-            }
-        }
+        using var tmpFileStream = FileSystem.File.CreateRandomHiddenTemporaryFile(fileInfo.DirectoryName);
+        megService.CreateMegArchive(tmpFileStream, fileInformation.FileVersion, fileInformation.EncryptionData, dataEntries);
+        using var destinationStream = FileSystem.FileStream.New(fullPath, FileMode.Create, FileAccess.Write);
+        tmpFileStream.Seek(0, SeekOrigin.Begin);
+        tmpFileStream.CopyTo(destinationStream);
     }
 
     /// <summary>

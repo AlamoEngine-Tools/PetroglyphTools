@@ -868,7 +868,7 @@ public class MegBuilderBaseTest
         Assert.ThrowsException<IOException>(() => builder.Build(fileInfo, false));
     }
 
-    //[TestMethod] TODO
+    [TestMethod]
     public void Test_CreateMegArchive_RealFileSystem_OverrideCurrentMeg()
     {
         var fileInfo = new MegFileInformation("a.meg", MegFileVersion.V1);

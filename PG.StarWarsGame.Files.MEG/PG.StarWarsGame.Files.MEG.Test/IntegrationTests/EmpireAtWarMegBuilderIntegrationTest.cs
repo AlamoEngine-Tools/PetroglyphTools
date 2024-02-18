@@ -13,10 +13,10 @@ using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Test.Files;
 using Testably.Abstractions.Testing;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
+namespace PG.StarWarsGame.Files.MEG.Test.IntegrationTests;
 
 [TestClass]
-public class EmpireAtWarMegBuilder_IntegrationTest
+public class EmpireAtWarMegBuilderIntegrationTest
 {
     private readonly MockFileSystem _fileSystem = new();
     private EmpireAtWarMegBuilder _eawMegBuilder;
@@ -45,7 +45,7 @@ public class EmpireAtWarMegBuilder_IntegrationTest
     [TestMethod]
     public void Test_BuildMeg()
     {
-        _fileSystem.Initialize().WithFile("entry.txt").Which(m =>  m.HasStringContent("test"));
+        _fileSystem.Initialize().WithFile("entry.txt").Which(m => m.HasStringContent("test"));
 
         var entry1 = _eawMegBuilder.ResolveEntryPath("entry1.txt");
         var entry2 = _eawMegBuilder.ResolveEntryPath("/game/corruption/data/xml/entry2.txt");
@@ -102,6 +102,6 @@ public class EmpireAtWarMegBuilder_IntegrationTest
         ms.Position = 0;
 
         var dataString = new StreamReader(ms).ReadToEnd();
-        Assert.AreEqual("testtest",dataString);
+        Assert.AreEqual("testtest", dataString);
     }
 }

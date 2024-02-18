@@ -15,7 +15,7 @@ using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
 using Testably.Abstractions.Testing;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Services;
+namespace PG.StarWarsGame.Files.MEG.Test.IntegrationTests;
 
 [TestClass]
 public class MegFileServiceIntegrationTest
@@ -80,63 +80,7 @@ public class MegFileServiceIntegrationTest
             _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
         });
     }
-
-    //[TestMethod]
-    //public void Test_CreateMegArchive_RealFileSystem_OverrideCurrentMeg()
-    //{
-    //    // Relative paths are OK for this test.
-    //    const string megFileName = "test.meg";
-    //    const string copyMeg = "copy.meg";
-
-    //    // This Test does not use the MockFileSystem but the actual FileSystem
-    //    var fs = new FileSystem();
-
-    //    var sc = new ServiceCollection();
-    //    sc.AddSingleton<IFileSystem>(fs);
-    //    sc.AddSingleton<IChecksumService>(new ChecksumService());
-    //    MegDomain.RegisterServices(sc);
-
-    //    var megFileService = new MegFileService(sc.BuildServiceProvider());
-
-    //    try
-    //    {
-    //        fs.File.WriteAllBytes(megFileName, MegTestConstants.CONTENT_MEG_FILE_V1);
-    //        fs.File.WriteAllBytes(copyMeg, MegTestConstants.CONTENT_MEG_FILE_V1);
-
-    //        var meg = megFileService.Load(megFileName);
-
-    //        megFileService.CreateMegArchive(
-    //            new MegFileInformation { FilePath = meg.FilePath, FileVersion = meg.FileVersion },
-    //            meg.Archive.Select(e => MegFileDataEntryBuilderInfo.FromEntry(meg, e)),
-    //            true);
-
-    //        var actualBytes = fs.File.ReadAllBytes(megFileName);
-    //        var expectedBytes = fs.File.ReadAllBytes(copyMeg);
-
-    //        CollectionAssert.AreEqual(expectedBytes, actualBytes);
-    //    }
-    //    finally
-    //    {
-    //        // Make sure to delete the test files again.
-    //        try
-    //        {
-    //            fs.File.Delete(megFileName);
-    //        }
-    //        catch
-    //        {
-    //            // Ignore
-    //        }
-    //        try
-    //        {
-    //            fs.File.Delete(copyMeg);
-    //        }
-    //        catch
-    //        {
-    //            // Ignore
-    //        }
-    //    }
-    //}
-
+    
     [TestMethod]
     public void Test_CreateMegArchive_MegWithEntriesOfSameNameButWithDifferentData()
     {
@@ -269,7 +213,7 @@ public class MegFileServiceIntegrationTest
         }
 
         using var param = new MegFileInformation(
-            expectedData.NewMegFilePath, 
+            expectedData.NewMegFilePath,
             expectedData.NewMegFileVersion,
             expectedData.EncryptionData);
 
@@ -299,7 +243,6 @@ public class MegFileServiceIntegrationTest
         TestMegModelContent(newMeg, expectedData, true);
     }
 
-
     private static void TestMegModelContent(IMegFile meg, ExpectedMegTestData expectedData, bool isNewMeg)
     {
         Assert.IsNotNull(meg);
@@ -320,7 +263,6 @@ public class MegFileServiceIntegrationTest
         }
     }
 
-
     private record ExpectedMegTestData
     {
         public MegFileVersion IsMegFileVersion { get; init; }
@@ -330,7 +272,7 @@ public class MegFileServiceIntegrationTest
 
         public IList<string> EntryNames { get; init; }
 
-        
+
         public string NewMegFilePath { get; init; }
 
         public bool NewMegIsBinaryEqual { get; init; }

@@ -20,7 +20,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     // Important: By design, this must be the only field of this struct!
     // This way we can assure that sizeof(CRC32) == sizeof(uint)
     private readonly uint _checksum;
-
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="Crc32"/> struct with the specified checksum value.
     /// </summary>

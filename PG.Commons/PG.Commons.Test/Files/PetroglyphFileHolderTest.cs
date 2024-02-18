@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Files;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PG.Testing;
+using Testably.Abstractions.Testing;
 
 namespace PG.Commons.Test.Files;
 
@@ -26,7 +26,7 @@ public class PetroglyphFileHolderTest
         sp.Setup(s => s.GetService(typeof(ILoggerFactory))).Returns(loggerFactoryMock.Object);
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        fs.AddEmptyFile("test");
+        fs.Initialize().WithFile("test");
 
         var holder = new TestFileHolder(model, new TestParam { FilePath = "test" }, sp.Object);
 
@@ -48,7 +48,7 @@ public class PetroglyphFileHolderTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        fs.AddEmptyFile(filePath);
+        fs.Initialize().WithFile(filePath);
 
         var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, sp.Object);
 
@@ -66,7 +66,9 @@ public class PetroglyphFileHolderTest
     [DataRow("a/../test", "test", "C:\\", "C:\\test")]
     [DataRow("üöä", "üöä", "C:\\", "C:\\üöä")]
     [DataRow("a/b", "b", "C:\\a", "C:\\a\\b")]
+#if NET
     [DataRow("test/\u00A0", "\u00A0", "C:\\test", "C:\\test\\\u00A0")]
+#endif
     //[DataRow("\u00A0", "\u00A0", "C:\\\u00A0", "C:\\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void Test_PassingFileNames_Windows(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
     {
@@ -75,8 +77,11 @@ public class PetroglyphFileHolderTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        fs.AddEmptyFile(filePath);
-        
+        fs.Initialize().WithFile(filePath);
+
+        var fi = fs.FileInfo.New(filePath);
+        var e = fi.Exists;
+
         var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, sp.Object);
 
         if (expectedFileName is not null)
@@ -102,7 +107,7 @@ public class PetroglyphFileHolderTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        fs.AddEmptyFile(filePath);
+        fs.Initialize().WithFile(filePath);
 
         var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, sp.Object);
 
@@ -186,7 +191,7 @@ public class PetroglyphFileHolderTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        fs.AddEmptyFile("test");
+        fs.Initialize().WithFile("test");
 
         var holder = new TestFileHolder(model, new TestParam { FilePath = "test" }, sp.Object);
         Assert.AreEqual(NullLogger.Instance, holder.Logger);

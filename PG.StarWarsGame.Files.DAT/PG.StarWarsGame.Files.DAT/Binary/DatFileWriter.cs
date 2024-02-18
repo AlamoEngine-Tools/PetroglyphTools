@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.IO.Abstractions;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 

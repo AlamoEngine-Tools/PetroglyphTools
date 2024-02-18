@@ -39,12 +39,12 @@ public class FileExtensionTest
     [TestMethod]
     public void Test_CreateRandomHiddenTemporaryFile_FromDirectory()
     {
-        _fileSystem.WithDrive("C:").InitializeIn("C:").WithSubdirectory("test");
+        _fileSystem.Initialize().WithSubdirectory(_fileSystem.Path.GetFullPath("test"));
 
-        var tempStream = _fileSystem.File.CreateRandomHiddenTemporaryFile(@"C:\test");
+        var tempStream = _fileSystem.File.CreateRandomHiddenTemporaryFile(_fileSystem.Path.GetFullPath("test"));
         var filePath = tempStream.Name;
 
-        Assert.IsTrue(filePath.StartsWith(@"C:\test\"));
+        Assert.IsTrue(filePath.StartsWith(_fileSystem.Path.GetFullPath("test")));
 
         // Check file exists
         Assert.IsTrue(_fileSystem.File.Exists(filePath));

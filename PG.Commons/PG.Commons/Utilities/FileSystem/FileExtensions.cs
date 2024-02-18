@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace PG.Commons.Utilities.FileSystem;
@@ -29,7 +30,11 @@ public static class FileExtensions
         FileSystemStream stream = null!;
         ExecuteFileActionWithRetry(3, 500, () =>
         {
-            var randomName = fs.Path.GetRandomFileName();
+            var randomName = fs.Path.GetTempFileName();
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                randomName  = "." + randomName;
+
             var tempFilePath = fs.Path.GetFullPath(fs.Path.Combine(directory, randomName));
             stream = fs.FileStream.New(tempFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None, 0x1000, FileOptions.DeleteOnClose);
             fs.File.SetAttributes(tempFilePath, FileAttributes.Temporary | FileAttributes.Hidden);

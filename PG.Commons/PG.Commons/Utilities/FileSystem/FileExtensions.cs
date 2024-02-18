@@ -30,7 +30,7 @@ public static class FileExtensions
         FileSystemStream stream = null!;
         ExecuteFileActionWithRetry(3, 500, () =>
         {
-            var randomName = fs.Path.GetTempFileName();
+            var randomName = fs.Path.GetRandomFileName();
 
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 randomName  = "." + randomName;

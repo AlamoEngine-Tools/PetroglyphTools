@@ -2,30 +2,36 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.Binary.File;
-using PG.StarWarsGame.Files.MEG.Binary.Shared.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal class MegBinaryServiceFactory : IMegBinaryServiceFactory
+internal class MegBinaryServiceFactory(IServiceProvider serviceProvider) : IMegBinaryServiceFactory
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-    public MegBinaryServiceFactory(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
-    public IBinaryFileReader<IMegFileMetadata> GetReader(MegFileVersion megVersion)
+    public IMegFileBinaryReader GetReader(MegFileVersion megVersion)
     {
         if (megVersion == MegFileVersion.V1)
-            return new V1.MegFileBinaryServiceV1();
+            return new MegFileBinaryReaderV1(_serviceProvider);
+
         throw new NotImplementedException();
     }
 
-    public IBinaryFileReader<IMegFileMetadata> GetReader(ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv)
+    public IMegBinaryConverter GetConverter(MegFileVersion megVersion)
     {
+        if (megVersion == MegFileVersion.V1)
+            return new MegBinaryConverterV1(_serviceProvider);
+
+        throw new NotImplementedException();
+    }
+
+    public IConstructingMegArchiveBuilder GetConstructionBuilder(MegFileVersion megVersion)
+    {
+        if (megVersion == MegFileVersion.V1)
+            return new ConstructingMegArchiveBuilderV1(_serviceProvider);
+
         throw new NotImplementedException();
     }
 }

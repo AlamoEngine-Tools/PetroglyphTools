@@ -13,12 +13,15 @@
     <PropertyGroup>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="DotNet.Glob" Version="3.1.3" />
         <PackageReference Include="IsExternalInit" Version="1.0.3">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0" />
 	    <PackageReference Include="Required" Version="1.0.0">
 		    <PrivateAssets>all</PrivateAssets>
 		    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,7 +30,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
         <PackageReference Include="System.Composition.AttributedModel" Version="8.0.0" />
-        <PackageReference Include="System.IO.Abstractions" Version="20.0.4" />
+        <PackageReference Include="System.IO.Abstractions" Version="20.0.15" />
         <PackageReference Include="Nullable" Version="1.3.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -35,5 +38,8 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="C:\Users\Anakin\Source\Repos\AlamoEngine-Tools\PetroglyphTools\aet.png" Link="aet.png" />
     </ItemGroup>
 </Project>

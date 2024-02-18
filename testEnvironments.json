@@ -9,7 +9,7 @@
     {
       "name": "linux dotnet-core-sdk",
       "type": "docker",
-      "dockerImage": "mcr.microsoft.com/dotnet/sdk:8.0"
+      "dockerFile": "Dockerfile.test"
     }
   ]
 }

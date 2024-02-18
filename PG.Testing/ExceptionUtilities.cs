@@ -18,8 +18,8 @@ public static class ExceptionUtilities
         }
         catch (Exception e)
         {
-            throw new AssertFailedException(
-                $"Expected no exception to be thrown but got '{e.GetType().Name}' instead", e);
+            Assert.Fail($"Expected no exception to be thrown but got '{e.GetType().Name}' instead", e);
+            return default;
         }
     }
 
@@ -53,6 +53,20 @@ public static class ExceptionUtilities
         var exceptionType = exception.GetType();
         if (!exceptionTypes.Contains(exceptionType))
             throw new AssertFailedException($"Caught wrong exception: {exceptionType.Name}");
+    }
+
+    public static void AssertThrowsAny(Action testCode)
+    {
+        AssertThrowsAnyOfType<Exception>(testCode);
+    }
+
+    public static void AssertThrowsAnyOfType<T>(Action testCode) where T : Exception
+    {
+        var exception = Record(testCode);
+        if (exception is null)
+            throw new AssertFailedException("Expected an exception but none was thrown.");
+        if (exception is not T)
+            throw new AssertFailedException($"Expected any exception of type {typeof(T).Name} but got {exception.GetType().Name}");
     }
 
     public static Exception? Record(Action testCode)

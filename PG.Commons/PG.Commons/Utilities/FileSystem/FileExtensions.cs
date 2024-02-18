@@ -45,6 +45,11 @@ public static class FileExtensions
         bool throwOnFailure = true, 
         Func<Exception, int, bool>? errorAction = null)
     {
+        if (fileAction == null) 
+            throw new ArgumentNullException(nameof(fileAction));
+        if (retryCount < 0)
+            throw new ArgumentOutOfRangeException(nameof(retryCount));
+
         var num = retryCount + 1;
         for (var index = 0; index < num; ++index)
         {

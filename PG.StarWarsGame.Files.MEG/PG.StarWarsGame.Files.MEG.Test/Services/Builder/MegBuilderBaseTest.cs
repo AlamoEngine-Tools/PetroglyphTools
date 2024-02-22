@@ -876,7 +876,7 @@ public class MegBuilderBaseTest
         var expectedData = new byte[] { 1, 2, 3 };
 
         // This Test does not use the MockFileSystem but the actual FileSystem
-        var fs = new FileSystem();
+        var fs = new System.IO.Abstractions.FileSystem();
 
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(fs);

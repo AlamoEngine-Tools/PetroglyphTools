@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 using PG.Testing;
 
-namespace PG.Commons.Test.Utilities.FileSystem;
+namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.FileSystem;
 
 // Based on https://github.com/dotnet/roslyn/ and
 // https://github.com/NuGet/NuGet.Client/ and
@@ -94,13 +94,16 @@ public class PathExtensionTest
     }
 
     [TestMethod]
-    [DynamicData(nameof(NormalizeTestDataSource), DynamicDataSourceType.Method)]
-    public void Test_Normalize(NormalizeTestData testData)
+    public void Test_Normalize()
     {
-        var result = _fileSystem.Path.Normalize(testData.Input, testData.Options);
-        Assert.AreEqual(
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? testData.ExpectedWindows : testData.ExpectedLinux,
-            result);
+        foreach (var testData in NormalizeTestDataSource())
+        {
+            var result = _fileSystem.Path.Normalize(testData.Input, testData.Options);
+            Assert.AreEqual(
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? testData.ExpectedWindows : testData.ExpectedLinux,
+                result);
+        }
+       
     }
 
     [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
@@ -290,129 +293,137 @@ public class PathExtensionTest
     }
 
 
-
-    public static IEnumerable<object[]> NormalizeTestDataSource()
+    private static IEnumerable<NormalizeTestData> NormalizeTestDataSource()
     {
-        yield return
-        [
-            new NormalizeTestData { Input = "a/b\\C", ExpectedLinux = "a/b\\C", ExpectedWindows = "a/b\\C", Options = new PathNormalizeOptions() }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C", ExpectedLinux = "a/b/C", ExpectedWindows = "a\\b\\C", Options =
-                    new PathNormalizeOptions
-                    {
-                        UnifySlashes = true
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C", ExpectedLinux = "a/b/C", ExpectedWindows = "a/b/C", Options =
-                    new PathNormalizeOptions
-                    {
-                        UnifySlashes = true,
-                        SeparatorKind = DirectorySeparatorKind.Linux
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C", ExpectedLinux = "a\\b\\C", ExpectedWindows = "a\\b\\C", Options =
-                    new PathNormalizeOptions
-                    {
-                        UnifySlashes = true,
-                        SeparatorKind = DirectorySeparatorKind.Windows
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C", ExpectedLinux = "a/b\\C", ExpectedWindows = "a/b\\c", Options =
-                    new PathNormalizeOptions
-                    {
-                        UnifyCase = UnifyCasingKind.LowerCase
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C", ExpectedLinux = "a/b\\c", ExpectedWindows = "a/b\\c", Options =
-                    new PathNormalizeOptions
-                    {
-                        UnifyCase = UnifyCasingKind.LowerCaseForce
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C", ExpectedLinux = "a/b\\C", ExpectedWindows = "A/B\\C", Options =
-                    new PathNormalizeOptions
-                    {
-                        UnifyCase = UnifyCasingKind.UpperCase
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C", ExpectedLinux = "A/B\\C", ExpectedWindows = "A/B\\C", Options =
-                    new PathNormalizeOptions
-                    {
-                        UnifyCase = UnifyCasingKind.UpperCaseForce
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C//\\", ExpectedLinux = "a/b\\C//\\", ExpectedWindows = "a/b\\C", Options =
-                    new PathNormalizeOptions
-                    {
-                        TrimTrailingSeparator = true
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C//\\", ExpectedLinux = "a/b\\C", ExpectedWindows = "a/b\\C", Options =
-                    new PathNormalizeOptions
-                    {
-                        TrimTrailingSeparator = true, SeparatorKind = DirectorySeparatorKind.Windows,
-                    }
-            }
-        ];
-        yield return
-        [
-            new NormalizeTestData
-            {
-                Input = "a/b\\C//\\", ExpectedLinux = "a/b\\C//\\", ExpectedWindows = "a/b\\C//\\", Options =
-                    new PathNormalizeOptions
-                    {
-                        TrimTrailingSeparator = true, SeparatorKind = DirectorySeparatorKind.Linux,
-                    }
-            }
-        ];
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C", 
+            ExpectedLinux = "a/b\\C", 
+            ExpectedWindows = "a/b\\C", 
+            Options = new PathNormalizeOptions()
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C",
+            ExpectedLinux = "a/b/C",
+            ExpectedWindows = "a\\b\\C",
+            Options =
+                new PathNormalizeOptions
+                {
+                    UnifySlashes = true
+                }
+        };
+
+
+
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C",
+            ExpectedLinux = "a/b/C",
+            ExpectedWindows = "a/b/C",
+            Options =
+                new PathNormalizeOptions
+                {
+                    UnifySlashes = true,
+                    SeparatorKind = DirectorySeparatorKind.Linux
+                }
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C",
+            ExpectedLinux = "a\\b\\C",
+            ExpectedWindows = "a\\b\\C",
+            Options =
+                new PathNormalizeOptions
+                {
+                    UnifySlashes = true,
+                    SeparatorKind = DirectorySeparatorKind.Windows
+                }
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C",
+            ExpectedLinux = "a/b\\C",
+            ExpectedWindows = "a/b\\c",
+            Options =
+                new PathNormalizeOptions
+                {
+                    UnifyCase = UnifyCasingKind.LowerCase
+                }
+        };
+
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C",
+            ExpectedLinux = "a/b\\c",
+            ExpectedWindows = "a/b\\c",
+            Options =
+                new PathNormalizeOptions
+                {
+                    UnifyCase = UnifyCasingKind.LowerCaseForce
+                }
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C",
+            ExpectedLinux = "a/b\\C",
+            ExpectedWindows = "A/B\\C",
+            Options =
+                new PathNormalizeOptions
+                {
+                    UnifyCase = UnifyCasingKind.UpperCase
+                }
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C",
+            ExpectedLinux = "A/B\\C",
+            ExpectedWindows = "A/B\\C",
+            Options =
+                new PathNormalizeOptions
+                {
+                    UnifyCase = UnifyCasingKind.UpperCaseForce
+                }
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C//\\",
+            ExpectedLinux = "a/b\\C//\\",
+            ExpectedWindows = "a/b\\C",
+            Options =
+                new PathNormalizeOptions
+                {
+                    TrimTrailingSeparator = true
+                }
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C//\\",
+            ExpectedLinux = "a/b\\C",
+            ExpectedWindows = "a/b\\C",
+            Options =
+                new PathNormalizeOptions
+                {
+                    TrimTrailingSeparator = true,
+                    SeparatorKind = DirectorySeparatorKind.Windows,
+                }
+        };
+        yield return new NormalizeTestData
+        {
+            Input = "a/b\\C//\\",
+            ExpectedLinux = "a/b\\C//\\",
+            ExpectedWindows = "a/b\\C//\\",
+            Options =
+                new PathNormalizeOptions
+                {
+                    TrimTrailingSeparator = true,
+                    SeparatorKind = DirectorySeparatorKind.Linux,
+                }
+        };
     }
 
 
-    public record NormalizeTestData
+    internal record NormalizeTestData
     {
         public required string Input { get; init; }
 
@@ -420,6 +431,6 @@ public class PathExtensionTest
 
         public string ExpectedLinux { get; init; }
 
-        internal PathNormalizeOptions Options { get; init; }
+        public required PathNormalizeOptions Options { get; init; }
     }
 }

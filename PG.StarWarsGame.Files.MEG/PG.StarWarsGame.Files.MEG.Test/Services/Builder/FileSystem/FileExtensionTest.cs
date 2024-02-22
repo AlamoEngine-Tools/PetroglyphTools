@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 using Testably.Abstractions.Testing;
 
-namespace PG.Commons.Test.Utilities.FileSystem;
+namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.FileSystem;
 
 [TestClass]
 public class FileExtensionTest

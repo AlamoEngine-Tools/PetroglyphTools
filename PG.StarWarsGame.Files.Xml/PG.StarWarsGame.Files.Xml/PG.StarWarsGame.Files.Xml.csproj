@@ -1,26 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <Title>PG.StarWarsGame.Files.Xml</Title>
-        <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.Xml</PackageId>
-        <Product>PG.StarWarsGame.Files.Xml</Product>
-    </PropertyGroup>
-    <PropertyGroup>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <InheritDocEnabled>true</InheritDocEnabled>
-    </PropertyGroup>
-    <PropertyGroup>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    </PropertyGroup>
-    <ItemGroup>
-        <EmbeddedResource Update="Resources\LocalizableTexts.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>LocalizableTexts.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-    </ItemGroup>
+	<PropertyGroup>
+		<IsPackable>false</IsPackable> <!--Enable when implemented-->
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Title>PG.StarWarsGame.Files.Xml</Title>
+		<PackageId>AlamoEngineTools.PG.StarWarsGame.Files.Xml</PackageId>
+		<Product>PG.StarWarsGame.Files.Xml</Product>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<InheritDocEnabled>true</InheritDocEnabled>
+	</PropertyGroup>
+	<PropertyGroup>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\LocalizableTexts.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>LocalizableTexts.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+	</ItemGroup>
 </Project>

@@ -1,29 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-        <TargetFrameworks>net8.0</TargetFrameworks>
-        <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="coverlet.msbuild" Version="6.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-        <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
-        <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
-        <PackageReference Include="coverlet.collector" Version="6.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="System.IO.Abstractions" Version="20.0.15" />
-        <PackageReference Include="Testably.Abstractions.Testing" Version="2.6.1" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
-        <ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
-        <ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
-    </ItemGroup>
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="coverlet.msbuild" Version="6.0.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.2.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
+		<PackageReference Include="coverlet.collector" Version="6.0.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.IO.Abstractions" Version="20.0.15" />
+		<PackageReference Include="Testably.Abstractions.Testing" Version="2.6.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
+		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
+		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
+	</ItemGroup>
 </Project>

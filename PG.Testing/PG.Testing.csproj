@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-        <TargetFrameworks>net8.0</TargetFrameworks>
-        <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
-        <PackageId>AlamoEngineTools.PG.Testing</PackageId>
-	    <IsTestProject>false</IsTestProject>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-        <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
+		<PackageId>AlamoEngineTools.PG.Testing</PackageId>
+		<IsTestProject>false</IsTestProject>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
 		<PackageReference Include="Testably.Abstractions.Testing" Version="2.6.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-    </ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectCapability Remove="TestContainer" />
 	</ItemGroup>

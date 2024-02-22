@@ -1,4 +1,4 @@
-name: Petroglyph Tools .NET Core Code Coverage
+name: Petroglyph Tools .NET Code Coverage
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v4
     - name: Generate Code Coverage Report
-      run: dotnet test ${{ matrix.test_project }}/${{ matrix.test_project }}.Test/${{ matrix.test_project }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      run: dotnet test -c Release -f net8.0 /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
     - name: Publish Coverage Report
       uses: coverallsapp/github-action@v2
       with:

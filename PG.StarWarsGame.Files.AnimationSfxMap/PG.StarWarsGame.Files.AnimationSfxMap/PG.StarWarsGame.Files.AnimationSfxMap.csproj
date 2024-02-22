@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <IsPackable>false</IsPackable> <!--Enable when implemented-->
         <TargetFramework>net8.0</TargetFramework>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>PG.StarWarsGame.Files.AnimationSfxMap</Title>

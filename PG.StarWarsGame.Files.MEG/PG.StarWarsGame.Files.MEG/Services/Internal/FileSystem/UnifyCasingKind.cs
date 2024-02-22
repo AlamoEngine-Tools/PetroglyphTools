@@ -1,9 +1,9 @@
-﻿namespace PG.Commons.Utilities.FileSystem;
+﻿namespace PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 /// <summary>
 /// Determines which character casing path normalization shall use.
 /// </summary>
-public enum UnifyCasingKind
+internal enum UnifyCasingKind
 {
     /// <summary>
     /// No casing will be applied.

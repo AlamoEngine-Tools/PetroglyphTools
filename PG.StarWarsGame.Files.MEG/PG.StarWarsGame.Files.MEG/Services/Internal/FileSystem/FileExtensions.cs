@@ -4,12 +4,12 @@ using System.IO.Abstractions;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace PG.Commons.Utilities.FileSystem;
+namespace PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 /// <summary>
 /// Provides extensions for file handling.
 /// </summary>
-public static class FileExtensions
+internal static class FileExtensions
 {
     /// <summary>
     /// Creates a temporary, hidden file which gets deleted once the returned stream is disposed.

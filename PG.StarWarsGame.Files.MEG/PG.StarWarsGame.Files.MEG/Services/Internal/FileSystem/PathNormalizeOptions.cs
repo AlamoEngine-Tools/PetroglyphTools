@@ -1,9 +1,9 @@
-﻿namespace PG.Commons.Utilities.FileSystem;
+﻿namespace PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 /// <summary>
 /// Options how path normalization shall be performed.
 /// </summary>
-public record PathNormalizeOptions
+internal record PathNormalizeOptions
 {
     /// <summary>
     /// Gets or sets whether directory separator shall be unified across the path based on <see cref="SeparatorKind"/>.

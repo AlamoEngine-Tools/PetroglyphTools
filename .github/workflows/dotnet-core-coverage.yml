@@ -1,0 +1,45 @@
+name: Petroglyph Tools .NET Core Code Coverage
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  code-coverage:
+    name: Code Coverage
+    strategy:
+      matrix:
+        test_project: [PG.Commons, PG.StarWarsGame.Files.MEG]
+        os: [windows-latest, ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v4
+    - name: Generate Code Coverage Report
+      run: dotnet test ${{ matrix.test_project }}/${{ matrix.test_project }}.Test/${{ matrix.test_project }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+    - name: Publish Coverage Report
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        flag-name: run-${{ matrix.test_project }}
+        path-to-lcov: ./${{ matrix.test_project }}/${{ matrix.test_project }}.Test/TestResults/coverage.info
+        format: lcov
+        allow-empty: true
+        parallel: true
+  finish:
+    needs: code-coverage
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finish
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true

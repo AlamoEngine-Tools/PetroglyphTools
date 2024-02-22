@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Utilities.FileSystem;
+using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 using PG.Testing;
 
 namespace PG.Commons.Test.Utilities.FileSystem;
@@ -420,6 +420,6 @@ public class PathExtensionTest
 
         public string ExpectedLinux { get; init; }
 
-        public required PathNormalizeOptions Options { get; init; }
+        internal PathNormalizeOptions Options { get; init; }
     }
 }

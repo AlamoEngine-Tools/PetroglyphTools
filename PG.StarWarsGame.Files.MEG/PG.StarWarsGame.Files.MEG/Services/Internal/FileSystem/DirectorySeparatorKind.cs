@@ -1,9 +1,9 @@
-﻿namespace PG.Commons.Utilities.FileSystem;
+﻿namespace PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 /// <summary>
 /// Determines which directory separator path normalization shall use.
 /// </summary>
-public enum DirectorySeparatorKind
+internal enum DirectorySeparatorKind
 {
     /// <summary>
     /// Uses the directory separators of the current system.

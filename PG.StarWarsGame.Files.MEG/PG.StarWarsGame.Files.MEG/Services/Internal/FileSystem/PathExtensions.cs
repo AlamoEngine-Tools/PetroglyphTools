@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace PG.Commons.Utilities.FileSystem;
+namespace PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 // Based on https://github.com/dotnet/roslyn/blob/main/src/Compilers/Core/Portable/FileSystem/PathUtilities.cs
 // and https://github.com/NuGet/NuGet.Client/blob/dev/src/NuGet.Core/NuGet.Common/PathUtil/PathUtility.cs
@@ -13,7 +13,7 @@ namespace PG.Commons.Utilities.FileSystem;
 /// <summary>
 /// Provides extensions for path manipulation.
 /// </summary>
-public static class PathExtensions
+internal static class PathExtensions
 {
     private const string ThisDirectory = ".";
     private const string ParentRelativeDirectory = "..";
@@ -324,7 +324,7 @@ public static class PathExtensions
     /// <exception cref="IOException">The normalization failed due to an internal error.</exception>
     public static string Normalize(this IPath _, string path, PathNormalizeOptions options)
     {
-        ThrowHelper.ThrowIfNullOrEmpty(path);
+        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(path);
 
         // Only do for DirectorySeparatorKind.System, cause for other kinds it will be done at the very end anyway.
         if (options.UnifySlashes && options.SeparatorKind == DirectorySeparatorKind.System)

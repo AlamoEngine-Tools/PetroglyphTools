@@ -42,4 +42,7 @@
 	<ItemGroup>
 		<None Update="C:\Users\Anakin\Source\Repos\AlamoEngine-Tools\PetroglyphTools\aet.png" Link="aet.png" />
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Update="Nerdbank.GitVersioning" Version="3.6.133" />
+	</ItemGroup>
 </Project>

@@ -38,7 +38,4 @@
 		<PackageReference Include="System.IO.Abstractions" Version="20.0.15" />
 		<PackageReference Include="System.IO.Hashing" Version="8.0.0" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Update="Nerdbank.GitVersioning" Version="3.6.133" />
-	</ItemGroup>
 </Project>

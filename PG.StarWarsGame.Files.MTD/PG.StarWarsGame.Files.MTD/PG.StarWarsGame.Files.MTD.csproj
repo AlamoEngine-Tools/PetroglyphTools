@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<IsPackable>false</IsPackable> <!--Enable when implemented-->
+		<IsPackable>false</IsPackable> <!--TODO Enable when implemented-->
 
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Title>PG.StarWarsGame.Files.MTD</Title>

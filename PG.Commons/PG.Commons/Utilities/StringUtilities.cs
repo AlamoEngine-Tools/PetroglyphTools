@@ -4,6 +4,10 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+#if NETSTANDARD2_0
+using AnakinRaW.CommonUtilities.Extensions;
+#endif
+
 
 namespace PG.Commons.Utilities;
 

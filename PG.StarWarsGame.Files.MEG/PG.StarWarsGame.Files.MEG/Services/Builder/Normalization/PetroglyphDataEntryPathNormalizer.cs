@@ -1,5 +1,5 @@
 using System;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -19,10 +19,10 @@ public sealed class PetroglyphDataEntryPathNormalizer : MegDataEntryPathNormaliz
     /// <inheritdoc />
     public override string NormalizePath(string filePath)
     {
-        return FileSystem.Path.Normalize(filePath,
+        return PathNormalizer.Normalize(filePath,
             new PathNormalizeOptions
             {
-                UnifySlashes = true, SeparatorKind = DirectorySeparatorKind.Windows,
+                UnifyDirectorySeparators = true, UnifySeparatorKind = DirectorySeparatorKind.Windows,
                 UnifyCase = UnifyCasingKind.UpperCaseForce
             });
     }

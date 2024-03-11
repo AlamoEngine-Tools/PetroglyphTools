@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Abstractions;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using AnakinRaW.CommonUtilities.FileSystem;
 
 namespace PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
@@ -28,7 +27,7 @@ internal static class FileExtensions
             throw new DirectoryNotFoundException($"Could not find the target directory '{directory}'");
 
         FileSystemStream stream = null!;
-        ExecuteFileActionWithRetry(3, 500, () =>
+        FileSystemUtilities.ExecuteFileSystemActionWithRetry(3, 500, () =>
         {
             var randomName = fs.Path.GetRandomFileName();
 
@@ -41,49 +40,5 @@ internal static class FileExtensions
         });
 
         return stream;
-    }
-
-    internal static bool ExecuteFileActionWithRetry(
-        int retryCount,
-        int retryDelay,
-        Action fileAction, 
-        bool throwOnFailure = true, 
-        Func<Exception, int, bool>? errorAction = null)
-    {
-        if (fileAction == null) 
-            throw new ArgumentNullException(nameof(fileAction));
-        if (retryCount < 0)
-            throw new ArgumentOutOfRangeException(nameof(retryCount));
-
-        var num = retryCount + 1;
-        for (var index = 0; index < num; ++index)
-        {
-            try
-            {
-                fileAction();
-                return true;
-            }
-            catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
-            {
-                if (!throwOnFailure || index + 1 < num)
-                {
-                    if (errorAction != null)
-                    {
-                        if (!errorAction(ex, index))
-                        {
-                            if (index + 1 >= num)
-                                continue;
-                        }
-                        else
-                            continue;
-                    }
-
-                    Task.Delay(retryDelay).Wait();
-                }
-                else
-                    throw;
-            }
-        }
-        return false;
     }
 }

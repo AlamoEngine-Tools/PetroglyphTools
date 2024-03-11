@@ -1,5 +1,5 @@
 using System;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -20,7 +20,7 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     /// <inheritdoc />
     public override string NormalizePath(string filePath)
     {
-        return FileSystem.Path.Normalize(filePath,
-            new PathNormalizeOptions { UnifySlashes = true, UnifyCase = UnifyCasingKind.UpperCaseForce });
+        return PathNormalizer.Normalize(filePath,
+            new PathNormalizeOptions {  UnifyDirectorySeparators = true, UnifyCase = UnifyCasingKind.UpperCaseForce });
     }
 }

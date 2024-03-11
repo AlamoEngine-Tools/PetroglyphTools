@@ -1,7 +1,7 @@
 using System;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using FluentValidation;
 using PG.Commons.Utilities;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -20,15 +20,15 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
 
         RuleFor(info => info.FilePath).Must(path =>
         {
-            var normalized = FileSystem.Path.Normalize(path,
-                new PathNormalizeOptions { UnifySlashes = true, SeparatorKind = DirectorySeparatorKind.Windows });
+            var normalized = PathNormalizer.Normalize(path,
+                new PathNormalizeOptions { UnifyDirectorySeparators = true, UnifySeparatorKind = DirectorySeparatorKind.Windows });
             if (!normalized.Equals(path))
                 return false;
 
             try
             {
-                var systemNormalized = FileSystem.Path.Normalize(path,
-                    new PathNormalizeOptions { UnifySlashes = true });
+                var systemNormalized = PathNormalizer.Normalize(path,
+                    new PathNormalizeOptions { UnifyDirectorySeparators = true });
 
                 var fileName = FileSystem.Path.GetFileName(systemNormalized);
                 return FileNameUtilities.IsValidFileName(fileName, out _);

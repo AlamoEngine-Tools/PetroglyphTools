@@ -1,7 +1,8 @@
 using System;
 using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities.FileSystem;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -11,7 +12,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
 
     public string? ResolvePath(string path, string basePath)
     {
-        var fullBase = _fileSystem.Path.EnsureTrailingSeparator(_fileSystem.Path.GetFullPath(basePath));
+        var fullBase = PathNormalizer.Normalize(_fileSystem.Path.GetFullPath(basePath), PathNormalizeOptions.EnsureTrailingSeparator);
 
         path = PrepareForPossibleDriveRelativePath(path, fullBase);
 
@@ -19,7 +20,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
         if (string.IsNullOrEmpty(path))
             return null;
 
-        if (_fileSystem.Path.HasTrailingPathSeparator(path))
+        if (_fileSystem.Path.HasTrailingDirectorySeparator(path))
             return null;
 
         var relativePath = _fileSystem.Path.GetRelativePathEx(fullBase, path);
@@ -40,8 +41,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
 
     private string PrepareForPossibleDriveRelativePath(string path, string rootPath)
     {
-
-        if (_fileSystem.Path.IsDriveRelative(path))
+        if (_fileSystem.Path.IsDriveRelative(path, out _))
         {
             // Both roots are the same, now cut away the drive relative part and just take the relative path.
             if (DriveRootsAreEqual(path, rootPath))
@@ -60,7 +60,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
             // This method by design is not feature complete.
             // Paths such as ("\\?\Server\Share", "\\?\C:\" or \\Server\Share) will produce false results
             // We don't expect these paths for our library as their complexity is just not worth the effort. 
-            if (!_fileSystem.Path.IsDriveAbsolute(fullPath))
+            if (!_fileSystem.Path.IsPathFullyQualified(fullPath))
                 return false;
 
             var fullPathDrive = fullPath.AsSpan().Slice(0, 1);

@@ -14,7 +14,7 @@ namespace PG.Commons.Utilities;
 public static class FileNameUtilities
 {
     /// <summary>
-    /// Indicates the status of a file name validation according to the rules used by <see cref="FileNameUtilities.IsValidFileName"/>.
+    /// Indicates the status of a file name validation according to the rules used by <see cref="IsValidFileName"/>.
     /// </summary>
     public enum FileNameValidationResult
     {

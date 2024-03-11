@@ -3,7 +3,7 @@
 
 using System;
 using System.Text;
-using PG.Commons.Utilities;
+using AnakinRaW.CommonUtilities.Extensions;
 
 namespace PG.Commons.Hashing;
 

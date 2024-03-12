@@ -7,9 +7,6 @@
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 	<ItemGroup>
-		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Remove="Resources\Files\v1_1_file_data.meg" />
 		<None Remove="Resources\Files\v1_2_files_empty.meg" />
 		<None Remove="Resources\Files\v1_2_files_with_extended_ascii_name.meg" />

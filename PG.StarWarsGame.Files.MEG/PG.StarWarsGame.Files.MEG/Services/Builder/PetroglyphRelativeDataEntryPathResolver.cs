@@ -14,7 +14,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
     {
         var fullBase = PathNormalizer.Normalize(_fileSystem.Path.GetFullPath(basePath), PathNormalizeOptions.EnsureTrailingSeparator);
 
-        path = PrepareForPossibleDriveRelativePath(path, fullBase);
+        path = PrepareForPossibleDriveRelativePath(path, fullBase.AsSpan());
 
         // Needs to be after relative drive preparation (e.g, if path was just "C:")
         if (string.IsNullOrEmpty(path))
@@ -39,12 +39,12 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
         return null;
     }
 
-    private string PrepareForPossibleDriveRelativePath(string path, string rootPath)
+    private string PrepareForPossibleDriveRelativePath(string path, ReadOnlySpan<char> rootPath)
     {
-        if (_fileSystem.Path.IsDriveRelative(path, out _))
+        if (_fileSystem.Path.IsDriveRelative(path, out var driveLetter))
         {
             // Both roots are the same, now cut away the drive relative part and just take the relative path.
-            if (DriveRootsAreEqual(path, rootPath))
+            if (DriveRootsAreEqual(driveLetter!.Value, rootPath))
             {
                 // drive relative paths, always have 2 chars
                 path = path.Substring(2);
@@ -52,20 +52,18 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
         }
         return path;
 
-        bool DriveRootsAreEqual(string driveRelativePath, string fullPath)
+        bool DriveRootsAreEqual(char driveLetter, ReadOnlySpan<char> fullPath)
         {
-            // driveRelativePath already is assured to be drive relative.
-            var relativeDriveLetter = driveRelativePath.AsSpan().Slice(0, 1);
-
             // This method by design is not feature complete.
             // Paths such as ("\\?\Server\Share", "\\?\C:\" or \\Server\Share) will produce false results
             // We don't expect these paths for our library as their complexity is just not worth the effort. 
             if (!_fileSystem.Path.IsPathFullyQualified(fullPath))
                 return false;
 
-            var fullPathDrive = fullPath.AsSpan().Slice(0, 1);
 
-            return fullPathDrive.CompareTo(relativeDriveLetter, StringComparison.InvariantCultureIgnoreCase) == 0;
+            var fullPathDrive = fullPath.Slice(0, 1);
+
+            return fullPathDrive.CompareTo(driveLetter, StringComparison.InvariantCultureIgnoreCase) == 0;
         }
     }
 }

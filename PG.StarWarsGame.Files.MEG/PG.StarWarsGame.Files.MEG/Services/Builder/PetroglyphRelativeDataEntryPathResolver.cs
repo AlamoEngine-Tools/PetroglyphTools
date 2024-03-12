@@ -1,7 +1,5 @@
 using System;
-using System.IO;
 using System.IO.Abstractions;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using AnakinRaW.CommonUtilities.FileSystem;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
@@ -48,7 +46,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
     {
         if (_fileSystem.Path.IsDriveRelative(path, out var driveLetter))
         {
-            var rootPathDrive = new WindowsPathHelper(_fileSystem).GetVolumeNameFromFullyQualifiedPath(rootPath);
+            var rootPathDrive = GetVolumeNameFromFullyQualifiedPath(_fileSystem, rootPath);
 
             if (rootPathDrive.HasValue && char.ToUpperInvariant(rootPathDrive.Value) == char.ToUpperInvariant(driveLetter.Value))
                 path = path.Substring(2);
@@ -56,83 +54,24 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
         return path;
     }
 
-
-    // Shamelessly copied from .NET Runtime
-    private readonly ref struct WindowsPathHelper(IFileSystem fileSystem)
+    // By design this method does not correctly handle stuff like Device paths (e.g, //./C:/)
+    private static char? GetVolumeNameFromFullyQualifiedPath(IFileSystem fileSystem, ReadOnlySpan<char> fullyQualifiedPath)
     {
-        private const int DevicePrefixLength = 4;
-
-
-        public char? GetVolumeNameFromFullyQualifiedPath(ReadOnlySpan<char> fullyQualifiedPath)
-        {
 
 #if NETSTANDARD2_0
-            var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath.ToString()).AsSpan();
+        var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath.ToString()).AsSpan();
 #else
             var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath);
 #endif
 
-            if (root.Length == 0)
-                return null;
+        if (root.Length < 3)
+            return null;
 
-            var isDevice = IsDevice(fullyQualifiedPath);
+        // If the second char is a Volume separator ':' it cannot be a device or UNC path. 
+        if (root[1] != ':')
+            return null;
 
-            if (IsUncPath(fullyQualifiedPath, isDevice))
-                return null;
-
-            var drivePartOffset = 0;
-
-            if (isDevice)
-                drivePartOffset = 4; // e.g, "\\?\C:\" to "C:\"
-
-            var driveOnlyPath = root.Slice(drivePartOffset);
-            return driveOnlyPath[0];
-        }
-
-        private bool IsUncPath(ReadOnlySpan<char> path, bool isDevice)
-        {
-            switch (isDevice)
-            {
-                case false when path.Slice(0, 2).Equals(@"\\".AsSpan(), StringComparison.Ordinal):
-                case true when path.Length >= 8
-                               && (path.Slice(0, 8).Equals(@"\\?\UNC\".AsSpan(), StringComparison.Ordinal)
-                                   || path.Slice(5, 4).Equals(@"UNC\".AsSpan(), StringComparison.Ordinal)):
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private bool IsDevice(ReadOnlySpan<char> path)
-        {
-            // If the path begins with any two separators is will be recognized and normalized and prepped with
-            // "\??\" for internal usage correctly. "\??\" is recognized and handled, "/??/" is not.
-            return IsExtended(path)
-                   ||
-                   (
-                       path.Length >= DevicePrefixLength
-                       && IsDirectorySeparator(path[0])
-                       && IsDirectorySeparator(path[1])
-                       && (path[2] == '.' || path[2] == '?')
-                       && IsDirectorySeparator(path[3])
-                   );
-        }
-
-        private bool IsExtended(ReadOnlySpan<char> path)
-        {
-            // While paths like "//?/C:/" will work, they're treated the same as "\\.\" paths.
-            // Skipping of normalization will *only* occur if back slashes ('\') are used.
-            return path.Length >= DevicePrefixLength
-                   && path[0] == '\\'
-                   && (path[1] == '\\' || path[1] == '?')
-                   && path[2] == '?'
-                   && path[3] == '\\';
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsDirectorySeparator(char c)
-        {
-            return c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
-        }
+        // GetPathRoot already ensure we don't have something wierd like ?:/ or ö:/ which are not legal roots in Windows.
+        return root[0];
     }
 }

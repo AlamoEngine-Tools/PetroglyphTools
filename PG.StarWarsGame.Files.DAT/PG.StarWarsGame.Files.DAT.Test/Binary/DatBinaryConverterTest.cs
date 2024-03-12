@@ -3,8 +3,10 @@
 
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PG.Commons;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -17,31 +19,38 @@ public class DatBinaryConverterTest
 {
     private readonly MockFileSystem _fileSystem = new();
     private DatBinaryConverter _binaryConverter = null!;
-    private readonly IChecksumService _checksumService = new ChecksumService();
+    private ICrc32HashingService _crc32HashingService = null!;
 
     [TestInitialize]
     public void Prepare()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
-        _binaryConverter = new DatBinaryConverter(sc.BuildServiceProvider());
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        PGDomain.RegisterServices(sc);
+        var sp = sc.BuildServiceProvider();
+
+        _binaryConverter = new DatBinaryConverter(sp);
+        _crc32HashingService = sp.GetRequiredService<ICrc32HashingService>();
+
     }
 
     [TestMethod]
     public void Test_ToHolder__ValidModelCreatesValidHolder()
     {
+        
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
         var binaryModel = new DatFile(
             new DatHeader(4),
             new IndexTable(new List<IndexTableRecord>
             {
-                new(_checksumService.GetChecksum("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY0".Length,
+                new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY0".Length,
                     (uint)"VALUE0".Length),
-                new(_checksumService.GetChecksum("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY1".Length,
+                new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY1".Length,
                     (uint)"VALUE1".Length),
-                new(_checksumService.GetChecksum("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY2".Length,
+                new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY2".Length,
                     (uint)"VALUE2".Length),
-                new(_checksumService.GetChecksum("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY3".Length,
+                new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY3".Length,
                     (uint)"VALUE3".Length)
             }.AsReadOnly()),
             new ValueTable(new List<ValueTableRecord>

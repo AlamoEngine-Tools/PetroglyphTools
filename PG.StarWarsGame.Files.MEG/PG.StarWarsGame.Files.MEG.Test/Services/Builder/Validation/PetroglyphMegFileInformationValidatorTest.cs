@@ -19,7 +19,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 [TestClass]
 public class PetroglyphMegFileInformationValidatorTest
 {
-    private TestPetroglyphMegFileInformationValidator _validator;
+    private TestPetroglyphMegFileInformationValidator _validator = null!;
 
     [TestInitialize]
     public void Setup()

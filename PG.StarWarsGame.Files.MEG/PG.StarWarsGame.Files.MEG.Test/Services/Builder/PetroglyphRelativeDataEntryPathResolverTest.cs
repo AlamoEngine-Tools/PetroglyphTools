@@ -1,15 +1,15 @@
 ﻿using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 using PG.Testing;
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
 [TestClass]
 public class PetroglyphRelativeDataEntryPathResolverTest
 {
-    private PetroglyphRelativeDataEntryPathResolver _pathResolver;
+    private PetroglyphRelativeDataEntryPathResolver _pathResolver = null!;
     private readonly IFileSystem _fileSystem = new System.IO.Abstractions.FileSystem();
 
     [TestInitialize]
@@ -44,7 +44,7 @@ public class PetroglyphRelativeDataEntryPathResolverTest
 
 
         var normalizedExpected = expectedEntryPath is not null
-            ? _fileSystem.Path.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifySlashes = true })
+            ? PathNormalizer.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifyDirectorySeparators = true })
             : expectedEntryPath;
 
 

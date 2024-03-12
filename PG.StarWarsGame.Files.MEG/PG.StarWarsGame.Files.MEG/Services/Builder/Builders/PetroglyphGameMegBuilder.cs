@@ -1,8 +1,9 @@
 using System;
+using AnakinRaW.CommonUtilities.FileSystem;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -79,7 +80,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
         DataEntryPathNormalizer = services.GetRequiredService<PetroglyphDataEntryPathNormalizer>();
         Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
 
-        baseDirectory = FileSystem.Path.EnsureTrailingSeparator(baseDirectory);
+        baseDirectory = PathNormalizer.Normalize(baseDirectory, PathNormalizeOptions.EnsureTrailingSeparator);
 
         var di = FileSystem.DirectoryInfo.New(baseDirectory);
         BaseDirectory = di.FullName;

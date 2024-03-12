@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PG.Commons.Hashing;
+using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -28,7 +29,8 @@ public class MegFileServiceIntegrationTest
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
-        sc.AddSingleton<IChecksumService>(new ChecksumService());
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        PGDomain.RegisterServices(sc);
         MegDomain.RegisterServices(sc);
         var sp = sc.BuildServiceProvider();
         _megFileService = sp.GetRequiredService<IMegFileService>();
@@ -270,10 +272,10 @@ public class MegFileServiceIntegrationTest
 
         public int MegFileCount { get; init; }
 
-        public IList<string> EntryNames { get; init; }
+        public IList<string> EntryNames { get; init; } = null!;
 
 
-        public string NewMegFilePath { get; init; }
+        public string NewMegFilePath { get; init; } = null!;
 
         public bool NewMegIsBinaryEqual { get; init; }
 

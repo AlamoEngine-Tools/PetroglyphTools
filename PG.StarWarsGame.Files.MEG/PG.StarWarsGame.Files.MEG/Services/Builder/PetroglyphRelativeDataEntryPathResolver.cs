@@ -1,7 +1,9 @@
 using System;
 using System.IO.Abstractions;
+using System.Runtime.InteropServices;
+using AnakinRaW.CommonUtilities.FileSystem;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -11,15 +13,16 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
 
     public string? ResolvePath(string path, string basePath)
     {
-        var fullBase = _fileSystem.Path.EnsureTrailingSeparator(_fileSystem.Path.GetFullPath(basePath));
+        var fullBase = PathNormalizer.Normalize(_fileSystem.Path.GetFullPath(basePath), PathNormalizeOptions.EnsureTrailingSeparator);
 
-        path = PrepareForPossibleDriveRelativePath(path, fullBase);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            path = PrepareForPossibleDriveRelativePath(path, fullBase.AsSpan());
 
         // Needs to be after relative drive preparation (e.g, if path was just "C:")
         if (string.IsNullOrEmpty(path))
             return null;
 
-        if (_fileSystem.Path.HasTrailingPathSeparator(path))
+        if (_fileSystem.Path.HasTrailingDirectorySeparator(path))
             return null;
 
         var relativePath = _fileSystem.Path.GetRelativePathEx(fullBase, path);
@@ -38,34 +41,37 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
         return null;
     }
 
-    private string PrepareForPossibleDriveRelativePath(string path, string rootPath)
-    {
 
-        if (_fileSystem.Path.IsDriveRelative(path))
+    private string PrepareForPossibleDriveRelativePath(string path, ReadOnlySpan<char> rootPath)
+    {
+        if (_fileSystem.Path.IsDriveRelative(path, out var driveLetter))
         {
-            // Both roots are the same, now cut away the drive relative part and just take the relative path.
-            if (DriveRootsAreEqual(path, rootPath))
-            {
-                // drive relative paths, always have 2 chars
+            var rootPathDrive = GetVolumeNameFromFullyQualifiedPath(_fileSystem, rootPath);
+
+            if (rootPathDrive.HasValue && char.ToUpperInvariant(rootPathDrive.Value) == char.ToUpperInvariant(driveLetter.Value))
                 path = path.Substring(2);
-            }
         }
         return path;
+    }
 
-        bool DriveRootsAreEqual(string driveRelativePath, string fullPath)
-        {
-            // driveRelativePath already is assured to be drive relative.
-            var relativeDriveLetter = driveRelativePath.AsSpan().Slice(0, 1);
+    // By design this method does not correctly handle stuff like Device paths (e.g, //./C:/)
+    private static char? GetVolumeNameFromFullyQualifiedPath(IFileSystem fileSystem, ReadOnlySpan<char> fullyQualifiedPath)
+    {
 
-            // This method by design is not feature complete.
-            // Paths such as ("\\?\Server\Share", "\\?\C:\" or \\Server\Share) will produce false results
-            // We don't expect these paths for our library as their complexity is just not worth the effort. 
-            if (!_fileSystem.Path.IsDriveAbsolute(fullPath))
-                return false;
+#if NETSTANDARD2_0
+        var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath.ToString()).AsSpan();
+#else
+            var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath);
+#endif
 
-            var fullPathDrive = fullPath.AsSpan().Slice(0, 1);
+        if (root.Length < 3)
+            return null;
 
-            return fullPathDrive.CompareTo(relativeDriveLetter, StringComparison.InvariantCultureIgnoreCase) == 0;
-        }
+        // If the second char is a Volume separator ':' it cannot be a device or UNC path. 
+        if (root[1] != ':')
+            return null;
+
+        // GetPathRoot already ensure we don't have something wierd like ?:/ or ö:/ which are not legal roots in Windows.
+        return root[0];
     }
 }

@@ -6,6 +6,9 @@ using System.Buffers.Binary;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Utilities;
+#if NETSTANDARD2_0
+using AnakinRaW.CommonUtilities.Extensions;
+#endif
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 

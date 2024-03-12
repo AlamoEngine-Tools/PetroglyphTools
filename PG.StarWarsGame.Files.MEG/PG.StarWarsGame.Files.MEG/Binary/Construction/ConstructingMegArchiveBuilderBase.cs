@@ -73,7 +73,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
 
 
         var entryInfoList = new List<MegDataEntryBinaryInformation>();
-        var checksumService = Services.GetRequiredService<IChecksumService>();
+        var checksumService = Services.GetRequiredService<ICrc32HashingService>();
 
         var megEncoding = MegFileConstants.MegDataEntryPathEncoding;
 
@@ -96,7 +96,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         return new MegFileBinaryInformation(metadataSize, FileVersion, encryptMeg, entryInfoList);
     }
 
-    private MegDataEntryBinaryInformation CreateBinaryInformation(MegFileDataEntryBuilderInfo builderInfo, Encoding encoding, IChecksumService checksumService)
+    private MegDataEntryBinaryInformation CreateBinaryInformation(MegFileDataEntryBuilderInfo builderInfo, Encoding encoding, ICrc32HashingService crc32HashingService)
     {
         var originalFilePath = builderInfo.FilePath;
 
@@ -111,7 +111,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         var encodedFilePath = encoding.GetString(pathBytes);
         MegFilePathUtilities.ValidateFilePathCharacterLength(encodedFilePath);
 
-        var crc = checksumService.GetChecksum(pathBytes);
+        var crc = crc32HashingService.GetCrc32(pathBytes);
 
         var dataSizes = GetDataSize(builderInfo);
 

@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 [TestClass]
 public class PetroglyphRelativeDataEntryPathResolverTest
 {
-    private PetroglyphRelativeDataEntryPathResolver _pathResolver;
+    private PetroglyphRelativeDataEntryPathResolver _pathResolver = null!;
     private readonly IFileSystem _fileSystem = new System.IO.Abstractions.FileSystem();
 
     [TestInitialize]

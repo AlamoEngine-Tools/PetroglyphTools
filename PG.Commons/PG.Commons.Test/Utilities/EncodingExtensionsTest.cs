@@ -62,7 +62,9 @@ public class EncodingExtensionsTest
             [Encoding.GetEncoding(28591)], // Latin1
             [Encoding.UTF32],
             [Encoding.UTF8],
+#pragma warning disable SYSLIB0001
             [Encoding.UTF7],
+#pragma warning restore SYSLIB0001
             [new MyAsciiEncoding()],
             new object[] { new MyUnicodeEncoding() },
         };

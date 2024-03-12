@@ -18,7 +18,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 [TestClass]
 public class EmpireAtWarMegFileInformationValidatorTest
 {
-    private EmpireAtWarMegFileInformationValidator _validator;
+    private EmpireAtWarMegFileInformationValidator _validator = null!;
 
     [TestInitialize]
     public void Setup()

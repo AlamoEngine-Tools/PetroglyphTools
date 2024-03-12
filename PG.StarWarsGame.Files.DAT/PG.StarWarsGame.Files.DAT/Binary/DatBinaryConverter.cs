@@ -17,7 +17,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
 {
     public IDatFileMetadata ModelToBinary(IDatModel model)
     {
-        var checksumService = Services.GetRequiredService<IChecksumService>();
+        var checksumService = Services.GetRequiredService<ICrc32HashingService>();
 
         var header = new DatHeader((uint)model.Count);
         var indexRecords = new List<IndexTableRecord>();
@@ -33,7 +33,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
             var key = model[i].Key.Replace("\0", string.Empty);
 
 
-            var keyChecksum = checksumService.GetChecksum(key, DatFileConstants.TextKeyEncoding);
+            var keyChecksum = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);
 
             var valueRecord = new ValueTableRecord(value);
            

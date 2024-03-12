@@ -36,7 +36,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         _fileSystem = new MockFileSystem();
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(_fileSystem);
-        sp.Setup(s => s.GetService(typeof(IChecksumService))).Returns(new ParseIntChecksumService());
+        sp.Setup(s => s.GetService(typeof(ICrc32HashingService))).Returns(new ParseIntCrc32HashingService());
         _serviceProviderMock = sp;
     }
 

@@ -3,9 +3,10 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Hashing;
+using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
@@ -19,8 +20,8 @@ namespace PG.StarWarsGame.Files.MEG.Test.IntegrationTests;
 public class EmpireAtWarMegBuilderIntegrationTest
 {
     private readonly MockFileSystem _fileSystem = new();
-    private EmpireAtWarMegBuilder _eawMegBuilder;
-    private IServiceProvider _serviceProvider;
+    private EmpireAtWarMegBuilder _eawMegBuilder = null!;
+    private IServiceProvider _serviceProvider = null!;
 
     [TestInitialize]
     public void Setup()
@@ -37,7 +38,8 @@ public class EmpireAtWarMegBuilderIntegrationTest
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
-        sc.AddSingleton<IChecksumService>(new ChecksumService());
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        PGDomain.RegisterServices(sc);
         MegDomain.RegisterServices(sc);
         return sc.BuildServiceProvider();
     }
@@ -55,9 +57,9 @@ public class EmpireAtWarMegBuilderIntegrationTest
         Assert.AreEqual(PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry2);
         Assert.IsNull(entry3);
 
-        var result1 = _eawMegBuilder.AddFile("entry.txt", entry1);
-        var result1a = _eawMegBuilder.AddFile("entry.txt", entry1, true);
-        var result2 = _eawMegBuilder.AddFile("entry.txt", entry2);
+        var result1 = _eawMegBuilder.AddFile("entry.txt", entry1!);
+        var result1a = _eawMegBuilder.AddFile("entry.txt", entry1!, true);
+        var result2 = _eawMegBuilder.AddFile("entry.txt", entry2!);
         var result2a = _eawMegBuilder.AddFile("entry.txt", "/game/corruption/data/xml/entry2.txt");
         var result3 = _eawMegBuilder.AddFile("entry.txt", "/other/corruption/data/xml/entry3.txt");
 

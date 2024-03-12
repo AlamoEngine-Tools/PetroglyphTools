@@ -19,6 +19,7 @@ public static class MegDomain
     /// <summary>
     /// Adds the required services for this library to the service collection.
     /// </summary>
+    /// <remarks>The method does not initialize dependencies such as PG.Commons. This needs to be done separately.</remarks>
     /// <param name="serviceCollection">The service collection to populate.</param>
     public static void RegisterServices(IServiceCollection serviceCollection)
     {

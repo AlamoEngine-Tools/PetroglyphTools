@@ -15,7 +15,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary;
 
 internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(services), IDatBinaryConverter
 {
-    public IDatFileMetadata ModelToBinary(IDatModel model)
+    public DatBinaryFile ModelToBinary(IDatModel model)
     {
         var checksumService = Services.GetRequiredService<ICrc32HashingService>();
 
@@ -31,7 +31,6 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
         {
             var value = (string.IsNullOrWhiteSpace(model[i].Value) ? "" : model[i].Value) ?? "";
             var key = model[i].Key.Replace("\0", string.Empty);
-
 
             var keyChecksum = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);
 
@@ -71,14 +70,18 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
                 $"The provided holder appears to be unsorted, but claims to be {model.Order}.");
         }
 
-        return new DatFile(header, new IndexTable(indexRecords), new ValueTable(values), new KeyTable(keys));
+        return new DatBinaryFile(header, new IndexTable(indexRecords), new ValueTable(values), new KeyTable(keys));
     }
 
-    public IDatModel BinaryToModel(IDatFileMetadata binary)
+    public IDatModel BinaryToModel(DatBinaryFile binary)
     {
+        if (binary == null) 
+            throw new ArgumentNullException(nameof(binary));
+
         var isSorted = true;
-        var currentCrc = binary.IndexTable[0].Crc32;
-        for (var i = 1; i < binary.RecordNumber; i++)
+        var currentCrc = default(Crc32);
+
+        for (var i = 0; i < binary.RecordNumber; i++)
         {
             if (binary.IndexTable[i].Crc32 > currentCrc)
             {
@@ -96,7 +99,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
         for (var i = 0; i < binary.RecordNumber; i++)
         {
             var keyEntry = binary.KeyTable[i];
-            var valueEntry = binary.ValueTable[i];
+            var valueEntry = binary.ValueTable[i].Value;
             datFileContent.Add(new DatFileEntry(keyEntry.Key, keyEntry.Crc32, valueEntry));
         }
 

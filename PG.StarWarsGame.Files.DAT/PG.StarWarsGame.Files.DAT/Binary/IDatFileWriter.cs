@@ -6,4 +6,4 @@ using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
-internal interface IDatFileWriter : IBinaryFileWriter<IDatFileMetadata>;
+internal interface IDatFileWriter : IBinaryFileWriter<DatBinaryFile>;

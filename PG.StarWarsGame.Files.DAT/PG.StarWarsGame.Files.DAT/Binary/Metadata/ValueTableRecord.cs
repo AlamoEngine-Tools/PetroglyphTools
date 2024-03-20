@@ -1,17 +1,20 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-#region
-
 using System;
 using PG.Commons.Binary;
-
-#endregion
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class ValueTableRecord : IBinary
+internal readonly struct ValueTableRecord : IBinary
 {
+    public string Value { get; }
+
+    public byte[] Bytes => DatFileConstants.TextValueEncoding.GetBytes(Value);
+
+    public int Size => DatFileConstants.TextKeyEncoding.GetByteCountPG(Value.Length);
+
     public ValueTableRecord(string? value)
     {
         if (value != null)
@@ -31,10 +34,4 @@ internal sealed class ValueTableRecord : IBinary
                 Convert.ToInt32(stringLength * 2));
         Value = new string(chars);
     }
-
-    public string Value { get; }
-
-    public byte[] Bytes => DatFileConstants.TextValueEncoding.GetBytes(Value);
-
-    public int Size => Bytes.Length;
 }

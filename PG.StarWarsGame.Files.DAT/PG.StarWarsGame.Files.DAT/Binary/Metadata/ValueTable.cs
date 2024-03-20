@@ -9,12 +9,11 @@ using PG.Commons.Binary;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class ValueTable : BinaryBase, IValueTable, IEnumerable<ValueTableRecord>
+internal sealed class ValueTable : BinaryBase, IEnumerable<ValueTableRecord>
 {
     private readonly IReadOnlyList<ValueTableRecord> _valueTableRecords;
 
     public ValueTableRecord this[int i] => _valueTableRecords[i];
-    string IValueTable.this[int i] => _valueTableRecords[i].Value;
 
     public ValueTable(IList<ValueTableRecord> valueTableRecords)
     {
@@ -33,11 +32,6 @@ internal sealed class ValueTable : BinaryBase, IValueTable, IEnumerable<ValueTab
         foreach (var valueTableRecord in _valueTableRecords)
             bytes.AddRange(valueTableRecord.Bytes);
         return bytes.ToArray();
-    }
-
-    IEnumerator<string> IEnumerable<string>.GetEnumerator()
-    {
-        return _valueTableRecords.Select(x => x.Value).GetEnumerator();
     }
 
     public IEnumerator<ValueTableRecord> GetEnumerator()

@@ -7,4 +7,4 @@ using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
-internal interface IDatBinaryConverter : IBinaryConverter<IDatFileMetadata, IDatModel>;
+internal interface IDatBinaryConverter : IBinaryConverter<DatBinaryFile, IDatModel>;

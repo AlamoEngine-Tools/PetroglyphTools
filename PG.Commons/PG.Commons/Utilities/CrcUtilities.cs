@@ -79,6 +79,18 @@ public static class Crc32Utilities
     /// <exception cref="ArgumentException"><paramref name="items"/> is not sorted by CRC32 checksum.</exception>
     public static void EnsureSortedByCrc32<T>(IEnumerable<T> items) where T : IHasCrc32
     {
+        if (!IsSortedByCrc32(items))
+            throw new ArgumentException("Items are not sorted by CRC32", nameof(items));
+    }
+
+    /// <summary>
+    /// Checks whether all elements of a sequence are sorted in ascending order by their CRC32 checksum.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="items">A sequence of values to check for correct sorting.</param>
+    /// <returns><see langword="true"/> is the specified collection is sorted; otherwise, <see langword="false"/>.</returns>
+    public static bool IsSortedByCrc32<T>(IEnumerable<T> items) where T : IHasCrc32
+    {
         if (items == null)
             throw new ArgumentNullException(nameof(items));
 
@@ -87,8 +99,10 @@ public static class Crc32Utilities
         {
             var currentCrc = item.Crc32;
             if (currentCrc < lastCrc)
-                throw new ArgumentException("Items are not sorted by CRC32", nameof(items));
+                return false;
             lastCrc = currentCrc;
         }
+
+        return true;
     }
 }

@@ -18,7 +18,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="AnakinRaW.CommonUtilities" Version="10.0.2" />
+		<PackageReference Include="AnakinRaW.CommonUtilities" Version="10.1.2" />
 		<PackageReference Include="IsExternalInit" Version="1.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -36,7 +36,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-		<PackageReference Include="System.IO.Abstractions" Version="20.0.28" />
+		<PackageReference Include="System.IO.Abstractions" Version="21.0.2" />
 		<PackageReference Include="System.IO.Hashing" Version="8.0.0" />
 	</ItemGroup>
 </Project>

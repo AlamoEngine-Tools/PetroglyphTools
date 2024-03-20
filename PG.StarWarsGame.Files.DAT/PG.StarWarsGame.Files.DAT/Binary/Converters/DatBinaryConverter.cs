@@ -70,21 +70,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
         if (binary == null) 
             throw new ArgumentNullException(nameof(binary));
 
-        var isSorted = true;
-        var currentCrc = default(Crc32);
-
-        for (var i = 0; i < binary.RecordNumber; i++)
-        {
-            if (binary.IndexTable[i].Crc32 > currentCrc)
-            {
-                currentCrc = binary.IndexTable[i].Crc32;
-            }
-            else
-            {
-                isSorted = false;
-                break;
-            }
-        }
+        var isSorted = Crc32Utilities.IsSortedByCrc32(binary.IndexTable);
 
         var datFileContent = new List<DatFileEntry>(binary.RecordNumber);
 

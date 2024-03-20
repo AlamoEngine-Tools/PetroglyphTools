@@ -3,11 +3,13 @@
 
 using System;
 using System.Buffers.Binary;
+using PG.Commons.Binary;
+using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal readonly struct IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength) : IComparable<IndexTableRecord>
+internal readonly struct IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength) : IHasCrc32, IComparable<IndexTableRecord>, IBinary
 {
     public Crc32 Crc32 { get; } = crc32;
 

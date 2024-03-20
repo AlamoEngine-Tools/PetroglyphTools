@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -19,43 +20,34 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
     {
         var checksumService = Services.GetRequiredService<ICrc32HashingService>();
 
-        var header = new DatHeader((uint)model.Count);
-        var indexRecords = new List<IndexTableRecord>();
-        var values = new List<ValueTableRecord>();
-        var keys = new List<KeyTableRecord>();
+        var numEntries = model.Count;
+        var header = new DatHeader((uint)numEntries);
+        var indexRecords = new List<IndexTableRecord>(numEntries);
+        var values = new List<ValueTableRecord>(numEntries);
+        var keys = new List<KeyTableRecord>(numEntries);
        
-        Crc32? currentCrc = null;
         var isSorted = true;
-        
-        for (var i = 0; i < model.Count; i++)
+
+        Crc32 lastCrc = default;
+        foreach (var entry in model)
         {
-            var value = (string.IsNullOrWhiteSpace(model[i].Value) ? "" : model[i].Value) ?? "";
-            var key = model[i].Key.Replace("\0", string.Empty);
+            var value = (string.IsNullOrWhiteSpace(entry.Value) ? "" : entry.Value) ?? "";
+            var key = entry.Key;
 
             var keyChecksum = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);
 
             var valueRecord = new ValueTableRecord(value);
-           
             var keyRecord = new KeyTableRecord(key, keyChecksum);
-            
             var indexRecord = new IndexTableRecord(keyChecksum, (uint)keyRecord.Key.Length, (uint)valueRecord.Value.Length);
             
-            if (i == 0)
-            {
-                currentCrc = indexRecord.Crc32;
-            }
-            else if (currentCrc < indexRecord.Crc32)
-            {
-                currentCrc = indexRecord.Crc32;
-            }
-            else
-            {
-                isSorted = false;
-            }
-
             values.Add(valueRecord);
             keys.Add(keyRecord);
             indexRecords.Add(indexRecord);
+
+            if (keyChecksum < lastCrc)
+                isSorted = false;
+
+            lastCrc = keyChecksum;
         }
 
         if (isSorted && model.Order != DatFileType.OrderedByCrc32)
@@ -78,23 +70,9 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
         if (binary == null) 
             throw new ArgumentNullException(nameof(binary));
 
-        var isSorted = true;
-        var currentCrc = default(Crc32);
+        var isSorted = Crc32Utilities.IsSortedByCrc32(binary.IndexTable);
 
-        for (var i = 0; i < binary.RecordNumber; i++)
-        {
-            if (binary.IndexTable[i].Crc32 > currentCrc)
-            {
-                currentCrc = binary.IndexTable[i].Crc32;
-            }
-            else
-            {
-                isSorted = false;
-                break;
-            }
-        }
-
-        var datFileContent = new List<DatFileEntry>();
+        var datFileContent = new List<DatFileEntry>(binary.RecordNumber);
 
         for (var i = 0; i < binary.RecordNumber; i++)
         {

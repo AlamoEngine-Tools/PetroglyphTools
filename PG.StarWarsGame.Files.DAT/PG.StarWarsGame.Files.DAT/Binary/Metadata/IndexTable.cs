@@ -9,17 +9,23 @@ using PG.Commons.Binary;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class IndexTable : BinaryBase, IEnumerable<IndexTableRecord>
+internal sealed class IndexTable : BinaryBase, IBinaryTable<IndexTableRecord>
 {
+    public int Count => _indexTableRecords.Count;
+
     private readonly IReadOnlyList<IndexTableRecord> _indexTableRecords;
 
     public IndexTableRecord this[int i] => _indexTableRecords[i];
 
     public IndexTable(IList<IndexTableRecord> indexTableRecords)
     {
-        if (indexTableRecords is null) throw new ArgumentNullException(nameof(indexTableRecords));
+        if (indexTableRecords is null) 
+            throw new ArgumentNullException(nameof(indexTableRecords));
 
-        _indexTableRecords = indexTableRecords.ToList();
+        if (indexTableRecords.Count == 0)
+            _indexTableRecords = Array.Empty<IndexTableRecord>();
+        else
+            _indexTableRecords = indexTableRecords.ToList();
     }
 
     protected override int GetSizeCore()

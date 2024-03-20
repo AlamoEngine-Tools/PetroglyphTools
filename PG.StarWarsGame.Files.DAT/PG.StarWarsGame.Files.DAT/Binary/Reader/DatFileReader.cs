@@ -18,7 +18,7 @@ internal class DatFileReader : ServiceBase, IDatFileReader
     {
     }
 
-    public IDatFileMetadata ReadBinary(Stream byteStream)
+    public DatBinaryFile ReadBinary(Stream byteStream)
     {
         using var reader = new BinaryReader(byteStream);
         var header = new DatHeader(reader.ReadUInt32());
@@ -54,7 +54,7 @@ internal class DatFileReader : ServiceBase, IDatFileReader
 
         var keyTable = new KeyTable(keyRecords);
 
-        return new DatFile(header, indexTable, valueTable, keyTable);
+        return new DatBinaryFile(header, indexTable, valueTable, keyTable);
     }
 
     public DatFileType PeekFileType(Stream byteStream)

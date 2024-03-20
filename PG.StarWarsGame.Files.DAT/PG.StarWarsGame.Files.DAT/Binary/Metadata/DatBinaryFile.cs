@@ -3,10 +3,11 @@
 
 using System.Collections.Generic;
 using PG.Commons.Binary;
+using PG.Commons.Binary.File;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class DatFile : BinaryBase, IDatFileMetadata
+internal sealed class DatBinaryFile : BinaryBase, IBinaryFile
 {
     internal DatHeader Header { get; }
     internal IndexTable IndexTable { get; }
@@ -14,14 +15,8 @@ internal sealed class DatFile : BinaryBase, IDatFileMetadata
     internal KeyTable KeyTable { get; }
 
     public int RecordNumber => (int)Header.RecordCount;
-
-    IIndexTable IDatFileMetadata.IndexTable => IndexTable;
-
-    IKeyTable IDatFileMetadata.KeyTable => KeyTable;
-
-    IValueTable IDatFileMetadata.ValueTable => ValueTable;
-
-    public DatFile(DatHeader header, IndexTable indexTable, ValueTable valueTable, KeyTable keyTable)
+    
+    public DatBinaryFile(DatHeader header, IndexTable indexTable, ValueTable valueTable, KeyTable keyTable)
     {
         Header = header;
         IndexTable = indexTable;

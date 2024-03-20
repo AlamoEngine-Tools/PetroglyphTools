@@ -7,7 +7,7 @@ using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength) : IDatRecordDescriptor, IComparable<IndexTableRecord>
+internal readonly struct IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength) : IComparable<IndexTableRecord>
 {
     public Crc32 Crc32 { get; } = crc32;
 
@@ -34,13 +34,8 @@ internal sealed class IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLe
 
     public int Size => sizeof(uint) * 3;
 
-    public int CompareTo(IndexTableRecord? other)
+    public int CompareTo(IndexTableRecord other)
     {
-        return other is null ? 1 : Crc32.CompareTo(other.Crc32);
-    }
-
-    int IComparable<IDatRecordDescriptor>.CompareTo(IDatRecordDescriptor? other)
-    {
-        return other is null ? 1 : Crc32.CompareTo(other.Crc32);
+        return Crc32.CompareTo(other.Crc32);
     }
 }

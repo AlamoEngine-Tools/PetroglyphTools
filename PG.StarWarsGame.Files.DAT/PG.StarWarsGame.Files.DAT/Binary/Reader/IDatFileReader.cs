@@ -8,7 +8,7 @@ using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
-internal interface IDatFileReader : IBinaryFileReader<IDatFileMetadata>
+internal interface IDatFileReader : IBinaryFileReader<DatBinaryFile>
 {
     DatFileType PeekFileType(Stream byteStream);
 }

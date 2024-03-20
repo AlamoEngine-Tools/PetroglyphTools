@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary;
 
 internal class DatFileWriter(IServiceProvider services) : ServiceBase(services), IDatFileWriter
 {
-    public void WriteBinary(string absoluteTargetFilePath, IDatFileMetadata model)
+    public void WriteBinary(string absoluteTargetFilePath, DatBinaryFile model)
     {
         var directory = FileSystem.Path.GetDirectoryName(absoluteTargetFilePath) ??
                         throw new ArgumentException(

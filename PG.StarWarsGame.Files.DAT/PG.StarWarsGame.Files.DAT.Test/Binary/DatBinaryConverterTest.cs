@@ -40,7 +40,7 @@ public class DatBinaryConverterTest
     {
         
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
-        var binaryModel = new DatFile(
+        var binaryModel = new DatBinaryFile(
             new DatHeader(4),
             new IndexTable(new List<IndexTableRecord>
             {

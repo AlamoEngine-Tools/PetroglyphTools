@@ -60,38 +60,24 @@ internal class DatFileReader : ServiceBase, IDatFileReader
     public DatFileType PeekFileType(Stream byteStream)
     {
         using var reader = new BinaryReader(byteStream);
-        var header = new DatHeader(reader.ReadUInt32());
 
-        var indexTableRecords = new List<IndexTableRecord>();
-        for (var i = 0; i < header.RecordCount; i++)
+        var numFiles = reader.ReadUInt32();
+        
+        var lastCrc = default(Crc32);
+
+        for (var i = 0; i < numFiles; i++)
         {
-            var rawCrc32 = reader.ReadUInt32();
-            var valueLength = reader.ReadUInt32();
-            var keyLength = reader.ReadUInt32();
-            indexTableRecords.Add(new IndexTableRecord(new Crc32(rawCrc32), keyLength, valueLength));
+            var currentCrc = new Crc32(reader.ReadUInt32());
+
+            if (currentCrc < lastCrc)
+                return DatFileType.NotOrdered;
+
+            reader.ReadUInt32(); // Value Length
+            reader.ReadUInt32(); // Key Length
+
+            lastCrc = currentCrc;
         }
 
-        var fileType = DatFileType.OrderedByCrc32;
-        Crc32? currentCrc = null;
-        foreach (var record in indexTableRecords)
-        {
-            if (currentCrc is null)
-            {
-                currentCrc = record.Crc32;
-                continue;
-            }
-
-            if (currentCrc < record.Crc32)
-            {
-                currentCrc = record.Crc32;
-            }
-            else
-            {
-                fileType = DatFileType.NotOrdered;
-                break;
-            }
-        }
-
-        return fileType;
+        return DatFileType.OrderedByCrc32;
     }
 }

@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Files;
 
@@ -36,8 +37,7 @@ internal class DatFileReader : ServiceBase, IDatFileReader
         var valueRecords = new List<ValueTableRecord>();
         for (var i = 0; i < header.RecordCount; i++)
         {
-            var valueBytes = reader.ReadBytes((int)indexTable[i].ValueLength);
-            var value = DatFileConstants.TextValueEncoding.GetString(valueBytes);
+            var value = reader.ReadString((int)indexTable[i].ValueLength, DatFileConstants.TextValueEncoding);
             valueRecords.Add(new ValueTableRecord(value));
         }
 
@@ -46,8 +46,7 @@ internal class DatFileReader : ServiceBase, IDatFileReader
         var checksumService = Services.GetRequiredService<ICrc32HashingService>();
         for (var i = 0; i < header.RecordCount; i++)
         {
-            var keyBytes = reader.ReadBytes((int)indexTable[i].KeyLength);
-            var key = DatFileConstants.TextKeyEncoding.GetString(keyBytes);
+            var key = reader.ReadString((int)indexTable[i].KeyLength, DatFileConstants.TextKeyEncoding);
             var crc = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);
             keyRecords.Add(new KeyTableRecord(key, crc));
         }

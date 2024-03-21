@@ -3,6 +3,7 @@
 
 using System;
 using PG.Commons.Files;
+using PG.StarWarsGame.Files.DAT.Data;
 
 namespace PG.StarWarsGame.Files.DAT.Files;
 
@@ -10,10 +11,10 @@ namespace PG.StarWarsGame.Files.DAT.Files;
 /// <remarks>
 ///     This class provides direct access to the DAT file content as well as its associated meta-information.
 /// </remarks>
-public sealed class DatFileHolder : PetroglyphFileHolder<IDatModel, DatFileInformation>, IDatFile
+public sealed class DatFile : PetroglyphFileHolder<IDatModel, DatFileInformation>, IDatFile
 {
     /// <inheritdoc />
-    public DatFileHolder(IDatModel model, DatFileInformation fileInfo, IServiceProvider serviceProvider) : base(model, fileInfo, serviceProvider)
+    public DatFile(IDatModel model, DatFileInformation fileInfo, IServiceProvider serviceProvider) : base(model, fileInfo, serviceProvider)
     {
     }
 }

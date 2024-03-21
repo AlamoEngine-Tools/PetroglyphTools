@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using PG.Commons.Hashing;
 using System.Linq;
+using AnakinRaW.CommonUtilities.Collections;
 
 namespace PG.Commons.Utilities;
 
@@ -55,6 +56,18 @@ public static class Crc32Utilities
             lastCrc = currentCrc;
         }
         return dict;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="crc"></param>
+    /// <param name="crcIndexMap"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    public static ReadOnlyFrugalList<T> ItemsWithCrc<T>(Crc32 crc, IReadOnlyDictionary<Crc32, IndexRange> crcIndexMap, IList<T> items) where T : IHasCrc32
+    {
+        return default;
     }
 
     /// <summary>

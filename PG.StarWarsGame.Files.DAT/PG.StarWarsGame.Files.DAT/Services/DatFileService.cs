@@ -9,9 +9,9 @@ using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
-using AnakinRaW.CommonUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.DAT.Binary;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.DAT.Services;
 
@@ -41,7 +41,7 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
             entryList = Crc32Utilities.SortByCrc32(entryList);
         }
 
-        var datModel = new DatModel(entryList, datFileType);
+        var datModel = new DatModel(entryList);
 
         var datBinary = Services.GetRequiredService<IDatBinaryConverter>().ModelToBinary(datModel);
 

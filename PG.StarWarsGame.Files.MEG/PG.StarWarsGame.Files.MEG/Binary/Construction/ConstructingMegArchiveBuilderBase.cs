@@ -137,7 +137,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             var fileSize = FileSystem.FileInfo.New(filePath!).Length;
 
             if (fileSize > uint.MaxValue)
-                ThrowHelper.ThrowDataEntryExceeds4GigabyteException(FileSystem.Path.GetFullPath(filePath!));
+                MegThrowHelper.ThrowDataEntryExceeds4GigabyteException(FileSystem.Path.GetFullPath(filePath!));
 
             dataSize = (uint) fileSize;
         }

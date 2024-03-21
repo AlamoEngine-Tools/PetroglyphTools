@@ -14,6 +14,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Services.FileSystem;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -77,8 +78,8 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     {
         ThrowIfDisposed();
 
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePathInMeg);
+        ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(filePathInMeg);
 
         var fileInfo = FileSystem.FileInfo.New(filePath);
         if (!fileInfo.Exists)
@@ -108,7 +109,7 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
             throw new ArgumentNullException(nameof(entryReference));
 
         var filePath = overridePathInMeg ?? entryReference.DataEntry.FilePath;
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(filePath);
 
         var encrypt = overrideEncrypt ?? entryReference.DataEntry.Encrypted;
 
@@ -205,14 +206,14 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
     private AddDataEntryToBuilderResult AddBuilderInfo(string filePath, Func<string, MegFileDataEntryBuilderInfo> createBuilderInfo)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(filePath);
 
         var actualFilePath = filePath;
 
         if (NormalizesEntryPaths && !DataEntryPathNormalizer.TryNormalizePath(ref actualFilePath, out var message))
             return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
 
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(actualFilePath);
+        ThrowHelper.ThrowIfNullOrEmpty(actualFilePath);
 
         actualFilePath = EncodePath(actualFilePath);
 

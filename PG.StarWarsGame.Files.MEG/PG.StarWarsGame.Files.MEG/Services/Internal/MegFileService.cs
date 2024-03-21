@@ -15,6 +15,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -85,14 +86,14 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         // The Archive itself is larger (Metadata + 4GB),
         // however the Metadata is still valid since no each part is within the uint32 range. 
         if (dataBytesWritten > uint.MaxValue)
-            ThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
+            MegThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
 
         Debug.Assert(dataBytesWritten == fileStream.Position);
     }
 
     public IMegFile Load(string filePath)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(filePath);
 
         var fullPath = FileSystem.Path.GetFullPath(filePath);
 
@@ -135,7 +136,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         // The Archive itself is larger (Metadata + 4GB),
         // however the Metadata is still valid since no each part is within the uint32 range. 
         if (actualMegSize > uint.MaxValue)
-            ThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
+            MegThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
 
         var validator = Services.GetRequiredService<IMegBinaryValidator>();
 
@@ -154,7 +155,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(file);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(file);
 
         using var fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         return GetMegFileVersion(fs, out encrypted);

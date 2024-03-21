@@ -6,6 +6,7 @@ using System.Buffers.Binary;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Utilities;
+using AnakinRaW.CommonUtilities;
 #if NETSTANDARD2_0
 using AnakinRaW.CommonUtilities.Extensions;
 #endif
@@ -38,8 +39,8 @@ internal readonly struct MegFileNameTableRecord : IBinary
 
     public MegFileNameTableRecord(string filePath, string originalFilePath)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
         StringUtilities.ValidateIsAsciiOnly(filePath.AsSpan());
         _fileNameLength = MegFilePathUtilities.ValidateFilePathCharacterLength(filePath);
 

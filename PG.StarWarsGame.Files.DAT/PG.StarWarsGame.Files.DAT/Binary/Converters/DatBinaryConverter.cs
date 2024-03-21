@@ -4,10 +4,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
-using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -49,18 +47,9 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
 
             lastCrc = keyChecksum;
         }
-
-        if (isSorted && model.Order != DatFileType.OrderedByCrc32)
-        {
-            throw new BinaryCorruptedException(
-                $"The provided holder appears to be sorted, but claims to be {model.Order}.");
-        }
-
-        if (!isSorted && model.Order != DatFileType.NotOrdered)
-        {
-            throw new BinaryCorruptedException(
-                $"The provided holder appears to be unsorted, but claims to be {model.Order}.");
-        }
+        
+        if (model.KeySortOder == DatFileType.OrderedByCrc32 && !isSorted)
+            throw new ArgumentException("MasterTextModel must be sorted.", nameof(model));
 
         return new DatBinaryFile(header, new IndexTable(indexRecords), new ValueTable(values), new KeyTable(keys));
     }
@@ -69,8 +58,6 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
     {
         if (binary == null) 
             throw new ArgumentNullException(nameof(binary));
-
-        var isSorted = Crc32Utilities.IsSortedByCrc32(binary.IndexTable);
 
         var datFileContent = new List<DatFileEntry>(binary.RecordNumber);
 
@@ -81,6 +68,6 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
             datFileContent.Add(new DatFileEntry(keyEntry.Key, keyEntry.Crc32, valueEntry));
         }
 
-        return new DatModel(datFileContent, isSorted ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered);
+        return new DatModel(datFileContent);
     }
 }

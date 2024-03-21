@@ -62,12 +62,27 @@ public static class Crc32Utilities
     /// 
     /// </summary>
     /// <param name="crc"></param>
-    /// <param name="crcIndexMap"></param>
+    /// <param name="indexMap"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public static ReadOnlyFrugalList<T> ItemsWithCrc<T>(Crc32 crc, IReadOnlyDictionary<Crc32, IndexRange> crcIndexMap, IList<T> items) where T : IHasCrc32
+    public static ReadOnlyFrugalList<T> ItemsWithCrc<T>(
+        Crc32 crc, 
+        IReadOnlyDictionary<Crc32, IndexRange> indexMap, 
+        IList<T> items) where T : IHasCrc32
     {
-        return default;
+        if (!indexMap.TryGetValue(crc, out var indexRange))
+            return ReadOnlyFrugalList<T>.Empty;
+
+        var length = indexRange.Length;
+
+        if (length == 1)
+            return new ReadOnlyFrugalList<T>(items[indexRange.Start]);
+
+        var array = new T[length];
+        for (var i = indexRange.Start; i < length; i++)
+            array[i] = items[i];
+
+        return new ReadOnlyFrugalList<T>(array);
     }
 
     /// <summary>

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using AnakinRaW.CommonUtilities;
 using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
@@ -20,7 +21,11 @@ internal readonly struct KeyTableRecord : IHasCrc32, IComparable<KeyTableRecord>
 
     public KeyTableRecord(string key, Crc32 checksum)
     {
-        Key = key.Replace("\0", string.Empty);
+        // While it's not recommended whitespace keys are not disallowed, so we only check for empty keys
+        ThrowHelper.ThrowIfNullOrEmpty(key);
+        StringUtilities.ValidateIsAsciiOnly(key.AsSpan());
+
+        Key = key;
         Crc32 = checksum;
     }
 

@@ -47,7 +47,6 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
         var normalEncoding = MegFileConstants.MegDataEntryPathEncoding;
 
         // NB: We use Latin1 encoding here, so that we can stay compatible with Mike.NL's tools. 
-        // Since MegFileNameTableRecord properly encodes the string, this is safe.
         var extendedEncoding = MegFileConstants.ExtendedMegEntryPathEncoding;
 
         for (uint i = 0; i < header.FileNumber; i++)

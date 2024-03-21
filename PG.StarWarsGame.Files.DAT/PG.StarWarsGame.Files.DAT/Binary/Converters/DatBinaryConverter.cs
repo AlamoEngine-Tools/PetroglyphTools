@@ -28,10 +28,10 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
        
         var isSorted = true;
 
-        Crc32 lastCrc = default;
+        var lastCrc = default(Crc32);
         foreach (var entry in model)
         {
-            var value = (string.IsNullOrWhiteSpace(entry.Value) ? "" : entry.Value) ?? "";
+            var value = entry.Value;
             var key = entry.Key;
 
             var keyChecksum = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);

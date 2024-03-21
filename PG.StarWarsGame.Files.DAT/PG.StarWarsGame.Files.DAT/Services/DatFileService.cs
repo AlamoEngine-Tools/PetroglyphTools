@@ -58,7 +58,7 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
 
         var fileInfo = new DatFileInformation { FilePath = filePath };
 
-        return new DatFileHolder(datModel, fileInfo, Services);
+        return new DatFile(datModel, fileInfo, Services);
     }
 
     public DatFileType PeekDatFileType(string filePath)

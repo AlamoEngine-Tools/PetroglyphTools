@@ -33,7 +33,7 @@ public interface IDatFileService
         DatFileType datFileType);
 
     /// <summary>
-    ///     Loads a *.DAT file from the provided path into a <see cref="DatFileHolder" />
+    ///     Loads a *.DAT file from the provided path into a <see cref="DatFile" />
     /// </summary>
     /// <param name="filePath">The absolute path to the DAT file.</param>
     /// <returns></returns>

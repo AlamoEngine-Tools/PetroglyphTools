@@ -7,6 +7,32 @@ using PG.Commons.Binary;
 
 namespace PG.Commons.Test.Binary;
 
+[TestClass]
+public class BinaryTableClassTest : BinaryTableTest<TestClassBinary>
+{
+    protected override TestClassBinary CreateFile(uint index, uint seed)
+    {
+        var random = new Random();
+        var size = (seed + 1) * 2;
+        var bytes = new byte[size];
+        random.NextBytes(bytes);
+        return new TestClassBinary(bytes);
+    }
+}
+
+[TestClass]
+public class BinaryTableStructTest : BinaryTableTest<TestStructBinary>
+{
+    protected override TestStructBinary CreateFile(uint index, uint seed)
+    {
+        var random = new Random();
+        var size = (seed + 1) * 2;
+        var bytes = new byte[size];
+        random.NextBytes(bytes);
+        return new TestStructBinary(bytes);
+    }
+}
+
 public abstract class BinaryTableTest<T> where T : IBinary
 {
     private static BinaryTable<T> CreateFileTable(IList<T> items)
@@ -144,4 +170,16 @@ public abstract class BinaryTableTest<T> where T : IBinary
         var expectedTableBytes = entry1.Bytes.Concat(entry2.Bytes).ToArray();
         CollectionAssert.AreEqual(expectedTableBytes, table.Bytes);
     }
+}
+
+public class TestClassBinary(byte[] bytes) : IBinary
+{
+    public byte[] Bytes { get; } = bytes;
+    public int Size => Bytes.Length;
+}
+
+public readonly struct TestStructBinary(byte[] bytes) : IBinary
+{
+    public byte[] Bytes { get; } = bytes;
+    public int Size => Bytes.Length;
 }

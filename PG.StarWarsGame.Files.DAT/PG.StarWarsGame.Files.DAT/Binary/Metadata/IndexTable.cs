@@ -30,7 +30,12 @@ internal sealed class IndexTable : BinaryBase, IBinaryTable<IndexTableRecord>
 
     protected override int GetSizeCore()
     {
-        return _indexTableRecords.Sum(indexTableRecord => indexTableRecord.Size);
+        return _indexTableRecords.Count switch
+        {
+            0 => 0,
+            1 => _indexTableRecords[0].Size,
+            _ => _indexTableRecords.Sum(indexTableRecord => indexTableRecord.Size)
+        };
     }
 
     protected override byte[] ToBytesCore()

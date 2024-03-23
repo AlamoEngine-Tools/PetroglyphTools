@@ -9,13 +9,24 @@ using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal readonly struct IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength) : IHasCrc32, IComparable<IndexTableRecord>, IBinary
+internal readonly struct IndexTableRecord : IHasCrc32, IComparable<IndexTableRecord>, IBinary
 {
-    public Crc32 Crc32 { get; } = crc32;
+    public IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength)
+    {
+        if (keyLength > int.MaxValue)
+            throw new ArgumentOutOfRangeException(nameof(keyLength), ".DAT key length over int32.MaxValue is not supported.");
+        if (valueLength > int.MaxValue)
+            throw new ArgumentOutOfRangeException(nameof(keyLength), ".DAT value length over int32.MaxValue is not supported.");
+        Crc32 = crc32;
+        KeyLength = keyLength;
+        ValueLength = valueLength;
+    }
 
-    public uint KeyLength { get; } = keyLength;
+    public Crc32 Crc32 { get; }
 
-    public uint ValueLength { get; } = valueLength;
+    public uint KeyLength { get; }
+
+    public uint ValueLength { get; }
 
     public byte[] Bytes
     {

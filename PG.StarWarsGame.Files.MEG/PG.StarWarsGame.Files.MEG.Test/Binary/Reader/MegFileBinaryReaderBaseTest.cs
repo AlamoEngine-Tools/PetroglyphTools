@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
+using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
@@ -56,14 +57,14 @@ public class MegFileBinaryReaderBaseTest
             CallBase = true
         };
 
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
+        var fileNameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
         var megHeader = new Mock<IMegHeader>();
         var fileTable = new Mock<IMegFileTable>();
 
 
         serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
             .Returns(megHeader.Object);
-        serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
             .Returns(fileNameTable);
         serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
             .Returns(fileTable.Object);
@@ -85,13 +86,13 @@ public class MegFileBinaryReaderBaseTest
             CallBase = true
         };
 
-        var fileNameTable = new MegFileNameTable(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
+        var fileNameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
         var megHeader = new Mock<IMegHeader>();
         var fileTable = new Mock<IMegFileTable>();
 
         serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
             .Returns((IMegHeader)null!);
-        serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
             .Returns(fileNameTable);
         serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
             .Returns(fileTable.Object);
@@ -100,8 +101,8 @@ public class MegFileBinaryReaderBaseTest
 
         serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
             .Returns(megHeader.Object);
-        serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns((MegFileNameTable)null!);
+        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+            .Returns((BinaryTable<MegFileNameTableRecord>)null!);
         serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
             .Returns(fileTable.Object);
 
@@ -109,7 +110,7 @@ public class MegFileBinaryReaderBaseTest
 
         serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
             .Returns(megHeader.Object);
-        serviceMock.Protected().Setup<MegFileNameTable>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
+        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
             .Returns(fileNameTable);
         serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
             .Returns((IMegFileTable)null!);
@@ -187,7 +188,7 @@ public class MegFileBinaryReaderBaseTest
         {
         }
 
-        protected internal override IMegFileMetadata CreateMegMetadata(IMegHeader header, MegFileNameTable fileNameTable, IMegFileTable fileTable)
+        protected internal override IMegFileMetadata CreateMegMetadata(IMegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, IMegFileTable fileTable)
         {
             throw new NotImplementedException();
         }

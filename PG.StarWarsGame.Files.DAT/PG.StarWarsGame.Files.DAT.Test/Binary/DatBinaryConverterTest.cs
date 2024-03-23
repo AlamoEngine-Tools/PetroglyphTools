@@ -7,6 +7,7 @@ using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons;
+using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -42,7 +43,7 @@ public class DatBinaryConverterTest
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
         var binaryModel = new DatBinaryFile(
             new DatHeader(4),
-            new IndexTable(new List<IndexTableRecord>
+            new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
             {
                 new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY0".Length,
                     (uint)"VALUE0".Length),
@@ -53,19 +54,19 @@ public class DatBinaryConverterTest
                 new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY3".Length,
                     (uint)"VALUE3".Length)
             }.AsReadOnly()),
-            new ValueTable(new List<ValueTableRecord>
+            new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
             {
                 new("VALUE0"),
                 new("VALUE1"),
                 new("VALUE2"),
                 new("VALUE3")
             }),
-            new KeyTable(new List<KeyTableRecord>
+            new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
             {
-                new("KEY0", new Crc32(1)),
-                new("KEY1", new Crc32(2)),
-                new("KEY2", new Crc32(3)),
-                new("KEY3", new Crc32(4))
+                new("KEY0"),
+                new("KEY1"),
+                new("KEY2"),
+                new("KEY3")
             }));
 
         var model = _binaryConverter.BinaryToModel(binaryModel);

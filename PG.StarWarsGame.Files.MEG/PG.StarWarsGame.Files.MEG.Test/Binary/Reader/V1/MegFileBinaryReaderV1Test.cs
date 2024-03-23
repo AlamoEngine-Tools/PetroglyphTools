@@ -34,7 +34,7 @@ public class MegFileBinaryReaderV1Test
     public void Test__CreateMegMetadata()
     {
         var header = (MegHeader)default;
-        var nameTable = new Mock<MegFileNameTable>(Array.Empty<MegFileNameTableRecord>());
+        var nameTable = new Mock<BinaryTable<MegFileNameTableRecord>>(Array.Empty<MegFileNameTableRecord>());
         var fileTable = new Mock<MegFileTable>(Array.Empty<MegFileTableRecord>());
 
         var metadata = _binaryReader.CreateMegMetadata(header, nameTable.Object, fileTable.Object);
@@ -85,27 +85,40 @@ public class MegFileBinaryReaderV1Test
     {
         return new[]
         {
-            new object[] { new byte[]
+            [
+                new byte[]
+                {
+                    0, 0, 0, 0,
+                    0, 0, 0, 0
+                },
+                0u, 0u
+            ],
+            [
+                new byte[]
+                {
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    1, 2, 3, 4, // Random Junk 
+                },
+                0u, 0u
+            ],
+            [
+                new byte[]
+                {
+                    1, 0, 0, 0,
+                    1, 0, 0, 0
+                },
+                1u, 1u
+            ],
+            new object[]
             {
-                0,0,0,0,
-                0,0,0,0
-            }, 0u, 0u },
-            new object[] { new byte[]
-            {
-                0,0,0,0,
-                0,0,0,0,
-                1,2,3,4, // Random Junk 
-            }, 0u, 0u },
-            new object[] { new byte[]
-            {
-                1,0,0,0,
-                1,0,0,0
-            }, 1u, 1u },
-            new object[] { new byte[]
-            {
-                0xFF,0xFF,0xFF,0x7F,
-                0xFF,0xFF,0xFF,0x7F
-            }, (uint)int.MaxValue, (uint)int.MaxValue },
+                new byte[]
+                {
+                    0xFF, 0xFF, 0xFF, 0x7F,
+                    0xFF, 0xFF, 0xFF, 0x7F
+                },
+                (uint)int.MaxValue, (uint)int.MaxValue
+            },
         };
     }
 
@@ -144,16 +157,19 @@ public class MegFileBinaryReaderV1Test
     {
         return new[]
         {
-            new object[] { 0u, Array.Empty<byte>(), -1, new Crc32(), 0u,0u,0u,0u},
-            new object[] { 1u, new byte[]
+            [0u, Array.Empty<byte>(), -1, new Crc32(), 0u,0u,0u,0u],
+            [
+                1u, new byte[]
             {
                 1,0,0,0, // CRC
                 0,0,0,0, // Index (FileTable)
                 2,0,0,0, // Size
                 0x40,0,0,0, // Offset
                 0,0,0,0  // Index (NameTable)
-            }, 0, new Crc32(1), 0u, 2u, 0x40u, 0u},
-            new object[] { 1u, new byte[]
+            }, 0, new Crc32(1), 0u, 2u, 0x40u, 0u
+            ],
+            [
+                1u, new byte[]
             {
                 1,0,0,0, // CRC
                 0,0,0,0, // Index (FileTable)
@@ -162,7 +178,8 @@ public class MegFileBinaryReaderV1Test
                 0,0,0,0,  // Index (NameTable)
 
                 1,2,3,4 // Junk
-            },  0, new Crc32(1), 0u, 2u, 0x40u, 0u},
+            },  0, new Crc32(1), 0u, 2u, 0x40u, 0u
+            ],
             new object[] { 2u, new byte[]
             {
                 1,0,0,0, // CRC
@@ -194,8 +211,7 @@ public class MegFileBinaryReaderV1Test
     {
         return new[]
         {
-            new object[]
-            {
+            [
                 1u, new byte[]
                 {
                     1, 0, 0, 0, // CRC
@@ -204,7 +220,7 @@ public class MegFileBinaryReaderV1Test
                     0, 0, 0, 0, // Offset
                     0, 0, 0, 0 // Index (NameTable)
                 }
-            },
+            ],
             new object[]
             {
                 1u, new byte[]

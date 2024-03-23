@@ -30,12 +30,12 @@ public abstract class MegBinaryConverterTest
         _converter = CreateConverter(sc.BuildServiceProvider());
     }
 
-    private protected abstract IMegFileMetadata CreateMetadata(IMegHeader header, IMegFileNameTable fileNameTable,
+    private protected abstract IMegFileMetadata CreateMetadata(IMegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable,
         IMegFileTable fileTable);
 
     private protected abstract IMegHeader CreateHeader(uint entriesCount);
 
-    private protected abstract IMegFileNameTable CreateFileNameTable(IList<MegDataEntry> entries);
+    private protected abstract BinaryTable<MegFileNameTableRecord> CreateFileNameTable(IList<MegDataEntry> entries);
 
     private protected abstract IMegFileDescriptor CreateFileDescriptor(MegDataEntry entry, uint index);
 

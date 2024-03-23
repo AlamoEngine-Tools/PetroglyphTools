@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using FluentValidation.TestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
@@ -18,7 +19,7 @@ public class MegFileSizeValidatorV1Test
     public void Test__ValidateCore_EmptyMeg()
     {
         var header = new MegHeader(0, 0);
-        var nameTable = new MegFileNameTable(new List<MegFileNameTableRecord>());
+        var nameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>());
         var fileTable = new MegFileTable(new List<MegFileTableRecord>());
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
@@ -45,7 +46,7 @@ public class MegFileSizeValidatorV1Test
     public void Test__ValidateCore_OneFileWithEmptyData()
     {
         var header = new MegHeader(1, 1);
-        var nameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
+        var nameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>
         {
             MegFileNameTableRecordTest.CreateNameRecord("A")
         });
@@ -72,7 +73,7 @@ public class MegFileSizeValidatorV1Test
     public void Test__ValidateCore_FilesWithData()
     {
         var header = new MegHeader(2, 2);
-        var nameTable = new MegFileNameTable(new List<MegFileNameTableRecord>
+        var nameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>
         {
             MegFileNameTableRecordTest.CreateNameRecord("A"),
             MegFileNameTableRecordTest.CreateNameRecord("B")

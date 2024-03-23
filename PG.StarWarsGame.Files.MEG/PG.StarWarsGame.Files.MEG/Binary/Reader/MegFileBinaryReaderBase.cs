@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using AnakinRaW.CommonUtilities.Extensions;
+using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
@@ -34,13 +35,13 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
         return CreateMegMetadata(header, fileNameTable, fileTable);
     }
 
-    protected internal abstract TMegMetadata CreateMegMetadata(TMegHeader header, MegFileNameTable fileNameTable, TMegFileTable fileTable);
+    protected internal abstract TMegMetadata CreateMegMetadata(TMegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, TMegFileTable fileTable);
 
     protected internal abstract TMegHeader BuildMegHeader(BinaryReader binaryReader);
 
     protected internal abstract TMegFileTable BuildFileTable(BinaryReader binaryReader, TMegHeader header);
 
-    protected internal virtual MegFileNameTable BuildFileNameTable(BinaryReader binaryReader, TMegHeader header)
+    protected internal virtual BinaryTable<MegFileNameTableRecord> BuildFileNameTable(BinaryReader binaryReader, TMegHeader header)
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
         
@@ -62,6 +63,6 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
             fileNameTable.Add(new MegFileNameTableRecord(asciiFileName, originalFileName));
         }
 
-        return new MegFileNameTable(fileNameTable);
+        return new BinaryTable<MegFileNameTableRecord>(fileNameTable);
     }
 }

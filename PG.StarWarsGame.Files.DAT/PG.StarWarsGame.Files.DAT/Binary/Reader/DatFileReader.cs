@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -33,7 +34,7 @@ internal class DatFileReader : ServiceBase, IDatFileReader
             indexTableRecords.Add(new IndexTableRecord(new Crc32(rawCrc32), keyLength, valueLength));
         }
 
-        var indexTable = new IndexTable(indexTableRecords);
+        var indexTable = new BinaryTable<IndexTableRecord>(indexTableRecords);
         var valueRecords = new List<ValueTableRecord>();
         for (var i = 0; i < header.RecordCount; i++)
         {
@@ -41,16 +42,15 @@ internal class DatFileReader : ServiceBase, IDatFileReader
             valueRecords.Add(new ValueTableRecord(value));
         }
 
-        var valueTable = new ValueTable(valueRecords);
+        var valueTable = new BinaryTable<ValueTableRecord>(valueRecords);
         var keyRecords = new List<KeyTableRecord>();
-        var checksumService = Services.GetRequiredService<ICrc32HashingService>();
         for (var i = 0; i < header.RecordCount; i++)
         {
             var key = reader.ReadString((int)indexTable[i].KeyLength, DatFileConstants.TextKeyEncoding);
             keyRecords.Add(new KeyTableRecord(key));
         }
 
-        var keyTable = new KeyTable(keyRecords);
+        var keyTable = new BinaryTable<KeyTableRecord>(keyRecords);
 
         return new DatBinaryFile(header, indexTable, valueTable, keyTable);
     }

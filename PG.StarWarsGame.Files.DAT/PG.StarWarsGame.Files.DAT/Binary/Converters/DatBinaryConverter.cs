@@ -35,7 +35,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
             var keyChecksum = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);
 
             var valueRecord = new ValueTableRecord(value);
-            var keyRecord = new KeyTableRecord(key, keyChecksum);
+            var keyRecord = new KeyTableRecord(key);
             var indexRecord = new IndexTableRecord(keyChecksum, (uint)keyRecord.Key.Length, (uint)valueRecord.Value.Length);
             
             values.Add(valueRecord);
@@ -63,9 +63,10 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
 
         for (var i = 0; i < binary.RecordNumber; i++)
         {
+            var crc = binary.IndexTable[i].Crc32;
             var keyEntry = binary.KeyTable[i];
             var valueEntry = binary.ValueTable[i].Value;
-            datFileContent.Add(new DatStringEntry(keyEntry.Key, keyEntry.Crc32, valueEntry));
+            datFileContent.Add(new DatStringEntry(keyEntry.Key, crc, valueEntry));
         }
 
         return new DatModel(datFileContent);

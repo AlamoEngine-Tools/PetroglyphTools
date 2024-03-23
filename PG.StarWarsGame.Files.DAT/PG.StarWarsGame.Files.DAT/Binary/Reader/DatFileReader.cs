@@ -47,8 +47,7 @@ internal class DatFileReader : ServiceBase, IDatFileReader
         for (var i = 0; i < header.RecordCount; i++)
         {
             var key = reader.ReadString((int)indexTable[i].KeyLength, DatFileConstants.TextKeyEncoding);
-            var crc = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);
-            keyRecords.Add(new KeyTableRecord(key, crc));
+            keyRecords.Add(new KeyTableRecord(key));
         }
 
         var keyTable = new KeyTable(keyRecords);

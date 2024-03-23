@@ -51,6 +51,4 @@ public class IndexTableRecordTest
 
         Assert.AreEqual(0, r1.CompareTo(r2));
     }
-
-
 }

@@ -13,5 +13,5 @@ internal readonly struct ValueTableRecord(string value) : IBinary
 
     public byte[] Bytes => DatFileConstants.TextValueEncoding.GetBytes(Value);
 
-    public int Size => DatFileConstants.TextKeyEncoding.GetByteCountPG(Value.Length);
+    public int Size => DatFileConstants.TextValueEncoding.GetByteCountPG(Value.Length);
 }

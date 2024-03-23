@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using AnakinRaW.CommonUtilities;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
 
@@ -18,10 +17,10 @@ internal readonly struct KeyTableRecord : IBinary
 
     public KeyTableRecord(string key)
     {
-        // While it's not recommended whitespace keys are not disallowed, so we only check for empty keys
-        ThrowHelper.ThrowIfNullOrEmpty(key);
+        // While it's not recommended empty or whitespace keys are not disallowed, so we only check for null
+        if (key == null) 
+            throw new ArgumentNullException(nameof(key));
         StringUtilities.ValidateIsAsciiOnly(key.AsSpan());
-
         Key = key;
     }
 }

@@ -9,8 +9,18 @@ namespace PG.StarWarsGame.Files.DAT.Data;
 /// <summary>
 /// 
 /// </summary>
-public interface IDatModel : IReadOnlyList<DatFileEntry>
+public interface IDatModel : IReadOnlyList<DatStringEntry>
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    ISet<string> Keys { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    ISet<Crc32> CrcKeys { get; }
+
     /// <summary>
     /// 
     /// </summary>
@@ -53,14 +63,14 @@ public interface IDatModel : IReadOnlyList<DatFileEntry>
     /// </summary>
     /// <param name="crc"></param>
     /// <returns></returns>
-    ReadOnlyFrugalList<DatFileEntry> EntriesWithCrc(Crc32 crc);
+    ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 crc);
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    ReadOnlyFrugalList<DatFileEntry> EntriesWithKey(string key);
+    ReadOnlyFrugalList<DatStringEntry> EntriesWithKey(string key);
 
     /// <summary>
     /// 

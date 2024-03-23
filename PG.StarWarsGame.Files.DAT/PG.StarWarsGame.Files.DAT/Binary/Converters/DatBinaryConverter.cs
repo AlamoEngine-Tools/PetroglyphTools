@@ -59,13 +59,13 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
         if (binary == null) 
             throw new ArgumentNullException(nameof(binary));
 
-        var datFileContent = new List<DatFileEntry>(binary.RecordNumber);
+        var datFileContent = new List<DatStringEntry>(binary.RecordNumber);
 
         for (var i = 0; i < binary.RecordNumber; i++)
         {
             var keyEntry = binary.KeyTable[i];
             var valueEntry = binary.ValueTable[i].Value;
-            datFileContent.Add(new DatFileEntry(keyEntry.Key, keyEntry.Crc32, valueEntry));
+            datFileContent.Add(new DatStringEntry(keyEntry.Key, keyEntry.Crc32, valueEntry));
         }
 
         return new DatModel(datFileContent);

@@ -4,51 +4,34 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.IO.Abstractions;
 using PG.Commons.Services;
-using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.DAT.Binary;
-using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.DAT.Services;
 
 internal class DatFileService(IServiceProvider services) : ServiceBase(services), IDatFileService
 {
-    public void StoreDatFile(string datFileName, string targetDirectory, IEnumerable<DatFileEntry> entries, DatFileType datFileType)
+    public void CreateDatFile(FileSystemStream fileStream, IEnumerable<DatStringEntry> entries, DatFileType datFileType)
     {
-        ThrowHelper.ThrowIfNullOrWhiteSpace(datFileName);
-        ThrowHelper.ThrowIfNullOrWhiteSpace(targetDirectory);
+        if (fileStream == null)
+            throw new ArgumentNullException(nameof(fileStream));
 
-        IList<DatFileEntry> entryList = entries.ToList();
-
-        if (!entryList.Any())
-        {
-            throw new ArgumentException($"No valid dat file entries have been provided.", nameof(entries));
-        }
-
-        if (!FileSystem.Directory.Exists(targetDirectory))
-        {
-            FileSystem.Directory.CreateDirectory(targetDirectory);
-        }
-
-        var absoluteFilePath = FileSystem.Path.Combine(targetDirectory, datFileName);
-
-        if (datFileType == DatFileType.OrderedByCrc32)
-        {
-            entryList = Crc32Utilities.SortByCrc32(entryList);
-        }
-
-        var datModel = new DatModel(entryList);
+        var datModel = new ConstructingDatModel(entries, datFileType);
 
         var datBinary = Services.GetRequiredService<IDatBinaryConverter>().ModelToBinary(datModel);
 
-        throw new NotImplementedException();
+#if NETSTANDARD2_1_OR_GREATER || NET
+        fileStream.Write(datBinary.Bytes);
+#else
+        fileStream.Write(datBinary.Bytes, 0, datBinary.Size);
+#endif
     }
 
-    public IDatFile LoadDatFile(string filePath)
+    public IDatFile Load(string filePath)
     {
         var datBinary = Services.GetRequiredService<IDatFileReader>()
             .ReadBinary(FileSystem.FileStream.New(filePath, FileMode.Open));
@@ -61,7 +44,7 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
         return new DatFile(datModel, fileInfo, Services);
     }
 
-    public DatFileType PeekDatFileType(string filePath)
+    public DatFileType GetDatFileType(string filePath)
     {
         if (!FileSystem.File.Exists(filePath))
             throw new ArgumentException($"The file {filePath} does not exist.", nameof(filePath));

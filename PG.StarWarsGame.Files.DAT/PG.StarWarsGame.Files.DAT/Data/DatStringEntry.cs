@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.DAT.Data;
 /// <summary>
 ///     A simple representation of a key-value pair that can be stored in a DAT file.
 /// </summary>
-public readonly struct DatFileEntry : IHasCrc32, IEquatable<DatFileEntry>, IComparable<DatFileEntry>
+public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
 {
     /// The entry's key. Does not have to be unique, but may never be null empty or whitespace.
     public string Key { get; }
@@ -34,8 +34,7 @@ public readonly struct DatFileEntry : IHasCrc32, IEquatable<DatFileEntry>, IComp
     /// <param name="value">
     ///     The entry's <see cref="Value" />
     /// </param>
-    /// <exception cref="ArgumentNullException">If the key is null, empty or whitespace.</exception>
-    public DatFileEntry(string key, Crc32 keyChecksum, string value)
+    public DatStringEntry(string key, Crc32 keyChecksum, string value)
     {
         ThrowHelper.ThrowIfNullOrWhiteSpace(key);
 
@@ -45,26 +44,20 @@ public readonly struct DatFileEntry : IHasCrc32, IEquatable<DatFileEntry>, IComp
     }   
 
     /// <inheritdoc />
-    public bool Equals(DatFileEntry other)
+    public bool Equals(DatStringEntry other)
     {
-        return Crc32.Equals(other.Crc32);
+        return Crc32.Equals(other.Crc32) && Value.Equals(other.Value);
     }
 
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return obj is DatFileEntry other && Equals(other);
+        return obj is DatStringEntry other && Equals(other);
     }
 
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        return Crc32.GetHashCode();
-    }
-
-    /// <inheritdoc />
-    public int CompareTo(DatFileEntry other)
-    {
-        return Crc32.CompareTo(other.Crc32);
+        return HashCode.Combine(Crc32, Value);
     }
 }

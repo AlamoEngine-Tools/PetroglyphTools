@@ -3,11 +3,12 @@
 
 using System;
 using AnakinRaW.CommonUtilities;
+using PG.Commons.Binary;
 using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal readonly struct KeyTableRecord
+internal readonly struct KeyTableRecord : IBinary
 {
     public string Key { get; }
 

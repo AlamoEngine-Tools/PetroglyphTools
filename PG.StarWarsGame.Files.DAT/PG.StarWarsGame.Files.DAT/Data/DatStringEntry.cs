@@ -16,6 +16,11 @@ public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
 {
     /// The entry's key. Does not have to be unique, but may never be null empty or whitespace.
     public string Key { get; }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    public string OriginalKey { get; }
 
     /// The entry's value. May be null.
     public string Value { get; }
@@ -35,16 +40,32 @@ public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
     /// <param name="value">
     ///     The entry's <see cref="Value" />
     /// </param>
-    public DatStringEntry(string key, Crc32 keyChecksum, string value)
+    public DatStringEntry(string key, Crc32 keyChecksum, string value) : this(key, keyChecksum, value, key)
     {
-        if (key == null) 
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="keyChecksum"></param>
+    /// <param name="value"></param>
+    /// <param name="originalKey"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public DatStringEntry(string key, Crc32 keyChecksum, string value, string originalKey)
+    {
+        if (key == null)
             throw new ArgumentNullException(nameof(key));
+        if (value == null) 
+            throw new ArgumentNullException(nameof(value));
+
         StringUtilities.ValidateIsAsciiOnly(key.AsSpan());
 
         Key = key;
+        OriginalKey = originalKey ?? throw new ArgumentNullException(nameof(originalKey));
         Value = value ?? throw new ArgumentNullException(nameof(value));
         Crc32 = keyChecksum;
-    }   
+    }
 
     /// <inheritdoc />
     public bool Equals(DatStringEntry other)

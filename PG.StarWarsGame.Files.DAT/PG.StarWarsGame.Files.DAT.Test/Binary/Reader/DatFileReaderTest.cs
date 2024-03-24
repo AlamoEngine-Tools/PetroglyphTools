@@ -200,6 +200,27 @@ public class DatFileReaderTest
                     Values = new List<string>{"a", "b"}
                 }
             },
+
+            new object[]
+            {
+                new MemoryStream(new byte[]
+                {
+                    0x1, 0x0, 0x0, 0x0, // Header
+                    0x1, 0x0, 0x0, 0x0, // Crc
+                    0x1, 0x0, 0x0, 0x0, // VL
+                    0x1, 0x0, 0x0, 0x0, // KL
+                    0x1, 0x0,  // Value
+                    0x1  // Key
+
+                }),
+                new ExpectedDatData
+                {
+                    Number = 1,
+                    Checksums = new List<Crc32>{new(1) },
+                    Keys = new List<string>{"?"},
+                    Values = new List<string>{"a"}
+                }
+            },
         };
     }
 

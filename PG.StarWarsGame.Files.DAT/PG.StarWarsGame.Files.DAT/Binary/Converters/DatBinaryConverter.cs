@@ -39,7 +39,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
             var keyChecksum = checksumService.GetCrc32(key, DatFileConstants.TextKeyEncoding);
 
             var valueRecord = new ValueTableRecord(value);
-            var keyRecord = new KeyTableRecord(key);
+            var keyRecord = new KeyTableRecord(key, entry.OriginalKey);
             var indexRecord = new IndexTableRecord(keyChecksum, (uint)keyRecord.Key.Length, (uint)valueRecord.Value.Length);
             
             values.Add(valueRecord);

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using AnakinRaW.CommonUtilities.Extensions;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
@@ -36,19 +37,31 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
 
             var indexTable = new BinaryTable<IndexTableRecord>(indexTableRecords);
             var valueRecords = new List<ValueTableRecord>();
+
+            var valueEncoding = DatFileConstants.TextValueEncoding;
+
             for (var i = 0; i < header.RecordCount; i++)
             {
-                var bytes = DatFileConstants.TextValueEncoding.GetByteCountPG((int)indexTable[i].ValueLength);
-                var value = reader.ReadString(bytes, DatFileConstants.TextValueEncoding);
+                var bytes = valueEncoding.GetByteCountPG((int)indexTable[i].ValueLength);
+                var value = reader.ReadString(bytes, valueEncoding);
                 valueRecords.Add(new ValueTableRecord(value));
             }
 
             var valueTable = new BinaryTable<ValueTableRecord>(valueRecords);
             var keyRecords = new List<KeyTableRecord>();
+
+            // NB: We use Latin1 encoding here, so that we can stay compatible any binary compatible .DAT file
+            var extendedKeyEncoding = DatFileConstants.TextKeyEncoding_Latin1;
+            var normalKeyEncoding = DatFileConstants.TextKeyEncoding;
+
             for (var i = 0; i < header.RecordCount; i++)
             {
-                var key = reader.ReadString((int)indexTable[i].KeyLength, DatFileConstants.TextKeyEncoding);
-                keyRecords.Add(new KeyTableRecord(key));
+                var byteSize = normalKeyEncoding.GetByteCountPG((int)indexTable[i].KeyLength);
+
+                var originalKey = reader.ReadString(byteSize, extendedKeyEncoding);
+                var key = normalKeyEncoding.EncodeString(originalKey);
+
+                keyRecords.Add(new KeyTableRecord(key, originalKey));
             }
 
             var keyTable = new BinaryTable<KeyTableRecord>(keyRecords);

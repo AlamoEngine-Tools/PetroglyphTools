@@ -52,8 +52,8 @@ public class DatBinaryFileTest
         });
         var keys = new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
         {
-            new("Key1"),
-            new("Key2")
+            new("Key1", "Key1"),
+            new("Key2", "Key2")
         });
 
         var dat = new DatBinaryFile(header, index, values, keys);

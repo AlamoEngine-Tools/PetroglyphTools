@@ -63,10 +63,10 @@ public class DatBinaryConverterTest
             }),
             new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
             {
-                new("KEY0"),
-                new("KEY1"),
-                new("KEY2"),
-                new("KEY3")
+                new("KEY0", "KEY0"),
+                new("KEY1", "KEY1"),
+                new("KEY2", "KEY2"),
+                new("KEY3", "KEY3")
             }));
 
         var model = _binaryConverter.BinaryToModel(binaryModel);

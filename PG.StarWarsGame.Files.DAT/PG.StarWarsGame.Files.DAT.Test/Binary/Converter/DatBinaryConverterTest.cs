@@ -51,9 +51,9 @@ public class DatBinaryConverterTest
 
         var keyTable = new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
         {
-            new("1"),
-            new("1"),
-            new("2"),
+            new("1", "1"),
+            new("1", "1"),
+            new("2", "2"),
         });
         var valueTable = new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
         {
@@ -89,9 +89,9 @@ public class DatBinaryConverterTest
 
         var keyTable = new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
         {
-            new("2"),
-            new("2"),
-            new("1"),
+            new("2", "2"),
+            new("2", "2"),
+            new("1", "1"),
         });
         var valueTable = new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
         {
@@ -151,9 +151,9 @@ public class DatBinaryConverterTest
 
         CollectionAssert.AreEqual(new List<KeyTableRecord>
         {
-            new ("1"),
-            new ("1"),
-            new ("2"),
+            new ("1", "1"),
+            new ("1", "1"),
+            new ("2", "2"),
         }, binary.KeyTable.ToList());
 
         CollectionAssert.AreEqual(new List<ValueTableRecord>

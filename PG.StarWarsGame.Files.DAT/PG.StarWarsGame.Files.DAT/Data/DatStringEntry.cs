@@ -5,6 +5,7 @@ using System;
 using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using AnakinRaW.CommonUtilities;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
@@ -36,7 +37,9 @@ public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
     /// </param>
     public DatStringEntry(string key, Crc32 keyChecksum, string value)
     {
-        ThrowHelper.ThrowIfNullOrWhiteSpace(key);
+        if (key == null) 
+            throw new ArgumentNullException(nameof(key));
+        StringUtilities.ValidateIsAsciiOnly(key.AsSpan());
 
         Key = key;
         Value = value ?? throw new ArgumentNullException(nameof(value));

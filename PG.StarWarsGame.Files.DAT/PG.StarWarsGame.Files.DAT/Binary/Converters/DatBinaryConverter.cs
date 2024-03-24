@@ -17,6 +17,9 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
 {
     public DatBinaryFile ModelToBinary(IDatModel model)
     {
+        if (model == null) 
+            throw new ArgumentNullException(nameof(model));
+
         var checksumService = Services.GetRequiredService<ICrc32HashingService>();
 
         var numEntries = model.Count;

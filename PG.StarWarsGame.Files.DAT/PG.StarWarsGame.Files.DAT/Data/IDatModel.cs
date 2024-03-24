@@ -1,4 +1,7 @@
-﻿using AnakinRaW.CommonUtilities.Collections;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using AnakinRaW.CommonUtilities.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using PG.Commons.Hashing;

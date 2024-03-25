@@ -121,7 +121,7 @@ public class DatBinaryConverterTest
     }
 
     [TestMethod]
-    public void Test_ModelToBinary()
+    public void Test_ModelToBinary_Ordered()
     {
         var modelEntries = new List<DatStringEntry>
         {
@@ -133,6 +133,7 @@ public class DatBinaryConverterTest
         var model = new Mock<IDatModel>();
         model.Setup(m => m.Count).Returns(3);
         model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
+        model.Setup(m => m.KeySortOder).Returns(DatFileType.OrderedByCrc32);
 
         _hashingService.Setup(h => h.GetCrc32("1", Encoding.ASCII)).Returns(new Crc32(1));
         _hashingService.Setup(h => h.GetCrc32("2", Encoding.ASCII)).Returns(new Crc32(2));
@@ -162,5 +163,66 @@ public class DatBinaryConverterTest
             new ("d"),
             new (new string('a', 260)),
         }, binary.ValueTable.ToList());
+    }
+
+    [TestMethod]
+    public void Test_ModelToBinary_Unsorted()
+    {
+        var modelEntries = new List<DatStringEntry>
+        {
+            new("2", new Crc32(0), "abc"),
+            new("1", new Crc32(0), "d"),
+        };
+
+        var model = new Mock<IDatModel>();
+        model.Setup(m => m.Count).Returns(2);
+        model.Setup(m => m.KeySortOder).Returns(DatFileType.NotOrdered);
+        model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
+
+        _hashingService.Setup(h => h.GetCrc32("1", Encoding.ASCII)).Returns(new Crc32(1));
+        _hashingService.Setup(h => h.GetCrc32("2", Encoding.ASCII)).Returns(new Crc32(2));
+
+        var binary = _converter.ModelToBinary(model.Object);
+
+        Assert.AreEqual(model.Object.Count, binary.RecordNumber);
+        Assert.AreEqual(model.Object.Count, (int)binary.Header.RecordCount);
+
+        CollectionAssert.AreEqual(new List<IndexTableRecord>
+        {
+            new(new Crc32(2), 1, 3),
+            new(new Crc32(1), 1, 1),
+        }, binary.IndexTable.ToList());
+
+        CollectionAssert.AreEqual(new List<KeyTableRecord>
+        {
+            new ("2", "2"),
+            new ("1", "1"),
+        }, binary.KeyTable.ToList());
+
+        CollectionAssert.AreEqual(new List<ValueTableRecord>
+        {
+            new ("abc"),
+            new ("d"),
+        }, binary.ValueTable.ToList());
+    }
+
+    [TestMethod]
+    public void Test_ModelToBinary_WantsSortedButIsNot_ThrowsArgumentException()
+    {
+        var modelEntries = new List<DatStringEntry>
+        {
+            new("2", new Crc32(0), "abc"),
+            new("1", new Crc32(0), "d"),
+        };
+
+        var model = new Mock<IDatModel>();
+        model.Setup(m => m.Count).Returns(2);
+        model.Setup(m => m.KeySortOder).Returns(DatFileType.OrderedByCrc32);
+        model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
+
+        _hashingService.Setup(h => h.GetCrc32("1", Encoding.ASCII)).Returns(new Crc32(1));
+        _hashingService.Setup(h => h.GetCrc32("2", Encoding.ASCII)).Returns(new Crc32(2));
+
+        Assert.ThrowsException<ArgumentException>(() => _converter.ModelToBinary(model.Object));
     }
 }

@@ -4,7 +4,6 @@
 using System;
 using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
-using AnakinRaW.CommonUtilities;
 using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
@@ -67,21 +66,21 @@ public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
         Crc32 = keyChecksum;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool Equals(DatStringEntry other)
     {
-        return Crc32.Equals(other.Crc32) && Value.Equals(other.Value);
+        return Key == other.Key && Value == other.Value && Crc32.Equals(other.Crc32);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
         return obj is DatStringEntry other && Equals(other);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
-        return HashCode.Combine(Crc32, Value);
+        return HashCode.Combine(Key, Value, Crc32);
     }
 }

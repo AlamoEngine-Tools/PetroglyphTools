@@ -11,10 +11,5 @@ namespace PG.StarWarsGame.Files.DAT.Files;
 /// <remarks>
 ///     This class provides direct access to the DAT file content as well as its associated meta-information.
 /// </remarks>
-public sealed class DatFile : PetroglyphFileHolder<IDatModel, DatFileInformation>, IDatFile
-{
-    /// <inheritdoc />
-    public DatFile(IDatModel model, DatFileInformation fileInfo, IServiceProvider serviceProvider) : base(model, fileInfo, serviceProvider)
-    {
-    }
-}
+public sealed class DatFile(IDatModel model, DatFileInformation fileInfo, IServiceProvider serviceProvider) 
+    : PetroglyphFileHolder<IDatModel, DatFileInformation>(model, fileInfo, serviceProvider), IDatFile;

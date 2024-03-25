@@ -20,7 +20,7 @@ public class DatHeaderTest
     }
 
     [TestMethod]
-    public void Test_Ctor()
+    public void Test_Ctor_ThrowsArgumentOutOfRangeException()
     {
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => new DatHeader((uint)int.MaxValue + 1));
     }

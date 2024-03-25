@@ -33,10 +33,20 @@ public interface IDatFileService
     IDatFile Load(string filePath);
 
     /// <summary>
-    ///     Determines whether a provided DAT file is <see cref="DatFileType.OrderedByCrc32" /> or
-    ///     <see cref="DatFileType.NotOrdered" />.
+    ///  Loads a *.DAT file from the provided path and 
     /// </summary>
-    /// <param name="filePath">The absolute path to the DAT file.</param>
+    /// <param name="filePath"></param>
+    /// <param name="requestedFileType"></param>
+    /// <returns></returns>
+    IDatFile LoadAs(string filePath, DatFileType requestedFileType);
+
+    /// <summary>
+    /// Determines whether a provided DAT file is <see cref="DatFileType.OrderedByCrc32" /> or <see cref="DatFileType.NotOrdered" />.
+    /// </summary>
+    /// <remarks>
+    /// For empty or single-entry DAT files this method returns <see cref="DatFileType.OrderedByCrc32"/>
+    /// </remarks>
+    /// <param name="filePath">The path to the DAT file.</param>
     /// <returns></returns>
     DatFileType GetDatFileType(string filePath);
 }

@@ -13,28 +13,30 @@ using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
-internal class ConstructingDatModel : IDatModel
+internal class ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatFileType fileType) : IDatModel
 {
-    private readonly IList<DatStringEntry> _entries;
+    private readonly IList<DatStringEntry> _entries = fileType == DatFileType.NotOrdered ? entries.ToList() : Crc32Utilities.SortByCrc32(entries);
 
     public int Count => _entries.Count;
 
-    public DatFileType KeySortOder { get; }
+    public DatFileType KeySortOder { get; } = fileType;
 
-    public DatStringEntry this[int index] => throw new NotImplementedException();
+    public DatStringEntry this[int index] => _entries[index];
 
-    public ISet<string> Keys => throw new NotImplementedException();
-
-    public ISet<Crc32> CrcKeys => throw new NotImplementedException();
-
-
-    public ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatFileType fileType)
+    public IEnumerator<DatStringEntry> GetEnumerator()
     {
-        _entries = fileType == DatFileType.NotOrdered ? entries.ToList() : Crc32Utilities.SortByCrc32(entries);
-        if (_entries.Count == 0)
-            throw new ArgumentException("Dat file cannot be empty.", nameof(entries));
-        KeySortOder = fileType;
+        return _entries.GetEnumerator();
     }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+
+    public ISet<string> Keys => throw new NotSupportedException();
+
+    public ISet<Crc32> CrcKeys => throw new NotSupportedException();
 
     public bool ContainsKey(string key) => throw new NotSupportedException();
 
@@ -51,14 +53,4 @@ internal class ConstructingDatModel : IDatModel
     public string GetValue(Crc32 key) => throw new NotSupportedException();
 
     public bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value) => throw new NotSupportedException();
-
-    public IEnumerator<DatStringEntry> GetEnumerator()
-    {
-        return _entries.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
 }

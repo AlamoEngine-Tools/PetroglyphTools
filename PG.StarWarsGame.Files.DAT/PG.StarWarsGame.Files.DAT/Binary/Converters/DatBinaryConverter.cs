@@ -65,14 +65,22 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
 
         var datFileContent = new List<DatStringEntry>(binary.RecordNumber);
 
+        var sorted = true;
+        var lastCrc = default(Crc32);
         for (var i = 0; i < binary.RecordNumber; i++)
         {
             var crc = binary.IndexTable[i].Crc32;
             var keyEntry = binary.KeyTable[i];
             var valueEntry = binary.ValueTable[i].Value;
             datFileContent.Add(new DatStringEntry(keyEntry.Key, crc, valueEntry));
+
+            if (crc < lastCrc)
+                sorted = false;
+            lastCrc = crc;
         }
 
-        return new DatModel(datFileContent);
+        if (sorted)
+            return new SortedDatModel(datFileContent);
+        return new UnsortedDatModel(datFileContent);
     }
 }

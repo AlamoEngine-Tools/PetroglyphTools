@@ -9,6 +9,17 @@ using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
+internal interface ISortedDatModel : IDatModel
+{
+    IUnsortedDatModel ToUnsortedModel();
+}
+
+internal interface IUnsortedDatModel : IDatModel
+{
+    ISortedDatModel ToSortedModel();
+}
+
+
 /// <summary>
 /// 
 /// </summary>

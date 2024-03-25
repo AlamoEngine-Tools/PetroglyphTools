@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using AnakinRaW.CommonUtilities.Extensions;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
@@ -79,7 +80,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
         if (byteStream == null)
             throw new ArgumentNullException(nameof(byteStream));
 
-        using var reader = new BinaryReader(byteStream);
+        using var reader = new BinaryReader(byteStream, Encoding.Default, true);
 
         try
         {

@@ -7,6 +7,7 @@ using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons;
 using PG.Commons.Binary;
+using PG.Commons.Extensibility;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -26,18 +27,16 @@ public class DatBinaryConverterTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PGDomain.RegisterServices(sc);
+        sc.CollectAndContributeServiceContributions();
         var sp = sc.BuildServiceProvider();
 
         _binaryConverter = new DatBinaryConverter(sp);
         _crc32HashingService = sp.GetRequiredService<ICrc32HashingService>();
-
     }
 
     [Fact]
     public void Test_ToHolder__ValidModelCreatesValidHolder()
     {
-        
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
         var binaryModel = new DatBinaryFile(
             new DatHeader(4),

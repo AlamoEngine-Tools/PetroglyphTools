@@ -1,8 +1,6 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
-using System;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Attributes;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Services;
@@ -12,19 +10,12 @@ using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG;
 
-/// <summary>
-///     Provides methods to initialize this library.
-/// </summary>
-[Obsolete(
-    $"{nameof(MegDomain)} is deprecated and will be removed in a future version. Use {nameof(MegServiceContribution)} instead.")]
-public static class MegDomain
+/// <inheritdoc />
+[Order(1000)]
+public class MegServiceContribution : IServiceContribution
 {
-    /// <summary>
-    ///     Adds the required services for this library to the service collection.
-    /// </summary>
-    /// <remarks>The method does not initialize dependencies such as PG.Commons. This needs to be done separately.</remarks>
-    /// <param name="serviceCollection">The service collection to populate.</param>
-    public static void RegisterServices(IServiceCollection serviceCollection)
+    /// <inheritdoc />
+    public void ContributeServices(IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IMegFileService>(sp => new MegFileService(sp));
         serviceCollection.AddSingleton<IMegFileExtractor>(sp => new MegFileExtractor(sp));

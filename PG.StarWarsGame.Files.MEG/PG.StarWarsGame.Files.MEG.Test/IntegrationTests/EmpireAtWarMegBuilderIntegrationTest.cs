@@ -5,8 +5,8 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-
 using PG.Commons;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
@@ -39,8 +39,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PGDomain.RegisterServices(sc);
-        MegDomain.RegisterServices(sc);
+        sc.CollectAndContributeServiceContributions();
         return sc.BuildServiceProvider();
     }
 

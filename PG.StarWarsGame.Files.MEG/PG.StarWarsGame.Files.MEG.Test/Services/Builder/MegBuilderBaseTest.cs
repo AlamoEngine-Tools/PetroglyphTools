@@ -280,7 +280,7 @@ public class MegBuilderBaseTest
 
         var builder = CreateBuilder(false, false, true);
 
-        _normalizer.Setup(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage))
+        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
             .Callback(new NormalizerCallBack((ref string path, out string? message) =>
             {
                 message = null;
@@ -294,7 +294,7 @@ public class MegBuilderBaseTest
         Assert.IsTrue(result.Added);
         Assert.AreEqual(normalizedPath, result.AddedBuilderInfo.FilePath);
 
-        _normalizer.Verify(n => n.TryNormalizePath(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
+        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
     }
 
     [TestMethod]
@@ -312,7 +312,7 @@ public class MegBuilderBaseTest
 
         var builder = CreateBuilder(false, false, true);
 
-        _normalizer.Setup(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage))
+        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
             .Callback(new NormalizerCallBack((ref string path, out string? message) =>
             {
                 message = null;
@@ -325,7 +325,7 @@ public class MegBuilderBaseTest
         Assert.AreEqual(AddDataEntryToBuilderState.FailedNormalization,result.Status);
         Assert.IsNull(result.AddedBuilderInfo);
 
-        _normalizer.Verify(n => n.TryNormalizePath(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
+        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
     }
 
     [TestMethod]
@@ -342,7 +342,7 @@ public class MegBuilderBaseTest
 
         var builder = CreateBuilder(false, false, true);
 
-        _normalizer.Setup(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage))
+        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
             .Callback(new NormalizerCallBack((ref string path, out string? message) =>
             {
                 message = null;
@@ -354,7 +354,7 @@ public class MegBuilderBaseTest
         Assert.IsTrue(result.Added);
         Assert.AreEqual(expectedEncodedEntry, result.AddedBuilderInfo.FilePath);
 
-        _normalizer.Verify(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage), Times.Once);
+        _normalizer.Verify(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage), Times.Once);
     }
 
     [TestMethod]
@@ -596,7 +596,7 @@ public class MegBuilderBaseTest
 
         var builder = CreateBuilder(false, false, true);
 
-        _normalizer.Setup(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage))
+        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
             .Callback(new NormalizerCallBack((ref string path, out string? message) =>
             {
                 message = null;
@@ -610,7 +610,7 @@ public class MegBuilderBaseTest
         Assert.IsTrue(result.Added);
         Assert.AreEqual(normalizedPath, result.AddedBuilderInfo.FilePath);
 
-        _normalizer.Verify(n => n.TryNormalizePath(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
+        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
     }
 
     [TestMethod]
@@ -635,7 +635,7 @@ public class MegBuilderBaseTest
 
         var builder = CreateBuilder(false, false, true);
 
-        _normalizer.Setup(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage))
+        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
             .Callback(new NormalizerCallBack((ref string path, out string? message) =>
             {
                 message = null;
@@ -648,7 +648,7 @@ public class MegBuilderBaseTest
         Assert.AreEqual(AddDataEntryToBuilderState.FailedNormalization, result.Status);
         Assert.IsNull(result.AddedBuilderInfo);
 
-        _normalizer.Verify(n => n.TryNormalizePath(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
+        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
     }
 
     [TestMethod]
@@ -672,7 +672,7 @@ public class MegBuilderBaseTest
 
         var builder = CreateBuilder(false, false, true);
 
-        _normalizer.Setup(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage))
+        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
             .Callback(new NormalizerCallBack((ref string path, out string? message) =>
             {
                 message = null;
@@ -684,7 +684,7 @@ public class MegBuilderBaseTest
         Assert.IsTrue(result.Added);
         Assert.AreEqual(expectedEntryPath, result.AddedBuilderInfo.FilePath);
 
-        _normalizer.Verify(n => n.TryNormalizePath(ref inputEntryPath, out normalizerMessage), Times.Once);
+        _normalizer.Verify(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage), Times.Once);
     }
 
     [TestMethod]

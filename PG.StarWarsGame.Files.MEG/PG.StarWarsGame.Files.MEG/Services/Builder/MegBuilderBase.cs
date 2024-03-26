@@ -13,7 +13,6 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
@@ -210,10 +209,11 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
 
         var actualFilePath = filePath;
 
-        if (NormalizesEntryPaths && !DataEntryPathNormalizer.TryNormalizePath(ref actualFilePath, out var message))
+        if (NormalizesEntryPaths && !DataEntryPathNormalizer.TryNormalize(ref actualFilePath, out var message))
             return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
 
-        ThrowHelper.ThrowIfNullOrEmpty(actualFilePath);
+        if (string.IsNullOrEmpty(actualFilePath))
+            throw new InvalidOperationException("filePath cannot be null");
 
         actualFilePath = EncodePath(actualFilePath);
 

@@ -16,10 +16,10 @@ public abstract class DataEntryPathNormalizerTestBase
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
-        ExceptionUtilities.AssertThrowsAny(() => normalizer.NormalizePath(source));
+        ExceptionUtilities.AssertThrowsAny(() => normalizer.Normalize(source));
 
         var copy = source;
-        var success = normalizer.TryNormalizePath(ref copy, out _);
+        var success = normalizer.TryNormalize(ref copy, out _);
         Assert.IsFalse(success);
     }
 
@@ -27,11 +27,11 @@ public abstract class DataEntryPathNormalizerTestBase
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
-        var actual = normalizer.NormalizePath(source);
+        var actual = normalizer.Normalize(source);
         Assert.AreEqual(expected, actual);
 
         var copy = source;
-        var success = normalizer.TryNormalizePath(ref copy, out _);
+        var success = normalizer.TryNormalize(ref copy, out _);
         Assert.IsTrue(success);
         Assert.AreEqual(copy, expected);
     }

@@ -1,14 +1,21 @@
 ﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
+using PG.Commons.Utilities;
 using Testably.Abstractions.Testing;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.FileSystem;
+namespace PG.Commons.Test.Utilities;
 
 [TestClass]
 public class FileExtensionTest
 {
     private readonly MockFileSystem _fileSystem = new();
+
+    [TestMethod]
+    public void Test_CreateRandomHiddenTemporaryFile_DirectoryNotExist()
+    {
+        Assert.ThrowsException<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile());
+        Assert.ThrowsException<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile("/test"));
+    }
 
     [TestMethod]
     public void Test_CreateRandomHiddenTemporaryFile()
@@ -60,12 +67,5 @@ public class FileExtensionTest
         // Check deleted
         tempStream.Dispose();
         Assert.IsFalse(_fileSystem.File.Exists(filePath));
-    }
-
-    [TestMethod]
-    public void Test_CreateRandomHiddenTemporaryFile_DirectoryNotExist()
-    {
-        Assert.ThrowsException<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile());
-        Assert.ThrowsException<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile(@"C:\Test\"));
     }
 }

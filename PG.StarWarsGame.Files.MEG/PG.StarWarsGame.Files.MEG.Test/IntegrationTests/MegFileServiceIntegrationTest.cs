@@ -6,7 +6,7 @@ using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PG.Commons;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -30,10 +30,96 @@ public class MegFileServiceIntegrationTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PGDomain.RegisterServices(sc);
-        MegDomain.RegisterServices(sc);
+        sc.CollectAndContributeServiceContributions();
         var sp = sc.BuildServiceProvider();
         _megFileService = sp.GetRequiredService<IMegFileService>();
+    }
+
+    private void TestMegFiles(string megFilePath, ExpectedMegTestData expectedData)
+    {
+        var megVersion = _megFileService.GetMegFileVersion(megFilePath, out var encrypted);
+        Assert.AreEqual(expectedData.IsMegFileVersion, megVersion);
+        Assert.AreEqual(expectedData.IsMegEncrypted, encrypted);
+
+        var meg = _megFileService.Load(megFilePath);
+        TestMegModelContent(meg, expectedData, false);
+
+        for (var i = 0; i < meg.Archive.Count; i++)
+        {
+            var entry = meg.Archive[i];
+            var expected = expectedData.EntryNames[i];
+            Assert.AreEqual(expected, entry.FilePath);
+        }
+
+        using var param = new MegFileInformation(
+            expectedData.NewMegFilePath,
+            expectedData.NewMegFileVersion,
+            expectedData.EncryptionData);
+
+        var builderInformation = meg.Archive.Select(e =>
+            new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
+
+        using (var fs = _fileSystem.File.OpenWrite(expectedData.NewMegFilePath))
+        {
+            _megFileService.CreateMegArchive(fs, expectedData.NewMegFileVersion, expectedData.EncryptionData,
+                builderInformation);
+        }
+
+        Assert.IsTrue(_fileSystem.File.Exists(expectedData.NewMegFilePath));
+
+        var createdVersion = _megFileService.GetMegFileVersion(expectedData.NewMegFilePath, out var newEncrypted);
+        Assert.AreEqual(expectedData.NewMegFileVersion, createdVersion);
+        Assert.AreEqual(expectedData.EncryptionData is null, !newEncrypted);
+
+
+        var actualBytes = _fileSystem.File.ReadAllBytes(expectedData.NewMegFilePath);
+        var expectedBytes = _fileSystem.File.ReadAllBytes(megFilePath);
+        if (expectedData.NewMegIsBinaryEqual)
+            CollectionAssert.AreEqual(expectedBytes, actualBytes);
+        else
+            CollectionAssert.AreNotEqual(expectedBytes, actualBytes);
+
+        var newMeg = _megFileService.Load(megFilePath);
+        TestMegModelContent(newMeg, expectedData, true);
+    }
+
+    private static void TestMegModelContent(IMegFile meg, ExpectedMegTestData expectedData, bool isNewMeg)
+    {
+        Assert.IsNotNull(meg);
+        Assert.AreEqual(expectedData.MegFileCount, meg.Content.Count);
+        Assert.AreEqual(expectedData.IsMegFileVersion, meg.FileInformation.FileVersion);
+        Assert.AreEqual(expectedData.EntryNames.Count, meg.Archive.Count);
+
+        if (isNewMeg)
+            Assert.AreEqual(expectedData.EncryptionData is null, !meg.FileInformation.HasEncryption);
+        else
+            Assert.AreEqual(expectedData.IsMegEncrypted, meg.FileInformation.HasEncryption);
+
+        for (var i = 0; i < meg.Archive.Count; i++)
+        {
+            var entry = meg.Archive[i];
+            var expected = expectedData.EntryNames[i];
+            Assert.AreEqual(expected, entry.FilePath);
+        }
+    }
+
+    private record ExpectedMegTestData
+    {
+        public MegFileVersion IsMegFileVersion { get; init; }
+        public bool IsMegEncrypted { get; init; }
+
+        public int MegFileCount { get; init; }
+
+        public IList<string> EntryNames { get; init; } = null!;
+
+
+        public string NewMegFilePath { get; init; } = null!;
+
+        public bool NewMegIsBinaryEqual { get; init; }
+
+        public MegFileVersion NewMegFileVersion { get; init; }
+
+        public MegEncryptionData? EncryptionData { get; }
     }
 
     #region Create Meg Archive
@@ -82,7 +168,7 @@ public class MegFileServiceIntegrationTest
             _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
         });
     }
-    
+
     [TestMethod]
     public void Test_CreateMegArchive_MegWithEntriesOfSameNameButWithDifferentData()
     {
@@ -197,92 +283,6 @@ public class MegFileServiceIntegrationTest
     }
 
     #endregion
-
-    private void TestMegFiles(string megFilePath, ExpectedMegTestData expectedData)
-    {
-        var megVersion = _megFileService.GetMegFileVersion(megFilePath, out var encrypted);
-        Assert.AreEqual(expectedData.IsMegFileVersion, megVersion);
-        Assert.AreEqual(expectedData.IsMegEncrypted, encrypted);
-
-        var meg = _megFileService.Load(megFilePath);
-        TestMegModelContent(meg, expectedData, false);
-
-        for (var i = 0; i < meg.Archive.Count; i++)
-        {
-            var entry = meg.Archive[i];
-            var expected = expectedData.EntryNames[i];
-            Assert.AreEqual(expected, entry.FilePath);
-        }
-
-        using var param = new MegFileInformation(
-            expectedData.NewMegFilePath,
-            expectedData.NewMegFileVersion,
-            expectedData.EncryptionData);
-
-        var builderInformation = meg.Archive.Select(e =>
-            new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
-
-        using (var fs = _fileSystem.File.OpenWrite(expectedData.NewMegFilePath))
-        {
-            _megFileService.CreateMegArchive(fs, expectedData.NewMegFileVersion, expectedData.EncryptionData, builderInformation);
-        }
-
-        Assert.IsTrue(_fileSystem.File.Exists(expectedData.NewMegFilePath));
-
-        var createdVersion = _megFileService.GetMegFileVersion(expectedData.NewMegFilePath, out var newEncrypted);
-        Assert.AreEqual(expectedData.NewMegFileVersion, createdVersion);
-        Assert.AreEqual(expectedData.EncryptionData is null, !newEncrypted);
-
-
-        var actualBytes = _fileSystem.File.ReadAllBytes(expectedData.NewMegFilePath);
-        var expectedBytes = _fileSystem.File.ReadAllBytes(megFilePath);
-        if (expectedData.NewMegIsBinaryEqual)
-            CollectionAssert.AreEqual(expectedBytes, actualBytes);
-        else
-            CollectionAssert.AreNotEqual(expectedBytes, actualBytes);
-
-        var newMeg = _megFileService.Load(megFilePath);
-        TestMegModelContent(newMeg, expectedData, true);
-    }
-
-    private static void TestMegModelContent(IMegFile meg, ExpectedMegTestData expectedData, bool isNewMeg)
-    {
-        Assert.IsNotNull(meg);
-        Assert.AreEqual(expectedData.MegFileCount, meg.Content.Count);
-        Assert.AreEqual(expectedData.IsMegFileVersion, meg.FileInformation.FileVersion);
-        Assert.AreEqual(expectedData.EntryNames.Count, meg.Archive.Count);
-
-        if (isNewMeg)
-            Assert.AreEqual(expectedData.EncryptionData is null, !meg.FileInformation.HasEncryption);
-        else
-            Assert.AreEqual(expectedData.IsMegEncrypted, meg.FileInformation.HasEncryption);
-
-        for (var i = 0; i < meg.Archive.Count; i++)
-        {
-            var entry = meg.Archive[i];
-            var expected = expectedData.EntryNames[i];
-            Assert.AreEqual(expected, entry.FilePath);
-        }
-    }
-
-    private record ExpectedMegTestData
-    {
-        public MegFileVersion IsMegFileVersion { get; init; }
-        public bool IsMegEncrypted { get; init; }
-
-        public int MegFileCount { get; init; }
-
-        public IList<string> EntryNames { get; init; } = null!;
-
-
-        public string NewMegFilePath { get; init; } = null!;
-
-        public bool NewMegIsBinaryEqual { get; init; }
-
-        public MegFileVersion NewMegFileVersion { get; init; }
-
-        public MegEncryptionData? EncryptionData { get; init; }
-    }
 
 
     // TODO: Need to test V3 Encrypted!

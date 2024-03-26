@@ -6,7 +6,7 @@ using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
@@ -39,8 +39,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PGDomain.RegisterServices(sc);
-        MegDomain.RegisterServices(sc);
+        sc.CollectAndContributeServiceContributions();
         return sc.BuildServiceProvider();
     }
 
@@ -54,7 +53,9 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var entry3 = _eawMegBuilder.ResolveEntryPath("/other/corruption/data/xml/entry3.txt");
 
         Assert.AreEqual("entry1.txt", entry1);
-        Assert.AreEqual(PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry2);
+        Assert.AreEqual(
+            PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }),
+            entry2);
         Assert.IsNull(entry3);
 
         var result1 = _eawMegBuilder.AddFile("entry.txt", entry1!);
@@ -76,7 +77,8 @@ public class EmpireAtWarMegBuilderIntegrationTest
 
         Assert.IsFalse(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V2)));
         Assert.IsFalse(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("?new.meg", MegFileVersion.V1)));
-        Assert.IsFalse(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData())));
+        Assert.IsFalse(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V3,
+            MegEncryptionDataTest.CreateRandomData())));
 
         _eawMegBuilder.Build(new MegFileInformation("new.meg", MegFileVersion.V1), false);
 

@@ -2,9 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PG.Commons.Services.Builder;
+using PG.Commons.Services.Builder.Normalization;
 
-namespace PG.Commons.Test.Services.Builder;
+namespace PG.Commons.Test.Services.Builder.Noramlization;
 
 [TestClass]
 public class BuilderEntryNormalizerTest_String : BuilderEntryNormalizerTest<string>
@@ -52,10 +52,10 @@ public abstract class BuilderEntryNormalizerTest<T> where T : IEquatable<T>
                 Assert.AreEqual(tt, CreateT());
             })
             .Throws<Exception>(() => new InvalidOperationException("Test"));
-        
+
         var result = normalizer.Object.TryNormalize(ref t, out var message);
         Assert.IsFalse(result);
-        Assert.AreEqual("Test", message); 
+        Assert.AreEqual("Test", message);
         Assert.ThrowsException<InvalidOperationException>(() => normalizer.Object.Normalize(CreateT()));
     }
 
@@ -75,7 +75,7 @@ public abstract class BuilderEntryNormalizerTest<T> where T : IEquatable<T>
 
         var result = normalizer.Object.TryNormalize(ref t, out var message);
         Assert.IsTrue(result);
-        Assert.IsNull (message);
+        Assert.IsNull(message);
 
         Assert.AreEqual(CreateTNormalized(), normalizer.Object.Normalize(CreateT()));
     }

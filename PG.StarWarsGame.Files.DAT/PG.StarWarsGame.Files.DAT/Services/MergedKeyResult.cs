@@ -11,12 +11,12 @@ namespace PG.StarWarsGame.Files.DAT.Services;
 public readonly struct MergedKeyResult
 {
     /// <summary>
-    /// Gets the entry that was added or overwritten.
+    /// Gets the entry that was added or replaced an existing entry.
     /// </summary>
     public DatStringEntry NewEntry { get; }
 
     /// <summary>
-    /// Gets the last entry that was overwritten.
+    /// Gets the entry that was overwritten or <see langword="null"/> if no entry was overwritten.
     /// </summary>
     public DatStringEntry? OldEntry { get; }
 

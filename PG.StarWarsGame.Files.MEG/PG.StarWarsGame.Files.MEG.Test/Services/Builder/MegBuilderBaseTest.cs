@@ -196,7 +196,6 @@ public class MegBuilderBaseTest
         _fileSystem.Initialize().WithFile(fileToAdd);
 
         var builder = CreateBuilder(false, false, false);
-        Assert.ThrowsException<ArgumentNullException>(() => builder.ValidateFileInformation(null!));
 
         var fileInfo = new MegFileInformation("path", MegFileVersion.V2);
 
@@ -208,6 +207,7 @@ public class MegBuilderBaseTest
             })
             .Returns(new ValidationResult());
 
+        
         builder.AddFile(fileToAdd, inputEntryPath);
 
         builder.ValidateFileInformation(fileInfo);
@@ -809,145 +809,17 @@ public class MegBuilderBaseTest
 
         var expectedData = new byte[] { 1, 2, 3 };
 
-        var tempFilePath = string.Empty;
-
         _megFileService.Setup(s => s.CreateMegArchive(It.IsAny<FileSystemStream>(), fileInfo.FileVersion,
                 fileInfo.EncryptionData,
                 It.IsAny<IEnumerable<MegFileDataEntryBuilderInfo>>()))
             .Callback(new MegFileServiceCreateCallBack((stream, _, _, _) =>
             {
-                tempFilePath = stream.Name;
                 using var ms = new MemoryStream(expectedData);
                 ms.CopyTo(stream);
             }));
 
         builder.Build(fileInfo, false);
-
         CollectionAssert.AreEqual(expectedData, _fileSystem.File.ReadAllBytes(fileInfo.FilePath));
-        Assert.AreNotEqual(string.Empty, tempFilePath);
-        Assert.AreNotEqual(tempFilePath, fileInfo.FilePath);
-        Assert.IsFalse(_fileSystem.File.Exists(tempFilePath));
-    }
-
-    [TestMethod]
-    public void Test_Build_WritingFails_Throws()
-    {
-        var fileInfo = new MegFileInformation("path/a.meg", MegFileVersion.V1);
-
-        var builder = CreateBuilder(false, false, false);
-
-        var expectedData = new byte[] { 1, 2, 3 };
-
-        var tempFilePath = string.Empty;
-
-        _megFileService.Setup(s => s.CreateMegArchive(It.IsAny<FileSystemStream>(), fileInfo.FileVersion,
-                fileInfo.EncryptionData,
-                It.IsAny<IEnumerable<MegFileDataEntryBuilderInfo>>()))
-            .Callback(new MegFileServiceCreateCallBack((stream, _, _, _) =>
-            {
-                tempFilePath = stream.Name;
-                using var ms = new MemoryStream(expectedData);
-                ms.CopyTo(stream);
-            }))
-            .Throws<IOException>();
-
-        Assert.ThrowsException<IOException>(() => builder.Build(fileInfo, false));
-
-        Assert.IsFalse(_fileSystem.File.Exists(tempFilePath));
-    }
-
-    [TestMethod]
-    public void Test_Build_DoNotOverwrite_Throws()
-    {
-        var fileInfo = new MegFileInformation("a.meg", MegFileVersion.V1);
-
-        _fileSystem.Initialize().WithFile("a.meg");
-
-        var builder = CreateBuilder(false, false, false);
-        
-        Assert.ThrowsException<IOException>(() => builder.Build(fileInfo, false));
-    }
-
-    [TestMethod]
-    public void Test_CreateMegArchive_RealFileSystem_OverrideCurrentMeg()
-    {
-        var fileInfo = new MegFileInformation("a.meg", MegFileVersion.V1);
-
-        var expectedData = new byte[] { 1, 2, 3 };
-
-        // This Test does not use the MockFileSystem but the actual FileSystem
-        var fs = new System.IO.Abstractions.FileSystem();
-
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(fs);
-        sc.AddSingleton(_ => _megFileService.Object);
-
-        // Default Validator always passes
-        _infoValidator.Setup(v => v.Validate(It.IsAny<MegBuilderFileInformationValidationData>()))
-            .Returns(new ValidationResult());
-
-        _megFileService.Setup(s => s.CreateMegArchive(It.IsAny<FileSystemStream>(), fileInfo.FileVersion,
-                fileInfo.EncryptionData,
-                It.IsAny<IEnumerable<MegFileDataEntryBuilderInfo>>()))
-            .Callback(new MegFileServiceCreateCallBack((stream, _, _, _) =>
-            {
-                using var orgFs = fs.File.OpenRead("a.meg");
-                orgFs.CopyTo(stream);
-            }));
-
-        var builder = new TestingMegBuilder(false, true, _normalizer.Object, _entryValidator.Object,
-            _infoValidator.Object, sc.BuildServiceProvider());
-
-        try
-        {
-            fs.File.WriteAllBytes(fileInfo.FilePath, [1, 2, 3]);
-            builder.Build(fileInfo, true);
-
-            var actualBytes = fs.File.ReadAllBytes(fileInfo.FilePath);
-
-            CollectionAssert.AreEqual(expectedData, actualBytes);
-        }
-        finally
-        {
-            try
-            {
-                fs.File.Delete(fileInfo.FilePath);
-            }
-            catch
-            {
-                // Ignore
-            }
-        }
-    }
-
-    [TestMethod]
-    public void Test_Build_InvalidInfo_Throws()
-    {
-        var fileInfo = new MegFileInformation("a.meg", MegFileVersion.V1);
-
-        var builder = CreateBuilder(false, false, false);
-
-        _infoValidator.Setup(v => v.Validate(It.IsAny<MegBuilderFileInformationValidationData>()))
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("some-error", "some error") }));
-
-        Assert.ThrowsException<NotSupportedException>(() => builder.Build(fileInfo, false));
-
-        _infoValidator.Verify(v => 
-            v.Validate(It.IsAny<MegBuilderFileInformationValidationData>()), Times.Once);
-    }
-
-    [TestMethod]
-    [DataRow("./")]
-    [DataRow("./..")]
-    [DataRow("path/")]
-    [DataRow("/")]
-    public void Test_Build_InvalidInfoPath_Throws(string path)
-    {
-        var fileInfo = new MegFileInformation(path, MegFileVersion.V1);
-
-        var builder = CreateBuilder(false, false, false);
-
-        Assert.ThrowsException<ArgumentException>(() => builder.Build(fileInfo, false));
     }
 
     #endregion

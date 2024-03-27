@@ -6,28 +6,23 @@ using System.Collections.Generic;
 namespace PG.StarWarsGame.Files.DAT.Data;
 
 /// <summary>
-/// 
+/// Compares two <see cref="DatStringEntry"/> by their CRC32 checksum.
 /// </summary>
 public class CrcBasedDatStringEntryEqualityComparer : IEqualityComparer<DatStringEntry>
 {
-    internal static readonly CrcBasedDatStringEntryEqualityComparer Instance = new();
-
     /// <summary>
-    /// 
+    /// Gets a shared instance of the <see cref="CrcBasedDatStringEntryEqualityComparer"/> class.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
+    public static readonly CrcBasedDatStringEntryEqualityComparer Instance = new();
+
+
+    /// <inheritdoc />
     public bool Equals(DatStringEntry x, DatStringEntry y)
     {
         return x.Crc32.Equals(y.Crc32);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
+    /// <inheritdoc />
     public int GetHashCode(DatStringEntry obj)
     {
         return obj.Crc32.GetHashCode();

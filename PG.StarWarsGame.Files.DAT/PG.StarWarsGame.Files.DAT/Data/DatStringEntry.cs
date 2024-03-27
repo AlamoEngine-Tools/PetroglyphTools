@@ -9,48 +9,59 @@ using PG.Commons.Utilities;
 namespace PG.StarWarsGame.Files.DAT.Data;
 
 /// <summary>
-///     A simple representation of a key-value pair that can be stored in a DAT file.
+/// A simple representation of a key-value pair that can be stored in a DAT file.
 /// </summary>
+/// <remarks>
+/// Equality is based on <see cref="Key"/>, <see cref="Crc32"/> and <see cref="Value"/>.
+/// </remarks>
 public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
 {
-    /// The entry's key. Does not have to be unique, but may never be null empty or whitespace.
+    /// <summary>
+    /// Gets the entry's key. Does not have to be unique. 
+    /// </summary>
     public string Key { get; }
     
     /// <summary>
-    /// 
+    /// Gets the entry's original key which may include extended ASCII characters.
     /// </summary>
     public string OriginalKey { get; }
 
-    /// The entry's value. May be null.
+    /// <summary>
+    /// Gets the entry's value.
+    /// </summary>
     public string Value { get; }
 
     /// <summary>
-    /// Get the CRC32 checksum of the entry's key.
+    /// Gets the CRC32 checksum of the key.
     /// </summary>
     public Crc32 Crc32 { get; }
 
     /// <summary>
-    ///     .ctor
+    /// Initializes a new instance of the <see cref="DatStringEntry"/> structure with a specified key, checksum and value.
     /// </summary>
-    /// <param name="key">
-    ///     The entry's <see cref="Key" />
-    /// </param>
+    /// <param name="key"> The entry's key.</param>
     /// <param name="keyChecksum">The CRC32 checksum of the key.</param>
-    /// <param name="value">
-    ///     The entry's <see cref="Value" />
-    /// </param>
+    /// <param name="value">The entry's value.</param>
+    /// <exception cref="ArgumentException"><paramref name="key"/> contains non-ASCII characters.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="key"/> or <paramref name="value"/> is <see langword="null"/>.
+    /// </exception>
     public DatStringEntry(string key, Crc32 keyChecksum, string value) : this(key, keyChecksum, value, key)
     {
     }
 
     /// <summary>
-    /// 
+    /// Initializes a new instance of the <see cref="DatStringEntry"/> structure with a specified key, checksum,
+    /// value and the original extended ASCII key.
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="keyChecksum"></param>
-    /// <param name="value"></param>
-    /// <param name="originalKey"></param>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="key"> The entry's key.</param>
+    /// <param name="keyChecksum">The CRC32 checksum of the key.</param>
+    /// <param name="value">The entry's value.</param>
+    /// <param name="originalKey">The entry's original key.</param>
+    /// <exception cref="ArgumentException"><paramref name="key"/> contains non-ASCII characters.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="key"/> or <paramref name="value"/> or <paramref name="originalKey"/> is <see langword="null"/>.
+    /// </exception>
     public DatStringEntry(string key, Crc32 keyChecksum, string value, string originalKey)
     {
         if (key == null)

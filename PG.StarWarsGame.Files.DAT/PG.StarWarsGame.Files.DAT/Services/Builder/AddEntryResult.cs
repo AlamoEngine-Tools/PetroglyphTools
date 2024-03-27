@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using PG.StarWarsGame.Files.DAT.Data;
 
@@ -82,6 +85,7 @@ public readonly struct AddEntryResult
     internal static AddEntryResult EntryAdded(DatStringEntry addedEntry, DatStringEntry oldEntry)
     {
         DatStringEntry? overwrittenEntry = oldEntry.Equals(default) ? null : oldEntry;
-        return new AddEntryResult(AddEntryState.Added, addedEntry, overwrittenEntry, null);
+        return new AddEntryResult(overwrittenEntry is null ? AddEntryState.Added : AddEntryState.AddedDuplicate,
+            addedEntry, overwrittenEntry, null);
     }
 }

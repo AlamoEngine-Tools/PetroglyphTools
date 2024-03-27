@@ -1,6 +1,6 @@
 using System;
 
-namespace PG.Commons.Services.Builder;
+namespace PG.Commons.Services.Builder.Normalization;
 
 /// <summary>
 /// Base class for an <see cref="IBuilderEntryNormalizer{T}"/>.

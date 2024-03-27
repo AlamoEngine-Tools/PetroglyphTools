@@ -1,6 +1,6 @@
 using System;
 
-namespace PG.Commons.Services.Builder;
+namespace PG.Commons.Services.Builder.Normalization;
 
 /// <summary>
 /// Provides methods to normalize a data entry's file path to store it into a MEG archive.
@@ -15,7 +15,6 @@ public interface IBuilderEntryNormalizer<T>
     /// <returns>The normalized entry.</returns>
     /// <exception cref="Exception">The normalization failed or <paramref name="entry"/> is not supported.</exception>
     T Normalize(T entry);
-
 
     /// <summary>
     /// Attempts to normalize the specified entry.

@@ -187,13 +187,13 @@ public abstract class DatModelTest
 
         var model = CreateModel(entries);
 
-        Assert.AreEqual("value2", model.GetValue("1"));
+        Assert.AreEqual("value1", model.GetValue("1"));
         model.TryGetValue("1", out var value);
-        Assert.AreEqual("value2", value);
+        Assert.AreEqual("value1", value);
 
-        Assert.AreEqual("value2", model.GetValue(new Crc32(1)));
+        Assert.AreEqual("value1", model.GetValue(new Crc32(1)));
         model.TryGetValue(new Crc32(1), out value);
-        Assert.AreEqual("value2", value);
+        Assert.AreEqual("value1", value);
 
 
         Assert.ThrowsException<KeyNotFoundException>(() => model.GetValue("11"));

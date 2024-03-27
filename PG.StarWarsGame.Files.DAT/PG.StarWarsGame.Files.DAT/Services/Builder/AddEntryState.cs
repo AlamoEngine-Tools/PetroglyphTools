@@ -1,4 +1,7 @@
-﻿namespace PG.StarWarsGame.Files.DAT.Services.Builder;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
 /// Represents the state of adding an entry to an <see cref="IDatBuilder"/>. 
@@ -21,8 +24,4 @@ public enum AddEntryState
     /// The entry was not added because its key is invalid.
     /// </summary>
     InvalidKey,
-    /// <summary>
-    /// The entry was not added because key normalization failed.
-    /// </summary>
-    FailedNormalization
 }

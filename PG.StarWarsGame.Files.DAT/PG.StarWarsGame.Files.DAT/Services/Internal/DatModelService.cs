@@ -3,9 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Data;
@@ -13,55 +11,81 @@ using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Services;
 
+internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(serviceProvider), IDatModelService
+{
+    public IReadOnlyDictionary<string, IReadOnlyList<DatStringEntry>> GetDuplicateEntries(IDatModel datModel)
+    {
+        if (datModel == null)
+            throw new ArgumentNullException(nameof(datModel));
+
+        var duplicates = new Dictionary<string, IReadOnlyList<DatStringEntry>>();
+
+        foreach (var key in datModel.CrcKeys)
+        {
+            var entries = datModel.EntriesWithCrc(key);
+            if (entries.Count > 1)
+                duplicates.Add(entries.First().Key, entries);
+        }
+        return duplicates;
+    }
+
+    public IDatModel RemoveDuplicates(IDatModel datModel)
+    {
+        if (datModel == null)
+            throw new ArgumentNullException(nameof(datModel));
+
+        IList<DatStringEntry> newEntries = new List<DatStringEntry>();
+        
+        // TODO Fill list
+
+        if (datModel.KeySortOder == DatFileType.OrderedByCrc32)
+        {
+            newEntries = Crc32Utilities.SortByCrc32(newEntries);
+            return new SortedDatModel(newEntries);
+        }
+
+        return new UnsortedDatModel(newEntries);
+    }
+
+    public IDatModel SortModel(IDatModel datModel)
+    {
+        if (datModel == null)
+            throw new ArgumentNullException(nameof(datModel));
+
+        if (datModel is ISortedDatModel)
+            return datModel;
+        if (datModel is IUnsortedDatModel unsortedDat)
+            return unsortedDat.ToSortedModel();
+        return new SortedDatModel(Crc32Utilities.SortByCrc32(datModel.ToList()));
+    }
+
+    public ISet<string> GetMissingKeysFromBase(IDatModel baseDatModel, IDatModel datToCompare)
+    {
+        if (baseDatModel == null)
+            throw new ArgumentNullException(nameof(baseDatModel));
+        if (datToCompare == null)
+            throw new ArgumentNullException(nameof(datToCompare));
+
+        var keys = baseDatModel.Keys;
+        keys.ExceptWith(datToCompare.Keys);
+        return keys;
+    }
+
+    public IDatModel MergeSorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
+        SortedDatMergeOptions mergeOptions = SortedDatMergeOptions.KeepExisting)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IDatModel Merge(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
+        UnsortedDatMergeOptions mergeOptions = UnsortedDatMergeOptions.ByIndex)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 //internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(serviceProvider), IDatModelService
 //{
-//    public IReadOnlyDictionary<string, IReadOnlyList<DatStringEntry>> GetDuplicateEntries(IDatModel datModel)
-//    {
-//        if (datModel == null) 
-//            throw new ArgumentNullException(nameof(datModel));
-
-//        var duplicates = new Dictionary<string, IReadOnlyList<DatStringEntry>>();
-
-//        foreach (var key in datModel.CrcKeys)
-//        {
-//            var entries = datModel.EntriesWithCrc(key);
-//            if (entries.Count > 1)
-//                duplicates.Add(entries.First().Key, entries);
-//        }
-//        return duplicates;
-//    }
-
-//    public T RemoveDuplicates<T>(T datModel) where T : class, IDatModel
-//    {
-//        if (datModel == null)
-//            throw new ArgumentNullException(nameof(datModel));
-
-//        IList<DatStringEntry> newEntries = new List<DatStringEntry>();
-
-//        foreach (var key in datModel.CrcKeys)
-//        {
-//            var lastEntry = datModel.EntriesWithCrc(key).Last();
-//            newEntries.Add(lastEntry);
-//        }
-
-//        if (datModel.KeySortOder == DatFileType.OrderedByCrc32)
-//            newEntries = Crc32Utilities.SortByCrc32(newEntries);
-
-//        return new DatModel(newEntries);
-//    }
-
-//    public ISet<string> GetMissingKeysFromBase(IDatModel baseDatModel, IDatModel datToCompare)
-//    {
-//        if (baseDatModel == null)
-//            throw new ArgumentNullException(nameof(baseDatModel));
-//        if (datToCompare == null)
-//            throw new ArgumentNullException(nameof(datToCompare));
-
-//        var keys = baseDatModel.Keys;
-//        keys.ExceptWith(datToCompare.Keys);
-//        return keys;
-//    }
-
 //    public IDatModel Merge(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
 //        DatMergeOptions mergeOptions = DatMergeOptions.KeepExisting)
 //    {
@@ -83,7 +107,7 @@ namespace PG.StarWarsGame.Files.DAT.Services;
 //    {
 //        var newEntries = baseDatModel.ToList();
 
-        
+
 //        var maxIteration = Math.Min(newEntries.Count, datToMerge.Count);
 //        var totalKeys = Math.Max(newEntries.Count, datToMerge.Count);
 

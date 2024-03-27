@@ -1,7 +1,7 @@
 using System;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Services.Builder;
+using PG.Commons.Services.Builder.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 

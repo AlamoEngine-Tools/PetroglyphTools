@@ -44,9 +44,9 @@ internal class ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatFile
 
     public bool TryGetValue(string key, [NotNullWhen(true)] out string? value) => throw new NotSupportedException();
 
-    public bool ContainsKey(Crc32 keyCrc) => throw new NotSupportedException();
+    public bool ContainsKey(Crc32 key) => throw new NotSupportedException();
 
-    public ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 crc) => throw new NotSupportedException();
+    public ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key) => throw new NotSupportedException();
 
     public ReadOnlyFrugalList<DatStringEntry> EntriesWithKey(string key) => throw new NotSupportedException();
 

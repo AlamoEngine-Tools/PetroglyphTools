@@ -1,10 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons;
+using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.DAT.Binary;
+using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.Testing;
@@ -149,5 +153,45 @@ public class DatFileServiceIntegrationTest
         var model = _service.Load("Sorted_TwoEntriesDuplicate.dat");
         Assert.AreEqual(2, model.Content.Count);
         Assert.AreEqual(1, model.Content.Keys.Count);
+    }
+
+
+    //[TestMethod]
+    public void Test()
+    {
+        var fileSystem = new FileSystem();
+
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(fileSystem);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        PGDomain.RegisterServices(sc);
+        DatDomain.RegisterServices(sc);
+        var sp = sc.BuildServiceProvider();
+        var service = new DatFileService(sp);
+
+        var path = "C:/test/MasterTextFile_german.dat";
+
+        using (var fs = fileSystem.FileStream.New(path, FileMode.Create))
+        {
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceIntegrationTest), "Files.mastertextfile_english.dat");
+            stream.CopyTo(fs);
+        }
+
+        var datFile = service.Load(path).Content;
+
+        var entries = datFile.ToList();
+
+        var crcT = sp.GetRequiredService<ICrc32HashingService>()
+            .GetCrc32("TEXT_TOOLTIP_TARKIN_01", DatFileConstants.TextKeyEncoding);
+        entries.Add(new DatStringEntry("TEXT_TOOLTIP_TARKIN_01", crcT, "bla bla bla"));
+
+        var pietIndex = entries.FindIndex(e => e.Key == "TEXT_TOOLTIP_VEERS_01");
+        var cPiet = entries[pietIndex];
+        var newPiet = new DatStringEntry(cPiet.Key, cPiet.Crc32, "This is some text\nwith real\r\nline breaks and \t a tab.");
+        entries[pietIndex] = newPiet;
+
+        using var writeFs = fileSystem.FileStream.New(path, FileMode.Open, FileAccess.Write);
+
+        service.CreateDatFile(writeFs, entries, DatFileType.OrderedByCrc32);
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace PG.StarWarsGame.Files.DAT.Services.Builder;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
 /// Contains constants for controlling how to treat duplicate keys when building DAT files.

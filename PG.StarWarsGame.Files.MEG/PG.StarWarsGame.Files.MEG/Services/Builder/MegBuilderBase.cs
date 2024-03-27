@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -14,15 +13,19 @@ using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using AnakinRaW.CommonUtilities;
+using PG.Commons.Services.Builder;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// Base class for a <see cref="IMegBuilder"/> service providing the fundamental implementations.
 /// </summary>
-public abstract class MegBuilderBase : ServiceBase, IMegBuilder
+public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>, IMegBuilder
 {
     private readonly Dictionary<string, MegFileDataEntryBuilderInfo> _dataEntries = new();
+
+    /// <inheritdoc />
+    public sealed override IReadOnlyCollection<MegFileDataEntryBuilderInfo> BuilderData => DataEntries;
 
     /// <inheritdoc/>
     [MemberNotNullWhen(true, nameof(DataEntryPathNormalizer))]
@@ -131,69 +134,23 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         _dataEntries.Clear();
     }
 
-    /// <inheritdoc/>
-    /// <remarks>
-    /// <paramref name="fileInformation"/> may specify relative or absolute path information.
-    /// Relative path information is interpreted as relative to the current working directory.
-    /// <br/>
-    /// <br/>
-    /// Any and all directories specified in <paramref name="fileInformation"/> are created, unless they already exist or unless some part of path is invalid.
-    /// </remarks>
-    public void Build(MegFileInformation fileInformation, bool overwrite)
+    /// <inheritdoc />
+    protected sealed override void BuildFileCore(FileSystemStream fileStream, MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> data)
     {
-        ThrowIfDisposed();
-
-        if (fileInformation is null)
-            throw new ArgumentNullException(nameof(fileInformation));
-
-        // Prevent races by creating getting a copy of the current state
-        var dataEntries = DataEntries;
-
-        if (dataEntries.Any(e => e.Encrypted))
-        {
-            throw new NotImplementedException("Encryption is currently not supported.");
-        }
-
-        var validationResult = MegFileInformationValidator.Validate(new(fileInformation, dataEntries));
-        if (!validationResult.IsValid)
-            throw new NotSupportedException($"Provided file parameters are not valid for this builder: {validationResult}");
-
-        var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
-
-        // file path points to a directory
-        // NB: This is not a full inclusive check. We leave it up to the file system to throw exceptions if something is still invalid.
-        if (string.IsNullOrEmpty(fileInfo.Name) || fileInfo.Directory is null)
-            throw new ArgumentException("Specified file information contains an invalid file path.", nameof(fileInformation));
-
-        var fullPath = fileInfo.FullName;
-
-        if (!overwrite && fileInfo.Exists)
-            throw new IOException($"The file '{fullPath}' already exists.");
-
-        fileInfo.Directory.Create();
-
         var megService = Services.GetRequiredService<IMegFileService>();
-        using var tmpFileStream = FileSystem.File.CreateRandomHiddenTemporaryFile(fileInfo.DirectoryName);
-        megService.CreateMegArchive(tmpFileStream, fileInformation.FileVersion, fileInformation.EncryptionData, dataEntries);
-        using var destinationStream = FileSystem.FileStream.New(fullPath, FileMode.Create, FileAccess.Write);
-        tmpFileStream.Seek(0, SeekOrigin.Begin);
-        tmpFileStream.CopyTo(destinationStream);
+        megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, data);
     }
 
-    /// <summary>
-    /// Checks whether the passed file information are valid for this <see cref="IMegBuilder"/>.
-    /// </summary>
-    /// <remarks>
-    /// The default implementation does not validate and always returns <see langword="true"/>.
-    /// </remarks>
-    /// <param name="fileInformation">The file information to validate</param>
-    /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fileInformation"/> is <see langword="null"/>.</exception>
-    public bool ValidateFileInformation(MegFileInformation fileInformation)
+    /// <inheritdoc />
+    protected sealed override bool ValidateFileInformationCore(MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> builderData,
+        out string? failedReason)
     {
-        if (fileInformation == null)
-            throw new ArgumentNullException(nameof(fileInformation));
-        return MegFileInformationValidator.Validate(new(fileInformation, DataEntries)).IsValid;
+        if (builderData.Any(e => e.Encrypted))
+            throw new NotImplementedException("Encryption is currently not supported.");
+
+        var validation = MegFileInformationValidator.Validate(new(fileInformation, DataEntries));
+        failedReason = validation.ToString();
+        return validation.IsValid;
     }
 
     /// <inheritdoc/>

@@ -8,76 +8,26 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Collections;
-using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
-using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
-
-internal sealed class SortedDatModel : DatModel, ISortedDatModel
-{
-    private readonly IReadOnlyDictionary<Crc32, IndexRange> _crcToIndexMap;
-
-    public override DatFileType KeySortOder => DatFileType.OrderedByCrc32;
-
-
-    public SortedDatModel(IList<DatStringEntry> entries) : base(entries)
-    {
-        _crcToIndexMap = Crc32Utilities.ListToCrcIndexRangeTable(Entries);
-    }
-
-    public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 crc)
-    {
-        return Crc32Utilities.ItemsWithCrc(crc, _crcToIndexMap!, Entries);
-    }
-
-    public IUnsortedDatModel ToUnsortedModel()
-    {
-        return new UnsortedDatModel(Entries);
-    }
-}
-
-internal sealed class UnsortedDatModel(IList<DatStringEntry> entries) : DatModel(entries), IUnsortedDatModel
-{
-    public override DatFileType KeySortOder => DatFileType.NotOrdered;
-
-    public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 crc)
-    {
-        if (!ContainsKey(crc))
-            return ReadOnlyFrugalList<DatStringEntry>.Empty;
-
-        var list = new FrugalList<DatStringEntry>();
-        foreach (var entry in Entries)
-        {
-            if (entry.Crc32 == crc)
-                list.Add(entry);
-        }
-        return list.AsReadOnly();
-    }
-
-    public ISortedDatModel ToSortedModel()
-    {
-        var sortedEntries = Crc32Utilities.SortByCrc32(Entries);
-        return new SortedDatModel(sortedEntries);
-    }
-}
 
 internal abstract class DatModel : IDatModel
 {
     protected readonly ReadOnlyCollection<DatStringEntry> Entries;
 
-    private readonly IReadOnlyDictionary<string, string> _lastKeyValueDictionary;
-    private readonly IReadOnlyDictionary<Crc32, string> _lastCrcKeyValueDictionary;
+    private readonly IReadOnlyDictionary<string, string> _firstKeyValueDictionary;
+    private readonly IReadOnlyDictionary<Crc32, string> _firstCrcKeyValueDictionary;
 
 
     public int Count => Entries.Count;
 
     public DatStringEntry this[int index] => Entries[index];
 
-    public ISet<string> Keys => new HashSet<string>(_lastKeyValueDictionary.Keys);
+    public ISet<string> Keys => new HashSet<string>(_firstKeyValueDictionary.Keys);
 
-    public ISet<Crc32> CrcKeys => new HashSet<Crc32>(_lastCrcKeyValueDictionary.Keys);
+    public ISet<Crc32> CrcKeys => new HashSet<Crc32>(_firstCrcKeyValueDictionary.Keys);
 
     public abstract DatFileType KeySortOder { get; }
 
@@ -88,15 +38,17 @@ internal abstract class DatModel : IDatModel
 
         var copyList = new List<DatStringEntry>(entries.Count);
 
-        var lastKeyValueDict = new Dictionary<string, string>();
-        var lastCrcKeyValueDict = new Dictionary<Crc32, string>();
+        var firstKeyValueDict = new Dictionary<string, string>();
+        var firstCrcKeyValueDict = new Dictionary<Crc32, string>();
 
         var sorted = true;
         var lastCrc = default(Crc32);
         foreach (var entry in entries)
         {
-            lastKeyValueDict[entry.Key] = entry.Value;
-            lastCrcKeyValueDict[entry.Crc32] = entry.Value;
+            if (!firstCrcKeyValueDict.ContainsKey(entry.Crc32)) 
+                firstCrcKeyValueDict.Add(entry.Crc32, entry.Value);
+            if (!firstKeyValueDict.ContainsKey(entry.Key)) 
+                firstKeyValueDict.Add(entry.Key, entry.Value);
             copyList.Add(entry);
 
             if (entry.Crc32 <  lastCrc)
@@ -109,8 +61,8 @@ internal abstract class DatModel : IDatModel
             throw new InvalidOperationException("Unable to create sorted DAT model from unsorted entries.");
 
         Entries = new ReadOnlyCollection<DatStringEntry>(copyList);
-        _lastKeyValueDictionary = lastKeyValueDict;
-        _lastCrcKeyValueDictionary = lastCrcKeyValueDict;
+        _firstKeyValueDictionary = firstKeyValueDict;
+        _firstCrcKeyValueDictionary = firstCrcKeyValueDict;
     }
 
     public bool ContainsKey(string key)
@@ -120,7 +72,7 @@ internal abstract class DatModel : IDatModel
 
     public string GetValue(string key)
     {
-        return _lastKeyValueDictionary[key];
+        return _firstKeyValueDictionary[key];
     }
 
     public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
@@ -137,16 +89,16 @@ internal abstract class DatModel : IDatModel
         }
     }
 
-    public bool ContainsKey(Crc32 keyCrc)
+    public bool ContainsKey(Crc32 key)
     {
-        return CrcKeys.Contains(keyCrc);
+        return CrcKeys.Contains(key);
     }
 
-    public abstract ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 crc);
+    public abstract ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);
 
     public ReadOnlyFrugalList<DatStringEntry> EntriesWithKey(string key)
     {
-        if (!_lastKeyValueDictionary.ContainsKey(key))
+        if (!_firstKeyValueDictionary.ContainsKey(key))
             return ReadOnlyFrugalList<DatStringEntry>.Empty;
 
         var crc = Entries.First(e => e.Key.Equals(key)).Crc32;
@@ -155,7 +107,7 @@ internal abstract class DatModel : IDatModel
 
     public string GetValue(Crc32 key)
     {
-        return _lastCrcKeyValueDictionary[key];
+        return _firstCrcKeyValueDictionary[key];
     }
 
     public bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value)

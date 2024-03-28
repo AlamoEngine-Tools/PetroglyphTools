@@ -4,7 +4,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
@@ -13,17 +12,16 @@ using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Converter;
 
-[TestClass]
 public class DatBinaryConverterTest
 {
-    private DatBinaryConverter _converter = null!;
-    private Mock<ICrc32HashingService> _hashingService = null!;
+    private readonly DatBinaryConverter _converter;
+    private readonly Mock<ICrc32HashingService> _hashingService;
 
-    [TestInitialize]
-    public void Setup()
+    public DatBinaryConverterTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
@@ -32,13 +30,13 @@ public class DatBinaryConverterTest
         _converter = new DatBinaryConverter(sc.BuildServiceProvider());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BinaryToModel_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _converter.BinaryToModel(null!));
+        Assert.Throws<ArgumentNullException>(() => _converter.BinaryToModel(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BinaryToModel_Sorted()
     {
         var header = new DatHeader(3);
@@ -65,10 +63,10 @@ public class DatBinaryConverterTest
 
         var model = _converter.BinaryToModel(binary);
 
-        Assert.AreEqual(binary.RecordNumber, model.Count);
-        Assert.AreEqual(DatFileType.OrderedByCrc32, model.KeySortOder);
+        Assert.Equal(binary.RecordNumber, model.Count);
+        Assert.Equal(DatFileType.OrderedByCrc32, model.KeySortOder);
 
-        CollectionAssert.AreEqual(new List<DatStringEntry>
+        Assert.Equal(new List<DatStringEntry>
         {
             new("1", new Crc32(1), "a"),
             new("1", new Crc32(1), "b"),
@@ -76,7 +74,7 @@ public class DatBinaryConverterTest
         }, model.ToList());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BinaryToModel_Unsorted()
     {
         var header = new DatHeader(3);
@@ -103,10 +101,10 @@ public class DatBinaryConverterTest
 
         var model = _converter.BinaryToModel(binary);
 
-        Assert.AreEqual(binary.RecordNumber, model.Count);
-        Assert.AreEqual(DatFileType.NotOrdered, model.KeySortOder);
+        Assert.Equal(binary.RecordNumber, model.Count);
+        Assert.Equal(DatFileType.NotOrdered, model.KeySortOder);
 
-        CollectionAssert.AreEqual(new List<DatStringEntry>
+        Assert.Equal(new List<DatStringEntry>
         {
             new("2", new Crc32(2), "a"),
             new("2", new Crc32(2), "b"),
@@ -114,13 +112,13 @@ public class DatBinaryConverterTest
         }, model.ToList());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ModelToBinary_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _converter.ModelToBinary(null!));
+        Assert.Throws<ArgumentNullException>(() => _converter.ModelToBinary(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ModelToBinary_Ordered()
     {
         var modelEntries = new List<DatStringEntry>
@@ -140,24 +138,24 @@ public class DatBinaryConverterTest
 
         var binary = _converter.ModelToBinary(model.Object);
 
-        Assert.AreEqual(model.Object.Count, binary.RecordNumber);
-        Assert.AreEqual(model.Object.Count, (int)binary.Header.RecordCount);
+        Assert.Equal(model.Object.Count, binary.RecordNumber);
+        Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
 
-        CollectionAssert.AreEqual(new List<IndexTableRecord>
+        Assert.Equal(new List<IndexTableRecord>
         {
             new(new Crc32(1), 1, 3),
             new(new Crc32(1), 1, 1),
             new(new Crc32(2), 1, 260),
         },binary.IndexTable.ToList());
 
-        CollectionAssert.AreEqual(new List<KeyTableRecord>
+        Assert.Equal(new List<KeyTableRecord>
         {
             new ("1", "1"),
             new ("1", "1"),
             new ("2", "2"),
         }, binary.KeyTable.ToList());
 
-        CollectionAssert.AreEqual(new List<ValueTableRecord>
+        Assert.Equal(new List<ValueTableRecord>
         {
             new ("abc"),
             new ("d"),
@@ -165,7 +163,7 @@ public class DatBinaryConverterTest
         }, binary.ValueTable.ToList());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ModelToBinary_Unsorted()
     {
         var modelEntries = new List<DatStringEntry>
@@ -184,29 +182,29 @@ public class DatBinaryConverterTest
 
         var binary = _converter.ModelToBinary(model.Object);
 
-        Assert.AreEqual(model.Object.Count, binary.RecordNumber);
-        Assert.AreEqual(model.Object.Count, (int)binary.Header.RecordCount);
+        Assert.Equal(model.Object.Count, binary.RecordNumber);
+        Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
 
-        CollectionAssert.AreEqual(new List<IndexTableRecord>
+        Assert.Equal(new List<IndexTableRecord>
         {
             new(new Crc32(2), 1, 3),
             new(new Crc32(1), 1, 1),
         }, binary.IndexTable.ToList());
 
-        CollectionAssert.AreEqual(new List<KeyTableRecord>
+        Assert.Equal(new List<KeyTableRecord>
         {
             new ("2", "2"),
             new ("1", "1"),
         }, binary.KeyTable.ToList());
 
-        CollectionAssert.AreEqual(new List<ValueTableRecord>
+        Assert.Equal(new List<ValueTableRecord>
         {
             new ("abc"),
             new ("d"),
         }, binary.ValueTable.ToList());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ModelToBinary_WantsSortedButIsNot_ThrowsArgumentException()
     {
         var modelEntries = new List<DatStringEntry>
@@ -223,6 +221,6 @@ public class DatBinaryConverterTest
         _hashingService.Setup(h => h.GetCrc32("1", Encoding.ASCII)).Returns(new Crc32(1));
         _hashingService.Setup(h => h.GetCrc32("2", Encoding.ASCII)).Returns(new Crc32(2));
 
-        Assert.ThrowsException<ArgumentException>(() => _converter.ModelToBinary(model.Object));
+        Assert.Throws<ArgumentException>(() => _converter.ModelToBinary(model.Object));
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
@@ -11,7 +10,6 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Converters.V1;
 
-[TestClass]
 public class MegBinaryConverterV1Test : MegBinaryConverterTest
 {
     public override bool SupportsEncryption => false;

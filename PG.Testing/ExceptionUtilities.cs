@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace PG.Testing;
 
@@ -18,7 +18,7 @@ public static class ExceptionUtilities
         }
         catch (Exception e)
         {
-            Assert.Fail($"Expected no exception to be thrown but got '{e.GetType().Name}' instead", e);
+            Assert.Fail($"Expected no exception to be thrown but got '{e.GetType().Name}' instead");
             return default;
         }
     }
@@ -40,19 +40,19 @@ public static class ExceptionUtilities
     {
         var exception = Record(action);
         if (exception is null)
-            throw new AssertFailedException($"Expected an exception of type '{type.Name}' but none was thrown.");
+            Assert.Fail($"Expected an exception of type '{type.Name}' but none was thrown.");
         if (exception.GetType() != type)
-            throw new AssertFailedException($"Expected an exception of type '{type.Name}' but '{exception.GetType().Name}' was thrown.");
+            Assert.Fail($"Expected an exception of type '{type.Name}' but '{exception.GetType().Name}' was thrown.");
     }
 
     public static void AssertThrows(Type[] exceptionTypes, Action testCode)
     {
         var exception = Record(testCode);
         if (exception is null)
-            throw new AssertFailedException("Expected an exception but none was thrown.");
+            Assert.Fail("Expected an exception but none was thrown.");
         var exceptionType = exception.GetType();
         if (!exceptionTypes.Contains(exceptionType))
-            throw new AssertFailedException($"Caught wrong exception: {exceptionType.Name}");
+            Assert.Fail($"Caught wrong exception: {exceptionType.Name}");
     }
 
     public static void AssertThrowsAny(Action testCode)
@@ -64,9 +64,9 @@ public static class ExceptionUtilities
     {
         var exception = Record(testCode);
         if (exception is null)
-            throw new AssertFailedException("Expected an exception but none was thrown.");
+            Assert.Fail("Expected an exception but none was thrown.");
         if (exception is not T)
-            throw new AssertFailedException($"Expected any exception of type {typeof(T).Name} but got {exception.GetType().Name}");
+            Assert.Fail($"Expected any exception of type {typeof(T).Name} but got {exception.GetType().Name}");
     }
 
     public static Exception? Record(Action testCode)

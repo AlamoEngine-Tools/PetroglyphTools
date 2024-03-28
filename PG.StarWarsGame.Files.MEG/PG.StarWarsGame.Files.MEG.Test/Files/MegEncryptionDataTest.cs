@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PG.StarWarsGame.Files.MEG.Files;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Files;
 
-[TestClass]
+
 public class MegEncryptionDataTest
 {
     internal static MegEncryptionData CreateRandomData()
@@ -17,7 +18,7 @@ public class MegEncryptionDataTest
         return new MegEncryptionData(key, iv);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_KeyHandling()
     {
         var keyIv = new byte[16];
@@ -29,8 +30,8 @@ public class MegEncryptionDataTest
         keyIv[0] = 0;
         keyIv[1] = 0;
 
-        CollectionAssert.AreNotEqual(keyIv, encData.IV);
-        CollectionAssert.AreNotEqual(keyIv, encData.Key);
+        Assert.NotEqual(keyIv, encData.IV);
+        Assert.NotEqual(keyIv, encData.Key);
 
         var iv = encData.IV;
         iv[0] = 0;
@@ -40,18 +41,18 @@ public class MegEncryptionDataTest
         key[0] = 0;
         key[1] = 0;
 
-        CollectionAssert.AreNotEqual(iv, encData.IV);
-        CollectionAssert.AreNotEqual(key, encData.Key);
+        Assert.NotEqual(iv, encData.IV);
+        Assert.NotEqual(key, encData.Key);
 
         encData.Dispose();
 
-        Assert.IsTrue(encData.IsDisposed);
+        Assert.True(encData.IsDisposed);
 
-        Assert.ThrowsException<ObjectDisposedException>(() => encData.Key);
-        Assert.ThrowsException<ObjectDisposedException>(() => encData.IV);
+        Assert.Throws<ObjectDisposedException>(() => encData.Key);
+        Assert.Throws<ObjectDisposedException>(() => encData.IV);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_InvalidKeySizes()
     {
         var invalidSize = new byte[4];
@@ -59,7 +60,7 @@ public class MegEncryptionDataTest
         RandomNumberGenerator.Create().GetNonZeroBytes(invalidSize);
         RandomNumberGenerator.Create().GetNonZeroBytes(validSize);
 
-        Assert.ThrowsException<ArgumentException>(() => new MegEncryptionData(invalidSize, validSize));
-        Assert.ThrowsException<ArgumentException>(() => new MegEncryptionData(validSize, invalidSize));
+        Assert.Throws<ArgumentException>(() => new MegEncryptionData(invalidSize, validSize));
+        Assert.Throws<ArgumentException>(() => new MegEncryptionData(validSize, invalidSize));
     }
 }

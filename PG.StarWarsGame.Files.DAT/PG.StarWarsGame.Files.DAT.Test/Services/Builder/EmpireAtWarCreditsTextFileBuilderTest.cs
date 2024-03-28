@@ -1,15 +1,14 @@
 ﻿using System;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-[TestClass]
 public class EmpireAtWarCreditsTextFileBuilderTest
 {
     private readonly MockFileSystem _fileSystem = new();
@@ -22,13 +21,13 @@ public class EmpireAtWarCreditsTextFileBuilderTest
         return sc.BuildServiceProvider();
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor()
     {
         var builder = new EmpireAtWarCreditsTextFileBuilder(CreateServiceProvider());
         
-        Assert.AreEqual(BuilderOverrideKind.AllowDuplicate,builder.KeyOverwriteBehavior);
-        Assert.AreEqual(DatFileType.NotOrdered, builder.TargetKeySortOrder);
-        Assert.IsInstanceOfType<EmpireAtWarKeyValidator>(builder.KeyValidator);
+        Assert.Equal(BuilderOverrideKind.AllowDuplicate,builder.KeyOverwriteBehavior);
+        Assert.Equal(DatFileType.NotOrdered, builder.TargetKeySortOrder);
+        Assert.IsType<EmpireAtWarKeyValidator>(builder.KeyValidator);
     }
 }

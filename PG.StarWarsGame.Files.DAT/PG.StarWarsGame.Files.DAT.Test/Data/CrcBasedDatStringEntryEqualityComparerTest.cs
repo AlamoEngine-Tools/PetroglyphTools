@@ -1,45 +1,44 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Commons.Hashing;
+﻿using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Data;
 
-[TestClass]
 public class CrcBasedDatStringEntryEqualityComparerTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Equals()
     {
         var comparer = CrcBasedDatStringEntryEqualityComparer.Instance;
 
-        Assert.IsTrue(comparer.Equals(new DatStringEntry(), new DatStringEntry()));
-        Assert.IsTrue(comparer.Equals(
+        Assert.True(comparer.Equals(new DatStringEntry(), new DatStringEntry()));
+        Assert.True(comparer.Equals(
             new DatStringEntry("1", new Crc32(1), "1", "1"), 
             new DatStringEntry("1", new Crc32(1), "2", "2")));
 
-        Assert.IsTrue(comparer.Equals(
+        Assert.True(comparer.Equals(
             new DatStringEntry("1", new Crc32(1), "1", "1"),
             new DatStringEntry("2", new Crc32(1), "2", "2")));
 
-        Assert.IsFalse(comparer.Equals(
+        Assert.False(comparer.Equals(
             new DatStringEntry("1", new Crc32(1), "1", "1"),
             new DatStringEntry("1", new Crc32(2), "1", "1")));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_GetHashCode()
     {
         var comparer = CrcBasedDatStringEntryEqualityComparer.Instance;
 
-        Assert.AreEqual(
+        Assert.Equal(
             comparer.GetHashCode(new DatStringEntry("1", new Crc32(1), "1", "1")),
             comparer.GetHashCode(new DatStringEntry("1", new Crc32(1), "2", "2")));
 
-        Assert.AreEqual(
+        Assert.Equal(
             comparer.GetHashCode(new DatStringEntry("1", new Crc32(1), "1", "1")),
             comparer.GetHashCode(new DatStringEntry("2", new Crc32(1), "2", "2")));
 
-        Assert.AreNotEqual(
+        Assert.NotEqual(
             comparer.GetHashCode(new DatStringEntry("1", new Crc32(1), "1", "1")),
             comparer.GetHashCode(new DatStringEntry("1", new Crc32(2), "2", "2")));
     }

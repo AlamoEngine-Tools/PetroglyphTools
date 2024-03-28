@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using FluentValidation.TestHelper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Moq;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
@@ -9,13 +9,13 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Binary.Validation.V1;
 using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation.V1;
 
-[TestClass]
 public class MegFileSizeValidatorV1Test
 {
-    [TestMethod]
+    [Fact]
     public void Test__ValidateCore_EmptyMeg()
     {
         var header = new MegHeader(0, 0);
@@ -29,20 +29,20 @@ public class MegFileSizeValidatorV1Test
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
         var validator = new V1SizeValidator();
-        Assert.IsTrue(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.TestValidate(sizeInfo.Object).IsValid);
 
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 1);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size);
-        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
 
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size - 1);
-        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ValidateCore_OneFileWithEmptyData()
     {
         var header = new MegHeader(1, 1);
@@ -62,14 +62,14 @@ public class MegFileSizeValidatorV1Test
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
         var validator = new V1SizeValidator();
-        Assert.IsTrue(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.TestValidate(sizeInfo.Object).IsValid);
 
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 1);
-        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ValidateCore_FilesWithData()
     {
         var header = new MegHeader(2, 2);
@@ -91,9 +91,9 @@ public class MegFileSizeValidatorV1Test
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
         var validator = new V1SizeValidator();
-        Assert.IsTrue(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.TestValidate(sizeInfo.Object).IsValid);
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 3 + 5 + 99);
-        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
     }
 }

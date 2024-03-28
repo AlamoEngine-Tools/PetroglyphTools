@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Services.Builder.Normalization;
+using Xunit;
 
 namespace PG.Commons.Test.Services.Builder.Noramlization;
 
-[TestClass]
 public class BuilderEntryNormalizerTest_String : BuilderEntryNormalizerTest<string>
 {
     protected override string CreateT()
@@ -20,7 +19,6 @@ public class BuilderEntryNormalizerTest_String : BuilderEntryNormalizerTest<stri
     }
 }
 
-[TestClass]
 public class BuilderEntryNormalizerTest_Int32 : BuilderEntryNormalizerTest<int>
 {
     protected override int CreateT()
@@ -39,7 +37,7 @@ public abstract class BuilderEntryNormalizerTest<T> where T : IEquatable<T>
     protected abstract T CreateT();
     protected abstract T CreateTNormalized();
 
-    [TestMethod]
+    [Fact]
     public void TestNormalize_Fails()
     {
         var normalizer = new Mock<BuilderEntryNormalizerBase<T>>(new ServiceCollection().BuildServiceProvider());
@@ -49,17 +47,17 @@ public abstract class BuilderEntryNormalizerTest<T> where T : IEquatable<T>
         normalizer.Setup(n => n.Normalize(It.IsAny<T>()))
             .Callback((T tt) =>
             {
-                Assert.AreEqual(tt, CreateT());
+                Assert.Equal(tt, CreateT());
             })
             .Throws<Exception>(() => new InvalidOperationException("Test"));
 
         var result = normalizer.Object.TryNormalize(ref t, out var message);
-        Assert.IsFalse(result);
-        Assert.AreEqual("Test", message);
-        Assert.ThrowsException<InvalidOperationException>(() => normalizer.Object.Normalize(CreateT()));
+        Assert.False(result);
+        Assert.Equal("Test", message);
+        Assert.Throws<InvalidOperationException>(() => normalizer.Object.Normalize(CreateT()));
     }
 
-    [TestMethod]
+    [Fact]
     public void TestNormalize_Success()
     {
         var normalizer = new Mock<BuilderEntryNormalizerBase<T>>(new ServiceCollection().BuildServiceProvider());
@@ -69,14 +67,14 @@ public abstract class BuilderEntryNormalizerTest<T> where T : IEquatable<T>
         normalizer.Setup(n => n.Normalize(It.IsAny<T>()))
             .Callback((T tt) =>
             {
-                Assert.AreEqual(tt, CreateT());
+                Assert.Equal(tt, CreateT());
             })
             .Returns(CreateTNormalized());
 
         var result = normalizer.Object.TryNormalize(ref t, out var message);
-        Assert.IsTrue(result);
-        Assert.IsNull(message);
+        Assert.True(result);
+        Assert.Null(message);
 
-        Assert.AreEqual(CreateTNormalized(), normalizer.Object.Normalize(CreateT()));
+        Assert.Equal(CreateTNormalized(), normalizer.Object.Normalize(CreateT()));
     }
 }

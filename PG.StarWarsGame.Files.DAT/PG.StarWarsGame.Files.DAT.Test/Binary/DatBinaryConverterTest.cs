@@ -5,25 +5,23 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary;
 
-[TestClass]
 public class DatBinaryConverterTest
 {
     private readonly MockFileSystem _fileSystem = new();
-    private DatBinaryConverter _binaryConverter = null!;
-    private ICrc32HashingService _crc32HashingService = null!;
+    private readonly DatBinaryConverter _binaryConverter;
+    private readonly ICrc32HashingService _crc32HashingService;
 
-    [TestInitialize]
-    public void Prepare()
+    public DatBinaryConverterTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
@@ -36,7 +34,7 @@ public class DatBinaryConverterTest
 
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ToHolder__ValidModelCreatesValidHolder()
     {
         
@@ -70,13 +68,13 @@ public class DatBinaryConverterTest
             }));
 
         var model = _binaryConverter.BinaryToModel(binaryModel);
-        Assert.IsNotNull(model);
+        Assert.NotNull(model);
 
-        Assert.AreEqual(binaryModel.RecordNumber, model.Count);
+        Assert.Equal(binaryModel.RecordNumber, model.Count);
         for (var i = 0; i < binaryModel.RecordNumber; i++)
         {
-            Assert.AreEqual(binaryModel.KeyTable[i].Key, model[i].Key);
-            Assert.AreEqual(binaryModel.ValueTable[i].Value, model[i].Value);
+            Assert.Equal(binaryModel.KeyTable[i].Key, model[i].Key);
+            Assert.Equal(binaryModel.ValueTable[i].Value, model[i].Value);
         }
     }
 }

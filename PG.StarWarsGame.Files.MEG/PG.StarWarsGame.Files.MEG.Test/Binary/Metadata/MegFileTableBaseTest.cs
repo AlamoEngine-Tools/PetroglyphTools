@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
@@ -10,7 +11,7 @@ public abstract class MegFileTableBaseTest
 
     private protected abstract IMegFileDescriptor CreateFile(uint index, uint seed);
 
-    [TestMethod]
+    [Fact]
     public void Test_Enumerate()
     {
         var entry1 = CreateFile(0, 1);
@@ -27,10 +28,10 @@ public abstract class MegFileTableBaseTest
         var list = new List<IMegFileDescriptor>();
         foreach (var record in table)
             list.Add(record);
-        CollectionAssert.AreEqual(recordList, list);
+        Assert.Equal(recordList, list);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Enumerate_ResetEnumerator()
     {
         var entry1 = CreateFile(0, 1);
@@ -46,11 +47,11 @@ public abstract class MegFileTableBaseTest
 
         using var enumerator = table.GetEnumerator();
         enumerator.MoveNext();
-        Assert.AreEqual(table[0], enumerator.Current);
+        Assert.Equal(table[0], enumerator.Current);
 
         enumerator.Reset();
 
         enumerator.MoveNext();
-        Assert.AreEqual(table[0], enumerator.Current);
+        Assert.Equal(table[0], enumerator.Current);
     }
 }

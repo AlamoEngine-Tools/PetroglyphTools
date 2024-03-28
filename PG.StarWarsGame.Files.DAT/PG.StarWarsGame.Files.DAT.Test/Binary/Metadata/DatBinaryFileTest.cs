@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 
-[TestClass]
 public class DatBinaryFileTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new DatBinaryFile(default, null!, new BinaryTable<ValueTableRecord>([]), new BinaryTable<KeyTableRecord>([])));
-        Assert.ThrowsException<ArgumentNullException>(() => new DatBinaryFile(default, new BinaryTable<IndexTableRecord>([]), null!, new BinaryTable<KeyTableRecord>([])));
-        Assert.ThrowsException<ArgumentNullException>(() => new DatBinaryFile(default, new BinaryTable<IndexTableRecord>([]), new BinaryTable<ValueTableRecord>([]), null!));
+        Assert.Throws<ArgumentNullException>(() => new DatBinaryFile(default, null!, new BinaryTable<ValueTableRecord>([]), new BinaryTable<KeyTableRecord>([])));
+        Assert.Throws<ArgumentNullException>(() => new DatBinaryFile(default, new BinaryTable<IndexTableRecord>([]), null!, new BinaryTable<KeyTableRecord>([])));
+        Assert.Throws<ArgumentNullException>(() => new DatBinaryFile(default, new BinaryTable<IndexTableRecord>([]), new BinaryTable<ValueTableRecord>([]), null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_Empty()
     {
         DatHeader header = default;
@@ -28,15 +27,15 @@ public class DatBinaryFileTest
 
         var dat = new DatBinaryFile(header, index, values, keys);
 
-        Assert.AreEqual(0, dat.RecordNumber);
-        Assert.AreSame(index, dat.IndexTable);
-        Assert.AreSame(keys, dat.KeyTable);
-        Assert.AreSame(values, dat.ValueTable);
-        Assert.AreEqual(4, dat.Size);
-        CollectionAssert.AreEqual(BitConverter.GetBytes(dat.RecordNumber), dat.Bytes);
+        Assert.Equal(0, dat.RecordNumber);
+        Assert.Same(index, dat.IndexTable);
+        Assert.Same(keys, dat.KeyTable);
+        Assert.Same(values, dat.ValueTable);
+        Assert.Equal(4, dat.Size);
+        Assert.Equal(BitConverter.GetBytes(dat.RecordNumber), dat.Bytes);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor()
     {
         var header = new DatHeader(2);
@@ -58,11 +57,11 @@ public class DatBinaryFileTest
 
         var dat = new DatBinaryFile(header, index, values, keys);
 
-        Assert.AreEqual(2, dat.RecordNumber);
-        Assert.AreSame(index, dat.IndexTable);
-        Assert.AreSame(keys, dat.KeyTable);
-        Assert.AreSame(values, dat.ValueTable);
-        Assert.AreEqual(header.Size + index.Size + values.Size + keys.Size, dat.Size);
+        Assert.Equal(2, dat.RecordNumber);
+        Assert.Same(index, dat.IndexTable);
+        Assert.Same(keys, dat.KeyTable);
+        Assert.Same(values, dat.ValueTable);
+        Assert.Equal(header.Size + index.Size + values.Size + keys.Size, dat.Size);
 
         var bytes = new List<byte>();
         bytes.AddRange(header.Bytes);
@@ -70,6 +69,6 @@ public class DatBinaryFileTest
         bytes.AddRange(values.Bytes);
         bytes.AddRange(keys.Bytes);
 
-        CollectionAssert.AreEqual(bytes, dat.Bytes);
+        Assert.Equal(bytes, dat.Bytes);
     }
 }

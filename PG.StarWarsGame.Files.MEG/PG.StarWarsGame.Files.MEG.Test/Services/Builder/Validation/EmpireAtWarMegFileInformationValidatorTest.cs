@@ -5,23 +5,23 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Files;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-[TestClass]
+
 public class EmpireAtWarMegFileInformationValidatorTest
 {
-    private EmpireAtWarMegFileInformationValidator _validator = null!;
+    private readonly EmpireAtWarMegFileInformationValidator _validator;
 
-    [TestInitialize]
-    public void Setup()
+    public EmpireAtWarMegFileInformationValidatorTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
@@ -29,20 +29,20 @@ public class EmpireAtWarMegFileInformationValidatorTest
     }
 
 
-    [TestMethod]
-    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(ValidTestData))]
     public void TestValid(MegBuilderFileInformationValidationData builderInfo)
     {
-        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
+        Assert.True(_validator.Validate(builderInfo).IsValid);
     }
 
-    [TestMethod]
-    [DynamicData(nameof(InvalidTestData), typeof(DefaultMegFileInformationValidatorTest), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
-    [DynamicData(nameof(InvalidTestData), typeof(PetroglyphMegFileInformationValidatorTest), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
-    [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(InvalidTestData), MemberType = typeof(DefaultMegFileInformationValidatorTest))]
+    [MemberData(nameof(InvalidTestData), MemberType = typeof(PetroglyphMegFileInformationValidatorTest))]
+    [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(MegBuilderFileInformationValidationData builderInfo)
     {
-        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
+        Assert.False(_validator.Validate(builderInfo).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()

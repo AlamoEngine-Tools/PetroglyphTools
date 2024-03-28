@@ -1,104 +1,101 @@
 using System;
 using System.IO;
 using System.IO.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.Testing;
 using Testably.Abstractions.Testing;
+using Xunit;
 using static PG.StarWarsGame.Files.MEG.Test.Data.Entries.MegDataEntryTest;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
-[TestClass]
+
 public class MegFileExtractorTest
 {
-    private MegFileExtractor _extractor = null!;
+    private readonly MegFileExtractor _extractor;
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IServiceProvider> _serviceProvider = new();
     private readonly Mock<IMegDataStreamFactory> _streamFactory = new();
 
-    [TestInitialize]
-    public void Init()
+    public MegFileExtractorTest()
     {
         _serviceProvider.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(_fileSystem);
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegDataStreamFactory))).Returns(_streamFactory.Object);
         _extractor = new MegFileExtractor(_serviceProvider.Object);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_GetAbsoluteFilePath_Throws()
     {
         var entry = CreateEntry("path");
-        Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(null!, "path", false));
-        Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(entry, null!, false));
-        Assert.ThrowsException<ArgumentException>(() => _extractor.GetAbsoluteFilePath(entry, "", false));
-        Assert.ThrowsException<ArgumentException>(() => _extractor.GetAbsoluteFilePath(entry, "   ", false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(null!, "path", false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(entry, null!, false));
+        Assert.Throws<ArgumentException>(() => _extractor.GetAbsoluteFilePath(entry, "", false));
+        Assert.Throws<ArgumentException>(() => _extractor.GetAbsoluteFilePath(entry, "   ", false));
     }
 
 
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
-    [TestMethod]
-    [DataRow("a.txt", "new", true, "C:\\new\\a.txt")]
-    [DataRow("path/a.txt", "new", true, "C:\\new\\path\\a.txt")]
-    [DataRow("../a.txt", "new", true, "C:\\a.txt")]
-    [DataRow("a.txt", "D:\\", true, "D:\\a.txt")]
-    [DataRow("../a.txt", "D:\\new\\", true, "D:\\a.txt")]
-    [DataRow("D:\\new\\..\\a.txt", "new", true, "D:\\a.txt")]
-    //[DataRow("/a.txt", "D:/new", true, "C:\\a.txt")] // Note that /a.txt is rooted but not absolute (on Windows).
-    //[DataRow("D:a.txt", "D:/new", true, "D:\\a.txt")]
-    [DataRow("a.txt", "new", false, "C:\\new\\a.txt")]
-    [DataRow("path/a.txt", "new", false, "C:\\new\\a.txt")]
-    [DataRow("../a.txt", "new", false, "C:\\new\\a.txt")]
-    [DataRow("a.txt", "D:\\", false, "D:\\a.txt")]
-    [DataRow("..a.txt", "D:\\", false, "D:\\..a.txt")]
-    [DataRow("C:/a.txt", "D:\\", false, "D:\\a.txt")]
+    [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
+    [InlineData("a.txt", "new", true, "C:\\new\\a.txt")]
+    [InlineData("path/a.txt", "new", true, "C:\\new\\path\\a.txt")]
+    [InlineData("../a.txt", "new", true, "C:\\a.txt")]
+    [InlineData("a.txt", "D:\\", true, "D:\\a.txt")]
+    [InlineData("../a.txt", "D:\\new\\", true, "D:\\a.txt")]
+    [InlineData("D:\\new\\..\\a.txt", "new", true, "D:\\a.txt")]
+    //[InlineData("/a.txt", "D:/new", true, "C:\\a.txt")] // Note that /a.txt is rooted but not absolute (on Windows).
+    //[InlineData("D:a.txt", "D:/new", true, "D:\\a.txt")]
+    [InlineData("a.txt", "new", false, "C:\\new\\a.txt")]
+    [InlineData("path/a.txt", "new", false, "C:\\new\\a.txt")]
+    [InlineData("../a.txt", "new", false, "C:\\new\\a.txt")]
+    [InlineData("a.txt", "D:\\", false, "D:\\a.txt")]
+    [InlineData("..a.txt", "D:\\", false, "D:\\..a.txt")]
+    [InlineData("C:/a.txt", "D:\\", false, "D:\\a.txt")]
 
     public void Test_GetAbsoluteFilePath_Windows(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
         var path = _extractor.GetAbsoluteFilePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
-        Assert.AreEqual(expectedPath, path);
+        Assert.Equal(expectedPath, path);
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
-    [TestMethod]
-    [DataRow("a.txt", "new", true, "/new/a.txt")]
-    [DataRow("path/a.txt", "new", true, "/new/path/a.txt")]
-    [DataRow("../a.txt", "new", true, "/a.txt")]
-    [DataRow("a.txt", "/new", true, "/new/a.txt")]
-    [DataRow("../a.txt", "/new/", true, "/a.txt")]
-    [DataRow("/new/../a.txt", "path", true, "/a.txt")]
-    [DataRow("a.txt", "new", false, "/new/a.txt")]
-    [DataRow("path/a.txt", "new", false, "/new/a.txt")]
-    [DataRow("../a.txt", "new", false, "/new/a.txt")]
-    [DataRow("a.txt", "/", false, "/a.txt")]
-    [DataRow("..a.txt", "/", false, "/..a.txt")]
-    [DataRow("/new/a.txt", "/path/", false, "/path/a.txt")]
+    [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
+    [InlineData("a.txt", "new", true, "/new/a.txt")]
+    [InlineData("path/a.txt", "new", true, "/new/path/a.txt")]
+    [InlineData("../a.txt", "new", true, "/a.txt")]
+    [InlineData("a.txt", "/new", true, "/new/a.txt")]
+    [InlineData("../a.txt", "/new/", true, "/a.txt")]
+    [InlineData("/new/../a.txt", "path", true, "/a.txt")]
+    [InlineData("a.txt", "new", false, "/new/a.txt")]
+    [InlineData("path/a.txt", "new", false, "/new/a.txt")]
+    [InlineData("../a.txt", "new", false, "/new/a.txt")]
+    [InlineData("a.txt", "/", false, "/a.txt")]
+    [InlineData("..a.txt", "/", false, "/..a.txt")]
+    [InlineData("/new/a.txt", "/path/", false, "/path/a.txt")]
 
     public void Test_GetAbsoluteFilePath_Linux(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
         var path = _extractor.GetAbsoluteFilePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
-        Assert.AreEqual(expectedPath, path);
+        Assert.Equal(expectedPath, path);
     }
 
-    [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
+    [Fact]
     public void Test_GetAbsoluteFilePath_ThrowsInvalidOperation()
     {
         var entry = CreateEntry("notAFile.txt/");
-        _extractor.GetAbsoluteFilePath(entry, "someRoot", false);
+        Assert.Throws<InvalidOperationException>(() => _extractor.GetAbsoluteFilePath(entry, "someRoot", false));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_GetFileData_ThrowsArgumentNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _extractor.GetFileData(null!));
+        Assert.Throws<ArgumentNullException>(() => _extractor.GetFileData(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_GetFileData_Throws()
     { 
         var entry = CreateEntry("file.txt");
@@ -107,13 +104,13 @@ public class MegFileExtractorTest
 
         _streamFactory.Setup(sf => sf.GetDataStream(location)).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _extractor.GetFileData(location));
+        Assert.Throws<Exception>(() => _extractor.GetFileData(location));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_GetFileData()
     {
-        var megFileDataStream = new MemoryStream(new byte[] { 1, 2, 3, 4 });
+        var megFileDataStream = new MemoryStream([1, 2, 3, 4]);
 
         var entry = CreateEntry("file.txt");
         var meg = new Mock<IMegFile>();
@@ -123,25 +120,25 @@ public class MegFileExtractorTest
         
         var stream = _extractor.GetFileData(location);
         
-        Assert.AreSame(megFileDataStream, stream);
+        Assert.Same(megFileDataStream, stream);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ExtractFile_ThrowsArgumentsIncorrect()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _extractor.ExtractFile(null!, "path", false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.ExtractFile(null!, "path", false));
 
         var entry = CreateEntry("file.txt");
         var meg = new Mock<IMegFile>();
         var location = new MegDataEntryLocationReference(meg.Object, entry);
 
-        Assert.ThrowsException<ArgumentNullException>(() => _extractor.ExtractFile(location, null!, false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.ExtractFile(location, null!, false));
 
-        Assert.ThrowsException<ArgumentException>(() => _extractor.ExtractFile(location, "", false));
-        Assert.ThrowsException<ArgumentException>(() => _extractor.ExtractFile(location, "    ", false));
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, "", false));
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, "    ", false));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ExtractFile_Throws()
     {
         var entry = CreateEntry("file.txt");
@@ -150,10 +147,10 @@ public class MegFileExtractorTest
 
         _streamFactory.Setup(sf => sf.GetDataStream(location)).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _extractor.ExtractFile(location, "file.txt", false));
+        Assert.Throws<Exception>(() => _extractor.ExtractFile(location, "file.txt", false));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ExtractData_NoOverwrite()
     {
         var megFileData = new byte[] { 1, 2, 3, 4 };
@@ -163,17 +160,17 @@ public class MegFileExtractorTest
         var meg = new Mock<IMegFile>();
         var location = new MegDataEntryLocationReference(meg.Object, entry);
 
-        Assert.IsFalse(_fileSystem.File.Exists("file.txt"));
+        Assert.False(_fileSystem.File.Exists("file.txt"));
 
         _streamFactory.Setup(f => f.GetDataStream(location)).Returns(new MemoryStream(megFileData));
 
         var extracted = _extractor.ExtractFile(location, "file.txt", false);
         
-        Assert.IsTrue(extracted);
-        Assert.IsTrue(_fileSystem.File.Exists("file.txt"));
+        Assert.True(extracted);
+        Assert.True(_fileSystem.File.Exists("file.txt"));
 
         var actualFileData = _fileSystem.File.ReadAllBytes("file.txt");
-        CollectionAssert.AreEqual(megFileData, actualFileData);
+        Assert.Equal(megFileData, actualFileData);
 
 
         // Overwrite File with some other data;
@@ -182,13 +179,13 @@ public class MegFileExtractorTest
 
         //Extract again
         extracted = _extractor.ExtractFile(location, "file.txt", false);
-        Assert.IsFalse(extracted);
+        Assert.False(extracted);
 
         actualFileData = _fileSystem.File.ReadAllBytes("file.txt");
-        CollectionAssert.AreEqual(otherFileData, actualFileData);
+        Assert.Equal(otherFileData, actualFileData);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ExtractData_Overwrite()
     {
         var megFileData = new byte[] { 1, 2, 3, 4 };
@@ -198,7 +195,7 @@ public class MegFileExtractorTest
 
         _fileSystem.Initialize().WithFile("a.meg");
 
-        CollectionAssert.AreEqual(existingFileData, _fileSystem.File.ReadAllBytes("file.txt"));
+        Assert.Equal(existingFileData, _fileSystem.File.ReadAllBytes("file.txt"));
 
         var entry = CreateEntry("file.txt");
         var meg = new Mock<IMegFile>();
@@ -207,13 +204,13 @@ public class MegFileExtractorTest
         _streamFactory.Setup(f => f.GetDataStream(location)).Returns(new MemoryStream(megFileData));
 
         var extracted = _extractor.ExtractFile(location, "file.txt", true);
-        Assert.IsTrue(extracted);
+        Assert.True(extracted);
 
         var actualFileData = _fileSystem.File.ReadAllBytes("file.txt");
-        CollectionAssert.AreEqual(megFileData, actualFileData);
+        Assert.Equal(megFileData, actualFileData);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ExtractData_CreateDirectories()
     {
         var megFileData = new byte[] { 1, 2, 3, 4 };
@@ -230,16 +227,15 @@ public class MegFileExtractorTest
        _streamFactory.Setup(f => f.GetDataStream(location)).Returns(new MemoryStream(megFileData));
 
         var extracted = _extractor.ExtractFile(location, filePathWhereToExtract, false);
-        Assert.IsTrue(extracted);
+        Assert.True(extracted);
 
         var actualFileData = _fileSystem.File.ReadAllBytes(filePathWhereToExtract);
-        CollectionAssert.AreEqual(megFileData, actualFileData);
+        Assert.Equal(megFileData, actualFileData);
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
-    [ExpectedException(typeof(ArgumentException))]
-    [DataRow("c:/")]
-    [DataRow("c:")]
+    [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
+    [InlineData("c:/")]
+    [InlineData("c:")]
     public void Test_ExtractData_Throws_IllegalPath_Windows(string filePathWhereToExtract)
     {
         _fileSystem.Initialize().WithFile("a.meg");
@@ -248,12 +244,11 @@ public class MegFileExtractorTest
         var meg = new Mock<IMegFile>();
         var location = new MegDataEntryLocationReference(meg.Object, entry);
 
-        _extractor.ExtractFile(location, filePathWhereToExtract, false);
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, filePathWhereToExtract, false));
     }
 
-    [ExpectedException(typeof(ArgumentException))]
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
-    [DataRow("/")]
+    [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
+    [InlineData("/")]
     public void Test_ExtractData_Throws_IllegalPath_Linux(string filePathWhereToExtract)
     {
         _fileSystem.Initialize().WithFile("a.meg");
@@ -262,6 +257,6 @@ public class MegFileExtractorTest
         var meg = new Mock<IMegFile>();
         var location = new MegDataEntryLocationReference(meg.Object, entry);
 
-        _extractor.ExtractFile(location, filePathWhereToExtract, false);
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, filePathWhereToExtract, false));
     }
 }

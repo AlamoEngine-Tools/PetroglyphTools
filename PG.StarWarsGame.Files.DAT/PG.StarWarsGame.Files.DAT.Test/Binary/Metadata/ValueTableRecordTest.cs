@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 
-[TestClass]
 public class ValueTableRecordTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new ValueTableRecord(null!));
+        Assert.Throws<ArgumentNullException>(() => new ValueTableRecord(null!));
     }
 
-    [TestMethod]
-    [DataRow("")]
-    [DataRow("   ")]
-    [DataRow("test")]
-    [DataRow("testöäü")]
-    [DataRow("test\\r\\n")]
-    [DataRow("👌")]
-    [DataRow("\u00A0")]
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("test")]
+    [InlineData("testöäü")]
+    [InlineData("test\\r\\n")]
+    [InlineData("👌")]
+    [InlineData("\u00A0")]
     public void Test_Ctor(string input)
     {
         var record = new ValueTableRecord(input);
-        Assert.AreEqual(input, record.Value);
-        Assert.AreEqual(input.Length * 2, record.Size); // Value has unicode which is two times the char length.
-        CollectionAssert.AreEqual(Encoding.Unicode.GetBytes(record.Value), record.Bytes);
+        Assert.Equal(input, record.Value);
+        Assert.Equal(input.Length * 2, record.Size); // Value has unicode which is two times the char length.
+        Assert.Equal(Encoding.Unicode.GetBytes(record.Value), record.Bytes);
     }
 }

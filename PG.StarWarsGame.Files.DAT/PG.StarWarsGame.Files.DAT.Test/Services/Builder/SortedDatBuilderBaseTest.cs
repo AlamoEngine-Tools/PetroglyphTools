@@ -2,16 +2,15 @@
 using System.Linq;
 using System.Text;
 using FluentValidation.Results;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-[TestClass]
 public class SortedDatBuilderBaseTest : DatBuilderBaseTest
 {
     protected override Mock<DatBuilderBase> CreateBuilder()
@@ -22,7 +21,7 @@ public class SortedDatBuilderBaseTest : DatBuilderBaseTest
         return builder;
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_Sorted()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
@@ -37,10 +36,10 @@ public class SortedDatBuilderBaseTest : DatBuilderBaseTest
         var result1 = builder.Object.AddEntry("key1", "value1");
 
 
-        Assert.IsTrue(result1.Added);
-        Assert.IsTrue(result2.Added);
+        Assert.True(result1.Added);
+        Assert.True(result2.Added);
 
-        CollectionAssert.AreEqual(
+        Assert.Equal(
             new List<DatStringEntry>
             {
                 new("key1", new Crc32(1), "value1"),
@@ -48,7 +47,7 @@ public class SortedDatBuilderBaseTest : DatBuilderBaseTest
             },
             builder.Object.BuilderData.ToList());
 
-        CollectionAssert.AreEqual(
+        Assert.Equal(
             new List<DatStringEntry>
             {
                 new("key1", new Crc32(1), "value1"),
@@ -56,7 +55,7 @@ public class SortedDatBuilderBaseTest : DatBuilderBaseTest
             },
             builder.Object.SortedEntries.ToList());
 
-        CollectionAssert.AreEqual(
+        Assert.Equal(
             new List<DatStringEntry>
             {
                 new("key2", new Crc32(2), "value2"),

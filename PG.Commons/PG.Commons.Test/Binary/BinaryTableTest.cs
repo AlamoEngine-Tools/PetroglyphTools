@@ -2,12 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Binary;
+using Xunit;
 
 namespace PG.Commons.Test.Binary;
 
-[TestClass]
 public class BinaryTableClassTest : BinaryTableTest<TestClassBinary>
 {
     protected override TestClassBinary CreateFile(uint index, uint seed)
@@ -20,7 +19,6 @@ public class BinaryTableClassTest : BinaryTableTest<TestClassBinary>
     }
 }
 
-[TestClass]
 public class BinaryTableStructTest : BinaryTableTest<TestStructBinary>
 {
     protected override TestStructBinary CreateFile(uint index, uint seed)
@@ -42,16 +40,16 @@ public abstract class BinaryTableTest<T> where T : IBinary
 
     protected abstract T CreateFile(uint index, uint seed);
 
-    [TestMethod]
+    [Fact]
     public void Test_EmptyTable()
     {
         var table = CreateFileTable(new List<T>(0));
-        Assert.AreEqual(0, table.Count);
-        Assert.AreEqual(0, table.Size);
-        CollectionAssert.AreEqual(new byte[] { }, table.Bytes);
+        Assert.Empty(table);
+        Assert.Equal(0, table.Size);
+        Assert.Equal([], table.Bytes);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Size_1_Entry()
     {
         var entry = CreateFile(0, 1);
@@ -59,10 +57,10 @@ public abstract class BinaryTableTest<T> where T : IBinary
         {
             entry
         });
-        Assert.AreEqual(entry.Size, table.Size);
+        Assert.Equal(entry.Size, table.Size);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Size_2_Entries()
     {
         var entry1 = CreateFile(0, 1);
@@ -72,10 +70,10 @@ public abstract class BinaryTableTest<T> where T : IBinary
             entry1,
             entry2
         });
-        Assert.AreEqual(entry1.Size + entry2.Size, table.Size);
+        Assert.Equal(entry1.Size + entry2.Size, table.Size);
     }
 
-    [TestMethod]
+    [Fact]
     public void IFileNameTable_Test_Index()
     {
         var entry1 = CreateFile(0, 1);
@@ -86,13 +84,13 @@ public abstract class BinaryTableTest<T> where T : IBinary
             entry2
         });
 
-        Assert.AreEqual(2, table.Count);
-        Assert.AreEqual(entry1, table[0]);
-        Assert.AreEqual(entry2, table[1]);
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => table[2]);
+        Assert.Equal(2, table.Count);
+        Assert.Equal(entry1, table[0]);
+        Assert.Equal(entry2, table[1]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => table[2]);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Enumerate()
     {
         var entry1 = CreateFile(0, 1);
@@ -109,10 +107,10 @@ public abstract class BinaryTableTest<T> where T : IBinary
         var list = new List<T>();
         foreach (var record in table)
             list.Add(record);
-        CollectionAssert.AreEqual(recordList, list);
+        Assert.Equal(recordList, list);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Enumerate_AsIEnumerable()
     {
         var entry1 = CreateFile(0, 1);
@@ -129,10 +127,10 @@ public abstract class BinaryTableTest<T> where T : IBinary
         var list = new List<T>();
         foreach (T record in table)
             list.Add(record);
-        CollectionAssert.AreEqual(recordList, list);
+        Assert.Equal(recordList, list);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Enumerate_ResetEnumerator()
     {
         var entry1 = CreateFile(0, 1);
@@ -148,15 +146,15 @@ public abstract class BinaryTableTest<T> where T : IBinary
 
         using var enumerator = table.GetEnumerator();
         enumerator.MoveNext();
-        Assert.AreEqual(table[0], enumerator.Current);
+        Assert.Equal(table[0], enumerator.Current);
 
         enumerator.Reset();
 
         enumerator.MoveNext();
-        Assert.AreEqual(table[0], enumerator.Current);
+        Assert.Equal(table[0], enumerator.Current);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Bytes()
     {
         var entry1 = CreateFile(0, 1);
@@ -168,7 +166,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
         });
 
         var expectedTableBytes = entry1.Bytes.Concat(entry2.Bytes).ToArray();
-        CollectionAssert.AreEqual(expectedTableBytes, table.Bytes);
+        Assert.Equal(expectedTableBytes, table.Bytes);
     }
 }
 

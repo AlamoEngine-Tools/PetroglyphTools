@@ -1,42 +1,40 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Abstractions;
-using System.Reflection;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-[TestClass]
+
 public class EmpireAtWarMegDataEntryValidatorTest
 {
-    private EmpireAtWarMegDataEntryValidator _validator = null!;
+    private readonly EmpireAtWarMegDataEntryValidator _validator;
 
-    [TestInitialize]
-    public void Setup()
+    public EmpireAtWarMegDataEntryValidatorTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
         _validator = new EmpireAtWarMegDataEntryValidator(sc.BuildServiceProvider());
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(ValidTestData))]
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
+        Assert.True(_validator.Validate(builderInfo).IsValid);
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(NotNullDataEntryValidatorTest.InvalidTestData), typeof(NotNullDataEntryValidatorTest), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
-    [DynamicData(nameof(PetroglyphMegDataEntryValidatorTest.InvalidTestData), typeof(PetroglyphMegDataEntryValidatorTest), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
-    [DynamicData(nameof(InvalidTestDataEaw), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(NotNullDataEntryValidatorTest.InvalidTestData), MemberType = typeof(NotNullDataEntryValidatorTest))]
+    [MemberData(nameof(PetroglyphMegDataEntryValidatorTest.InvalidTestData), MemberType = typeof(PetroglyphMegDataEntryValidatorTest))]
+    [MemberData(nameof(InvalidTestDataEaw))]
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
+        Assert.False(_validator.Validate(builderInfo).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()
@@ -64,16 +62,5 @@ public class EmpireAtWarMegDataEntryValidatorTest
 
         // We do not allow encrypted entries
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)];
-    }
-
-    public static string GetValidationDataDisplayName(MethodInfo methodInfo, object[] data)
-    {
-        var builderInfo = data[0] as MegFileDataEntryBuilderInfo;
-        var filePath = builderInfo?.FilePath;
-
-        if (filePath is not null && filePath.Length > 30)
-            filePath = filePath.Substring(0, 30) + "..." + filePath.Length + "]";
-
-        return $"{methodInfo.Name} ({filePath}, {builderInfo?.Encrypted})";
     }
 }

@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
@@ -14,19 +13,18 @@ using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
-[TestClass]
 public class DatFileServiceTest
 {
-    private DatFileService _service;
+    private readonly DatFileService _service;
     private readonly MockFileSystem _fileSystem = new();
-    private Mock<IDatBinaryConverter> _converter;
-    private Mock<IDatFileReader> _reader;
+    private readonly Mock<IDatBinaryConverter> _converter;
+    private readonly Mock<IDatFileReader> _reader;
 
-    [TestInitialize]
-    public void Setup()
+    public DatFileServiceTest()
     {
         _converter = new();
         _reader = new();
@@ -37,17 +35,17 @@ public class DatFileServiceTest
         _service = new DatFileService(sc.BuildServiceProvider());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateDatFile_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             _service.CreateDatFile(null!, new List<DatStringEntry>(), DatFileType.NotOrdered));
 
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             _service.CreateDatFile(_fileSystem.FileStream.New("test.dat", FileMode.Create), null!, DatFileType.NotOrdered));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateDatFile_PreserveOrder()
     {
         var binary = CreateUnsortedBinary();
@@ -65,8 +63,8 @@ public class DatFileServiceTest
             .Callback((IDatModel m) =>
             {
                 var entries = m.ToList();
-                Assert.AreEqual(3, m.Count);
-                CollectionAssert.AreEqual(inputEntries, entries);
+                Assert.Equal(3, m.Count);
+                Assert.Equal(inputEntries, entries);
             })
             .Returns(binary);
 
@@ -74,12 +72,12 @@ public class DatFileServiceTest
         _service.CreateDatFile(fs, inputEntries, DatFileType.NotOrdered);
         fs.Dispose();
 
-        CollectionAssert.AreEqual(binary.Bytes, _fileSystem.File.ReadAllBytes("test.dat"));
+        Assert.Equal(binary.Bytes, _fileSystem.File.ReadAllBytes("test.dat"));
 
         _converter.Verify(c => c.ModelToBinary(It.IsAny<IDatModel>()), Times.Once);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateDatFile_SortEntries()
     {
         var binary = CreateUnsortedBinary();
@@ -97,8 +95,8 @@ public class DatFileServiceTest
             .Callback((IDatModel m) =>
             {
                 var entries = m.ToList();
-                Assert.AreEqual(3, m.Count);
-                CollectionAssert.AreEqual(new List<DatStringEntry>
+                Assert.Equal(3, m.Count);
+                Assert.Equal(new List<DatStringEntry>
                 {
                     new("1", new Crc32(1), "value1"),
                     new("2", new Crc32(2), "value2"),
@@ -111,14 +109,14 @@ public class DatFileServiceTest
         _service.CreateDatFile(fs, inputEntries, DatFileType.OrderedByCrc32);
         fs.Dispose();
 
-        CollectionAssert.AreEqual(binary.Bytes, _fileSystem.File.ReadAllBytes("test.dat"));
+        Assert.Equal(binary.Bytes, _fileSystem.File.ReadAllBytes("test.dat"));
 
         _converter.Verify(c => c.ModelToBinary(It.IsAny<IDatModel>()), Times.Once);
     }
 
-    [DataTestMethod]
-    [DataRow(DatFileType.NotOrdered)]
-    [DataRow(DatFileType.OrderedByCrc32)]
+    [Theory]
+    [InlineData(DatFileType.NotOrdered)]
+    [InlineData(DatFileType.OrderedByCrc32)]
     public void Test_GetDatFileType(DatFileType expected)
     {
         _fileSystem.Initialize().WithFile("test.dat").Which(a => a.HasBytesContent([0x1]));
@@ -126,17 +124,17 @@ public class DatFileServiceTest
         _reader.Setup(r => r.PeekFileType(It.IsAny<Stream>()))
             .Callback((Stream s) =>
             {
-                Assert.AreEqual(1, s.Length);
+                Assert.Equal(1, s.Length);
             })
             .Returns(expected);
         
         var sorted = _service.GetDatFileType("test.dat");
 
-        Assert.AreEqual(expected, sorted);
+        Assert.Equal(expected, sorted);
         _reader.Verify(r => r.PeekFileType(It.IsAny<Stream>()), Times.Once);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Load()
     {
         var sortedModel = new Mock<IDatModel>();
@@ -166,17 +164,17 @@ public class DatFileServiceTest
             .Returns(unsortedModel.Object);
 
         var sortedFileHolder =_service.Load("sorted.dat");
-        Assert.AreEqual(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FilePath);
-        Assert.AreEqual(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FileInformation.FilePath);
-        Assert.AreSame(sortedModel.Object, sortedFileHolder.Content);
+        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FilePath);
+        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FileInformation.FilePath);
+        Assert.Same(sortedModel.Object, sortedFileHolder.Content);
 
         var unsortedFileHolder = _service.Load("unsorted.dat");
-        Assert.AreEqual(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FilePath);
-        Assert.AreEqual(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FileInformation.FilePath);
-        Assert.AreSame(unsortedModel.Object, unsortedFileHolder.Content);
+        Assert.Equal(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FilePath);
+        Assert.Equal(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FileInformation.FilePath);
+        Assert.Same(unsortedModel.Object, unsortedFileHolder.Content);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_LoadAs_SortedAsUnsorted()
     {
         var unsortedModel = new Mock<IUnsortedDatModel>();
@@ -200,12 +198,12 @@ public class DatFileServiceTest
 
         var unsortedFileHolder = _service.LoadAs("sorted.dat", DatFileType.NotOrdered);
 
-        Assert.AreEqual(_fileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FilePath);
-        Assert.AreEqual(_fileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FileInformation.FilePath);
-        Assert.AreSame(unsortedModel.Object, unsortedFileHolder.Content);
+        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FilePath);
+        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FileInformation.FilePath);
+        Assert.Same(unsortedModel.Object, unsortedFileHolder.Content);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_LoadAs_UnsortedAsSorted_Throws()
     {
         var unsortedModel = new Mock<IUnsortedDatModel>();
@@ -222,7 +220,7 @@ public class DatFileServiceTest
         _converter.Setup(c => c.BinaryToModel(unsortedBinary))
             .Returns(unsortedModel.Object);
 
-        Assert.ThrowsException<NotSupportedException>(() =>
+        Assert.Throws<NotSupportedException>(() =>
             _service.LoadAs("unsorted.dat", DatFileType.OrderedByCrc32));
     }
 

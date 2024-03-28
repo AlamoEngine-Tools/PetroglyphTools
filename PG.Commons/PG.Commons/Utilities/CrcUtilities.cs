@@ -78,11 +78,11 @@ public static class Crc32Utilities
         if (length == 1)
             return new ReadOnlyFrugalList<T>(items[indexRange.Start]);
 
-        var array = new T[length];
-        for (var i = indexRange.Start; i < length; i++)
-            array[i] = items[i];
+        var list = new List<T>(length);
+        for (var i = indexRange.Start; i < indexRange.Start + length; i++)
+            list.Add(items[i]);
 
-        return new ReadOnlyFrugalList<T>(array);
+        return new ReadOnlyFrugalList<T>(list);
     }
 
     /// <summary>

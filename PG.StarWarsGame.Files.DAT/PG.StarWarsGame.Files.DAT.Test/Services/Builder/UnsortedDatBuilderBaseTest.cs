@@ -2,16 +2,15 @@
 using System.Linq;
 using System.Text;
 using FluentValidation.Results;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-[TestClass]
 public class UnsortedDatBuilderBaseTest : DatBuilderBaseTest
 {
     protected override Mock<DatBuilderBase> CreateBuilder()
@@ -22,7 +21,7 @@ public class UnsortedDatBuilderBaseTest : DatBuilderBaseTest
         return builder;
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_Unsorted()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
@@ -37,10 +36,10 @@ public class UnsortedDatBuilderBaseTest : DatBuilderBaseTest
         var result1 = builder.Object.AddEntry("key1", "value1");
 
 
-        Assert.IsTrue(result1.Added);
-        Assert.IsTrue(result2.Added);
+        Assert.True(result1.Added);
+        Assert.True(result2.Added);
 
-        CollectionAssert.AreEqual(
+        Assert.Equal(
             new List<DatStringEntry>
             {
                 new("key2", new Crc32(2), "value2"),
@@ -48,7 +47,7 @@ public class UnsortedDatBuilderBaseTest : DatBuilderBaseTest
             },
             builder.Object.BuilderData.ToList());
 
-        CollectionAssert.AreEqual(
+        Assert.Equal(
             new List<DatStringEntry>
             {
                 new("key1", new Crc32(1), "value1"),
@@ -56,7 +55,7 @@ public class UnsortedDatBuilderBaseTest : DatBuilderBaseTest
             },
             builder.Object.SortedEntries.ToList());
 
-        CollectionAssert.AreEqual(
+        Assert.Equal(
             new List<DatStringEntry>
             {
                 new("key2", new Crc32(2), "value2"),
@@ -65,7 +64,7 @@ public class UnsortedDatBuilderBaseTest : DatBuilderBaseTest
             builder.Object.Entries.ToList());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_RemoveAllKeys_WithDuplicates()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
@@ -76,8 +75,8 @@ public class UnsortedDatBuilderBaseTest : DatBuilderBaseTest
         builder.Object.AddEntry("key", "value");
         builder.Object.AddEntry("key", "value1");
         
-        Assert.IsTrue(builder.Object.RemoveAllKeys("key"));
+        Assert.True(builder.Object.RemoveAllKeys("key"));
 
-        Assert.AreEqual(0, builder.Object.BuilderData.Count);
+        Assert.Equal(0, builder.Object.BuilderData.Count);
     }
 }

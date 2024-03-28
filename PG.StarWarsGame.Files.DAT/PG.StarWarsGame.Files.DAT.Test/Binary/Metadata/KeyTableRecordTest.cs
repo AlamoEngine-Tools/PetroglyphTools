@@ -1,41 +1,40 @@
 ﻿using System;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 
-[TestClass]
 public class KeyTableRecordTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new KeyTableRecord(null!, ""));
-        Assert.ThrowsException<ArgumentNullException>(() => new KeyTableRecord("", null!));
+        Assert.Throws<ArgumentNullException>(() => new KeyTableRecord(null!, ""));
+        Assert.Throws<ArgumentNullException>(() => new KeyTableRecord("", null!));
     }
 
-    [TestMethod]
-    [DataRow("testöäü")]
-    [DataRow("👌")]
-    [DataRow("\u00A0")]
+    [Theory]
+    [InlineData("testöäü")]
+    [InlineData("👌")]
+    [InlineData("\u00A0")]
     public void Test_Ctor_NotAscii_Throws(string input)
     {
-        Assert.ThrowsException<ArgumentException>(() => new KeyTableRecord(input, input));
+        Assert.Throws<ArgumentException>(() => new KeyTableRecord(input, input));
     }
 
-    [TestMethod]
-    [DataRow("", "randomÖÄÜ")]
-    [DataRow("   ", "randomÖÄÜ")]
-    [DataRow("test", "randomÖÄÜ")]
-    [DataRow("test\tTAB", "randomÖÄÜ")]
-    [DataRow("test\\r\\n", "randomÖÄÜ")]
+    [Theory]
+    [InlineData("", "randomÖÄÜ")]
+    [InlineData("   ", "randomÖÄÜ")]
+    [InlineData("test", "randomÖÄÜ")]
+    [InlineData("test\tTAB", "randomÖÄÜ")]
+    [InlineData("test\\r\\n", "randomÖÄÜ")]
     public void Test_Ctor(string input, string original)
     {
         var record = new KeyTableRecord(input, original);
-        Assert.AreEqual(input, record.Key);
-        Assert.AreEqual(original, record.OriginalKey);
-        Assert.AreEqual(input.Length, record.Size); // Value has unicode which is two times the char length.
-        CollectionAssert.AreEqual(Encoding.ASCII.GetBytes(record.Key), record.Bytes);
+        Assert.Equal(input, record.Key);
+        Assert.Equal(original, record.OriginalKey);
+        Assert.Equal(input.Length, record.Size); // Value has unicode which is two times the char length.
+        Assert.Equal(Encoding.ASCII.GetBytes(record.Key), record.Bytes);
     }
 }

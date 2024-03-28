@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Moq;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
@@ -13,16 +13,16 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 
-[TestClass]
+
 public class MegFileBinaryReaderV1Test
 {
-    private MegFileBinaryReaderV1 _binaryReader = null!;
+    private readonly MegFileBinaryReaderV1 _binaryReader;
 
-    [TestInitialize]
-    public void SetUp()
+    public MegFileBinaryReaderV1Test()
     {
         var fs = new MockFileSystem();
         var sp = new Mock<IServiceProvider>();
@@ -30,7 +30,7 @@ public class MegFileBinaryReaderV1Test
         _binaryReader = new MegFileBinaryReaderV1(sp.Object);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__CreateMegMetadata()
     {
         var header = (MegHeader)default;
@@ -39,12 +39,12 @@ public class MegFileBinaryReaderV1Test
 
         var metadata = _binaryReader.CreateMegMetadata(header, nameTable.Object, fileTable.Object);
 
-        Assert.AreEqual(header, metadata.Header);
-        Assert.AreEqual(nameTable.Object, metadata.FileNameTable);
-        Assert.AreEqual(fileTable.Object, metadata.FileTable);
+        Assert.Equal(header, metadata.Header);
+        Assert.Equal(nameTable.Object, metadata.FileNameTable);
+        Assert.Equal(fileTable.Object, metadata.FileTable);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__BuildMegHeader_NotSupportedFileCount()
     {
         var data = new byte[]
@@ -54,10 +54,10 @@ public class MegFileBinaryReaderV1Test
         };
 
         var reader = new BinaryReader(new MemoryStream(data));
-        Assert.ThrowsException<NotSupportedException>(() => _binaryReader.BuildMegHeader(reader));
+        Assert.Throws<NotSupportedException>(() => _binaryReader.BuildMegHeader(reader));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__BuildMegHeader_NotEqualFile_FileName_Count()
     {
         var data = new byte[]
@@ -67,21 +67,21 @@ public class MegFileBinaryReaderV1Test
         };
 
         var reader = new BinaryReader(new MemoryStream(data));
-        Assert.ThrowsException<BinaryCorruptedException>(() => _binaryReader.BuildMegHeader(reader));
+        Assert.Throws<BinaryCorruptedException>(() => _binaryReader.BuildMegHeader(reader));
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(HeaderTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(HeaderTestData))]
     public void Test__BuildMegHeader_Correct(byte[] data, uint numFiles, uint numNames)
     {
         var reader = new BinaryReader(new MemoryStream(data));
         var header = _binaryReader.BuildMegHeader(reader);
 
-        Assert.AreEqual(numFiles, header.NumFiles);
-        Assert.AreEqual(numNames, header.NumFileNames);
+        Assert.Equal(numFiles, header.NumFiles);
+        Assert.Equal(numNames, header.NumFileNames);
     }
 
-    private static IEnumerable<object[]> HeaderTestData()
+    public static IEnumerable<object[]> HeaderTestData()
     {
         return new[]
         {
@@ -122,8 +122,8 @@ public class MegFileBinaryReaderV1Test
         };
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(FileTableIntegrationTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(FileTableIntegrationTestData))]
     public void Test__BuildFileTable_Integration(
         uint numberEntries,
         byte[] data,
@@ -139,21 +139,21 @@ public class MegFileBinaryReaderV1Test
         var reader = new BinaryReader(new MemoryStream(data));
         var fileTable = _binaryReader.BuildFileTable(reader, header);
 
-        Assert.AreEqual((int)numberEntries, fileTable.Count);
+        Assert.Equal((int)numberEntries, fileTable.Count);
 
         if (fileTable.Count == 0)
             return;
 
         var record = fileTable[dataToInspect];
 
-        Assert.AreEqual(crc32, record.Crc32);
-        Assert.AreEqual(fIndex, record.FileTableRecordIndex);
-        Assert.AreEqual(fSize, record.FileSize);
-        Assert.AreEqual(fOffset, record.FileOffset);
-        Assert.AreEqual(nIndex, record.FileNameIndex);
+        Assert.Equal(crc32, record.Crc32);
+        Assert.Equal(fIndex, record.FileTableRecordIndex);
+        Assert.Equal(fSize, record.FileSize);
+        Assert.Equal(fOffset, record.FileOffset);
+        Assert.Equal(nIndex, record.FileNameIndex);
     }
 
-    private static IEnumerable<object[]> FileTableIntegrationTestData()
+    public static IEnumerable<object[]> FileTableIntegrationTestData()
     {
         return new[]
         {
@@ -198,16 +198,16 @@ public class MegFileBinaryReaderV1Test
     }
 
 
-    [DataTestMethod]
-    [DynamicData(nameof(NotSupportedFileTableRecords), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(NotSupportedFileTableRecords))]
     public void Test__BuildFileTable_NotSupported(uint numberEntries, byte[] data)
     {
         var header = new MegHeader(numberEntries, numberEntries);
         var reader = new BinaryReader(new MemoryStream(data));
-        Assert.ThrowsException<NotSupportedException>(() => _binaryReader.BuildFileTable(reader, header));
+        Assert.Throws<NotSupportedException>(() => _binaryReader.BuildFileTable(reader, header));
     }
 
-    private static IEnumerable<object[]> NotSupportedFileTableRecords()
+    public static IEnumerable<object[]> NotSupportedFileTableRecords()
     {
         return new[]
         {

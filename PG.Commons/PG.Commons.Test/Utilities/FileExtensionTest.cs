@@ -1,23 +1,22 @@
 ﻿using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Utilities;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.Commons.Test.Utilities;
 
-[TestClass]
 public class FileExtensionTest
 {
     private readonly MockFileSystem _fileSystem = new();
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateRandomHiddenTemporaryFile_DirectoryNotExist()
     {
-        Assert.ThrowsException<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile());
-        Assert.ThrowsException<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile("/test"));
+        Assert.Throws<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile());
+        Assert.Throws<DirectoryNotFoundException>(() => _fileSystem.File.CreateRandomHiddenTemporaryFile("/test"));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateRandomHiddenTemporaryFile()
     {
         _fileSystem.Initialize();
@@ -26,8 +25,8 @@ public class FileExtensionTest
         var filePath = tempStream.Name;
 
         // Check file exists
-        Assert.IsTrue(_fileSystem.File.Exists(filePath));
-        Assert.IsTrue(_fileSystem.File.GetAttributes(filePath).HasFlag(FileAttributes.Hidden));
+        Assert.True(_fileSystem.File.Exists(filePath));
+        Assert.True(_fileSystem.File.GetAttributes(filePath).HasFlag(FileAttributes.Hidden));
 
         // Check file read/write
         tempStream.Write([1,2,3], 0, 3);
@@ -35,14 +34,14 @@ public class FileExtensionTest
 
         var resultBuffer = new byte[3];
         _ = tempStream.Read(resultBuffer, 0, 3);
-        CollectionAssert.AreEqual(new byte[]{1,2,3}, resultBuffer);
+        Assert.Equal([1,2,3], resultBuffer);
 
         // Check deleted
         tempStream.Dispose();
-        Assert.IsFalse(_fileSystem.File.Exists(filePath));
+        Assert.False(_fileSystem.File.Exists(filePath));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateRandomHiddenTemporaryFile_FromDirectory()
     {
         _fileSystem.Initialize().WithSubdirectory(_fileSystem.Path.GetFullPath("test"));
@@ -50,11 +49,11 @@ public class FileExtensionTest
         var tempStream = _fileSystem.File.CreateRandomHiddenTemporaryFile(_fileSystem.Path.GetFullPath("test"));
         var filePath = tempStream.Name;
 
-        Assert.IsTrue(filePath.StartsWith(_fileSystem.Path.GetFullPath("test")));
+        Assert.True(filePath.StartsWith(_fileSystem.Path.GetFullPath("test")));
 
         // Check file exists
-        Assert.IsTrue(_fileSystem.File.Exists(filePath));
-        Assert.IsTrue(_fileSystem.File.GetAttributes(filePath).HasFlag(FileAttributes.Hidden));
+        Assert.True(_fileSystem.File.Exists(filePath));
+        Assert.True(_fileSystem.File.GetAttributes(filePath).HasFlag(FileAttributes.Hidden));
 
         // Check file read/write
         tempStream.Write([1, 2, 3], 0, 3);
@@ -62,10 +61,10 @@ public class FileExtensionTest
 
         var resultBuffer = new byte[3];
         _ = tempStream.Read(resultBuffer, 0, 3);
-        CollectionAssert.AreEqual(new byte[] { 1, 2, 3 }, resultBuffer);
+        Assert.Equal([1, 2, 3], resultBuffer);
 
         // Check deleted
         tempStream.Dispose();
-        Assert.IsFalse(_fileSystem.File.Exists(filePath));
+        Assert.False(_fileSystem.File.Exists(filePath));
     }
 }

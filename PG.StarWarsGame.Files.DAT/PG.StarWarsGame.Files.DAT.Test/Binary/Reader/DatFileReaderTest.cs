@@ -4,50 +4,48 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.Testing;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Reader;
 
-[TestClass]
 public class DatFileReaderTest
 {
-    private DatFileReader _reader = null!;
+    private readonly DatFileReader _reader;
 
-    [TestInitialize]
-    public void Setup()
+    public DatFileReaderTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
         _reader = new DatFileReader(sc.BuildServiceProvider());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_PeekFileType_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _reader.PeekFileType(null!));
+        Assert.Throws<ArgumentNullException>(() => _reader.PeekFileType(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_PeekFileType_ThrowsBinaryCorruptedException()
     {
-        Assert.ThrowsException<BinaryCorruptedException>(() => _reader.PeekFileType(new MemoryStream()));
+        Assert.Throws<BinaryCorruptedException>(() => _reader.PeekFileType(new MemoryStream()));
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(DatFileTypeTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(DatFileTypeTestData))]
     public void Test_PeekFileType(Stream stream, DatFileType expectedFileType)
     {
         var fileType = _reader.PeekFileType(stream);
-        Assert.AreEqual(expectedFileType, fileType);
+        Assert.Equal(expectedFileType, fileType);
     }
 
-    private static IEnumerable<object[]> DatFileTypeTestData()
+    public static IEnumerable<object[]> DatFileTypeTestData()
     {
         return new[]
         {
@@ -122,38 +120,38 @@ public class DatFileReaderTest
         };
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ReadBinary_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _reader.ReadBinary(null!));
+        Assert.Throws<ArgumentNullException>(() => _reader.ReadBinary(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ReadBinary_ThrowsBinaryCorruptedException()
     {
-        Assert.ThrowsException<BinaryCorruptedException>(() => _reader.ReadBinary(new MemoryStream()));
+        Assert.Throws<BinaryCorruptedException>(() => _reader.ReadBinary(new MemoryStream()));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ReadBinary_Integration()
     {
         ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"));
         ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"));
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(DatReadTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(DatReadTestData))]
     public void Test_ReadBinary(Stream stream, ExpectedDatData expectedDat)
     {
         var binary = _reader.ReadBinary(stream);
-        Assert.AreEqual(expectedDat.Number, binary.RecordNumber);
-        CollectionAssert.AreEqual(expectedDat.Checksums.ToList(), binary.IndexTable.Select(k => k.Crc32).ToList());
-        CollectionAssert.AreEqual(expectedDat.Keys.ToList(), binary.KeyTable.Select(k => k.Key).ToList());
-        CollectionAssert.AreEqual(expectedDat.OriginalKeys.ToList(), binary.KeyTable.Select(k => k.OriginalKey).ToList());
-        CollectionAssert.AreEqual(expectedDat.Values.ToList(), binary.ValueTable.Select(k => k.Value).ToList());
+        Assert.Equal(expectedDat.Number, binary.RecordNumber);
+        Assert.Equal(expectedDat.Checksums.ToList(), binary.IndexTable.Select(k => k.Crc32).ToList());
+        Assert.Equal(expectedDat.Keys.ToList(), binary.KeyTable.Select(k => k.Key).ToList());
+        Assert.Equal(expectedDat.OriginalKeys.ToList(), binary.KeyTable.Select(k => k.OriginalKey).ToList());
+        Assert.Equal(expectedDat.Values.ToList(), binary.ValueTable.Select(k => k.Value).ToList());
     }
 
-    private static IEnumerable<object[]> DatReadTestData()
+    public static IEnumerable<object[]> DatReadTestData()
     {
         return new[]
         {

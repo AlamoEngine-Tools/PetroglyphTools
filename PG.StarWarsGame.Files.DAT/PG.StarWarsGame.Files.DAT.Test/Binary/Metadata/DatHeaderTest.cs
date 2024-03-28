@@ -1,27 +1,26 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 
-[TestClass]
 public class DatHeaderTest
 {
-    [TestMethod]
-    [DataRow(0u)]
-    [DataRow(1u)]
-    [DataRow(100u)]
+    [Theory]
+    [InlineData(0u)]
+    [InlineData(1u)]
+    [InlineData(100u)]
     public void Test_Ctor(uint number)
     {
         var header = new DatHeader(number);
-        Assert.AreEqual(number, header.RecordCount);
-        Assert.AreEqual(sizeof(uint), header.Size);
-        CollectionAssert.AreEqual(BitConverter.GetBytes(header.RecordCount), header.Bytes);
+        Assert.Equal(number, header.RecordCount);
+        Assert.Equal(sizeof(uint), header.Size);
+        Assert.Equal(BitConverter.GetBytes(header.RecordCount), header.Bytes);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_ThrowsArgumentOutOfRangeException()
     {
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new DatHeader((uint)int.MaxValue + 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new DatHeader((uint)int.MaxValue + 1));
     }
 }

@@ -1,27 +1,26 @@
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
-[TestClass]
 public class MegDataEntryLocationReferenceTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             new MegDataEntryLocationReference(null!, MegDataEntryTest.CreateEntry("path")));
 
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             new MegDataEntryLocationReference(new Mock<IMegFile>().Object, null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor()
     {
         var meg = new Mock<IMegFile>().Object;
@@ -29,11 +28,11 @@ public class MegDataEntryLocationReferenceTest
 
         var reference = new MegDataEntryLocationReference(meg, entry);
 
-        Assert.AreSame(meg, reference.MegFile);
-        Assert.AreSame(entry, reference.DataEntry);
+        Assert.Same(meg, reference.MegFile);
+        Assert.Same(entry, reference.DataEntry);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Equals_Hashcode()
     {
         var meg = new Mock<IMegFile>().Object;
@@ -46,21 +45,21 @@ public class MegDataEntryLocationReferenceTest
         var otherNotEqualMeg = new MegDataEntryLocationReference(new Mock<IMegFile>().Object, entry);
         var otherNotEqualEntry = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("other"));
 
-        Assert.AreEqual(reference, reference);
-        Assert.AreEqual(reference, otherEqual);
-        Assert.AreEqual(reference.GetHashCode(), otherEqual.GetHashCode());
+        Assert.Equal(reference, reference);
+        Assert.Equal(reference, otherEqual);
+        Assert.Equal(reference.GetHashCode(), otherEqual.GetHashCode());
 
-        Assert.IsFalse(reference.Equals(null));
-        Assert.AreNotEqual(reference, (object?)null);
-        Assert.AreNotEqual(reference, new object());
-        Assert.AreNotEqual(reference, otherNotEqualMeg);
-        Assert.AreNotEqual(reference, otherNotEqualEntry);
+        Assert.False(reference.Equals(null));
+        Assert.NotEqual((object?)null, reference);
+        Assert.NotEqual(reference, new object());
+        Assert.NotEqual(reference, otherNotEqualMeg);
+        Assert.NotEqual(reference, otherNotEqualEntry);
 
-        Assert.AreNotEqual(reference.GetHashCode(), otherNotEqualMeg.GetHashCode());
-        Assert.AreNotEqual(reference.GetHashCode(), otherNotEqualEntry.GetHashCode());
+        Assert.NotEqual(reference.GetHashCode(), otherNotEqualMeg.GetHashCode());
+        Assert.NotEqual(reference.GetHashCode(), otherNotEqualEntry.GetHashCode());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Exists()
     {
         var entry = MegDataEntryTest.CreateEntry("path");
@@ -72,7 +71,7 @@ public class MegDataEntryLocationReferenceTest
         var locationExists = new MegDataEntryLocationReference(meg.Object, entry);
         var locationNotExists = new MegDataEntryLocationReference(meg.Object, MegDataEntryTest.CreateEntry("other"));
 
-        Assert.IsTrue(locationExists.Exists);
-        Assert.IsFalse(locationNotExists.Exists);
+        Assert.True(locationExists.Exists);
+        Assert.False(locationNotExists.Exists);
     }
 }

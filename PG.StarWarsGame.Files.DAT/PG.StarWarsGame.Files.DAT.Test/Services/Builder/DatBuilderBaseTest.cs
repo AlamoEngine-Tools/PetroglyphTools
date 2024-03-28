@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
@@ -15,6 +14,7 @@ using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 using PG.Testing;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
@@ -37,7 +37,7 @@ public abstract class DatBuilderBaseTest
         return sc.BuildServiceProvider();
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor()
     {
         var sc = new ServiceCollection();
@@ -46,13 +46,13 @@ public abstract class DatBuilderBaseTest
 
         var builder = builderMock.Object;
 
-        Assert.IsNotNull(builder.KeyValidator);
-        Assert.IsNotNull(builder.BuilderData);
-        Assert.IsNotNull(builder.SortedEntries);
-        Assert.IsNotNull(builder.Entries);
+        Assert.NotNull(builder.KeyValidator);
+        Assert.NotNull(builder.BuilderData);
+        Assert.NotNull(builder.SortedEntries);
+        Assert.NotNull(builder.Entries);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_IsKeyValid()
     {
         KeyValidator.SetupSequence(v => v.Validate("key"))
@@ -60,14 +60,14 @@ public abstract class DatBuilderBaseTest
             .Returns(new ValidationResult([new ValidationFailure("error", "error")]));
         var builder = CreateBuilder();
 
-        Assert.ThrowsException<ArgumentNullException>(() => builder.Object.IsKeyValid(null!));
-        Assert.IsTrue(builder.Object.IsKeyValid("key"));
-        Assert.IsFalse(builder.Object.IsKeyValid("key"));
+        Assert.Throws<ArgumentNullException>(() => builder.Object.IsKeyValid(null!));
+        Assert.True(builder.Object.IsKeyValid("key"));
+        Assert.False(builder.Object.IsKeyValid("key"));
     }
 
     #region Clear/Remove/Dispose
 
-    [TestMethod]
+    [Fact]
     public void Test_Clear()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
@@ -76,18 +76,18 @@ public abstract class DatBuilderBaseTest
        
 
         var entries = builder.Object.BuilderData;
-        Assert.AreEqual(0, entries.Count);
+        Assert.Empty(entries);
 
         builder.Object.AddEntry("key", "value");
 
-        Assert.AreEqual(1, builder.Object.BuilderData.Count);
+        Assert.Single(builder.Object.BuilderData);
 
         builder.Object.Clear();
 
-        Assert.AreEqual(0, builder.Object.BuilderData.Count);
+        Assert.Empty(builder.Object.BuilderData);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Remove()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
@@ -99,27 +99,26 @@ public abstract class DatBuilderBaseTest
         builder.Object.AddEntry("key", "value");
         builder.Object.AddEntry("key1", "other");
 
-        Assert.AreEqual(2, builder.Object.BuilderData.Count);
+        Assert.Equal(2, builder.Object.BuilderData.Count);
 
-        Assert.IsFalse(builder.Object.Remove(default));
-        Assert.IsFalse(builder.Object.RemoveAllKeys("key3"));
+        Assert.False(builder.Object.Remove(default));
+        Assert.False(builder.Object.RemoveAllKeys("key3"));
 
-        Assert.AreEqual(2, builder.Object.BuilderData.Count);
+        Assert.Equal(2, builder.Object.BuilderData.Count);
 
-        Assert.IsTrue(builder.Object.Remove(new DatStringEntry("key1", new Crc32(0), "other")));
+        Assert.True(builder.Object.Remove(new DatStringEntry("key1", new Crc32(0), "other")));
 
-        CollectionAssert.AreEqual(new List<DatStringEntry>
-            {
-                new("key", new Crc32(0), "value"),
-            }, 
+        Assert.Equal([
+                new("key", new Crc32(0), "value")
+            ], 
             builder.Object.BuilderData.ToList());
 
-        Assert.IsTrue(builder.Object.RemoveAllKeys("key"));
+        Assert.True(builder.Object.RemoveAllKeys("key"));
 
-        Assert.AreEqual(0, builder.Object.BuilderData.Count);
+        Assert.Empty(builder.Object.BuilderData);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Dispose_ThrowsOnAddingMethods()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
@@ -128,9 +127,9 @@ public abstract class DatBuilderBaseTest
 
         builder.Object.Dispose();
 
-        Assert.AreEqual(0, builder.Object.BuilderData.Count);
+        Assert.Empty(builder.Object.BuilderData);
 
-        Assert.ThrowsException<ObjectDisposedException>(() => builder.Object.AddEntry("key", "value"));
+        Assert.Throws<ObjectDisposedException>(() => builder.Object.AddEntry("key", "value"));
         
         ExceptionUtilities.AssertDoesNotThrowException(() => builder.Object.Entries);
         ExceptionUtilities.AssertDoesNotThrowException(builder.Object.Clear);
@@ -144,7 +143,7 @@ public abstract class DatBuilderBaseTest
 
     #region AddEntry
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_Throws()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
@@ -152,11 +151,11 @@ public abstract class DatBuilderBaseTest
 
         var builder = CreateBuilder();
 
-        Assert.ThrowsException<ArgumentNullException>(() => builder.Object.AddEntry(null!, "value"));
-        Assert.ThrowsException<ArgumentNullException>(() => builder.Object.AddEntry("key", null!));
+        Assert.Throws<ArgumentNullException>(() => builder.Object.AddEntry(null!, "value"));
+        Assert.Throws<ArgumentNullException>(() => builder.Object.AddEntry("key", null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
@@ -168,14 +167,14 @@ public abstract class DatBuilderBaseTest
 
         var result = builder.Object.AddEntry("key", "value");
 
-        Assert.IsTrue(result.Added);
-        Assert.IsFalse(result.WasOverwrite);
-        Assert.AreEqual(AddEntryState.Added, result.Status);
-        Assert.AreEqual(1, builder.Object.BuilderData.Count);
-        Assert.AreEqual("value", builder.Object.BuilderData.First().Value);
+        Assert.True(result.Added);
+        Assert.False(result.WasOverwrite);
+        Assert.Equal(AddEntryState.Added, result.Status);
+        Assert.Single(builder.Object.BuilderData);
+        Assert.Equal("value", builder.Object.BuilderData.First().Value);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_DoNotAllowDuplicates()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
@@ -188,13 +187,13 @@ public abstract class DatBuilderBaseTest
         builder.Object.AddEntry("key", "value");
         var result = builder.Object.AddEntry("key", "value1");
 
-        Assert.IsFalse(result.Added);
-        Assert.AreEqual(AddEntryState.NotAddedDuplicate, result.Status);
-        Assert.AreEqual(1, builder.Object.BuilderData.Count);
-        Assert.AreEqual("value", builder.Object.BuilderData.First().Value);
+        Assert.False(result.Added);
+        Assert.Equal(AddEntryState.NotAddedDuplicate, result.Status);
+        Assert.Single( builder.Object.BuilderData);
+        Assert.Equal("value", builder.Object.BuilderData.First().Value);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_OverwriteDuplicates()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
@@ -207,15 +206,15 @@ public abstract class DatBuilderBaseTest
         builder.Object.AddEntry("key", "value");
         var result = builder.Object.AddEntry("key", "value1");
 
-        Assert.IsTrue(result.Added);
-        Assert.IsTrue(result.WasOverwrite);
-        Assert.IsNotNull(result.OverwrittenEntry);
-        Assert.AreEqual(AddEntryState.AddedDuplicate, result.Status);
-        Assert.AreEqual(1, builder.Object.BuilderData.Count);
-        Assert.AreEqual("value1", builder.Object.BuilderData.First().Value);
+        Assert.True(result.Added);
+        Assert.True(result.WasOverwrite);
+        Assert.NotNull(result.OverwrittenEntry);
+        Assert.Equal(AddEntryState.AddedDuplicate, result.Status);
+        Assert.Single(builder.Object.BuilderData);
+        Assert.Equal("value1", builder.Object.BuilderData.First().Value);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_AllowDuplicates()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
@@ -231,17 +230,17 @@ public abstract class DatBuilderBaseTest
         builder.Object.AddEntry("key1", "other");
         var result = builder.Object.AddEntry("key", "value1");
 
-        Assert.IsTrue(result.Added);
-        Assert.IsFalse(result.WasOverwrite);
-        Assert.IsNull(result.OverwrittenEntry);
-        Assert.AreEqual(AddEntryState.AddedDuplicate, result.Status);
-        Assert.AreEqual(3, builder.Object.BuilderData.Count);
+        Assert.True(result.Added);
+        Assert.False(result.WasOverwrite);
+        Assert.Null(result.OverwrittenEntry);
+        Assert.Equal(AddEntryState.AddedDuplicate, result.Status);
+        Assert.Equal(3, builder.Object.BuilderData.Count);
 
-        Assert.AreEqual("value", builder.Object.BuilderData.First(e => e.Key == "key").Value);
-        Assert.AreEqual("value1", builder.Object.BuilderData.Last(e => e.Key == "key").Value);
+        Assert.Equal("value", builder.Object.BuilderData.First(e => e.Key == "key").Value);
+        Assert.Equal("value1", builder.Object.BuilderData.Last(e => e.Key == "key").Value);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_PerformsEncoding()
     {
         KeyValidator.Setup(v => v.Validate("key???"))
@@ -251,14 +250,14 @@ public abstract class DatBuilderBaseTest
 
         var result = builder.Object.AddEntry("keyÖÄÜ", "value");
 
-        Assert.IsTrue(result.Added);
+        Assert.True(result.Added);
 
-        Assert.AreEqual("key???", result.AddedEntry.Value.Key);
-        Assert.AreEqual("keyÖÄÜ", result.AddedEntry.Value.OriginalKey);
+        Assert.Equal("key???", result.AddedEntry.Value.Key);
+        Assert.Equal("keyÖÄÜ", result.AddedEntry.Value.OriginalKey);
     }
 
 
-    [TestMethod]
+    [Fact]
     public void Test_AddEntry_InvalidKey()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
@@ -270,13 +269,13 @@ public abstract class DatBuilderBaseTest
 
         var result = builder.Object.AddEntry("key", "value");
 
-        Assert.IsFalse(result.Added);
-        Assert.AreEqual(AddEntryState.InvalidKey, result.Status);
+        Assert.False(result.Added);
+        Assert.Equal(AddEntryState.InvalidKey, result.Status);
     }
 
     #endregion
 
-    [TestMethod]
+    [Fact]
     public void Test_Build()
     {
         var builder = CreateBuilder();
@@ -295,6 +294,6 @@ public abstract class DatBuilderBaseTest
             FilePath = "test.dat"
         }, false);
 
-        CollectionAssert.AreEqual(new byte[]{1,2,3}, FileSystem.File.ReadAllBytes("test.dat"));
+        Assert.Equal(new byte[]{1,2,3}, FileSystem.File.ReadAllBytes("test.dat"));
     }
 }

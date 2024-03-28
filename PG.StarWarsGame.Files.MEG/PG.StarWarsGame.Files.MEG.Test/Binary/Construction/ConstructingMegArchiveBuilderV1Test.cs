@@ -1,12 +1,10 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Construction;
 
-[TestClass]
 public class ConstructingMegArchiveBuilderV1Test : ConstructingMegArchiveBuilderBaseTest
 {
     private protected override ConstructingMegArchiveBuilderBase CreateService(IServiceProvider serviceProvider)

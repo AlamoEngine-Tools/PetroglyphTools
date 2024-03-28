@@ -86,7 +86,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         throw new NotImplementedException();
     }
 
-    public IDatModel Merge(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
+    public IDatModel MergeUnsorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
         UnsortedDatMergeOptions mergeOptions = UnsortedDatMergeOptions.ByIndex)
     {
         if (baseDatModel == null)
@@ -210,7 +210,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
 
 //internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(serviceProvider), IDatModelService
 //{
-//    public IDatModel Merge(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
+//    public IDatModel MergeUnsorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
 //        DatMergeOptions mergeOptions = DatMergeOptions.KeepExisting)
 //    {
 //        if (baseDatModel == null) 

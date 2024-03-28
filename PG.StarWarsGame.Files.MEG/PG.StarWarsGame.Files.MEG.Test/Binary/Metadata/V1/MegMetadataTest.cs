@@ -4,31 +4,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
-[TestClass]
 public class MegMetadataTest
 {
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__ThrowsArgumentNullException()
     {
         var fileTable = new MegFileTable(new List<MegFileTableRecord>
             { new(default, 0, 0, 0, 0) });
-        Assert.ThrowsException<ArgumentNullException>(() => new MegMetadata(default, null!, fileTable));
+        Assert.Throws<ArgumentNullException>(() => new MegMetadata(default, null!, fileTable));
 
 
         var fileNameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>
             { MegFileNameTableRecordTest.CreateNameRecord("123") });
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             new MegMetadata(default, fileNameTable, null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__ThrowsArgumentException()
     {
         var header1 = new MegHeader(1, 1);
@@ -43,12 +42,12 @@ public class MegMetadataTest
             MegFileNameTableRecordTest.CreateNameRecord("456")
         });
 
-        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(header2, fileNameTable1, fileTable1));
-        Assert.ThrowsException<ArgumentException>(() => new MegMetadata(header1, fileNameTable2, fileTable1));
+        Assert.Throws<ArgumentException>(() => new MegMetadata(header2, fileNameTable1, fileTable1));
+        Assert.Throws<ArgumentException>(() => new MegMetadata(header1, fileNameTable2, fileTable1));
     }
 
 
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__Correct()
     {
         new MegMetadata(
@@ -56,10 +55,10 @@ public class MegMetadataTest
             new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("123") }),
             new MegFileTable(new List<MegFileTableRecord> { default }));
 
-        Assert.IsTrue(true);
+        Assert.True(true);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_SizeBytes_WithContent()
     {
         var header = new MegHeader(1, 1);
@@ -74,11 +73,11 @@ public class MegMetadataTest
             .ToArray();
 
 
-        Assert.AreEqual(header.Size + fileNameTable.Size + fileTable.Size, metadata.Size);
-        CollectionAssert.AreEqual(expectedBytes, metadata.Bytes);
+        Assert.Equal(header.Size + fileNameTable.Size + fileTable.Size, metadata.Size);
+        Assert.Equal(expectedBytes, metadata.Bytes);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_SizeBytes_Empty()
     {
         var header = new MegHeader(0, 0);
@@ -89,7 +88,7 @@ public class MegMetadataTest
 
         var expectedBytes = header.Bytes.ToArray();
 
-        Assert.AreEqual(header.Size, metadata.Size);
-        CollectionAssert.AreEqual(expectedBytes, metadata.Bytes);
+        Assert.Equal(header.Size, metadata.Size);
+        Assert.Equal(expectedBytes, metadata.Bytes);
     }
 }

@@ -1,26 +1,25 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder.Validation;
 
-[TestClass]
 public class EmpireAtWarKeyValidatorTest
 {
     private readonly EmpireAtWarKeyValidator _validator = new();
 
-    [TestMethod]
-    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(ValidTestData))]
     public void TestValid(string key)
     {
-        Assert.IsTrue(_validator.Validate(key).IsValid);
+        Assert.True(_validator.Validate(key).IsValid);
     }
 
-    [TestMethod]
-    [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(string key)
     {
-        Assert.IsFalse(_validator.Validate(key).IsValid);
+        Assert.False(_validator.Validate(key).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()

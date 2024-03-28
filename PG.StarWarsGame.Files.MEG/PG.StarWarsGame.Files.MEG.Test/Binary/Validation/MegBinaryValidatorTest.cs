@@ -1,25 +1,23 @@
 using System;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
 
-[TestClass]
 public class MegBinaryValidatorTest
 {
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
+    [Fact]
     public void Test_Ctor_Throws()
     {
-        new MegBinaryValidator(null!);
+        Assert.Throws<ArgumentNullException>(() => new MegBinaryValidator(null!));
     }
 
     
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Composite_Valid()
     {
         var fileTable = new Mock<IMegFileTable>();
@@ -35,10 +33,10 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // true | true --> true
-        Assert.IsTrue(validator.TestValidate(info.Object).IsValid);
+        Assert.True(validator.TestValidate(info.Object).IsValid);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Composite_Invalid1()
     {
         var fileTable = new Mock<IMegFileTable>();
@@ -54,10 +52,10 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // false | true --> false
-        Assert.IsFalse(validator.TestValidate(info.Object).IsValid);
+        Assert.False(validator.TestValidate(info.Object).IsValid);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Composite_Invalid2()
     {
         var fileTable = new Mock<IMegFileTable>();
@@ -73,10 +71,10 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // true | false --> false
-        Assert.IsFalse(validator.TestValidate(info.Object).IsValid);
+        Assert.False(validator.TestValidate(info.Object).IsValid);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Composite_Invalid3()
     {
         var fileTable = new Mock<IMegFileTable>();
@@ -92,16 +90,12 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // false | false --> false
-        Assert.IsFalse(validator.TestValidate(info.Object).IsValid);
+        Assert.False(validator.TestValidate(info.Object).IsValid);
     }
 
-    private class ValidSizeValidator : AbstractValidator<IMegBinaryValidationInformation>, IMegFileSizeValidator
-    {
-    }
+    private class ValidSizeValidator : AbstractValidator<IMegBinaryValidationInformation>, IMegFileSizeValidator;
 
-    private class ValidFileTableValidator : AbstractValidator<IMegFileTable>, IFileTableValidator
-    {
-    }
+    private class ValidFileTableValidator : AbstractValidator<IMegFileTable>, IFileTableValidator;
 
     private class InvalidSizeValidator : AbstractValidator<IMegBinaryValidationInformation>, IMegFileSizeValidator
     {

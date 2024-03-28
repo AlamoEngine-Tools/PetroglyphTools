@@ -80,7 +80,7 @@ public interface IDatModelService
     /// <param name="mergeOptions">Specifies how to treat existing keys.</param>
     /// <returns>The merged model.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="baseDatModel"/> and <paramref name="datToMerge"/> are not sorted.</exception>
+    /// <exception cref="ArgumentException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is not sorted.</exception>
     IDatModel MergeSorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
         SortedDatMergeOptions mergeOptions = SortedDatMergeOptions.KeepExisting);
 
@@ -93,7 +93,7 @@ public interface IDatModelService
     /// <param name="mergeOptions">Specifies how to treat existing keys.</param>
     /// <returns>The merged model.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="baseDatModel"/> and <paramref name="datToMerge"/> are not unsorted.</exception>
+    /// <exception cref="ArgumentException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is not unsorted.</exception>
     IDatModel Merge(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
         UnsortedDatMergeOptions mergeOptions = UnsortedDatMergeOptions.ByIndex);
 }

@@ -15,6 +15,11 @@ public static class DatFileConstants
     /// </summary>
     public static readonly Encoding TextKeyEncoding = Encoding.ASCII;
 
+
+    // This encoding *only* gets used for reading binary DAT files to maintain compatibility if some arbitrary tool does not use 7-bit ASCII.
+    // This way we can preserve the original key.
+    internal static readonly Encoding TextKeyEncoding_Latin1 = Encoding.GetEncoding(28591);
+
     /// <summary>
     ///     the value key encoding.
     /// </summary>

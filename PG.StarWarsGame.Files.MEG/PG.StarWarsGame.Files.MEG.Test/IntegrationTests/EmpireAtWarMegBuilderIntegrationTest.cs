@@ -5,7 +5,7 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -13,18 +13,18 @@ using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Test.Files;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.IntegrationTests;
 
-[TestClass]
+
 public class EmpireAtWarMegBuilderIntegrationTest
 {
     private readonly MockFileSystem _fileSystem = new();
-    private EmpireAtWarMegBuilder _eawMegBuilder = null!;
-    private IServiceProvider _serviceProvider = null!;
+    private readonly EmpireAtWarMegBuilder _eawMegBuilder;
+    private readonly IServiceProvider _serviceProvider;
 
-    [TestInitialize]
-    public void Setup()
+    public EmpireAtWarMegBuilderIntegrationTest()
     {
         var gamePath = "/game/corruption/data";
         _fileSystem.Initialize().WithSubdirectory(gamePath);
@@ -44,7 +44,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         return sc.BuildServiceProvider();
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildMeg()
     {
         _fileSystem.Initialize().WithFile("entry.txt").Which(m => m.HasStringContent("test"));
@@ -53,9 +53,9 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var entry2 = _eawMegBuilder.ResolveEntryPath("/game/corruption/data/xml/entry2.txt");
         var entry3 = _eawMegBuilder.ResolveEntryPath("/other/corruption/data/xml/entry3.txt");
 
-        Assert.AreEqual("entry1.txt", entry1);
-        Assert.AreEqual(PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry2);
-        Assert.IsNull(entry3);
+        Assert.Equal("entry1.txt", entry1);
+        Assert.Equal(PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry2);
+        Assert.Null(entry3);
 
         var result1 = _eawMegBuilder.AddFile("entry.txt", entry1!);
         var result1a = _eawMegBuilder.AddFile("entry.txt", entry1!, true);
@@ -63,35 +63,35 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var result2a = _eawMegBuilder.AddFile("entry.txt", "/game/corruption/data/xml/entry2.txt");
         var result3 = _eawMegBuilder.AddFile("entry.txt", "/other/corruption/data/xml/entry3.txt");
 
-        Assert.IsTrue(result1.Added);
-        Assert.IsFalse(result1a.Added);
-        Assert.IsTrue(result2.Added);
-        Assert.IsFalse(result2a.Added);
-        Assert.IsFalse(result3.Added);
+        Assert.True(result1.Added);
+        Assert.False(result1a.Added);
+        Assert.True(result2.Added);
+        Assert.False(result2a.Added);
+        Assert.False(result3.Added);
 
-        Assert.AreEqual("ENTRY1.TXT", result1.AddedBuilderInfo!.FilePath);
-        Assert.AreEqual("XML\\ENTRY2.TXT", result2.AddedBuilderInfo!.FilePath);
+        Assert.Equal("ENTRY1.TXT", result1.AddedBuilderInfo!.FilePath);
+        Assert.Equal("XML\\ENTRY2.TXT", result2.AddedBuilderInfo!.FilePath);
 
-        Assert.AreEqual(2, _eawMegBuilder.DataEntries.Count);
+        Assert.Equal(2, _eawMegBuilder.DataEntries.Count);
 
-        Assert.IsFalse(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V2)));
-        Assert.IsFalse(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("?new.meg", MegFileVersion.V1)));
-        Assert.IsFalse(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData())));
+        Assert.False(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V2)));
+        Assert.False(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("?new.meg", MegFileVersion.V1)));
+        Assert.False(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData())));
 
         _eawMegBuilder.Build(new MegFileInformation("new.meg", MegFileVersion.V1), false);
 
-        Assert.IsTrue(_fileSystem.File.Exists("new.meg"));
+        Assert.True(_fileSystem.File.Exists("new.meg"));
 
         var megFileService = _serviceProvider.GetRequiredService<IMegFileService>();
         var meg = megFileService.Load("new.meg");
 
-        Assert.AreEqual(2, meg.Archive.Count);
+        Assert.Equal(2, meg.Archive.Count);
 
         var packedEntry1 = meg.Archive.First(x => x.FilePath.Equals("ENTRY1.TXT"));
         var packedEntry2 = meg.Archive.First(x => x.FilePath.Equals("XML\\ENTRY2.TXT"));
 
-        Assert.IsNotNull(packedEntry1);
-        Assert.IsNotNull(packedEntry2);
+        Assert.NotNull(packedEntry1);
+        Assert.NotNull(packedEntry2);
 
         var extractor = _serviceProvider.GetRequiredService<IMegFileExtractor>();
         var entry1Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry1));
@@ -104,6 +104,6 @@ public class EmpireAtWarMegBuilderIntegrationTest
         ms.Position = 0;
 
         var dataString = new StreamReader(ms).ReadToEnd();
-        Assert.AreEqual("testtest", dataString);
+        Assert.Equal("testtest", dataString);
     }
 }

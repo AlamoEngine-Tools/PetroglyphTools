@@ -14,7 +14,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
 internal class MegFileBinaryReaderV1(IServiceProvider services) : MegFileBinaryReaderBase<MegMetadata, MegHeader, MegFileTable>(services)
 {
-    protected internal override MegMetadata CreateMegMetadata(MegHeader header, MegFileNameTable fileNameTable, MegFileTable fileTable)
+    protected internal override MegMetadata CreateMegMetadata(MegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, MegFileTable fileTable)
     {
         return new MegMetadata(header, fileNameTable, fileTable);
     }

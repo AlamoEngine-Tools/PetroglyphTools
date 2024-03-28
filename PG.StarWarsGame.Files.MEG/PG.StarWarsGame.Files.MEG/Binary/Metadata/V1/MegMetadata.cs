@@ -14,15 +14,13 @@ internal class MegMetadata : BinaryBase, IMegFileMetadata
 {
     public IMegHeader Header { get; }
 
-    internal MegFileNameTable FileNameTable { get; }
+    public BinaryTable<MegFileNameTableRecord> FileNameTable { get; }
 
     public MegFileTable FileTable { get; }
 
-    IMegFileNameTable IMegFileMetadata.FileNameTable => FileNameTable;
-
     IMegFileTable IMegFileMetadata.FileTable => FileTable;
 
-    public MegMetadata(MegHeader header, MegFileNameTable fileNameTable, MegFileTable fileTable)
+    public MegMetadata(MegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, MegFileTable fileTable)
     {
         if (fileNameTable == null)
             throw new ArgumentNullException(nameof(fileNameTable));

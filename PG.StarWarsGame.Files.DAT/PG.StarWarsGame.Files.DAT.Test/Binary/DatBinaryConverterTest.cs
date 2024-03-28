@@ -5,24 +5,23 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons;
+using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary;
 
-[TestClass]
 public class DatBinaryConverterTest
 {
     private readonly MockFileSystem _fileSystem = new();
-    private DatBinaryConverter _binaryConverter = null!;
-    private ICrc32HashingService _crc32HashingService = null!;
+    private readonly DatBinaryConverter _binaryConverter;
+    private readonly ICrc32HashingService _crc32HashingService;
 
-    [TestInitialize]
-    public void Prepare()
+    public DatBinaryConverterTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
@@ -35,14 +34,14 @@ public class DatBinaryConverterTest
 
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ToHolder__ValidModelCreatesValidHolder()
     {
         
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
-        var binaryModel = new DatFile(
+        var binaryModel = new DatBinaryFile(
             new DatHeader(4),
-            new IndexTable(new List<IndexTableRecord>
+            new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
             {
                 new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY0".Length,
                     (uint)"VALUE0".Length),
@@ -53,29 +52,29 @@ public class DatBinaryConverterTest
                 new(_crc32HashingService.GetCrc32("KEY0", DatFileConstants.TextKeyEncoding), (uint)"KEY3".Length,
                     (uint)"VALUE3".Length)
             }.AsReadOnly()),
-            new ValueTable(new List<ValueTableRecord>
+            new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
             {
                 new("VALUE0"),
                 new("VALUE1"),
                 new("VALUE2"),
                 new("VALUE3")
             }),
-            new KeyTable(new List<KeyTableRecord>
+            new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
             {
-                new("KEY0", new Crc32(1)),
-                new("KEY1", new Crc32(2)),
-                new("KEY2", new Crc32(3)),
-                new("KEY3", new Crc32(4))
+                new("KEY0", "KEY0"),
+                new("KEY1", "KEY1"),
+                new("KEY2", "KEY2"),
+                new("KEY3", "KEY3")
             }));
 
         var model = _binaryConverter.BinaryToModel(binaryModel);
-        Assert.IsNotNull(model);
+        Assert.NotNull(model);
 
-        Assert.AreEqual(binaryModel.RecordNumber, model.Count);
+        Assert.Equal(binaryModel.RecordNumber, model.Count);
         for (var i = 0; i < binaryModel.RecordNumber; i++)
         {
-            Assert.AreEqual(binaryModel.KeyTable[i].Key, model[i].Key);
-            Assert.AreEqual(binaryModel.ValueTable[i].Value, model[i].Value);
+            Assert.Equal(binaryModel.KeyTable[i].Key, model[i].Key);
+            Assert.Equal(binaryModel.ValueTable[i].Value, model[i].Value);
         }
     }
 }

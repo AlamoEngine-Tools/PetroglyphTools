@@ -14,8 +14,7 @@ internal readonly struct DatHeader : IBinary
     internal DatHeader(uint recordCount)
     {
         if (recordCount > int.MaxValue)
-            throw new ArgumentOutOfRangeException(nameof(recordCount),
-                $".DAT files with more than {int.MaxValue} records are not supported.");
+            throw new ArgumentOutOfRangeException(nameof(recordCount), $".DAT files with more than {int.MaxValue} records are not supported.");
         RecordCount = recordCount;
     }
 

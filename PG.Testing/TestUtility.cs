@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace PG.Testing;
 
@@ -14,10 +14,10 @@ public static class TestUtility
         
     public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
     {
-        Assert.AreEqual(expected.Count, actual.Count);
+        Assert.Equal(expected.Count, actual.Count);
         for (var i = 0; i < expected.Count; i++)
         {
-            Assert.AreEqual(expected[i], actual[i]);
+            Assert.Equal(expected[i], actual[i]);
         }
     }
 

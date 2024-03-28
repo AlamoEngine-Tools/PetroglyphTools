@@ -2,25 +2,23 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MTD.Binary.File.Builder;
-using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Builder;
 
-[TestClass]
 public class MtdFileBuilderTest
 {
-    [TestMethod]
-    [DataRow(null)]
-    [DataRow(new byte[]
+    [Theory]
+    [InlineData(null)]
+    [InlineData(new byte[]
     {
         0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0
     })]
-    [DataRow(new byte[]
+    [InlineData(new byte[]
     {
         0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -30,17 +28,16 @@ public class MtdFileBuilderTest
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0
     })]
-    [ExpectedException(typeof(ArgumentException))]
-    public void FromBytes_Test__ThrowsArgumentException(byte[] byteStream)
+    public void FromBytes_Test__ThrowsArgumentException(byte[]? byteStream)
     {
         var builder = new MtdFileConverter();
-        MtdFile? _ = builder.FromBytes(byteStream);
+        Assert.Throws<ArgumentException>(() => builder.FromBytes(byteStream!));
     }
 
-    [TestMethod]
+    [Fact]
     public void FromBytes_Test__AsExpected()
     {
         var builder = new MtdFileConverter();
-        MtdFile? _ = builder.FromBytes(MtdTestConstants.MtdFileTestConstants.METADATA_TO_BYTES);
+        builder.FromBytes(MtdTestConstants.MtdFileTestConstants.METADATA_TO_BYTES);
     }
 }

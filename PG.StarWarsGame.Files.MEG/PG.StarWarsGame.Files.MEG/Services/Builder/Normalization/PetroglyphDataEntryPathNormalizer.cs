@@ -17,7 +17,7 @@ public sealed class PetroglyphDataEntryPathNormalizer : MegDataEntryPathNormaliz
     }
 
     /// <inheritdoc />
-    public override string NormalizePath(string filePath)
+    public override string Normalize(string filePath)
     {
         return PathNormalizer.Normalize(filePath,
             new PathNormalizeOptions

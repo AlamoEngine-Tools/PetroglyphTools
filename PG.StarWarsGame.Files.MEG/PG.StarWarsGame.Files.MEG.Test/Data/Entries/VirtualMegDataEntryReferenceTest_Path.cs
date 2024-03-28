@@ -1,11 +1,10 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
-[TestClass]
 public class VirtualMegDataEntryReferenceTest_Path : MegDataEntryBaseTest<MegDataEntryOriginInfo>
 {
     private VirtualMegDataEntryReference CreateVirtualMegDataEntryReference(string path, Crc32 crc, MegDataEntryOriginInfo location)
@@ -23,7 +22,7 @@ public class VirtualMegDataEntryReferenceTest_Path : MegDataEntryBaseTest<MegDat
         return new MegDataEntryOriginInfo(seed.ToString());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Equals_HashCode()
     {
         var entry = CreateVirtualMegDataEntryReference("path", DefaultCrc, CreateLocation(1));
@@ -31,19 +30,19 @@ public class VirtualMegDataEntryReferenceTest_Path : MegDataEntryBaseTest<MegDat
         var entryNotEqualsOtherEntry = CreateVirtualMegDataEntryReference("other", DefaultCrc, CreateLocation(1));
         var entryNotEqualsOtherLocation = CreateVirtualMegDataEntryReference("path", DefaultCrc, CreateLocation(99));
 
-        Assert.IsTrue(entry.Equals(entry));
-        Assert.IsTrue(entry.Equals((object)entryEquals));
-        Assert.IsTrue(entry.Equals(entryEquals));
-        Assert.IsTrue(entry.Equals((object)entry));
-        Assert.AreEqual(entry.GetHashCode(), entryEquals.GetHashCode());
+        Assert.True(entry.Equals(entry));
+        Assert.True(entry.Equals((object)entryEquals));
+        Assert.True(entry.Equals(entryEquals));
+        Assert.True(entry.Equals((object)entry));
+        Assert.Equal(entry.GetHashCode(), entryEquals.GetHashCode());
 
-        Assert.IsFalse(entry.Equals((object?)null));
-        Assert.IsFalse(entry.Equals(null));
-        Assert.IsFalse(entry.Equals(new object()));
-        Assert.IsFalse(entry.Equals(entryNotEqualsOtherLocation));
-        Assert.IsFalse(entry.Equals(entryNotEqualsOtherEntry));
+        Assert.False(entry.Equals((object?)null));
+        Assert.False(entry.Equals(null));
+        Assert.False(entry.Equals(new object()));
+        Assert.False(entry.Equals(entryNotEqualsOtherLocation));
+        Assert.False(entry.Equals(entryNotEqualsOtherEntry));
 
-        Assert.AreNotEqual(entry.GetHashCode(), entryNotEqualsOtherEntry.GetHashCode());
-        Assert.AreNotEqual(entry.GetHashCode(), entryNotEqualsOtherLocation.GetHashCode());
+        Assert.NotEqual(entry.GetHashCode(), entryNotEqualsOtherEntry.GetHashCode());
+        Assert.NotEqual(entry.GetHashCode(), entryNotEqualsOtherLocation.GetHashCode());
     }
 }

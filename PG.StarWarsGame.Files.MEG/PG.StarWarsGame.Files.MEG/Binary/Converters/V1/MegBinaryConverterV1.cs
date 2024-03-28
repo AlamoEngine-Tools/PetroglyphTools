@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -35,7 +36,7 @@ internal sealed class MegBinaryConverterV1(IServiceProvider services) : MegBinar
             fileTableEntries.Add(binaryRecord);
         }
 
-        var fileNameTable = new MegFileNameTable(fileNameTableEntries);
+        var fileNameTable = new BinaryTable<MegFileNameTableRecord>(fileNameTableEntries);
         var fileTable = new MegFileTable(fileTableEntries);
 
         return new MegMetadata(header, fileNameTable, fileTable);

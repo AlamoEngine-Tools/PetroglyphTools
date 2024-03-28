@@ -2,21 +2,19 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.Testing;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 
-[TestClass]
 public class MegFileBinaryReaderV1IntegrationTest
 {
-    private MegFileBinaryReaderV1 _binaryReader = null!;
+    private readonly MegFileBinaryReaderV1 _binaryReader;
 
-    [TestInitialize]
-    public void SetUp()
+    public MegFileBinaryReaderV1IntegrationTest()
     {
         var fs = new MockFileSystem();
         var sp = new Mock<IServiceProvider>();
@@ -24,72 +22,72 @@ public class MegFileBinaryReaderV1IntegrationTest
         _binaryReader = new MegFileBinaryReaderV1(sp.Object);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ReadBinary_EmptyMeg()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_empty.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
-        Assert.AreEqual(0, megMetadata.FileNameTable.Count);
-        Assert.AreEqual(0, megMetadata.FileTable.Count);
-        Assert.AreEqual(0, megMetadata.Header.FileNumber);
+        Assert.Empty(megMetadata.FileNameTable);
+        Assert.Empty(megMetadata.FileTable);
+        Assert.Equal(0, megMetadata.Header.FileNumber);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ReadBinary_OneFile()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_1_file_data.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
-        Assert.AreEqual(1, megMetadata.FileNameTable.Count);
-        Assert.AreEqual(1, megMetadata.FileTable.Count);
-        Assert.AreEqual(1, megMetadata.Header.FileNumber);
+        Assert.Single(megMetadata.FileNameTable);
+        Assert.Single(megMetadata.FileTable);
+        Assert.Equal(1, megMetadata.Header.FileNumber);
 
         var fileSizes = megMetadata.FileTable.Select(x => x.FileSize).Sum(x => x);
-        Assert.AreEqual(3, fileSizes);
+        Assert.Equal(3, fileSizes);
 
-        Assert.AreEqual("TEST.TXT", megMetadata.FileNameTable[0].FileName);
-        Assert.AreEqual("TEST.TXT", megMetadata.FileNameTable[0].OriginalFilePath);
-        Assert.AreEqual(3u, megMetadata.FileTable[0].FileSize);
+        Assert.Equal("TEST.TXT", megMetadata.FileNameTable[0].FileName);
+        Assert.Equal("TEST.TXT", megMetadata.FileNameTable[0].OriginalFilePath);
+        Assert.Equal(3u, megMetadata.FileTable[0].FileSize);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ReadBinary_TwoFiles()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_2_files_empty.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
-        Assert.AreEqual(2, megMetadata.FileNameTable.Count);
-        Assert.AreEqual(2, megMetadata.FileTable.Count);
-        Assert.AreEqual(2, megMetadata.Header.FileNumber);
+        Assert.Equal(2, megMetadata.FileNameTable.Count);
+        Assert.Equal(2, megMetadata.FileTable.Count);
+        Assert.Equal(2, megMetadata.Header.FileNumber);
 
         var fileSizes = megMetadata.FileTable.Select(x => x.FileSize).Sum(x => x);
-        Assert.AreEqual(0, fileSizes);
+        Assert.Equal(0, fileSizes);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ReadBinary_TwoFilesWithNonAsciiName()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_2_files_with_extended_ascii_name.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
-        Assert.AreEqual(2, megMetadata.FileNameTable.Count);
-        Assert.AreEqual(2, megMetadata.FileTable.Count);
-        Assert.AreEqual(2, megMetadata.Header.FileNumber);
+        Assert.Equal(2, megMetadata.FileNameTable.Count);
+        Assert.Equal(2, megMetadata.FileTable.Count);
+        Assert.Equal(2, megMetadata.Header.FileNumber);
 
-        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[0].FileName);
-        Assert.AreEqual("TESTü.TXT", megMetadata.FileNameTable[0].OriginalFilePath);
-        Assert.AreEqual("TEST?.TXT", megMetadata.FileNameTable[1].FileName);
-        Assert.AreEqual("TESTä.TXT", megMetadata.FileNameTable[1].OriginalFilePath);
+        Assert.Equal("TEST?.TXT", megMetadata.FileNameTable[0].FileName);
+        Assert.Equal("TESTü.TXT", megMetadata.FileNameTable[0].OriginalFilePath);
+        Assert.Equal("TEST?.TXT", megMetadata.FileNameTable[1].FileName);
+        Assert.Equal("TESTä.TXT", megMetadata.FileNameTable[1].OriginalFilePath);
 
         // Not equal, cause MIKE uses Latin1 and thus CRC32 is calculated on the original file name, 
-        Assert.AreNotEqual(megMetadata.FileTable[0].Crc32, megMetadata.FileTable[1].Crc32);
+        Assert.NotEqual(megMetadata.FileTable[0].Crc32, megMetadata.FileTable[1].Crc32);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ReadBinary_TwoFiles2()
     {
         var megMetadata = _binaryReader.ReadBinary(new MemoryStream(MegTestConstants.ContentMegFileV1));
 
-        Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].FileName);
-        Assert.AreEqual("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].OriginalFilePath);
-        Assert.AreEqual("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1].FileName);
-        Assert.AreEqual("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1].OriginalFilePath);
+        Assert.Equal("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].FileName);
+        Assert.Equal("DATA/XML/GAMEOBJECTFILES.XML", megMetadata.FileNameTable[0].OriginalFilePath);
+        Assert.Equal("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1].FileName);
+        Assert.Equal("DATA/XML/CAMPAIGNFILES.XML", megMetadata.FileNameTable[1].OriginalFilePath);
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
-[TestClass]
+
 public class PetroglyphDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBase
 {
     protected override IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider)
@@ -13,15 +13,15 @@ public class PetroglyphDataEntryPathNormalizerTest : DataEntryPathNormalizerTest
         return new PetroglyphDataEntryPathNormalizer(serviceProvider);
     }
 
-    [TestMethod]
-    [DynamicData(nameof(ValidPathsToNormalize), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(ValidPathsToNormalize))]
     public void Test_Normalize_Success(string source, string expected)
     {
         TestNormalizePathPasses(source, expected);
     }
 
-    [TestMethod]
-    [DynamicData(nameof(DefaultDataEntryPathNormalizerTest.InvalidPathsToNormalize), typeof(DefaultDataEntryPathNormalizerTest), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(DefaultDataEntryPathNormalizerTest.InvalidPathsToNormalize), MemberType = typeof(DefaultDataEntryPathNormalizerTest))]
     public void Test_Normalize_Fails(string source)
     {
         TestNormalizePathFails(source);

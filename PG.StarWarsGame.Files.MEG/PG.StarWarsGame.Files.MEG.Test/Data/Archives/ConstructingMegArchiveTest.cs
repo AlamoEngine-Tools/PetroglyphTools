@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -9,31 +8,30 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
-[TestClass]
 public class ConstructingMegArchiveTest
 {
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
+    [Fact]
     public void Test_Ctor_Throw_NullArgument()
     {
-        _ = new ConstructingMegArchive(null!, MegFileVersion.V1, false);
+        Assert.Throws<ArgumentNullException>(() =>new ConstructingMegArchive(null!, MegFileVersion.V1, false));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_Empty()
     {
         var entries = new List<VirtualMegDataEntryReference>();
         var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, true);
 
-        Assert.AreEqual(MegFileVersion.V3, cArchive.MegVersion);
-        CollectionAssert.AreEqual(new MegArchive(new List<MegDataEntry>()).ToList(), cArchive.Archive.ToList());
-        Assert.IsTrue(cArchive.Encrypted);
+        Assert.Equal(MegFileVersion.V3, cArchive.MegVersion);
+        Assert.Equal(new MegArchive(new List<MegDataEntry>()).ToList(), cArchive.Archive.ToList());
+        Assert.True(cArchive.Encrypted);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_CreateArchive()
     {
         var entry1 = MegDataEntryTest.CreateEntry("pathA", new Crc32(1), 1, 1, true);
@@ -55,14 +53,14 @@ public class ConstructingMegArchiveTest
 
         var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, false);
 
-        Assert.AreEqual(MegFileVersion.V3, cArchive.MegVersion);
-        Assert.IsFalse(cArchive.Encrypted);
+        Assert.Equal(MegFileVersion.V3, cArchive.MegVersion);
+        Assert.False(cArchive.Encrypted);
 
         var expectedArchiveList = new List<MegDataEntry>
         {
             entry1, entry2
         };
 
-        CollectionAssert.AreEqual(expectedArchiveList, cArchive.Archive.ToList());
+        Assert.Equal(expectedArchiveList, cArchive.Archive.ToList());
     }
 }

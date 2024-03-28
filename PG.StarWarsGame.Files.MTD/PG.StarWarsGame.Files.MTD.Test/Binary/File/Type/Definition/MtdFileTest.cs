@@ -2,22 +2,21 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;
+using PG.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MTD.Test.Binary.File.Type.Definition;
 
-[TestClass]
 public class MtdFileTest
 {
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [Fact]
     public void Ctor_Test__ThrowsArgumentException()
     {
-        var _ = new MtdFile(new MtdImageTableRecord[] { });
+        Assert.Throws<ArgumentException>(() => new MtdFile(new MtdImageTableRecord[] { }));
     }
 
-    [TestMethod]
+    [Fact]
     public void ToBytes_Test__AreBinaryEquivalent()
     {
         var mtdFile = new MtdFile(new[]

@@ -1,11 +1,9 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-[TestClass]
 public class PrimitiveMegBuilderTest : MegBuilderTestSuite
 {
     protected override Type ExpectedFileInfoValidatorType => typeof(DefaultMegFileInformationValidator);

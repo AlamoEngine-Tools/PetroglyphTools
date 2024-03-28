@@ -1,20 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Files;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using PG.Testing;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.Commons.Test.Files;
 
-[TestClass]
 public class PetroglyphFileHolderTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_SetupProperties()
     {
         var fs = new MockFileSystem();
@@ -30,16 +29,16 @@ public class PetroglyphFileHolderTest
 
         var holder = new TestFileHolder(model, new TestParam { FilePath = "test" }, sp.Object);
 
-        Assert.AreSame(model, holder.Content);
-        Assert.AreEqual(fs.Path.GetFullPath("test"), holder.FilePath);
-        Assert.AreEqual(fs.Path.GetDirectoryName(fs.Path.GetFullPath("test")), holder.Directory);
-        Assert.AreSame(sp.Object, holder.Services);
+        Assert.Same(model, holder.Content);
+        Assert.Equal(fs.Path.GetFullPath("test"), holder.FilePath);
+        Assert.Equal(fs.Path.GetDirectoryName(fs.Path.GetFullPath("test")), holder.Directory);
+        Assert.Same(sp.Object, holder.Services);
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
-    [DataRow("/   ", "   ", "/", "/   ")]
-    [DataRow("./   ", "   ", "/", "/   ")]
-    //[DataRow("   ", "   ", "/", "/   ")]  // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
+    [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
+    [InlineData("/   ", "   ", "/", "/   ")]
+    [InlineData("./   ", "   ", "/", "/   ")]
+    //[InlineData("   ", "   ", "/", "/   ")]  // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void Test_PassingFileNames_Whitespace_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFullPath)
     {
         var fs = new MockFileSystem();
@@ -54,22 +53,22 @@ public class PetroglyphFileHolderTest
 
         if (expectedFileName is not null)
         {
-            Assert.AreEqual(expectedFileName, holder.FileName);
-            Assert.AreEqual(expectedDirectory, holder.Directory);
-            Assert.AreEqual(expectedFullPath, holder.FilePath);
+            Assert.Equal(expectedFileName, holder.FileName);
+            Assert.Equal(expectedDirectory, holder.Directory);
+            Assert.Equal(expectedFullPath, holder.FilePath);
         }
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
-    [DataRow("test.txt", "test.txt", "C:\\", "C:\\test.txt")]
-    [DataRow("./test", "test", "C:\\", "C:\\test")]
-    [DataRow("a/../test", "test", "C:\\", "C:\\test")]
-    [DataRow("üöä", "üöä", "C:\\", "C:\\üöä")]
-    [DataRow("a/b", "b", "C:\\a", "C:\\a\\b")]
+    [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
+    [InlineData("test.txt", "test.txt", "C:\\", "C:\\test.txt")]
+    [InlineData("./test", "test", "C:\\", "C:\\test")]
+    [InlineData("a/../test", "test", "C:\\", "C:\\test")]
+    [InlineData("üöä", "üöä", "C:\\", "C:\\üöä")]
+    [InlineData("a/b", "b", "C:\\a", "C:\\a\\b")]
 #if NET
-    [DataRow("test/\u00A0", "\u00A0", "C:\\test", "C:\\test\\\u00A0")]
+    [InlineData("test/\u00A0", "\u00A0", "C:\\test", "C:\\test\\\u00A0")]
 #endif
-    //[DataRow("\u00A0", "\u00A0", "C:\\\u00A0", "C:\\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
+    //[InlineData("\u00A0", "\u00A0", "C:\\\u00A0", "C:\\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void Test_PassingFileNames_Windows(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
     {
         var fs = new MockFileSystem();
@@ -86,20 +85,20 @@ public class PetroglyphFileHolderTest
 
         if (expectedFileName is not null)
         {
-            Assert.AreEqual(expectedFileName, holder.FileName);
-            Assert.AreEqual(expectedDirectory, holder.Directory);
-            Assert.AreEqual(expectedFilePath, holder.FilePath);
+            Assert.Equal(expectedFileName, holder.FileName);
+            Assert.Equal(expectedDirectory, holder.Directory);
+            Assert.Equal(expectedFilePath, holder.FilePath);
         }
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
-    [DataRow("test.txt", "test.txt", "/", "/test.txt")]
-    [DataRow("./test", "test", "/", "/test")]
-    [DataRow("a/../test", "test", "/", "/test")]
-    [DataRow("üöä", "üöä", "/", "/üöä")]
-    [DataRow("a/b", "b", "/a", "/a/b")]
-    [DataRow("test/\u00A0", "\u00A0", "/test", "/test/\u00A0")]
-    //[DataRow("\u00A0", "\u00A0", "/\u00A0", "/\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
+    [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
+    [InlineData("test.txt", "test.txt", "/", "/test.txt")]
+    [InlineData("./test", "test", "/", "/test")]
+    [InlineData("a/../test", "test", "/", "/test")]
+    [InlineData("üöä", "üöä", "/", "/üöä")]
+    [InlineData("a/b", "b", "/a", "/a/b")]
+    [InlineData("test/\u00A0", "\u00A0", "/test", "/test/\u00A0")]
+    //[InlineData("\u00A0", "\u00A0", "/\u00A0", "/\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void Test_PassingFileNames_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
     {
         var fs = new MockFileSystem();
@@ -113,13 +112,13 @@ public class PetroglyphFileHolderTest
 
         if (expectedFileName is not null)
         {
-            Assert.AreEqual(expectedFileName, holder.FileName);
-            Assert.AreEqual(expectedDirectory, holder.Directory);
-            Assert.AreEqual(expectedFilePath, holder.FilePath);
+            Assert.Equal(expectedFileName, holder.FileName);
+            Assert.Equal(expectedDirectory, holder.Directory);
+            Assert.Equal(expectedFilePath, holder.FilePath);
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_ThrowsArgumentNullException()
     {
         var fs = new MockFileSystem();
@@ -127,27 +126,27 @@ public class PetroglyphFileHolderTest
         var model = new object();
         IServiceProvider sp = null!;
 
-        Assert.ThrowsException<ArgumentNullException>(() => new TestFileHolder(model, new TestParam { FilePath = "test" }, sp));
+        Assert.Throws<ArgumentNullException>(() => new TestFileHolder(model, new TestParam { FilePath = "test" }, sp));
 
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        Assert.ThrowsException<ArgumentNullException>(() => new TestFileHolder(model, null!, spMock.Object));
+        Assert.Throws<ArgumentNullException>(() => new TestFileHolder(model, null!, spMock.Object));
 
-        Assert.ThrowsException<ArgumentNullException>(() => new TestFileHolder(null!, new TestParam { FilePath = "test" }, spMock.Object));
+        Assert.Throws<ArgumentNullException>(() => new TestFileHolder(null!, new TestParam { FilePath = "test" }, spMock.Object));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_ThrowsNoFileSystem_Throws()
     { 
         var model = new object();
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns((IFileSystem)null!);
-        Assert.ThrowsException<InvalidOperationException>(() => new TestFileHolder(model, new TestParam { FilePath = "test" }, spMock.Object));
+        Assert.Throws<InvalidOperationException>(() => new TestFileHolder(model, new TestParam { FilePath = "test" }, spMock.Object));
     }
     
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
-    [DataRow("   ", typeof(ArgumentException))]
+    [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
+    [InlineData("   ", typeof(ArgumentException))]
     public void Test_Ctor_InvalidPath_Whitespace_Windows_Throws(string path, Type type)
     {
         var fs = new MockFileSystem();
@@ -157,11 +156,11 @@ public class PetroglyphFileHolderTest
         ExceptionUtilities.AssertThrowsException(type, () => new TestFileHolder(model, new TestParam { FilePath = path }, sp.Object));
     }
 
-    [TestMethod]
-    [DataRow("dir/")]
-    [DataRow("")]
-    [DataRow("..")]
-    [DataRow(".")]
+    [Theory]
+    [InlineData("dir/")]
+    [InlineData("")]
+    [InlineData("..")]
+    [InlineData(".")]
     public void Test_Ctor_InvalidPaths_Throws(string path)
     {
         var fs = new MockFileSystem();
@@ -169,10 +168,10 @@ public class PetroglyphFileHolderTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
         
-        Assert.ThrowsException<ArgumentException>(() => new TestFileHolder(model, new TestParam { FilePath = path }, sp.Object));
+        Assert.Throws<ArgumentException>(() => new TestFileHolder(model, new TestParam { FilePath = path }, sp.Object));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_FileNotFound_Throws()
     {
         var fs = new MockFileSystem();
@@ -180,10 +179,10 @@ public class PetroglyphFileHolderTest
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
 
-        Assert.ThrowsException<FileNotFoundException>(() => new TestFileHolder(model, new TestParam { FilePath = "notfound.txt" }, sp.Object));
+        Assert.Throws<FileNotFoundException>(() => new TestFileHolder(model, new TestParam { FilePath = "notfound.txt" }, sp.Object));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_NullLogger()
     {
         var fs = new MockFileSystem();
@@ -194,7 +193,7 @@ public class PetroglyphFileHolderTest
         fs.Initialize().WithFile("test");
 
         var holder = new TestFileHolder(model, new TestParam { FilePath = "test" }, sp.Object);
-        Assert.AreEqual(NullLogger.Instance, holder.Logger);
+        Assert.Equal(NullLogger.Instance, holder.Logger);
     }
 
     private record TestParam : PetroglyphFileInformation;

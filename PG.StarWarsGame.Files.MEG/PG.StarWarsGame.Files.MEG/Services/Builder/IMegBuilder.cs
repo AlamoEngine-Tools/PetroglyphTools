@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using PG.Commons.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -15,7 +15,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// <summary>
 /// Service to create MEG files from local files or other MEG data entries ensuring custom validation and normalization rules.
 /// </summary>
-public interface IMegBuilder
+public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>
 {
     /// <summary>
     /// Gets a value indicating whether the <see cref="IMegBuilder"/> normalizes a data entry's path before adding it.
@@ -97,26 +97,4 @@ public interface IMegBuilder
     /// Removes all builder information from the <see cref="IMegBuilder"/>.
     /// </summary>
     void Clear();
-
-    /// <summary>
-    /// Builds a .MEG file from all <see cref="DataEntries"/>.
-    /// </summary>
-    /// <param name="fileInformation">The file parameters of the to be created MEG file.</param>
-    /// <param name="overwrite">When set to <see langword="true"/> an existing MEG file will be overwritten; otherwise an <see cref="IOException"/> is thrown if the file already exists.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="fileInformation"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="fileInformation"/> contains illegal data.</exception>
-    /// <exception cref="NotSupportedException">Creating the MEG file with the specified parameters is not supported.</exception>
-    /// <exception cref="IOException">The MEG file could not be created due to an IO error.</exception>
-    void Build(MegFileInformation fileInformation, bool overwrite);
-
-    /// <summary>
-    /// Checks whether the passed file information are valid for this <see cref="IMegBuilder"/>.
-    /// </summary>
-    /// <remarks>
-    /// The default implementation does not validate and always returns <see langword="true"/>.
-    /// </remarks>
-    /// <param name="fileInformation">The file information to validate</param>
-    /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fileInformation"/> is <see langword="null"/>.</exception>
-    bool ValidateFileInformation(MegFileInformation fileInformation);
 }

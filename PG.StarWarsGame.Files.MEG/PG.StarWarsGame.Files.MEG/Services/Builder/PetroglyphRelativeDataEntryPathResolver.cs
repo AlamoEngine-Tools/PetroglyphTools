@@ -11,7 +11,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
 {
     private readonly IFileSystem _fileSystem = serviceProvider.GetRequiredService<IFileSystem>();
 
-    public string? ResolvePath(string path, string basePath)
+    public string? ResolvePath(string? path, string basePath)
     {
         var fullBase = PathNormalizer.Normalize(_fileSystem.Path.GetFullPath(basePath), PathNormalizeOptions.EnsureTrailingSeparator);
 
@@ -22,10 +22,10 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
         if (string.IsNullOrEmpty(path))
             return null;
 
-        if (_fileSystem.Path.HasTrailingDirectorySeparator(path))
+        if (_fileSystem.Path.HasTrailingDirectorySeparator(path!))
             return null;
 
-        var relativePath = _fileSystem.Path.GetRelativePathEx(fullBase, path);
+        var relativePath = _fileSystem.Path.GetRelativePathEx(fullBase, path!);
 
         var fullRelativePathToBase = _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(fullBase, relativePath));
 
@@ -42,8 +42,10 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
     }
 
 
-    private string PrepareForPossibleDriveRelativePath(string path, ReadOnlySpan<char> rootPath)
+    private string? PrepareForPossibleDriveRelativePath(string? path, ReadOnlySpan<char> rootPath)
     {
+        if (path is null)
+            return null;
         if (_fileSystem.Path.IsDriveRelative(path, out var driveLetter))
         {
             var rootPathDrive = GetVolumeNameFromFullyQualifiedPath(_fileSystem, rootPath);

@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
     ///     Convenience method to collect and contribute all <see cref="IServiceContribution" />s.
     /// </summary>
     /// <param name="serviceCollection"></param>
-    public static void CollectAndContributeServiceContributions(this IServiceCollection serviceCollection)
+    public static void CollectPgServiceContributions(this IServiceCollection serviceCollection)
     {
         var contributions = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assemblyTypes => assemblyTypes.GetTypes())

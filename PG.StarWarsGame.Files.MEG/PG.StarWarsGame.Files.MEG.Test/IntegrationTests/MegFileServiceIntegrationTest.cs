@@ -28,7 +28,7 @@ public class MegFileServiceIntegrationTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectAndContributeServiceContributions();
+        sc.CollectPgServiceContributions();
         var sp = sc.BuildServiceProvider();
         _megFileService = sp.GetRequiredService<IMegFileService>();
     }

@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.DAT;
 
 /// <inheritdoc />
 [Order(1100)]
-public class DatServiceContribution : IServiceContribution
+internal sealed class DatServiceContribution : IServiceContribution
 {
     /// <inheritdoc />
     public void ContributeServices(IServiceCollection serviceCollection)

@@ -9,7 +9,7 @@ namespace PG.Commons;
 /// <inheritdoc />
 [Order(100)]
 // ReSharper disable once InconsistentNaming
-public sealed class PGServiceContribution : IServiceContribution
+internal sealed class PGServiceContribution : IServiceContribution
 {
     /// <inheritdoc />
     public void ContributeServices(IServiceCollection serviceCollection)

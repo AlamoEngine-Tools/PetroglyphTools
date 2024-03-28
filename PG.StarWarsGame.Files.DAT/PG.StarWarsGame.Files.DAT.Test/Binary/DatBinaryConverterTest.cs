@@ -27,7 +27,7 @@ public class DatBinaryConverterTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectAndContributeServiceContributions();
+        sc.CollectPgServiceContributions();
         var sp = sc.BuildServiceProvider();
 
         _binaryConverter = new DatBinaryConverter(sp);

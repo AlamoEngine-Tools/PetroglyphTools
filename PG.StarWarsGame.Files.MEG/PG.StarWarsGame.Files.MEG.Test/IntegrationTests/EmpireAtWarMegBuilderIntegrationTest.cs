@@ -39,7 +39,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectAndContributeServiceContributions();
+        sc.CollectPgServiceContributions();
         return sc.BuildServiceProvider();
     }
 

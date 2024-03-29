@@ -1,42 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Utilities;
+using Xunit;
 
 namespace PG.Commons.Test.Utilities;
 
-[TestClass]
 public class EncodingExtensionsTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_GetByteCountPG_NullArgs_Throws()
     {
         Encoding encoding = null!;
-        Assert.ThrowsException<ArgumentNullException>(() => encoding.GetByteCountPG(4));
+        Assert.Throws<ArgumentNullException>(() => encoding.GetByteCountPG(4));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_GetByteCountPG_NegativeCount_Throws()
     {
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Encoding.ASCII.GetByteCountPG(-1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Encoding.ASCII.GetByteCountPG(-1));
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(EncodingTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(EncodingTestData))]
     public void Test_GetByteCountPG(Encoding encoding, int charCount, int expectedBytesCount)
     {
-        Assert.AreEqual(expectedBytesCount, encoding.GetByteCountPG(charCount));
+        Assert.Equal(expectedBytesCount, encoding.GetByteCountPG(charCount));
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(NotSupportedEncodings), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(NotSupportedEncodings))]
     public void Test_GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
     {
-        Assert.ThrowsException<NotSupportedException>(() => encoding.GetByteCountPG(4));
+        Assert.Throws<NotSupportedException>(() => encoding.GetByteCountPG(4));
     }
 
-    private static IEnumerable<object[]> EncodingTestData()
+    public static IEnumerable<object[]> EncodingTestData()
     {
         return new[]
         {
@@ -54,7 +53,7 @@ public class EncodingExtensionsTest
         };
     }
 
-    private static IEnumerable<object[]> NotSupportedEncodings()
+    public static IEnumerable<object[]> NotSupportedEncodings()
     {
         return new[]
         {

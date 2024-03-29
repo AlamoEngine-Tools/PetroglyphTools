@@ -1,38 +1,37 @@
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
-[TestClass]
 public class MegDataEntryOriginInfoTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new MegDataEntryOriginInfo((string)null!));
-        Assert.ThrowsException<ArgumentNullException>(() => new MegDataEntryOriginInfo((MegDataEntryLocationReference)null!));
+        Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((string)null!));
+        Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((MegDataEntryLocationReference)null!));
 
-        Assert.ThrowsException<ArgumentException>(() => new MegDataEntryOriginInfo(string.Empty));
-        Assert.ThrowsException<ArgumentException>(() => new MegDataEntryOriginInfo("    "));
+        Assert.Throws<ArgumentException>(() => new MegDataEntryOriginInfo(string.Empty));
+        Assert.Throws<ArgumentException>(() => new MegDataEntryOriginInfo("    "));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_Path()
     {
         var originInfo = new MegDataEntryOriginInfo("path");
 
-        Assert.AreEqual("path", originInfo.FilePath);
-        Assert.IsNull(originInfo.MegFileLocation);
+        Assert.Equal("path", originInfo.FilePath);
+        Assert.Null(originInfo.MegFileLocation);
 
-        Assert.IsTrue(originInfo.IsLocalFile);
-        Assert.IsFalse(originInfo.IsEntryReference);
+        Assert.True(originInfo.IsLocalFile);
+        Assert.False(originInfo.IsEntryReference);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_ReferenceLocation()
     {
         var meg = new Mock<IMegFile>().Object;
@@ -40,14 +39,14 @@ public class MegDataEntryOriginInfoTest
 
         var originInfo = new MegDataEntryOriginInfo(location);
 
-        Assert.AreEqual(location, originInfo.MegFileLocation);
-        Assert.IsNull(originInfo.FilePath);
+        Assert.Equal(location, originInfo.MegFileLocation);
+        Assert.Null(originInfo.FilePath);
 
-        Assert.IsTrue(originInfo.IsEntryReference);
-        Assert.IsFalse(originInfo.IsLocalFile);
+        Assert.True(originInfo.IsEntryReference);
+        Assert.False(originInfo.IsLocalFile);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_HashCode()
     {
         var meg = new Mock<IMegFile>().Object;
@@ -59,13 +58,13 @@ public class MegDataEntryOriginInfoTest
         var originPath = new MegDataEntryOriginInfo("path");
         var otherOriginPath = new MegDataEntryOriginInfo("path");
 
-        Assert.AreNotEqual(originLoc.GetHashCode(), originPath.GetHashCode());
+        Assert.NotEqual(originLoc.GetHashCode(), originPath.GetHashCode());
 
-        Assert.AreEqual(originLoc.GetHashCode(), otherOriginLoc.GetHashCode());
-        Assert.AreEqual(originPath.GetHashCode(), otherOriginPath.GetHashCode());
+        Assert.Equal(originLoc.GetHashCode(), otherOriginLoc.GetHashCode());
+        Assert.Equal(originPath.GetHashCode(), otherOriginPath.GetHashCode());
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Equals()
     {
         var meg = new Mock<IMegFile>().Object;
@@ -78,26 +77,26 @@ public class MegDataEntryOriginInfoTest
         var otherOriginPath = new MegDataEntryOriginInfo("path");
 
 
-        Assert.AreEqual(originLoc, originLoc);
-        Assert.AreEqual(originLoc, (object)originLoc);
-        Assert.AreEqual(originLoc, otherOriginLoc);
+        Assert.Equal(originLoc, originLoc);
+        Assert.Equal(originLoc, (object)originLoc);
+        Assert.Equal(originLoc, otherOriginLoc);
 
-        Assert.AreEqual(originPath, originPath);
-        Assert.AreEqual(originPath, (object)originPath);
-        Assert.AreEqual(originPath, otherOriginPath);
+        Assert.Equal(originPath, originPath);
+        Assert.Equal(originPath, (object)originPath);
+        Assert.Equal(originPath, otherOriginPath);
 
-        Assert.IsFalse(originLoc.Equals(null));
-        Assert.AreNotEqual(originLoc, (object?)null);
+        Assert.False(originLoc.Equals(null));
+        Assert.NotEqual((object?)null, originLoc);
 
-        Assert.IsFalse(originPath.Equals(null));
-        Assert.AreNotEqual(originPath, (object?)null);
+        Assert.False(originPath.Equals(null));
+        Assert.NotEqual((object?)null, originPath);
 
-        Assert.AreNotEqual(originPath, originLoc);
-        Assert.AreNotEqual(originPath, (object)originLoc);
+        Assert.NotEqual(originPath, originLoc);
+        Assert.NotEqual(originPath, (object)originLoc);
 
-        Assert.AreNotEqual(originPath, new MegDataEntryOriginInfo("PATH"));
+        Assert.NotEqual(originPath, new MegDataEntryOriginInfo("PATH"));
 
-        Assert.AreNotEqual(originLoc,
+        Assert.NotEqual(originLoc,
             new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("PATH"))));
     }
 }

@@ -73,19 +73,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     /// <inheritdoc />
     public ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc)
     {
-        if (!_crcToIndexMap.TryGetValue(crc, out var indexRange))
-            return ReadOnlyFrugalList<T>.Empty;
-
-        var length = indexRange.Length;
-        
-        if (length == 1)
-            return new ReadOnlyFrugalList<T>(Entries[indexRange.Start]);
-
-        var array = new T[length];
-        for (var i = indexRange.Start; i < length; i++)
-            array[i] = Entries[i];
-        
-        return new ReadOnlyFrugalList<T>(array);
+        return Crc32Utilities.ItemsWithCrc(crc, _crcToIndexMap, Entries);
     }
 
     /// <inheritdoc />

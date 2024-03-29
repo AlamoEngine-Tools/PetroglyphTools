@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using PG.Commons.Hashing;
 using System.Linq;
+using AnakinRaW.CommonUtilities.Collections;
 
 namespace PG.Commons.Utilities;
 
@@ -58,6 +59,43 @@ public static class Crc32Utilities
     }
 
     /// <summary>
+    /// Gets all items of the specified sorted list matching the CRC32 checksum.
+    /// </summary>
+    /// <remarks>
+    /// This method assumes that <paramref name="items"/> is sorted and <paramref name="indexMap"/> matches <paramref name="items"/>.
+    /// Otherwise, incorrect results may occur or an <see cref="IndexOutOfRangeException"/> gets thrown.
+    /// </remarks>
+    /// <param name="crc">The CRC32 checksum to search for in the specified list.</param>
+    /// <param name="indexMap"></param>
+    /// <param name="items">The sorted list to search.</param>
+    /// <returns>A list containing all items matching <paramref name="crc"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="indexMap"/> or <paramref name="items"/> is <see langword="null"/>.</exception>
+    public static ReadOnlyFrugalList<T> ItemsWithCrc<T>(
+        Crc32 crc, 
+        IReadOnlyDictionary<Crc32, IndexRange> indexMap, 
+        IList<T> items) where T : IHasCrc32
+    {
+        if (indexMap is null) 
+            throw new ArgumentNullException(nameof(indexMap));
+        if (items is null)
+            throw new ArgumentNullException(nameof(items));
+
+        if (items.Count == 0 || !indexMap.TryGetValue(crc, out var indexRange))
+            return ReadOnlyFrugalList<T>.Empty;
+
+        var length = indexRange.Length;
+
+        if (length == 1)
+            return new ReadOnlyFrugalList<T>(items[indexRange.Start]);
+
+        var list = new List<T>(length);
+        for (var i = indexRange.Start; i < indexRange.Start + length; i++)
+            list.Add(items[i]);
+
+        return new ReadOnlyFrugalList<T>(list);
+    }
+
+    /// <summary>
     /// Sorts the elements of a sequence in ascending order by their CRC32 checksum.
     /// </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam>
@@ -79,6 +117,18 @@ public static class Crc32Utilities
     /// <exception cref="ArgumentException"><paramref name="items"/> is not sorted by CRC32 checksum.</exception>
     public static void EnsureSortedByCrc32<T>(IEnumerable<T> items) where T : IHasCrc32
     {
+        if (!IsSortedByCrc32(items))
+            throw new ArgumentException("Items are not sorted by CRC32", nameof(items));
+    }
+
+    /// <summary>
+    /// Checks whether all elements of a sequence are sorted in ascending order by their CRC32 checksum.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="items">A sequence of values to check for correct sorting.</param>
+    /// <returns><see langword="true"/> is the specified collection is sorted; otherwise, <see langword="false"/>.</returns>
+    public static bool IsSortedByCrc32<T>(IEnumerable<T> items) where T : IHasCrc32
+    {
         if (items == null)
             throw new ArgumentNullException(nameof(items));
 
@@ -87,8 +137,10 @@ public static class Crc32Utilities
         {
             var currentCrc = item.Crc32;
             if (currentCrc < lastCrc)
-                throw new ArgumentException("Items are not sorted by CRC32", nameof(items));
+                return false;
             lastCrc = currentCrc;
         }
+
+        return true;
     }
 }

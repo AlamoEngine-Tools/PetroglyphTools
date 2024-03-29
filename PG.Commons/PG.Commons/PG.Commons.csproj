@@ -19,6 +19,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="AnakinRaW.CommonUtilities" Version="10.1.2" />
+		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="10.1.2" />
 		<PackageReference Include="IsExternalInit" Version="1.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

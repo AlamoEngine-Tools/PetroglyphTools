@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -7,7 +7,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
-[TestClass]
+
 public class MegDataEntryReferenceTest : MegDataEntryBaseTest<MegDataEntryLocationReference>
 {
     // We need an instance global variable, cause IMegFile equality is only done by reference.

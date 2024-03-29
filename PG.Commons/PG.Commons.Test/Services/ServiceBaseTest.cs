@@ -2,24 +2,22 @@
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Services;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.Commons.Test.Services;
 
-[TestClass]
 public class ServiceBaseTest
 {
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
+    [Fact]
     public void Test_Ctor_ThrowsNullArg()
     {
-        _ = new MyService(null!);
+        Assert.Throws<ArgumentNullException>(() => new MyService(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_SetupProperties()
     {
         var fs = new MockFileSystem();
@@ -31,25 +29,20 @@ public class ServiceBaseTest
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
         
         var service = new MyService(spMock.Object);
-        Assert.AreEqual(spMock.Object, service.Services);
-        Assert.AreEqual(loggerMock.Object, service.Logger);
-        Assert.AreEqual(fs, service.FileSystem);
+        Assert.Equal(spMock.Object, service.Services);
+        Assert.Equal(loggerMock.Object, service.Logger);
+        Assert.Equal(fs, service.FileSystem);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_NullLogger()
     {
         var fs = new MockFileSystem();
         var spMock = new Mock<IServiceProvider>();
         spMock.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
         var service = new MyService(spMock.Object);
-        Assert.AreEqual(NullLogger.Instance, service.Logger);
+        Assert.Equal(NullLogger.Instance, service.Logger);
     }
 
-    private class MyService : ServiceBase
-    {
-        public MyService(IServiceProvider services) : base(services)
-        {
-        }
-    }
+    private class MyService(IServiceProvider services) : ServiceBase(services);
 }

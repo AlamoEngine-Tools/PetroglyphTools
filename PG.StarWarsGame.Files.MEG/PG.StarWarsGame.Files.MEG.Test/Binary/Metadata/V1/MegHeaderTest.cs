@@ -2,50 +2,49 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
-[TestClass]
 public class MegHeaderTest
 {
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__ThrowsArgumentOORException()
     {
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new MegHeader((uint)int.MaxValue + 1, (uint)int.MaxValue + 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MegHeader((uint)int.MaxValue + 1, (uint)int.MaxValue + 1));
     }
 
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__ThrowsArgumentException()
     {
-        Assert.ThrowsException<ArgumentException>(() => new MegHeader(1, 2));
+        Assert.Throws<ArgumentException>(() => new MegHeader(1, 2));
     }
 
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__Correct()
     {
         new MegHeader(0, 0);
         new MegHeader(1, 1);
         new MegHeader(int.MaxValue, int.MaxValue);
-        Assert.IsTrue(true);
+        Assert.True(true);
     }
 
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__FileNumber()
     {
         IMegHeader header = new MegHeader(1, 1);
-        Assert.AreEqual(1, header.FileNumber);
+        Assert.Equal(1, header.FileNumber);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Size()
     {
-        Assert.AreEqual(8, default(MegHeader).Size);
+        Assert.Equal(8, default(MegHeader).Size);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Bytes()
     {
         var header = new MegHeader(2, 2);
@@ -54,6 +53,6 @@ public class MegHeaderTest
             0x2, 0x0, 0x0, 0x0,
             0x2, 0x0, 0x0, 0x0
         };
-        CollectionAssert.AreEqual(expectedBytes, header.Bytes);
+        Assert.Equal(expectedBytes, header.Bytes);
     }
 }

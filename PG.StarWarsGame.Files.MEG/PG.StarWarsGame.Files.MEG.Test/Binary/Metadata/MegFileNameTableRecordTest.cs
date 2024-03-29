@@ -2,74 +2,73 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 
-[TestClass]
 public class MegFileNameTableRecordTest
 {
-    [TestMethod]
-    [DataRow("", "org")]
-    [DataRow("   ", "org")]
-    [DataRow("path", "")]
-    public void Ctor_Test__ThrowsArgumentException(string fileName, string originalFileName)
+    [Theory]
+    [InlineData("", "org")]
+    [InlineData("   ", "org")]
+    [InlineData("path", "")]
+    public void Ctor_Test_ThrowsArgumentException(string fileName, string originalFileName)
     {
-        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fileName, originalFileName));
+        Assert.Throws<ArgumentException>(() => new MegFileNameTableRecord(fileName, originalFileName));
     }
 
-    [TestMethod]
-    public void Ctor_Test__ThrowsArgumentNullException()
+    [Fact]
+    public void Ctor_Test_ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileNameTableRecord(null!, "org"));
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileNameTableRecord("path", null!));
+        Assert.Throws<ArgumentNullException>(() => new MegFileNameTableRecord(null!, "org"));
+        Assert.Throws<ArgumentNullException>(() => new MegFileNameTableRecord("path", null!));
     }
 
-    [TestMethod]
-    public void Ctor_Test__ThrowsArgumentException()
+    [Fact]
+    public void Ctor_Test_StringTooLong_ThrowsArgumentException()
     {
         var fn = new string('a', ushort.MaxValue + 1);
-        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fn, "org"));
+        Assert.Throws<ArgumentException>(() => new MegFileNameTableRecord(fn, "org"));
     }
 
-    [TestMethod]
+    [Fact]
     public void Ctor_Test_OriginalPath()
     {
         const string expectedOrgPath = "someUnusualStringÜöä😅";
         var record = ExceptionUtilities.AssertDoesNotThrowException(() => new MegFileNameTableRecord("path", expectedOrgPath));
-        Assert.AreEqual("path", record.FileName);
-        Assert.AreEqual(expectedOrgPath, record.OriginalFilePath);
+        Assert.Equal("path", record.FileName);
+        Assert.Equal(expectedOrgPath, record.OriginalFilePath);
     }
 
-    [TestMethod]
-    [DataRow("abc", 2 + 3)]
-    [DataRow("abc123", 2 + 6)]
+    [Theory]
+    [InlineData("abc", 2 + 3)]
+    [InlineData("abc123", 2 + 6)]
     public void Ctor_Test_Size(string fileName, int expectedSize)
     {
         var record = new MegFileNameTableRecord(fileName, "org");
-        Assert.AreEqual(expectedSize, record.Size);
+        Assert.Equal(expectedSize, record.Size);
     }
 
-    [TestMethod]
-    [DataRow("üöä")]
-    [DataRow("©")]
-    [DataRow("🍔")] // Long byte emojii
-    [DataRow("❓")] // Short byte emojii
-    [DataRow("a\u00A0")] 
+    [Theory]
+    [InlineData("üöä")]
+    [InlineData("©")]
+    [InlineData("🍔")] // Long byte emojii
+    [InlineData("❓")] // Short byte emojii
+    [InlineData("a\u00A0")] 
     public void Test_NonAsciiPath_Throws(string fileName)
     {
-        Assert.ThrowsException<ArgumentException>(() => new MegFileNameTableRecord(fileName, "org"));
+        Assert.Throws<ArgumentException>(() => new MegFileNameTableRecord(fileName, "org"));
     }
 
-    [TestMethod]
-    [DataRow("a", new byte[] { 0x1, 0x0, 0x61 })]
-    [DataRow("ab", new byte[] { 0x2, 0x0, 0x61, 0x62 })]
+    [Theory]
+    [InlineData("a", new byte[] { 0x1, 0x0, 0x61 })]
+    [InlineData("ab", new byte[] { 0x2, 0x0, 0x61, 0x62 })]
     public void Test_GetBytes(string fileName, byte[] expectedBytes)
     {
         var record = new MegFileNameTableRecord(fileName, "org");
-        CollectionAssert.AreEqual(expectedBytes, record.Bytes);
+        Assert.Equal(expectedBytes, record.Bytes);
     }
 
     internal static MegFileNameTableRecord CreateNameRecord(string path, string? orgPath = null)

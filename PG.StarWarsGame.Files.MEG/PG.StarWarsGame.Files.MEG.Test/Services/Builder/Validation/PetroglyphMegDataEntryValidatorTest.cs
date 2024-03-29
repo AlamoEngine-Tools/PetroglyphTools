@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,35 +8,35 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using Testably.Abstractions.Testing;
 using System.Reflection;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-[TestClass]
+
 public class PetroglyphMegDataEntryValidatorTest
 {
-    private TestPetroglyphMegDataEntryValidator _validator = null!;
+    private readonly TestPetroglyphMegDataEntryValidator _validator;
 
-    [TestInitialize]
-    public void Setup()
+    public PetroglyphMegDataEntryValidatorTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
         _validator = new TestPetroglyphMegDataEntryValidator(sc.BuildServiceProvider());
     }
 
-    [TestMethod]
-    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(ValidTestData))]
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
+        Assert.True(_validator.Validate(builderInfo).IsValid);
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(InvalidTestData), typeof(NotNullDataEntryValidatorTest), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
-    [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(InvalidTestData), MemberType = typeof(NotNullDataEntryValidatorTest))]
+    [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
+        Assert.False(_validator.Validate(builderInfo).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()

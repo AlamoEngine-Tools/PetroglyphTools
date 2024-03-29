@@ -18,7 +18,7 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     }
 
     /// <inheritdoc />
-    public override string NormalizePath(string filePath)
+    public override string Normalize(string filePath)
     {
         return PathNormalizer.Normalize(filePath,
             new PathNormalizeOptions {  UnifyDirectorySeparators = true, UnifyCase = UnifyCasingKind.UpperCaseForce });

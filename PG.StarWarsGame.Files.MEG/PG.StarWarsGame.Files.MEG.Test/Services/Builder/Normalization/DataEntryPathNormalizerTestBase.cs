@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
-using PG.Testing;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
@@ -16,24 +15,24 @@ public abstract class DataEntryPathNormalizerTestBase
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
-        ExceptionUtilities.AssertThrowsAny(() => normalizer.NormalizePath(source));
+        Assert.ThrowsAny<Exception>(() => normalizer.Normalize(source));
 
         var copy = source;
-        var success = normalizer.TryNormalizePath(ref copy, out _);
-        Assert.IsFalse(success);
+        var success = normalizer.TryNormalize(ref copy, out _);
+        Assert.False(success);
     }
 
     protected void TestNormalizePathPasses(string source, string expected)
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
-        var actual = normalizer.NormalizePath(source);
-        Assert.AreEqual(expected, actual);
+        var actual = normalizer.Normalize(source);
+        Assert.Equal(expected, actual);
 
         var copy = source;
-        var success = normalizer.TryNormalizePath(ref copy, out _);
-        Assert.IsTrue(success);
-        Assert.AreEqual(copy, expected);
+        var success = normalizer.TryNormalize(ref copy, out _);
+        Assert.True(success);
+        Assert.Equal(copy, expected);
     }
 
     private IServiceProvider CreateServiceProvider()

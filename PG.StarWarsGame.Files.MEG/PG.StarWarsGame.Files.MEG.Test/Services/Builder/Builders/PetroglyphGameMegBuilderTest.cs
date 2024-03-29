@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
@@ -34,35 +34,35 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestSuite
         return CreatePetroBuilder(BasePath, serviceProvider);
     }
 
-    [TestMethod]
+    [Fact]
     public void PetroglyphGameMegBuilderTest_Test_Ctor_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new EmpireAtWarMegBuilder(null!, CreateServiceProvider()));
-        Assert.ThrowsException<ArgumentException>(() => new EmpireAtWarMegBuilder("", CreateServiceProvider()));
+        Assert.Throws<ArgumentNullException>(() => new EmpireAtWarMegBuilder(null!, CreateServiceProvider()));
+        Assert.Throws<ArgumentException>(() => new EmpireAtWarMegBuilder("", CreateServiceProvider()));
     }
 
-    [TestMethod]
+    [Fact]
     public void PetroglyphGameMegBuilderTest_Test_Ctor()
     {
         var builder = CreatePetroBuilder(BasePath, CreateServiceProvider());
-        Assert.AreEqual(FileSystem.Path.GetFullPath(BasePath), builder.BaseDirectory);
+        Assert.Equal(FileSystem.Path.GetFullPath(BasePath), builder.BaseDirectory);
     }
 
-    [TestMethod]
+    [Fact]
     public void PetroglyphGameMegBuilderTest_Test_Ctor_BasePathIsTreatedAsDirectory()
     { 
         // Skipping trailing path separator on purpose
         var builder = CreatePetroBuilder("/game/corruption.dir", CreateServiceProvider());
 
         // Assert trailing path separator in instance.
-        Assert.AreEqual(FileSystem.Path.GetFullPath("/game/corruption.dir/"), builder.BaseDirectory);
+        Assert.Equal(FileSystem.Path.GetFullPath("/game/corruption.dir/"), builder.BaseDirectory);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_ResolveEntryPath()
     {
         var builder = CreatePetroBuilder(BasePath, CreateServiceProvider());
         EntryPathResolver.Setup(r => r.ResolvePath("somePath", builder.BaseDirectory)).Returns("someReturn");
-        Assert.AreEqual("someReturn", builder.ResolveEntryPath("somePath"));
+        Assert.Equal("someReturn", builder.ResolveEntryPath("somePath"));
     }
 }

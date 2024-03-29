@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Attributes;
 
@@ -16,7 +15,6 @@ public static class ServiceCollectionExtensions
     ///     Convenience method to collect and contribute all <see cref="IServiceContribution" />s.
     /// </summary>
     /// <param name="serviceCollection"></param>
-    [MethodImpl(MethodImplOptions.Synchronized)]
     public static void CollectPgServiceContributions(this IServiceCollection serviceCollection)
     {
         var contributions = AppDomain.CurrentDomain.GetAssemblies()

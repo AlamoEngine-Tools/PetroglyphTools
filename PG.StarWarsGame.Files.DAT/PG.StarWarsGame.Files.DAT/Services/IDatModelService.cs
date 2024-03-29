@@ -63,8 +63,8 @@ public interface IDatModelService
     /// <br/>
     /// <code>
     /// Example:
-    /// BaseDat := [A, A', B, C] where A' is a duplicate of the key A with a different value.
-    /// ToMerge := [A'', A''', D] where A'' and A''' are duplicates of the key A with a different values
+    /// BaseDat := [A, A', B, D] where A' is a duplicate of the key A with a different value.
+    /// ToMerge := [A'', A''', C] where A'' and A''' are duplicates of the key A with a different values
     /// Result  := [A'', A', B, C, D] 
     /// </code>
     /// </summary>

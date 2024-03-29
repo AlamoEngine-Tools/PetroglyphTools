@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using PG.Commons.Hashing;
@@ -10,6 +11,12 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
 public abstract partial class DatModelServiceTest
 {
+    [Fact]
+    public void Test_SortModel_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => Service.SortModel(null!));
+    }
+
     [Theory]
     [MemberData(nameof(GetUnsortedEntriesTestData))]
     public void Test_SortModel(IList<DatStringEntry> entries, IList<DatStringEntry> expectedList)

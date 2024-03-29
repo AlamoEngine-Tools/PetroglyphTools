@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using Xunit;
@@ -7,6 +8,13 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
 public abstract partial class DatModelServiceTest
 {
+    [Fact]
+    public void Test_GetMissingKeysFromBase_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => Service.GetMissingKeysFromBase(null!, CreateModel([])));
+        Assert.Throws<ArgumentNullException>(() => Service.GetMissingKeysFromBase(CreateModel([]), null!));
+    }
+
     [Theory]
     [MemberData(nameof(GetMissingKeysFromBase_TestData))]
     public void Test_GetMissingKeysFromBase(

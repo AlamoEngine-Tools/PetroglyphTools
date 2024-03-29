@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics;
 using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
@@ -14,6 +15,7 @@ namespace PG.StarWarsGame.Files.DAT.Data;
 /// <remarks>
 /// Equality is based on <see cref="Key"/>, <see cref="Crc32"/> and <see cref="Value"/>.
 /// </remarks>
+[DebuggerDisplay("{Key}:{Value}")]
 public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
 {
     /// <summary>
@@ -93,5 +95,11 @@ public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
     public override int GetHashCode()
     {
         return HashCode.Combine(Key, Value, Crc32);
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{Key}:{Value}";
     }
 }

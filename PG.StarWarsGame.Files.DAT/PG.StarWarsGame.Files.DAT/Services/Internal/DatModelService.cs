@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Data;
@@ -70,7 +72,8 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         return keys;
     }
 
-    public IDatModel MergeSorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
+    public IDatModel MergeSorted(IDatModel baseDatModel, IDatModel datToMerge,
+        out ICollection<MergedKeyResult> mergedKeys,
         SortedDatMergeOptions mergeOptions = SortedDatMergeOptions.KeepExisting)
     {
         if (baseDatModel == null)
@@ -83,7 +86,39 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datToMerge.KeySortOder != DatFileType.OrderedByCrc32)
             throw new ArgumentException("DAT model not sorted.", nameof(datToMerge));
 
-        throw new NotImplementedException();
+        var newEntries = baseDatModel.ToList();
+        var visitedCrc = new HashSet<Crc32>();
+
+        mergedKeys = new List<MergedKeyResult>();
+
+        foreach (var entryToMerge in datToMerge)
+        {
+            if (!visitedCrc.Add(entryToMerge.Crc32))
+                continue;
+
+            var firstInBase = baseDatModel.EntriesWithCrc(entryToMerge.Crc32).FirstOrDefault();
+
+            // The base DAT does not have the current CRC
+            if (firstInBase.Equals(default))
+            {
+                mergedKeys.Add(new MergedKeyResult(entryToMerge));
+                newEntries.Add(entryToMerge);
+                continue;
+            }
+
+            if (mergeOptions == SortedDatMergeOptions.KeepExisting)
+                continue;
+
+            var firstToMerge = datToMerge.EntriesWithCrc(entryToMerge.Crc32).First();
+
+            var indexToOverwrite = newEntries.IndexOf(firstInBase);
+            Debug.Assert(indexToOverwrite >= 0);
+
+            newEntries[indexToOverwrite] = firstToMerge;
+            mergedKeys.Add(new MergedKeyResult(firstToMerge, firstInBase));
+        }
+
+        return new SortedDatModel(Crc32Utilities.SortByCrc32(newEntries));
     }
 
     public IDatModel MergeUnsorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
@@ -131,7 +166,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
 
             if (datToMerge.Count > maxIndex)
             {
-                foreach (var entry in datToMerge.Take(maxIndex))
+                foreach (var entry in datToMerge.Skip(maxIndex))
                 {
                     mergedKeys.Add(new MergedKeyResult(entry));
                     newModelEntries.Add(entry);
@@ -163,7 +198,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
 
             if (datToMerge.Count > currentToMergeIndex)
             {
-                foreach (var entry in datToMerge.Take(currentToMergeIndex))
+                foreach (var entry in datToMerge.Skip(currentToMergeIndex))
                 {
                     mergedKeys.Add(new MergedKeyResult(entry));
                     newModelEntries.Add(entry);

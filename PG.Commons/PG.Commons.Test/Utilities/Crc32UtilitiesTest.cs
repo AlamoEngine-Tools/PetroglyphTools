@@ -108,6 +108,7 @@ public class Crc32UtilitiesTest
             ],
             new object[]
             {
+                // (uint)-1 is larger than 1
                 new[] { 1, -1 },
                 new Dictionary<int, (int, int)> { { 1, (0, 1) }, { -1, (1, 1) } }
             },
@@ -126,31 +127,146 @@ public class Crc32UtilitiesTest
 
         var result = Crc32Utilities.ListToCrcIndexRangeTable(list);
 
-        Assert.Equal(expectedTransformed.ToList(), result.ToList());
+        Assert.Equal(expectedTransformed, result);
     }
 
-
-    private class CrcHolder : IHasCrc32
+    [Fact]
+    public void Test_ItemsWithCrc_Throws()
     {
-        public Crc32 Crc32 { get; }
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, new Dictionary<Crc32, IndexRange>(), (IList<CrcHolder>)null!));
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, null!, new List<CrcHolder>()));
+    }
 
-        public CrcHolder(int number)
+    [Theory]
+    [MemberData(nameof(SortedTestDataForItemsWithCrc))]
+    public void Test_ItemsWithCrc((string Id, int Crc)[] data, ICollection<ItemsWithCrcQueryData> queries)
+    {
+        var list = data.Select(d => new CrcHolderWithIdentity(d.Id, d.Crc)).ToList();
+
+        var map = Crc32Utilities.ListToCrcIndexRangeTable(list);
+
+        foreach (var queryData in queries)
         {
-            Crc32 = new Crc32(number);
+            var items = Crc32Utilities.ItemsWithCrc(queryData.Crc, map, list);
+            Assert.Equal(queryData.ExpectedItems, items);
         }
     }
 
-    private class CrcHolderWithIdentity : IHasCrc32, IEquatable<CrcHolderWithIdentity>
+    public static IEnumerable<object[]> SortedTestDataForItemsWithCrc()
     {
-        public string Id { get; }
+        yield return
+        [
+            Array.Empty<(string, int)>(),
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                }
+            }
+        ];
+        yield return
+        [
+            new[] { ("a", 1) },
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                },
+                new()
+                {
+                    Crc = new Crc32(1),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("a", 1)
+                    ]
+                },
+            }
+        ];
+        yield return
+        [
+            new[] { ("a", 1), ("b", 1) },
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                },
+                new()
+                {
+                    Crc = new Crc32(1),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("a", 1),
+                        new CrcHolderWithIdentity("b", 1),
+                    ]
+                },
+            }
+        ];
+        yield return
+        [
+            new[] { ("a", 1), ("b", 1), ("c", 2), ("d", 3), ("e", 3), ("f", 4) },
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                },
+                new()
+                {
+                    Crc = new Crc32(1),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("a", 1), 
+                        new CrcHolderWithIdentity("b", 1)
+                    ]
+                },
+                new()
+                {
+                    Crc = new Crc32(2),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("c", 2),
+                    ]
+                },
+                new()
+                {
+                    Crc = new Crc32(3),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("d", 3),
+                        new CrcHolderWithIdentity("e", 3)
+                    ]
+                },
+                new()
+                {
+                    Crc = new Crc32(4),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("f", 4),
+                    ]
+                },
+            }
+        ];
+    }
 
-        public Crc32 Crc32 { get; }
+    public struct ItemsWithCrcQueryData
+    {
+        public Crc32 Crc { get; init; }
 
-        public CrcHolderWithIdentity(string id, int number)
-        {
-            Id = id;
-            Crc32 = new Crc32(number);
-        }
+        public IList<CrcHolderWithIdentity> ExpectedItems { get; init; }
+    }
+
+
+    public class CrcHolder(int number) : IHasCrc32
+    {
+        public Crc32 Crc32 { get; } = new(number);
+    }
+
+    public class CrcHolderWithIdentity(string id, int number) : IHasCrc32, IEquatable<CrcHolderWithIdentity>
+    {
+        public string Id { get; } = id;
+
+        public Crc32 Crc32 { get; } = new(number);
 
         public bool Equals(CrcHolderWithIdentity? other)
         {
@@ -170,6 +286,11 @@ public class Crc32UtilitiesTest
         public override int GetHashCode()
         {
             return HashCode.Combine(Id, Crc32);
+        }
+
+        public override string ToString()
+        {
+            return $"{Id}:{Crc32}";
         }
     }
 }

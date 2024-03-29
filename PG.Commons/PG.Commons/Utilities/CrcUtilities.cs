@@ -59,18 +59,28 @@ public static class Crc32Utilities
     }
 
     /// <summary>
-    /// 
+    /// Gets all items of the specified sorted list matching the CRC32 checksum.
     /// </summary>
-    /// <param name="crc"></param>
+    /// <remarks>
+    /// This method assumes that <paramref name="items"/> is sorted and <paramref name="indexMap"/> matches <paramref name="items"/>.
+    /// Otherwise, incorrect results may occur or an <see cref="IndexOutOfRangeException"/> gets thrown.
+    /// </remarks>
+    /// <param name="crc">The CRC32 checksum to search for in the specified list.</param>
     /// <param name="indexMap"></param>
-    /// <param name="items"></param>
-    /// <returns></returns>
+    /// <param name="items">The sorted list to search.</param>
+    /// <returns>A list containing all items matching <paramref name="crc"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="indexMap"/> or <paramref name="items"/> is <see langword="null"/>.</exception>
     public static ReadOnlyFrugalList<T> ItemsWithCrc<T>(
         Crc32 crc, 
         IReadOnlyDictionary<Crc32, IndexRange> indexMap, 
         IList<T> items) where T : IHasCrc32
     {
-        if (!indexMap.TryGetValue(crc, out var indexRange))
+        if (indexMap is null) 
+            throw new ArgumentNullException(nameof(indexMap));
+        if (items is null)
+            throw new ArgumentNullException(nameof(items));
+
+        if (items.Count == 0 || !indexMap.TryGetValue(crc, out var indexRange))
             return ReadOnlyFrugalList<T>.Empty;
 
         var length = indexRange.Length;

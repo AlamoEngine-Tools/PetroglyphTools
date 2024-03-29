@@ -5,9 +5,6 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons;
-using PG.Commons.Hashing;
-using PG.StarWarsGame.Files.DAT.Binary;
-using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.Testing;
@@ -19,7 +16,8 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 public class DatFileServiceIntegrationTest
 {
     private readonly MockFileSystem _fileSystem = new();
-    private readonly DatFileService _service;
+    private readonly IDatFileService _service;
+    private readonly IServiceProvider _serviceProvider;
 
     public DatFileServiceIntegrationTest()
     {
@@ -28,7 +26,8 @@ public class DatFileServiceIntegrationTest
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
         PGDomain.RegisterServices(sc);
         DatDomain.RegisterServices(sc);
-        _service = new DatFileService(sc.BuildServiceProvider());
+        _serviceProvider = sc.BuildServiceProvider();
+        _service = _serviceProvider.GetRequiredService<IDatFileService>();
     }
 
     [Fact]
@@ -120,7 +119,7 @@ public class DatFileServiceIntegrationTest
         }
         
         var model = _service.Load("Empty.dat");
-        Assert.Equal(0, model.Content.Count);
+        Assert.Empty(model.Content);
     }
 
     [Fact]
@@ -134,7 +133,7 @@ public class DatFileServiceIntegrationTest
         }
 
         var model = _service.Load("EmptyKeyWithValue.dat");
-        Assert.Equal(1, model.Content.Count);
+        Assert.Single(model.Content);
         Assert.True(model.Content.ContainsKey(string.Empty));
     }
 
@@ -150,46 +149,30 @@ public class DatFileServiceIntegrationTest
 
         var model = _service.Load("Sorted_TwoEntriesDuplicate.dat");
         Assert.Equal(2, model.Content.Count);
-        Assert.Equal(1, model.Content.Keys.Count);
+        Assert.Single(model.Content.Keys);
     }
 
 
-    //[Fact]
-    public void Test()
+    [Fact]
+    public void Test_LoadModifyCreate()
     {
-        var fileSystem = new FileSystem();
-
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(fileSystem);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PGDomain.RegisterServices(sc);
-        DatDomain.RegisterServices(sc);
-        var sp = sc.BuildServiceProvider();
-        var service = new DatFileService(sp);
-
-        var path = "C:/test/MasterTextFile_german.dat";
-
-        using (var fs = fileSystem.FileStream.New(path, FileMode.Create))
+        _fileSystem.Initialize();
+        using (var fs = _fileSystem.FileStream.New("Index_WithDuplicates.dat", FileMode.Create))
         {
-            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceIntegrationTest), "Files.mastertextfile_english.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceIntegrationTest), "Files.Index_WithDuplicates.dat");
             stream.CopyTo(fs);
         }
 
-        var datFile = service.Load(path).Content;
+        var model = _service.LoadAs("Index_WithDuplicates.dat", DatFileType.NotOrdered).Content;
+        Assert.Equal(DatFileType.NotOrdered, model.KeySortOder);
+        var modelService = _serviceProvider.GetRequiredService<IDatModelService>();
+        Assert.True(modelService.GetDuplicateEntries(model).Any());
+        var withoutDups = modelService.RemoveDuplicates(model);
+        Assert.False(modelService.GetDuplicateEntries(withoutDups).Any());
+        var sorted = modelService.SortModel(withoutDups);
+        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOder);
 
-        var entries = datFile.ToList();
-
-        var crcT = sp.GetRequiredService<ICrc32HashingService>()
-            .GetCrc32("TEXT_TOOLTIP_TARKIN_01", DatFileConstants.TextKeyEncoding);
-        entries.Add(new DatStringEntry("TEXT_TOOLTIP_TARKIN_01", crcT, "bla bla bla"));
-
-        var pietIndex = entries.FindIndex(e => e.Key == "TEXT_TOOLTIP_VEERS_01");
-        var cPiet = entries[pietIndex];
-        var newPiet = new DatStringEntry(cPiet.Key, cPiet.Crc32, "This is some text\nwith real\r\nline breaks and \t a tab.");
-        entries[pietIndex] = newPiet;
-
-        using var writeFs = fileSystem.FileStream.New(path, FileMode.Open, FileAccess.Write);
-
-        service.CreateDatFile(writeFs, entries, DatFileType.OrderedByCrc32);
+        using (var fs = _fileSystem.FileStream.New("newSorted.dat", FileMode.Create)) 
+            _service.CreateDatFile(fs, sorted, DatFileType.OrderedByCrc32);
     }
 }

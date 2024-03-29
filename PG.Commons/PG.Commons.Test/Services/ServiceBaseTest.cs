@@ -44,10 +44,5 @@ public class ServiceBaseTest
         Assert.Equal(NullLogger.Instance, service.Logger);
     }
 
-    private class MyService : ServiceBase
-    {
-        public MyService(IServiceProvider services) : base(services)
-        {
-        }
-    }
+    private class MyService(IServiceProvider services) : ServiceBase(services);
 }

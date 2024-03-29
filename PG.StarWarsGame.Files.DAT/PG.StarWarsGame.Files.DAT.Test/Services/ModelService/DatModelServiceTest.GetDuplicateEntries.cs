@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
@@ -8,6 +9,12 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
 public abstract partial class DatModelServiceTest
 {
+    [Fact]
+    public void Test_GetDuplicateEntries_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => Service.GetDuplicateEntries(null!));
+    }
+
     [Theory]
     [MemberData(nameof(GetDuplicateEntries_ModelsWithoutDuplicates))]
     public void Test_GetDuplicateEntries_NoDuplicates(IList<DatStringEntry> entries)

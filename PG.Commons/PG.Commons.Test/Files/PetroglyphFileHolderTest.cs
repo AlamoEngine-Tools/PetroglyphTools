@@ -153,7 +153,7 @@ public class PetroglyphFileHolderTest
         var model = new object();
         var sp = new Mock<IServiceProvider>();
         sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
-        ExceptionUtilities.AssertThrowsException(type, () => new TestFileHolder(model, new TestParam { FilePath = path }, sp.Object));
+        Assert.Throws(type, () => new TestFileHolder(model, new TestParam { FilePath = path }, sp.Object));
     }
 
     [Theory]

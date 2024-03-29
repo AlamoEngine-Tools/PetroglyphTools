@@ -2,7 +2,6 @@
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
-using PG.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -16,7 +15,7 @@ public abstract class DataEntryPathNormalizerTestBase
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
-        ExceptionUtilities.AssertThrowsAny(() => normalizer.Normalize(source));
+        Assert.ThrowsAny<Exception>(() => normalizer.Normalize(source));
 
         var copy = source;
         var success = normalizer.TryNormalize(ref copy, out _);

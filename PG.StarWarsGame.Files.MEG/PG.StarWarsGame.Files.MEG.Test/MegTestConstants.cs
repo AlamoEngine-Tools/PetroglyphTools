@@ -1,11 +1,9 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using PG.Testing;
-
 namespace PG.StarWarsGame.Files.MEG.Test;
 
-internal sealed class MegTestConstants : TestConstants
+internal static class MegTestConstants
 {
     internal static readonly byte[] ContentMegFileV1 =
     [
@@ -253,13 +251,5 @@ internal sealed class MegTestConstants : TestConstants
         112, 97, 105, 103, 110, 47, 99, 97, 109, 112, 97, 105, 103, 110, 115, 95, 117, 110, 100, 101, 114, 119, 111,
         114, 108, 100, 95, 116, 117, 116, 111, 114, 105, 97, 108, 46, 120, 109, 108, 60, 47, 70, 105, 108, 101, 62,
         10, 60, 47, 67, 97, 109, 112, 97, 105, 103, 110, 95, 70, 105, 108, 101, 115, 62
-    ];
-
-    internal static readonly byte[] CONTENT_MEG_FILE_HEADER_V1 =
-    [
-        2, 0, 0, 0, 2, 0, 0, 0, 28, 0, 68, 65, 84, 65, 47, 88, 77, 76, 47, 71, 65, 77, 69, 79, 66, 74, 69, 67, 84,
-        70, 73, 76, 69, 83, 46, 88, 77, 76, 26, 0, 68, 65, 84, 65, 47, 88, 77, 76, 47, 67, 65, 77, 80, 65, 73, 71,
-        78, 70, 73, 76, 69, 83, 46, 88, 77, 76, 146, 206, 127, 126, 0, 0, 0, 0, 158, 20, 0, 0, 106, 0, 0, 0, 0, 0,
-        0, 0, 252, 90, 98, 183, 1, 0, 0, 0, 114, 1, 0, 0, 8, 21, 0, 0, 1, 0, 0, 0
     ];
 }

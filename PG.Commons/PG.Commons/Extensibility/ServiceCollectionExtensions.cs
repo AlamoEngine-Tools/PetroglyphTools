@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
     public static void CollectPgServiceContributions(this IServiceCollection serviceCollection)
     {
         var contributions = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(IsValidAssembly)
             .SelectMany(assemblyTypes => assemblyTypes.GetTypes())
             .Where(assemblyType => typeof(IServiceContribution).IsAssignableFrom(assemblyType) &&
                                    assemblyType is { IsClass: true, IsAbstract: false })
@@ -42,5 +43,18 @@ public static class ServiceCollectionExtensions
                 // ignored
             }
         });
+    }
+
+    // Apparently there is some race condition when loading types from assemblies which are used for unit testing. 
+    // Making CollectPgServiceContributions() synchronized does not solve the problem.
+    // With this filter, we just allow assemblies which are from this project.
+    // (this is not a security guard as impersonating is still possible)
+    private static bool IsValidAssembly(Assembly assembly)
+    {
+        if (assembly.FullName == typeof(PGServiceContribution).Assembly.FullName)
+            return true;
+        if (assembly.FullName.StartsWith("PG.StarWarsGame."))
+            return true;
+        return false;
     }
 }

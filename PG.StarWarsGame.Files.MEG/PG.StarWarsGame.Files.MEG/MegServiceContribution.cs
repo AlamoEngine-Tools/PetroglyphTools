@@ -12,7 +12,7 @@ namespace PG.StarWarsGame.Files.MEG;
 
 /// <inheritdoc />
 [Order(1000)]
-internal sealed class MegServiceContribution : IServiceContribution
+public class MegServiceContribution : IServiceContribution
 {
     /// <inheritdoc />
     public void ContributeServices(IServiceCollection serviceCollection)

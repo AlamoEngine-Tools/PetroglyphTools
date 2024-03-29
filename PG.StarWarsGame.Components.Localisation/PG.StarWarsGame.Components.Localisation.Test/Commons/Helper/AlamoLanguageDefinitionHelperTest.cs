@@ -2,61 +2,63 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Attributes;
 using PG.StarWarsGame.Components.Localisation.Attributes;
 using PG.StarWarsGame.Components.Localisation.Commons.Helper;
 using PG.StarWarsGame.Components.Localisation.Languages;
-using PG.Testing;
+using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Components.Localisation.Test.Commons.Helper;
 
-[TestClass]
-public class AlamoLanguageDefinitionHelperTest : ServiceTestBase
+public class AlamoLanguageDefinitionHelperTest
 {
-    [TestMethod]
+    private readonly AlamoLanguageDefinitionHelper _helper;
+
+    public AlamoLanguageDefinitionHelperTest()
+    {
+        var fs = new MockFileSystem();
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(_ => fs);
+        _helper = new AlamoLanguageDefinitionHelper(sc.BuildServiceProvider());
+    }
+
+    [Fact]
     public void Test_GetAllAlamoLanguageDefinitions__ReturnsAtLeastDefaults()
     {
-        var definitions = GetServiceInstance<AlamoLanguageDefinitionHelper>()
+        var definitions = _helper
             .GetAllRegisteredAlamoLanguageDefinitions();
-        Assert.IsTrue(definitions.Count >= LocalisationTestConstants.RegisteredLanguageDefinitions.Count,
+        Assert.True(definitions.Count >= LocalisationTestConstants.RegisteredLanguageDefinitions.Count,
             "This function should always at least return the default language definitions.");
+
         var actualNumberOfLanguageDefinitionsMarkedAsOfficial = 0;
         var actualDefaultLanguageCount = 0;
         foreach (var alamoLanguageDefinition in definitions)
         {
-            if (alamoLanguageDefinition.GetType()
-                .GetAttributeValueOrDefault((OfficiallySupportedLanguageAttribute o) => o.IsOfficiallySupported))
+            if (alamoLanguageDefinition.GetType().GetAttributeValueOrDefault((OfficiallySupportedLanguageAttribute o) => o.IsOfficiallySupported))
             {
                 actualNumberOfLanguageDefinitionsMarkedAsOfficial++;
             }
 
-            if (alamoLanguageDefinition.GetType()
-                .GetAttributeValueOrDefault((DefaultLanguageAttribute d) => d.IsDefaultLanguage))
+            if (alamoLanguageDefinition.GetType().GetAttributeValueOrDefault((DefaultLanguageAttribute d) => d.IsDefaultLanguage))
             {
                 actualDefaultLanguageCount++;
             }
         }
 
-        Assert.AreEqual(LocalisationTestConstants.RegisteredLanguageDefinitions.Count,
-            actualNumberOfLanguageDefinitionsMarkedAsOfficial,
-            "Someone added a language definition marked as official. This should not happen. Please remove the OfficiallySupportedLanguageAttribute from the offending language.");
-        Assert.AreEqual(1, actualDefaultLanguageCount,
-            "Someone added a language definition marked as default. This should not happen. Please remove the DefaultAttribute from the offending language.");
+        Assert.Equal(LocalisationTestConstants.RegisteredLanguageDefinitions.Count, actualNumberOfLanguageDefinitionsMarkedAsOfficial);
+        Assert.Equal(1, actualDefaultLanguageCount);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_GetDefaultAlamoLanguageDefinition__ReturnsCorrectLanguage()
     {
-        var l = GetServiceInstance<AlamoLanguageDefinitionHelper>().GetDefaultAlamoLanguageDefinition();
-        Assert.AreEqual(LocalisationTestConstants.DefaultLanguage, l.GetType());
+        var defaultLanguage = _helper.GetDefaultAlamoLanguageDefinition();
+        Assert.Equal(LocalisationTestConstants.DefaultLanguage, defaultLanguage.GetType());
         var actual =
             Activator.CreateInstance(LocalisationTestConstants.DefaultLanguage) as IAlamoLanguageDefinition;
-        Assert.AreEqual(actual, l);
-    }
-
-    protected override Type GetServiceClass()
-    {
-        return typeof(AlamoLanguageDefinitionHelper);
+        Assert.Equal(actual, defaultLanguage);
     }
 }

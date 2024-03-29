@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
-using PG.Commons.Services;
 using PG.StarWarsGame.Components.Localisation.Languages;
 
 namespace PG.StarWarsGame.Components.Localisation.Commons.Helper;
@@ -10,7 +9,7 @@ namespace PG.StarWarsGame.Components.Localisation.Commons.Helper;
 /// <summary>
 ///     Helper service for dealing with <see cref="IAlamoLanguageDefinition" />s.
 /// </summary>
-public interface IAlamoLanguageDefinitionHelper : IService
+public interface IAlamoLanguageDefinitionHelper
 {
     /// <summary>
     ///     Returns all currently registered <see cref="IAlamoLanguageDefinition" /> implementations.

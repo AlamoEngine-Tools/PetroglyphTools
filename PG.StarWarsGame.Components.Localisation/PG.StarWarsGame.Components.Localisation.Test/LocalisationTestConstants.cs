@@ -4,11 +4,10 @@
 using System;
 using System.Collections.Generic;
 using PG.StarWarsGame.Components.Localisation.Languages.Builtin;
-using PG.Testing;
 
 namespace PG.StarWarsGame.Components.Localisation.Test;
 
-public sealed class LocalisationTestConstants : TestConstants
+public sealed class LocalisationTestConstants
 {
     public static readonly IList<Type> RegisteredLanguageDefinitions = new List<Type>
     {

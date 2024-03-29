@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
@@ -17,7 +18,7 @@ public class EmpireAtWarCreditsTextFileBuilderTest
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_ => _fileSystem); 
-        DatDomain.RegisterServices(sc);
+        sc.CollectPgServiceContributions();
         return sc.BuildServiceProvider();
     }
 

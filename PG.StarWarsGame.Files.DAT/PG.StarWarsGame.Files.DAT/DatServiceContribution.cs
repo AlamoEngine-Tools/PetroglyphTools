@@ -3,6 +3,7 @@ using PG.Commons.Attributes;
 using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Services;
+using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.DAT;
 
@@ -15,9 +16,9 @@ internal sealed class DatServiceContribution : IServiceContribution
     {
         serviceCollection
             .AddSingleton<IDatFileService>(sp => new DatFileService(sp))
-            .AddSingleton<IDatBinaryServiceFactory>(sp => new DatBinaryServiceFactory(sp))
+            .AddSingleton<IDatModelService>(sp => new DatModelService(sp))
             .AddTransient<IDatFileReader>(sp => new DatFileReader(sp))
             .AddTransient<IDatBinaryConverter>(sp => new DatBinaryConverter(sp))
-            .AddTransient<IDatFileWriter>(sp => new DatFileWriter(sp));
+            .AddSingleton(sp => new EmpireAtWarKeyValidator());
     }
 }

@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<IsPackable>false</IsPackable> <!--Enable when implemented-->
-
 		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Title>PG.StarWarsGame.Files.DAT</Title>
 		<Product>PG.StarWarsGame.Files.DAT</Product>

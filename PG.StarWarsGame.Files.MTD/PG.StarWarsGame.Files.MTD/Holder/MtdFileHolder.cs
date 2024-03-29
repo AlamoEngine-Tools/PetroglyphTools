@@ -7,7 +7,7 @@ using PG.Commons.Files;
 
 namespace PG.StarWarsGame.Files.MTD.Holder;
 
-public sealed class MtdFileHolder : IFileHolder<IList<MtdIcon>, MtdAlamoFileType>
+public sealed class MtdFileHolder : IPetroglyphFileHolder<,,>
 {
     public string FilePath { get; }
     public string FileName { get; }

@@ -1,24 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFrameworks>net7.0;netstandard2.0;netstandard2.1</TargetFrameworks>
-        <Title>PG.StarWarsGame.Files.MTD</Title>
-        <PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MTD</PackageId>
-        <Product>PG.StarWarsGame.Files.MTD</Product>
-    </PropertyGroup>
-    <PropertyGroup>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <InheritDocEnabled>true</InheritDocEnabled>
-    </PropertyGroup>
-    <PropertyGroup>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-        <PackageReference Include="System.IO.Abstractions" Version="19.2.69" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-    </ItemGroup>
+	<PropertyGroup>
+		<IsPackable>false</IsPackable> <!--Enable when implemented-->
+
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Title>PG.StarWarsGame.Files.MTD</Title>
+		<PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MTD</PackageId>
+		<Product>PG.StarWarsGame.Files.MTD</Product>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<InheritDocEnabled>true</InheritDocEnabled>
+	</PropertyGroup>
+	<PropertyGroup>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+		<PackageReference Include="System.IO.Abstractions" Version="21.0.2" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+	</ItemGroup>
 </Project>

@@ -3,30 +3,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using Xunit;
 
 namespace PG.Testing;
 
 public static class TestUtility
 {
-    private static readonly Random RandomGenerator = new Random();
+    private static readonly Random RandomGenerator = new();
         
     public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
     {
-        Assert.AreEqual(expected.Count, actual.Count);
+        Assert.Equal(expected.Count, actual.Count);
         for (var i = 0; i < expected.Count; i++)
         {
-            Assert.AreEqual(expected[i], actual[i]);
+            Assert.Equal(expected[i], actual[i]);
         }
     }
 
-    public static string GetRandomStringOfLength(int lenght)
+    public static string GetRandomStringOfLength(int length)
     {
         const string allowedChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
-        var chars = new char[lenght];
+        var chars = new char[length];
 
-        for (var i = 0; i < lenght; i++)
+        for (var i = 0; i < length; i++)
         {
             chars[i] = allowedChars[RandomGenerator.Next(0, allowedChars.Length)];
         }
@@ -34,35 +34,19 @@ public static class TestUtility
         return new string(chars);
     }
 
-    public static void Assert_CtorException<T>(Action action) where T : Exception
+    public static Stream GetEmbeddedResource(Type type, string path)
     {
-        Assert_CtorException(typeof(T), action);
+        var assembly = type.Assembly;
+        var resourcePath = $"{assembly.GetName().Name}.Resources.{path}";
+        return assembly.GetManifestResourceStream(resourcePath) ??
+               throw new IOException($"Could not find embedded resource: '{resourcePath}'");
     }
 
-    public static void Assert_CtorException(Type type, Action action)
+    public static byte[] GetEmbeddedResourceAsByteArray(Type type, string path)
     {
-        Assert_CtorException(type, () => action);
-    }
-
-    public static void Assert_CtorException<T>(Func<object?> action) where T : Exception
-    {
-        Assert_CtorException(typeof(T), action);
-    }
-
-    public static void Assert_CtorException(Type expectedException, Func<object?> action)
-    {
-        if (expectedException.IsAssignableFrom(typeof(Exception)))
-            throw new ArgumentException("Type argument must be assignable from System.Exception", nameof(expectedException));
-        try
-        {
-            action();
-        }
-        catch (TargetInvocationException e)
-        {
-            if (e.InnerException?.GetType() != expectedException)
-                Assert.Fail();
-            return;
-        }
-        Assert.Fail();
+        using var stream = GetEmbeddedResource(type, path);
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        return ms.ToArray();
     }
 }

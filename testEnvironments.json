@@ -1,0 +1,15 @@
+﻿{
+  "version": "1",
+  "environments": [
+    {
+      "name": "WSL Ubuntu",
+      "type": "wsl",
+      "wslDistribution": "Ubuntu-22.04"
+    },
+    {
+      "name": "linux dotnet-core-sdk",
+      "type": "docker",
+      "dockerFile": "Dockerfile.test"
+    }
+  ]
+}

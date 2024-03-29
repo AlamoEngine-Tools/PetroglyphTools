@@ -4,60 +4,55 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Services.Builder;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// A service to load and create Petroglyph's <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG files</a>
+/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG files</a>
 /// </summary>
 public interface IMegFileService
 {
     /// <summary>
-    /// Packs a list of files as an unencrypted *.MEG archive in the given version.
+    /// Creates a MEG file from a collection of data entries and writes it to a specified file stream.
+    /// It's recommended to use <see cref="IMegBuilder"/> instead, as this provides data validation and normalization.
     /// </summary>
-    /// <param name="megArchiveName">The desired name of the archive.</param>
-    /// <param name="targetDirectory">The target directory to which the .MEG archive will be written.</param>
-    /// <param name="packedFileNameToAbsoluteFilePathsMap">A list of absolute file paths, identified by their name in the .MEG file.</param>
-    /// <param name="megFileVersion">The file version of the .MEG file.</param>
-    void CreateMegArchive(
-        string megArchiveName,
-        string targetDirectory, 
-        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap, 
-        MegFileVersion megFileVersion);
+    /// <remarks>
+    /// Notes:
+    /// <br/>
+    /// - Any MEG entry file path will be re-encoded to ASCII automatically.
+    /// <br/>
+    /// - In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
+    /// <br/>
+    /// - The items of <paramref name="builderInformation"/> will be correctly sorted by this operation.
+    /// </remarks>
+    /// <param name="fileStream">The destination file stream to write the MEG archive to.</param>
+    /// <param name="fileVersion">The MEG file version to use.</param>
+    /// <param name="encryptionData">Optional encryption data.</param>
+    /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="fileStream"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
+    /// <exception cref="IOException">The MEG file could not be created.</exception>
+    /// <exception cref="FileNotFoundException">A data entry file was not found.</exception>
+    /// <exception cref="NotSupportedException">This library does not support creating the MEG archive from the specified arguments.</exception>
+    void CreateMegArchive(FileSystemStream fileStream, MegFileVersion fileVersion, MegEncryptionData? encryptionData, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation);
 
     /// <summary>
-    /// Packs a list of files as an encrypted *.MEG V3 archive.
+    /// Loads a *.MEG file's metadata into a <see cref="IMegFile" />.
     /// </summary>
-    /// <param name="megArchiveName">The desired name of the archive.</param>
-    /// <param name="targetDirectory">The target directory to which the .MEG archive will be written.</param>
-    /// <param name="packedFileNameToAbsoluteFilePathsMap">A list of absolute file paths, identified by their name in the .MEG file.</param>
-    /// <param name="key">The encryption key.</param>
-    /// <param name="iv">The initialization vector used for encryption.</param>
-    void CreateMegArchive(
-        string megArchiveName, 
-        string targetDirectory, 
-        IEnumerable<MegFileDataEntryInfo> packedFileNameToAbsoluteFilePathsMap,
-        ReadOnlySpan<byte> key,
-        ReadOnlySpan<byte> iv);
-    
-    /// <summary>
-    /// Loads a *.MEG file's metadata into a <see cref="MegFileHolder" />.
-    /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns>The specified *.MEG file's metadata.</returns>
+    /// <param name="filePath">The MEG file path.</param>
+    /// <returns>The MEG file's metadata.</returns>
+    /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
+    /// <exception cref="BinaryCorruptedException"><paramref name="filePath"/> is not a MEG archive.</exception>
+    /// <exception cref="FileNotFoundException"><paramref name="filePath"/> is not found.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty.</exception>
+    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
     IMegFile Load(string filePath);
-
-    /// <summary>
-    /// Loads a *.MEG file's metadata into a <see cref="MegFileHolder" />.
-    /// </summary>
-    /// <param name="filePath"></param>
-    /// <param name="key"></param>
-    /// <param name="iv"></param>
-    /// <returns>The specified *.MEG file's metadata.</returns>
-    IMegFile Load(string filePath, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
 
     /// <summary>
     /// Retrieves the <see cref="MegFileVersion"/> from a .MEG file.
@@ -65,15 +60,7 @@ public interface IMegFileService
     /// <param name="file">The .MEG file.</param>
     /// <param name="encrypted">Indicates whether the .MEG archive is encrypted or not.</param>
     /// <returns>The version of the .MEG archive.</returns>
-    /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid .MEG archive.</exception>
+    /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid MEG archive.</exception>
+    /// <exception cref="FileNotFoundException"><paramref name="file"/> is not found.</exception>
     MegFileVersion GetMegFileVersion(string file, out bool encrypted);
-
-    /// <summary>
-    /// Retrieves the <see cref="MegFileVersion"/> from a .MEG archive stream.
-    /// </summary>
-    /// <param name="stream">The .MEG's archive stream</param>
-    /// <param name="encrypted">Indicates whether the .MEG archive is encrypted or not.</param>
-    /// <returns>The version of the .MEG archive.</returns>
-    /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid .MEG archive.</exception>
-    MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted);
 }

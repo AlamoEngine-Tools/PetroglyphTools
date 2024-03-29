@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
-using PG.Commons.Services;
+using PG.Commons.Hashing;
 
 namespace PG.Benchmarks;
 
+[ExcludeFromCodeCoverage]
 [SimpleJob(RuntimeMoniker.Net481)]
 [SimpleJob(RuntimeMoniker.Net80)]
 [MemoryDiagnoser]
@@ -14,7 +16,7 @@ public class GetStringCrc32
 {
     private static readonly Random Random = new();
 
-    [Params(10, 257)]
+    [Params(0, 1, 10, 257)]
     public int N;
 
     private readonly Encoding _encoding = Encoding.ASCII;
@@ -55,10 +57,52 @@ public class GetStringCrc32
         else
         {
             var stringSpan = _s1.AsSpan();
-            var maxByteSize = _encoding.GetMaxByteCount(stringSpan.Length);
+            if (stringSpan.IsEmpty)
+                buffer = Span<byte>.Empty;
+            else
+            {
+                var maxByteSize = _encoding.GetMaxByteCount(stringSpan.Length);
 
+                var buff = stackalloc byte[maxByteSize];
+                fixed (char* sp = stringSpan)
+                {
+                    var a = _encoding.GetBytes(sp, _s1.Length, buff, maxByteSize);
+                    buffer = new Span<byte>(buff, a);
+                }
+            }
+        }
+
+        Span<byte> checksum = stackalloc byte[sizeof(Crc32)];
+        System.IO.Hashing.Crc32.Hash(buffer, checksum);
+        return new Crc32(checksum);
+    }
+
+    [Benchmark]
+    public unsafe Crc32 New()
+    {
+        ReadOnlySpan<byte> buffer;
+
+        var stringSpan = _s1.AsSpan();
+
+        if (stringSpan.IsEmpty)
+            return new Crc32(0);
+
+        var maxByteSize = _encoding.GetMaxByteCount(stringSpan.Length);
+
+        if (maxByteSize > 256)
+        {
+#if NET
+            var buff = new byte[maxByteSize].AsSpan();
+            var nb = _encoding.GetBytes(stringSpan, buff);
+            buffer = buff.Slice(0, nb);
+#else
+            buffer = _encoding.GetBytes(_s1).AsSpan();
+#endif
+        }
+        else
+        {
             var buff = stackalloc byte[maxByteSize];
-            fixed (char* sp = &stringSpan.GetPinnableReference())
+            fixed (char* sp = stringSpan)
             {
                 var a = _encoding.GetBytes(sp, _s1.Length, buff, maxByteSize);
                 buffer = new Span<byte>(buff, a);

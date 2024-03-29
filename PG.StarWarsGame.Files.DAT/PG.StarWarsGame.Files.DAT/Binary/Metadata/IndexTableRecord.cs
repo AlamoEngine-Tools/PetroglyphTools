@@ -3,23 +3,30 @@
 
 using System;
 using System.Buffers.Binary;
-using PG.Commons.Services;
+using PG.Commons.Binary;
+using PG.Commons.DataTypes;
+using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class IndexTableRecord : IDatRecordDescriptor, IComparable<IndexTableRecord>
+internal readonly struct IndexTableRecord : IHasCrc32, IComparable<IndexTableRecord>, IBinary
 {
-    public Crc32 Crc32 { get; }
-    public uint KeyLength { get; }
-    public uint ValueLength { get; }
-
-
     public IndexTableRecord(Crc32 crc32, uint keyLength, uint valueLength)
     {
+        if (keyLength > int.MaxValue)
+            throw new ArgumentOutOfRangeException(nameof(keyLength), ".DAT key length over int32.MaxValue is not supported.");
+        if (valueLength > int.MaxValue)
+            throw new ArgumentOutOfRangeException(nameof(keyLength), ".DAT value length over int32.MaxValue is not supported.");
         Crc32 = crc32;
         KeyLength = keyLength;
         ValueLength = valueLength;
     }
+
+    public Crc32 Crc32 { get; }
+
+    public uint KeyLength { get; }
+
+    public uint ValueLength { get; }
 
     public byte[] Bytes
     {
@@ -38,15 +45,10 @@ internal sealed class IndexTableRecord : IDatRecordDescriptor, IComparable<Index
         }
     }
 
-    public int Size { get; } = sizeof(uint) * 3;
+    public int Size => sizeof(uint) * 3;
 
-    public int CompareTo(IndexTableRecord? other)
+    public int CompareTo(IndexTableRecord other)
     {
-        return other is null ? 1 : Crc32.CompareTo(other.Crc32);
-    }
-
-    int IComparable<IDatRecordDescriptor>.CompareTo(IDatRecordDescriptor? other)
-    {
-        return other is null ? 1 : Crc32.CompareTo(other.Crc32);
+        return Crc32.CompareTo(other.Crc32);
     }
 }

@@ -13,22 +13,17 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "master" ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "develop" ]
+    branches: [ "develop", "master" ]
   schedule:
-    - cron: '19 11 * * 1'
+    - cron: '33 7 * * 4'
 
 jobs:
   analyze:
     name: Analyze
-    # Runner size impacts CodeQL analysis time. To learn more, please see:
-    #   - https://gh.io/recommended-hardware-resources-for-running-codeql
-    #   - https://gh.io/supported-runners-and-hardware-resources
-    #   - https://gh.io/using-larger-runners
-    # Consider using larger runners for possible analysis time improvements.
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    runs-on: ['ubuntu-latest']
     timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
     permissions:
       actions: read
@@ -46,14 +41,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.x
-      # Initializes the CodeQL tools for scanning.
+          dotnet-version: 8.x
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
@@ -65,13 +59,9 @@ jobs:
           # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
           # queries: security-extended,security-and-quality
       - name: Build
-        run: |
-          dotnet build PG.Commons/PG.Commons/PG.Commons.csproj
-          dotnet build PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.csproj
-          dotnet build PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj
-          dotnet build PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation/PG.StarWarsGame.Components.Localisation.csproj
+        run: dotnet build -c Release PetroglyphTools.sln
       
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{matrix.language}}"

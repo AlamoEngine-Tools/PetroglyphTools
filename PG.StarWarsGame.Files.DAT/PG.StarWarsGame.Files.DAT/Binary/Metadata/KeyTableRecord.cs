@@ -3,34 +3,30 @@
 
 using System;
 using PG.Commons.Binary;
-using PG.Commons.Services;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
-internal sealed class KeyTableRecord : IBinary, IComparable<KeyTableRecord>
+internal readonly struct KeyTableRecord : IBinary
 {
-    private Crc32 Crc32 => ChecksumService.Instance.GetChecksum(Key, DatFileConstants.TextKeyEncoding);
-
-    public KeyTableRecord(string key)
-    {
-        Key = key.Replace("\0", string.Empty);
-    }
-
-    public KeyTableRecord(byte[] bytes, long index, long stringLength)
-    {
-        char[] chars =
-            DatFileConstants.TextKeyEncoding.GetChars(bytes, Convert.ToInt32(index), Convert.ToInt32(stringLength));
-        Key = new string(chars);
-    }
-
     public string Key { get; }
+
+    public string OriginalKey { get; }
 
     public byte[] Bytes => DatFileConstants.TextKeyEncoding.GetBytes(Key);
 
-    public int Size => Bytes.Length;
+    public int Size => DatFileConstants.TextKeyEncoding.GetByteCountPG(Key.Length);
 
-    public int CompareTo(KeyTableRecord? other)
+    public KeyTableRecord(string key, string originalKey)
     {
-        return other is null ? 1 : Crc32.CompareTo(other.Crc32);
+        // While it's not recommended empty or whitespace keys are not disallowed, so we only check for null
+        if (key == null) 
+            throw new ArgumentNullException(nameof(key));
+        if (originalKey == null) 
+            throw new ArgumentNullException(nameof(originalKey));
+
+        StringUtilities.ValidateIsAsciiOnly(key.AsSpan());
+        Key = key;
+        OriginalKey = originalKey;
     }
 }

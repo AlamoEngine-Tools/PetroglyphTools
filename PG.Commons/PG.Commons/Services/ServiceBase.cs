@@ -3,17 +3,17 @@
 
 using System;
 using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using PG.Commons.Utilities;
 
 namespace PG.Commons.Services;
 
 /// <summary>
 /// Base class for services.
 /// </summary>
-public abstract class ServiceBase : DisposableObject, IService
+public abstract class ServiceBase : DisposableObject
 {
     /// <summary>
     /// The logger of this service.<br/>

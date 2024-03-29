@@ -28,12 +28,7 @@ public abstract class BinaryBase : IBinary
     {
         get
         {
-            if (!_size.HasValue)
-            {
-                _size = GetSizeCore();
-                if (!_size.HasValue)
-                    throw new InvalidOperationException("Size value must not be null");
-            }
+            _size ??= GetSizeCore();
             return _size.Value;
         }
     }

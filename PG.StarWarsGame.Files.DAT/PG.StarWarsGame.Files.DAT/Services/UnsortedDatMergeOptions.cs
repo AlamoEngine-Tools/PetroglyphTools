@@ -4,22 +4,7 @@
 namespace PG.StarWarsGame.Files.DAT.Services;
 
 /// <summary>
-/// Specifies how merging of CRC-sorted DAT models should treat existing keys.
-/// </summary>
-public enum SortedDatMergeOptions
-{
-    /// <summary>
-    /// An existing key will be kept.
-    /// </summary>
-    KeepExisting,
-    /// <summary>
-    /// An existing key will be overwritten by the new value.
-    /// </summary>
-    Overwrite
-}
-
-/// <summary>
-/// 
+/// Specifies which merging operation of unsorted DAT models should be performed.
 /// </summary>
 public enum UnsortedDatMergeOptions
 {

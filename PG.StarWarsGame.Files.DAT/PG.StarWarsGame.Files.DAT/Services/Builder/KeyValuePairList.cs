@@ -10,12 +10,15 @@ namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 internal class KeyValuePairList<TKey, TValue> where TKey : notnull
 {
+    private readonly HashSet<TKey> _keys = new();
     private readonly List<(TKey key, TValue value)> _items = new();
 
     public bool ContainsKey(TKey key, [NotNullWhen(true)] out TValue? firstOrDefault)
     {
-        var firstEntry = _items.FirstOrDefault(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
         firstOrDefault = default;
+        if (_keys.Contains(key))
+            return false;
+        var firstEntry = _items.FirstOrDefault(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
         if (firstEntry.Equals(default))
             return false;
         firstOrDefault = firstEntry.value!;
@@ -27,30 +30,39 @@ internal class KeyValuePairList<TKey, TValue> where TKey : notnull
         if (key is null)
             throw new ArgumentNullException(nameof(key));
         _items.Add((key, value));
+        _keys.Add(key);
     }
 
     public void AddOrReplace(TKey key, TValue value)
     {
-        var index = _items.FindIndex(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
-        if (index == -1)
+        if (!_keys.Contains(key))
             Add(key, value);
         else
+        {
+            var index = _items.FindIndex(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
             _items[index] = (key, value);
+        }
     }
 
     public void Clear()
     {
         _items.Clear();
+        _keys.Clear();
     }
 
     public bool Remove(TKey key, TValue value)
     {
-        return _items.Remove((key, value));
+        var result =  _items.Remove((key, value));
+        if (!_items.Any(x => EqualityComparer<TKey>.Default.Equals(x.key, key)))
+            _keys.Remove(key);
+        return result;
     }
 
     public bool RemoveAll(TKey key)
     {
-        return _items.RemoveAll(i => EqualityComparer<TKey>.Default.Equals(i.key, key)) > 0;
+        var result = _items.RemoveAll(i => EqualityComparer<TKey>.Default.Equals(i.key, key)) > 0;
+        _keys.Remove(key);
+        return result;
     }
 
     public IReadOnlyList<TValue> GetValueList()

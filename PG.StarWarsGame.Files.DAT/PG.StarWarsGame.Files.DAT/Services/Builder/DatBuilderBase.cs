@@ -24,6 +24,8 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
 {
     private readonly KeyValuePairList<string, DatStringEntry> _entries = new();
 
+    private readonly ICrc32HashingService _hashingService;
+
     /// <inheritdoc />
     public sealed override IReadOnlyList<DatStringEntry> BuilderData =>
         TargetKeySortOrder == DatFileType.OrderedByCrc32 ? SortedEntries : Entries;
@@ -49,6 +51,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     /// <param name="services">The service provider.</param>
     protected DatBuilderBase(IServiceProvider services) : base(services)
     {
+        _hashingService = Services.GetRequiredService<ICrc32HashingService>();
     }
 
     /// <inheritdoc />
@@ -68,11 +71,11 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
         if (!keyValidation.IsValid)
             return AddEntryResult.EntryNotAdded(AddEntryState.InvalidKey, keyValidation.ToString());
 
-        var crc = Services.GetRequiredService<ICrc32HashingService>().GetCrc32(encodedKey, encoding);
+        var crc = _hashingService.GetCrc32(encodedKey, encoding);
 
         var entry = new DatStringEntry(encodedKey, crc, value, key);
 
-        var containsKey = _entries.ContainsKey(entry.Key, out DatStringEntry oldValue);
+        var containsKey = _entries.ContainsKey(entry.Key, out var oldValue);
 
         if (containsKey && KeyOverwriteBehavior == BuilderOverrideKind.NoOverwrite)
             return AddEntryResult.FromDuplicate(entry);

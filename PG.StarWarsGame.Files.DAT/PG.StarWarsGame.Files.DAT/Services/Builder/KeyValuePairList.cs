@@ -16,7 +16,7 @@ internal class KeyValuePairList<TKey, TValue> where TKey : notnull
     public bool ContainsKey(TKey key, [NotNullWhen(true)] out TValue? firstOrDefault)
     {
         firstOrDefault = default;
-        if (_keys.Contains(key))
+        if (!_keys.Contains(key))
             return false;
         var firstEntry = _items.FirstOrDefault(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
         if (firstEntry.Equals(default))

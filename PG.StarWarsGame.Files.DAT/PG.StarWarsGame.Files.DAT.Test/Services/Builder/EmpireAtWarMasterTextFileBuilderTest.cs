@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -18,6 +19,7 @@ public class EmpireAtWarMasterTextFileBuilderTest
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_ => _fileSystem);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
         sc.CollectPgServiceContributions();
         return sc.BuildServiceProvider();
     }

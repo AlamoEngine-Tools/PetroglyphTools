@@ -18,9 +18,7 @@ internal class KeyValuePairList<TKey, TValue> where TKey : notnull
         firstOrDefault = default;
         if (!_keys.Contains(key))
             return false;
-        var firstEntry = _items.FirstOrDefault(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
-        if (firstEntry.Equals(default))
-            return false;
+        var firstEntry = _items.First(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
         firstOrDefault = firstEntry.value!;
         return true;
     }
@@ -33,15 +31,10 @@ internal class KeyValuePairList<TKey, TValue> where TKey : notnull
         _keys.Add(key);
     }
 
-    public void AddOrReplace(TKey key, TValue value)
+    public void Replace(TKey key, TValue value)
     {
-        if (!_keys.Contains(key))
-            Add(key, value);
-        else
-        {
-            var index = _items.FindIndex(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
-            _items[index] = (key, value);
-        }
+        var index = _items.FindIndex(i => EqualityComparer<TKey>.Default.Equals(i.key, key));
+        _items[index] = (key, value);
     }
 
     public void Clear()

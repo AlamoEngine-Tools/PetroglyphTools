@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using AnakinRaW.CommonUtilities.Extensions;
+using System;
 using FluentValidation;
+using PG.Commons.Utilities;
 using PG.Commons.Utilities.Validation;
-using PG.StarWarsGame.Files.DAT.Binary;
 
 namespace PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
@@ -24,17 +24,18 @@ public sealed class EmpireAtWarKeyValidator : NullableAbstractValidator<string>,
         RuleFor(key => key)
             .Must(key =>
             {
-                var encoded = DatFileConstants.TextKeyEncoding.EncodeString(key);
-                if (encoded != key)
+                var span = key.AsSpan();
+                if (span.IsWhiteSpace())
                     return false;
-                return true;
-            })
-            .Must(key =>
-            {
-                if (string.IsNullOrWhiteSpace(key))
+
+                if (span.StartsWith(" ".AsSpan()) || span.EndsWith(" ".AsSpan()))
                     return false;
-                if (key.StartsWith(" ") || key.EndsWith(" "))
-                    return false;
+
+                foreach (var c in span)
+                {
+                    if ((uint)(c - '\x0020') > '\x007F' - '\x0020') // (c >= '\x0020' && c <= '\x007F')
+                        return false;
+                }
                 return true;
             });
     }

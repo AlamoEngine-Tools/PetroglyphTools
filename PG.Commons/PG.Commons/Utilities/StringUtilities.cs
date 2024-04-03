@@ -69,11 +69,26 @@ public static class StringUtilities
     {
         if (value == null)
             throw new ArgumentNullException(nameof(value));
+        if (!IsAsciiOnly(value))
+            throw new ArgumentException("Value contains non-ASCII characters.", nameof(value));
+    }
+
+    /// <summary>
+    /// Throws an <see cref="ArgumentException"/> if the given character sequence contains non-ASCII characters.
+    /// </summary>
+    /// <param name="value">The character sequence to validate.</param>
+    /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsAsciiOnly(ReadOnlySpan<char> value)
+    {
+        if (value == null)
+            throw new ArgumentNullException(nameof(value));
 
         foreach (var ch in value)
         {
             if ((uint)ch > '\x007f')
-                throw new ArgumentException("Value contains non-ASCII characters.", nameof(value));
+                return false;
         }
+        return true;
     }
 }

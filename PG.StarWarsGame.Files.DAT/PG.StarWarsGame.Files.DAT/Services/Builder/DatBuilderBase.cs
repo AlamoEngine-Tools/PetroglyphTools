@@ -2,9 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
@@ -71,7 +73,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
         if (!keyValidation.IsValid)
             return AddEntryResult.EntryNotAdded(AddEntryState.InvalidKey, keyValidation.ToString());
 
-        var crc = _hashingService.GetCrc32(encodedKey, encoding);
+        var crc = GetCrc32AsciiFast(encodedKey);
 
         var entry = new DatStringEntry(encodedKey, crc, value, key);
 
@@ -87,8 +89,30 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
             return AddEntryResult.EntryAdded(entry, containsKey);
         }
 
-        _entries.AddOrReplace(entry.Key, entry);
+        if (!containsKey)
+            _entries.Add(entry.Key, entry);
+        else
+            _entries.Replace(entry.Key, entry);
+
         return AddEntryResult.EntryAdded(entry, oldValue);
+    }
+
+    private Crc32 GetCrc32AsciiFast(string value)
+    {
+        byte[]? encodedBytes = null;
+        try
+        {
+            var buffer = value.Length > 256 ? encodedBytes = ArrayPool<byte>.Shared.Rent(value.Length) : stackalloc byte[value.Length];
+            for (var i = 0; i < value.Length; i++)
+                buffer[i] = (byte)(value[i]);
+
+            return _hashingService.GetCrc32(buffer);
+        }
+        finally
+        {
+            if (encodedBytes is not null)
+                ArrayPool<byte>.Shared.Return(encodedBytes);
+        }
     }
 
     /// <inheritdoc />

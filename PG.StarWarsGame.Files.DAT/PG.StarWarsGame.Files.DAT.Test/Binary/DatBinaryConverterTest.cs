@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
 using PG.Commons.Binary;
 using PG.Commons.Extensibility;
 using PG.Commons.Hashing;

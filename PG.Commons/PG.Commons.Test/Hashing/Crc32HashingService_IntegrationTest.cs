@@ -50,7 +50,6 @@ public class Crc32HashingService_IntegrationTest
         crc = _crc32HashingService.GetCrc32(new MemoryStream(bytes));
         Assert.Equal((int)expectedChecksum, (int)crc);
         Assert.Equal((uint)expectedChecksum, (uint)crc);
-
     }
 
     [Fact]

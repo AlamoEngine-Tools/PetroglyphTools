@@ -19,7 +19,7 @@ public class DatBuilderBenchmark
 {
     private static readonly Random Random = new();
 
-    [Params(10, 1_000, 10_000)]
+    [Params(10_000)]
     public int N;
 
     private string[] _keys;
@@ -48,7 +48,7 @@ public class DatBuilderBenchmark
     }
 
     [Benchmark]
-    public void ReadBytesAndGetString_ButWithSpanInShortCases()
+    public void AddEntries()
     {
         for (int i = 0; i < N; i++)
         {

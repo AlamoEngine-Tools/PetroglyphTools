@@ -96,12 +96,11 @@ public class DatFileServiceTest
             {
                 var entries = m.ToList();
                 Assert.Equal(3, m.Count);
-                Assert.Equal(new List<DatStringEntry>
-                {
+                Assert.Equal([
                     new("1", new Crc32(1), "value1"),
                     new("2", new Crc32(2), "value2"),
-                    new("2", new Crc32(2), "value22"),
-                }, entries);
+                    new("2", new Crc32(2), "value22")
+                ], entries);
             })
             .Returns(binary);
 

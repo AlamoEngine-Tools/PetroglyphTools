@@ -25,7 +25,7 @@ public class DatBuilderBenchmark
     private string[] _keys;
     private string[] _values;
 
-    private EmpireAtWarMasterTextFileBuilder _builder;
+    private EmpireAtWarMasterTextBuilder _builder;
 
     [GlobalSetup]
     public void Setup()
@@ -44,7 +44,7 @@ public class DatBuilderBenchmark
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
         sc.CollectPgServiceContributions();
 
-        _builder = new EmpireAtWarMasterTextFileBuilder(false, sc.BuildServiceProvider());
+        _builder = new EmpireAtWarMasterTextBuilder(false, sc.BuildServiceProvider());
     }
 
     [Benchmark]

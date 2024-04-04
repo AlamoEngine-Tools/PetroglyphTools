@@ -17,7 +17,7 @@ internal sealed class SortedDatModel : DatModel, ISortedDatModel
     public override DatFileType KeySortOder => DatFileType.OrderedByCrc32;
 
 
-    public SortedDatModel(IList<DatStringEntry> entries) : base(entries)
+    public SortedDatModel(IEnumerable<DatStringEntry> entries) : base(entries)
     {
         _crcToIndexMap = Crc32Utilities.ListToCrcIndexRangeTable(Entries);
     }

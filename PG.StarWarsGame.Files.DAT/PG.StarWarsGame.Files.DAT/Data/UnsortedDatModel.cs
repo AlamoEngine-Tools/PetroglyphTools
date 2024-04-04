@@ -9,7 +9,7 @@ using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
-internal sealed class UnsortedDatModel(IList<DatStringEntry> entries) : DatModel(entries), IUnsortedDatModel
+internal sealed class UnsortedDatModel(IEnumerable<DatStringEntry> entries) : DatModel(entries), IUnsortedDatModel
 {
     public override DatFileType KeySortOder => DatFileType.NotOrdered;
 

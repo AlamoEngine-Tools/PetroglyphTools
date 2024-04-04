@@ -53,4 +53,7 @@ internal class ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatFile
     public string GetValue(Crc32 key) => throw new NotSupportedException();
 
     public bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value) => throw new NotSupportedException();
+    public DatStringEntry FirstEntryWithKey(string key) => throw new NotImplementedException();
+
+    public DatStringEntry FirstEntryWithCrc(Crc32 key) => throw new NotImplementedException();
 }

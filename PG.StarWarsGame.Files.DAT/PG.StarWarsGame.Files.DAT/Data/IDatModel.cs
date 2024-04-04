@@ -105,4 +105,21 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// </param>
     /// <returns><see langword="true"/> if the <see cref="IDatModel"/> contains an element with the specified key; otherwise, <see langword="false"/>.</returns>
     bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value);
+
+    /// <summary>
+    /// Gets the first entry associated with the specified key.
+    /// </summary>
+    /// <param name="key">The key of the entry to get.</param>
+    /// <returns>The entry associated with the specified key. If the specified key is not found, a get operation throws a <see cref="KeyNotFoundException"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
+    /// <exception cref="KeyNotFoundException">The key does not exist in the list.</exception>
+    DatStringEntry FirstEntryWithKey(string key);
+
+    /// <summary>
+    /// Gets the first entry associated with the specified key.
+    /// </summary>
+    /// <param name="key">The key of the entry to get.</param>
+    /// <returns>The entry associated with the specified key. If the specified key is not found, a get operation throws a <see cref="KeyNotFoundException"/>.</returns>
+    /// <exception cref="KeyNotFoundException">The key does not exist in the list.</exception>
+    DatStringEntry FirstEntryWithCrc(Crc32 key);
 }

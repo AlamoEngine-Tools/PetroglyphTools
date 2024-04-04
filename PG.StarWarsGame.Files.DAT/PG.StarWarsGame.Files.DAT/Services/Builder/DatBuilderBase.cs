@@ -122,6 +122,14 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     }
 
     /// <inheritdoc />
+    public IDatModel BuildModel()
+    {
+        if (TargetKeySortOrder == DatFileType.OrderedByCrc32)
+            return new SortedDatModel(BuilderData);
+        return new UnsortedDatModel(BuilderData);
+    }
+
+    /// <inheritdoc />
     protected sealed override void BuildFileCore(FileSystemStream fileStream, DatFileInformation fileInformation, IReadOnlyList<DatStringEntry> data)
     {
         var datService = Services.GetRequiredService<IDatFileService>();

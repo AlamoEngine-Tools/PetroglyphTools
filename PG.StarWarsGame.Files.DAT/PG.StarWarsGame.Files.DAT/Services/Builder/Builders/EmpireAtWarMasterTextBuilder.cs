@@ -9,28 +9,29 @@ using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// A <see cref="IDatBuilder"/> for building Credit DAT files used by the
+/// A <see cref="IDatBuilder"/> for building MasterText DAT files used by the
 /// Petroglyph game <em>Star Wars: Empire at War</em> and its extension <em>Empire at War: Forces of Corruption</em>.
 /// </summary>
-public sealed class EmpireAtWarCreditsTextFileBuilder : DatBuilderBase
+public sealed class EmpireAtWarMasterTextBuilder : DatBuilderBase
 {
     /// <inheritdoc/>
-    /// <remarks>An instance of this class always returns <see cref="DatFileType.NotOrdered"/>.</remarks>
-    public override DatFileType TargetKeySortOrder => DatFileType.NotOrdered;
+    /// <remarks>An instance of this class always returns <see cref="DatFileType.OrderedByCrc32"/>.</remarks>
+    public override DatFileType TargetKeySortOrder => DatFileType.OrderedByCrc32;
 
     /// <inheritdoc/>
-    /// <remarks>An instance of this class always returns <see cref="BuilderOverrideKind.AllowDuplicate"/>.</remarks>
-    public override BuilderOverrideKind KeyOverwriteBehavior => BuilderOverrideKind.AllowDuplicate;
+    public override BuilderOverrideKind KeyOverwriteBehavior { get; }
 
     /// <inheritdoc />
     public override IDatKeyValidator KeyValidator { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextFileBuilder"/> class.
+    /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextBuilder"/> class.
     /// </summary>
+    /// <param name="overwriteDuplicates"></param>
     /// <param name="services">The service provider.</param>
-    public EmpireAtWarCreditsTextFileBuilder(IServiceProvider services) : base(services)
+    public EmpireAtWarMasterTextBuilder(bool overwriteDuplicates, IServiceProvider services) : base(services)
     {
+        KeyOverwriteBehavior = overwriteDuplicates ? BuilderOverrideKind.Overwrite : BuilderOverrideKind.NoOverwrite;
         KeyValidator = Services.GetRequiredService<EmpireAtWarKeyValidator>();
     }
 }

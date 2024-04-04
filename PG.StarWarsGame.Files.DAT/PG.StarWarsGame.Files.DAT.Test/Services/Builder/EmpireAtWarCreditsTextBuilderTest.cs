@@ -12,7 +12,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-public class EmpireAtWarCreditsTextFileBuilderTest
+public class EmpireAtWarCreditsTextBuilderTest
 {
     private readonly MockFileSystem _fileSystem = new();
 
@@ -28,7 +28,7 @@ public class EmpireAtWarCreditsTextFileBuilderTest
     [Fact]
     public void Test_Ctor()
     {
-        var builder = new EmpireAtWarCreditsTextFileBuilder(CreateServiceProvider());
+        var builder = new EmpireAtWarCreditsTextBuilder(CreateServiceProvider());
         
         Assert.Equal(BuilderOverrideKind.AllowDuplicate,builder.KeyOverwriteBehavior);
         Assert.Equal(DatFileType.NotOrdered, builder.TargetKeySortOrder);
@@ -38,7 +38,7 @@ public class EmpireAtWarCreditsTextFileBuilderTest
     [Fact]
     public void Test_AddEntry_CorrectCrc()
     {
-        var builder = new EmpireAtWarCreditsTextFileBuilder(CreateServiceProvider());
+        var builder = new EmpireAtWarCreditsTextBuilder(CreateServiceProvider());
 
         var result = builder.AddEntry("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", "someValue");
         Assert.Equal(new Crc32(72402613), result.AddedEntry!.Value.Crc32);

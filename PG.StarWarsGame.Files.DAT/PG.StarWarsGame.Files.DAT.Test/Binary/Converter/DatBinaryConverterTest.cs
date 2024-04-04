@@ -66,12 +66,11 @@ public class DatBinaryConverterTest
         Assert.Equal(binary.RecordNumber, model.Count);
         Assert.Equal(DatFileType.OrderedByCrc32, model.KeySortOder);
 
-        Assert.Equal(new List<DatStringEntry>
-        {
+        Assert.Equal([
             new("1", new Crc32(1), "a"),
             new("1", new Crc32(1), "b"),
-            new("2", new Crc32(2), "c"),
-        }, model.ToList());
+            new("2", new Crc32(2), "c")
+        ], model.ToList());
     }
 
     [Fact]
@@ -104,12 +103,11 @@ public class DatBinaryConverterTest
         Assert.Equal(binary.RecordNumber, model.Count);
         Assert.Equal(DatFileType.NotOrdered, model.KeySortOder);
 
-        Assert.Equal(new List<DatStringEntry>
-        {
+        Assert.Equal([
             new("2", new Crc32(2), "a"),
             new("2", new Crc32(2), "b"),
-            new("1", new Crc32(1), "c"),
-        }, model.ToList());
+            new("1", new Crc32(1), "c")
+        ], model.ToList());
     }
 
     [Fact]
@@ -141,26 +139,23 @@ public class DatBinaryConverterTest
         Assert.Equal(model.Object.Count, binary.RecordNumber);
         Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
 
-        Assert.Equal(new List<IndexTableRecord>
-        {
+        Assert.Equal([
             new(new Crc32(1), 1, 3),
             new(new Crc32(1), 1, 1),
-            new(new Crc32(2), 1, 260),
-        },binary.IndexTable.ToList());
+            new(new Crc32(2), 1, 260)
+        ],binary.IndexTable.ToList());
 
-        Assert.Equal(new List<KeyTableRecord>
-        {
-            new ("1", "1"),
-            new ("1", "1"),
-            new ("2", "2"),
-        }, binary.KeyTable.ToList());
+        Assert.Equal([
+            new("1", "1"),
+            new("1", "1"),
+            new("2", "2")
+        ], binary.KeyTable.ToList());
 
-        Assert.Equal(new List<ValueTableRecord>
-        {
-            new ("abc"),
-            new ("d"),
-            new (new string('a', 260)),
-        }, binary.ValueTable.ToList());
+        Assert.Equal([
+            new("abc"),
+            new("d"),
+            new(new string('a', 260))
+        ], binary.ValueTable.ToList());
     }
 
     [Fact]
@@ -185,23 +180,20 @@ public class DatBinaryConverterTest
         Assert.Equal(model.Object.Count, binary.RecordNumber);
         Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
 
-        Assert.Equal(new List<IndexTableRecord>
-        {
+        Assert.Equal([
             new(new Crc32(2), 1, 3),
-            new(new Crc32(1), 1, 1),
-        }, binary.IndexTable.ToList());
+            new(new Crc32(1), 1, 1)
+        ], binary.IndexTable.ToList());
 
-        Assert.Equal(new List<KeyTableRecord>
-        {
-            new ("2", "2"),
-            new ("1", "1"),
-        }, binary.KeyTable.ToList());
+        Assert.Equal([
+            new("2", "2"),
+            new("1", "1")
+        ], binary.KeyTable.ToList());
 
-        Assert.Equal(new List<ValueTableRecord>
-        {
-            new ("abc"),
-            new ("d"),
-        }, binary.ValueTable.ToList());
+        Assert.Equal([
+            new("abc"),
+            new("d")
+        ], binary.ValueTable.ToList());
     }
 
     [Fact]

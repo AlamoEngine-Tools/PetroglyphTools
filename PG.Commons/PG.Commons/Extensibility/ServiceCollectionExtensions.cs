@@ -14,7 +14,12 @@ public static class ServiceCollectionExtensions
     /// <summary>
     ///     Convenience method to collect and contribute all <see cref="IServiceContribution" />s.
     /// </summary>
-    /// <param name="serviceCollection"></param>
+    /// <remarks>
+    ///     <b>Note:</b> For this mechanism to work the target assemblies
+    ///     (such as PG.StarWarsGame.Files.DAT.dll or PG.StarWarsGame.Files.MEG.dll)
+    ///     must already be loaded to the current AppDomain.
+    /// </remarks>
+    /// <param name="serviceCollection">The service collection to contribute services to.</param>
     public static void CollectPgServiceContributions(this IServiceCollection serviceCollection)
     {
         var contributions = AppDomain.CurrentDomain.GetAssemblies()

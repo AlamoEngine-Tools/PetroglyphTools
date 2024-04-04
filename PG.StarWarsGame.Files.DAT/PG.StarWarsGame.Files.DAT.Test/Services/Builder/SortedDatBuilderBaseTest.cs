@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using FluentValidation.Results;
 using Moq;
 using PG.Commons.Hashing;
-using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using Xunit;
@@ -40,27 +38,24 @@ public class SortedDatBuilderBaseTest : DatBuilderBaseTest
         Assert.True(result2.Added);
 
         Assert.Equal(
-            new List<DatStringEntry>
-            {
+            [
                 new("key1", new Crc32(1), "value1"),
-                new("key2", new Crc32(2), "value2"),
-            },
+                new("key2", new Crc32(2), "value2")
+            ],
             builder.Object.BuilderData.ToList());
 
         Assert.Equal(
-            new List<DatStringEntry>
-            {
+            [
                 new("key1", new Crc32(1), "value1"),
-                new("key2", new Crc32(2), "value2"),
-            },
+                new("key2", new Crc32(2), "value2")
+            ],
             builder.Object.SortedEntries.ToList());
 
         Assert.Equal(
-            new List<DatStringEntry>
-            {
+            [
                 new("key2", new Crc32(2), "value2"),
-                new("key1", new Crc32(1), "value1"),
-            },
+                new("key1", new Crc32(1), "value1")
+            ],
             builder.Object.Entries.ToList());
     }
 }

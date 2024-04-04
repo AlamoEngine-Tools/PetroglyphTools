@@ -12,7 +12,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-public class EmpireAtWarMasterTextFileBuilderTest
+public class EmpireAtWarMasterTextBuilderTest
 {
     private readonly MockFileSystem _fileSystem = new();
 
@@ -30,7 +30,7 @@ public class EmpireAtWarMasterTextFileBuilderTest
     [InlineData(false)]
     public void Test_Ctor(bool overwrite)
     {
-        var builder = new EmpireAtWarMasterTextFileBuilder(overwrite, CreateServiceProvider());
+        var builder = new EmpireAtWarMasterTextBuilder(overwrite, CreateServiceProvider());
 
         Assert.Equal(overwrite ? BuilderOverrideKind.Overwrite : BuilderOverrideKind.NoOverwrite, builder.KeyOverwriteBehavior);
         Assert.Equal(DatFileType.OrderedByCrc32, builder.TargetKeySortOrder);
@@ -42,7 +42,7 @@ public class EmpireAtWarMasterTextFileBuilderTest
     [InlineData(false)]
     public void Test_AddEntry_CorrectCrc(bool overwrite)
     {
-        var builder = new EmpireAtWarMasterTextFileBuilder(overwrite, CreateServiceProvider());
+        var builder = new EmpireAtWarMasterTextBuilder(overwrite, CreateServiceProvider());
 
         var result = builder.AddEntry("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", "someValue");
         Assert.Equal(new Crc32(72402613), result.AddedEntry!.Value.Crc32);

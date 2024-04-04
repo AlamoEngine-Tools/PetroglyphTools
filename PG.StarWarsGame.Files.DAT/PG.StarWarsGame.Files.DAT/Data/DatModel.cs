@@ -17,8 +17,8 @@ internal abstract class DatModel : IDatModel
 {
     protected readonly ReadOnlyCollection<DatStringEntry> Entries;
 
-    private readonly IReadOnlyDictionary<string, string> _firstKeyValueDictionary;
-    private readonly IReadOnlyDictionary<Crc32, string> _firstCrcKeyValueDictionary;
+    private readonly IReadOnlyDictionary<string, DatStringEntry> _firstKeyValueDictionary;
+    private readonly IReadOnlyDictionary<Crc32, DatStringEntry> _firstCrcKeyValueDictionary;
 
 
     public int Count => Entries.Count;
@@ -31,24 +31,29 @@ internal abstract class DatModel : IDatModel
 
     public abstract DatFileType KeySortOder { get; }
 
-    protected DatModel(IList<DatStringEntry> entries)
+    protected DatModel(IEnumerable<DatStringEntry> entries)
     {
         if (entries == null)
             throw new ArgumentNullException(nameof(entries));
 
-        var copyList = new List<DatStringEntry>(entries.Count);
+        var copyList = entries switch
+        {
+            ICollection<DatStringEntry> coll => new List<DatStringEntry>(coll.Count),
+            IReadOnlyCollection<DatStringEntry> roColl => new List<DatStringEntry>(roColl.Count),
+            _ => new List<DatStringEntry>()
+        };
 
-        var firstKeyValueDict = new Dictionary<string, string>();
-        var firstCrcKeyValueDict = new Dictionary<Crc32, string>();
+        var firstKeyValueDict = new Dictionary<string, DatStringEntry>();
+        var firstCrcKeyValueDict = new Dictionary<Crc32, DatStringEntry>();
 
         var sorted = true;
         var lastCrc = default(Crc32);
         foreach (var entry in entries)
         {
             if (!firstCrcKeyValueDict.ContainsKey(entry.Crc32)) 
-                firstCrcKeyValueDict.Add(entry.Crc32, entry.Value);
+                firstCrcKeyValueDict.Add(entry.Crc32, entry);
             if (!firstKeyValueDict.ContainsKey(entry.Key)) 
-                firstKeyValueDict.Add(entry.Key, entry.Value);
+                firstKeyValueDict.Add(entry.Key, entry);
             copyList.Add(entry);
 
             if (entry.Crc32 <  lastCrc)
@@ -72,7 +77,7 @@ internal abstract class DatModel : IDatModel
 
     public string GetValue(string key)
     {
-        return _firstKeyValueDictionary[key];
+        return _firstKeyValueDictionary[key].Value;
     }
 
     public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
@@ -107,7 +112,7 @@ internal abstract class DatModel : IDatModel
 
     public string GetValue(Crc32 key)
     {
-        return _firstCrcKeyValueDictionary[key];
+        return _firstCrcKeyValueDictionary[key].Value;
     }
 
     public bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value)
@@ -122,6 +127,16 @@ internal abstract class DatModel : IDatModel
         {
             return false;
         }
+    }
+
+    public DatStringEntry FirstEntryWithKey(string key)
+    {
+        return _firstKeyValueDictionary[key];
+    }
+
+    public DatStringEntry FirstEntryWithCrc(Crc32 key)
+    {
+        return _firstCrcKeyValueDictionary[key];
     }
 
     public IEnumerator<DatStringEntry> GetEnumerator()

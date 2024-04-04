@@ -276,6 +276,24 @@ public abstract class DatBuilderBaseTest
     #endregion
 
     [Fact]
+    public void Test_BuildModel()
+    {
+        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
+            .Returns(new ValidationResult());
+
+        var builder = CreateBuilder();
+
+        builder.Object.AddEntry("key1", "value");
+        builder.Object.AddEntry("key2", "value");
+        builder.Object.AddEntry("key3", "value");
+
+        var model = builder.Object.BuildModel();
+        Assert.Equal(builder.Object.TargetKeySortOrder, model.KeySortOder);
+        Assert.Equal(3, model.Count);
+        Assert.Equal(["key1", "key2", "key3"], model.Keys);
+    }
+
+    [Fact]
     public void Test_Build()
     {
         var builder = CreateBuilder();
@@ -294,6 +312,6 @@ public abstract class DatBuilderBaseTest
             FilePath = "test.dat"
         }, false);
 
-        Assert.Equal(new byte[]{1,2,3}, FileSystem.File.ReadAllBytes("test.dat"));
+        Assert.Equal([1,2,3], FileSystem.File.ReadAllBytes("test.dat"));
     }
 }

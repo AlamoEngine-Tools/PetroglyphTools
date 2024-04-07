@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 
 namespace PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;

@@ -1,5 +1,3 @@
-using PG.Commons.Data.Files;
-
 namespace PG.StarWarsGame.Files.Xml.Files;
 
 public class XmlAlamoFileType : IAlamoFileType

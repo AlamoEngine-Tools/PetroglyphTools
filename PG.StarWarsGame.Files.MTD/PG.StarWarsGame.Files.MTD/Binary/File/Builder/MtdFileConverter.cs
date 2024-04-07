@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using PG.Commons.Binary.File;
 using PG.StarWarsGame.Files.MTD.Binary.File.Type.Definition;
 using PG.StarWarsGame.Files.MTD.Holder;
 

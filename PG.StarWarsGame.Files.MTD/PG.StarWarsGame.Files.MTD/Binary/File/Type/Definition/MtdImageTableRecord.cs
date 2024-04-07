@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using PG.Commons.Binary;
 using PG.Commons.Binary.File;
 using PG.StarWarsGame.Files.MTD.Commons.Exceptions;
 

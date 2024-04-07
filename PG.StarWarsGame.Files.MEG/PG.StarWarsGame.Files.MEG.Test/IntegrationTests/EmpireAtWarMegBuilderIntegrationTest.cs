@@ -5,7 +5,6 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
 using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;

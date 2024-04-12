@@ -224,7 +224,7 @@ public class MegFileServiceIntegrationTest
                 "DATA/XML/GAMEOBJECTFILES.XML",
                 "DATA/XML/CAMPAIGNFILES.XML"
             },
-            NewMegFilePath = "/new.meg",
+            NewMegFilePath = "new.meg",
             NewMegFileVersion = MegFileVersion.V1,
             NewMegIsBinaryEqual = true
         };
@@ -246,7 +246,7 @@ public class MegFileServiceIntegrationTest
             IsMegEncrypted = false,
             MegFileCount = 0,
             EntryNames = new List<string>(),
-            NewMegFilePath = "/new.meg",
+            NewMegFilePath = "new.meg",
             NewMegFileVersion = MegFileVersion.V1,
             NewMegIsBinaryEqual = true
         };
@@ -272,7 +272,7 @@ public class MegFileServiceIntegrationTest
                 "TEST?.TXT",
                 "TEST?.TXT"
             },
-            NewMegFilePath = "/new.meg",
+            NewMegFilePath = "new.meg",
             NewMegFileVersion = MegFileVersion.V1,
             NewMegIsBinaryEqual = false
         };

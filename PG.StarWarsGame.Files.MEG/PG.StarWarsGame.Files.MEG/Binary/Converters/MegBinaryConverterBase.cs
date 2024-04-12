@@ -38,9 +38,9 @@ internal abstract class MegBinaryConverterBase<TMegMetadata>(IServiceProvider se
         // According to the specification: 
         //  - The Meg's FileTable is sorted by CRC32.
         //  - It's not specified how or whether the FileNameTable is sorted.
-        //  - The game merges FileTable entries (and takes the last entry for duplicates)
+        //  - The game merges FileTable entries (and skips duplicates in the same file.)
         //  --> In theory:  For file entries with the same file name (and thus same CRC32),
-        //                  the game should use the last file.
+        //                  the game uses the first file in the list.
         // 
         // Since an IMegFile expects a List<>, not a Collection<>, we have to preserve the order of the FileTable
         var lastCrc = new Crc32(0);

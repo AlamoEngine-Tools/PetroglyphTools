@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -36,7 +37,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datModel == null)
             throw new ArgumentNullException(nameof(datModel));
 
-        var newEntries = new LinkedHashSet<DatStringEntry>(datModel, CrcBasedDatStringEntryEqualityComparer.Instance)
+        var newEntries = new LinkedHashSet<DatStringEntry>(datModel, CrcBasedEqualityComparer<DatStringEntry>.Instance)
             .ToList();
         
         if (datModel.KeySortOder == DatFileType.OrderedByCrc32)

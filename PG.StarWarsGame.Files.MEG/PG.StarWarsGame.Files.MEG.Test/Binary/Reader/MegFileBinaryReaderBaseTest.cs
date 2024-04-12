@@ -42,7 +42,7 @@ public class MegFileBinaryReaderBaseTest
 
         Assert.Throws<ArgumentNullException>(() => serviceMock.Object.ReadBinary(null!));
         Assert.Throws<ArgumentException>(() => serviceMock.Object.ReadBinary(new MemoryStream()));
-        Assert.Throws<ArgumentException>(() => serviceMock.Object.ReadBinary(new MemoryStream(Array.Empty<byte>())));
+        Assert.Throws<ArgumentException>(() => serviceMock.Object.ReadBinary(new MemoryStream([])));
     }
 
     [Fact]
@@ -190,12 +190,9 @@ public class MegFileBinaryReaderBaseTest
         };
     }
 
-    private class TestMegFileBinaryReader : MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>
+    private class TestMegFileBinaryReader(IServiceProvider services)
+        : MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>(services)
     {
-        public TestMegFileBinaryReader(IServiceProvider services) : base(services)
-        {
-        }
-
         protected internal override IMegFileMetadata CreateMegMetadata(IMegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, IMegFileTable fileTable)
         {
             throw new NotImplementedException();

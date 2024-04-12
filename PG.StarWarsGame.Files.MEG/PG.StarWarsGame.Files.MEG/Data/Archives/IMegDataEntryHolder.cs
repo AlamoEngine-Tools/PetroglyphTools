@@ -40,7 +40,7 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
     /// <returns><see langword="null"/> if no entry is found; otherwise the last entry in the <see cref="IMegDataEntryHolder{T}"/>.</returns>
-    T? LastEntryWithCrc(Crc32 crc);
+    T? FirstEntryWithCrc(Crc32 crc);
 
     /// <summary>
     /// Tries to find any <typeparamref name="T"/> by matching the specified search pattern.
@@ -56,6 +56,7 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// The search pattern might produce false-positive and false negatives, since this method is <b>not</b> designed to resolve paths.
     /// </remarks>
     /// <param name="searchPattern">The globbing pattern.</param>
+    /// <param name="caseInsensitive">When <see langword="true"/> the pattern ignores the character casing.</param>
     /// <returns>A list with all entries matching the specified pattern.</returns>
-    ReadOnlyFrugalList<T> FindAllEntries(string searchPattern);
+    ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive);
 }

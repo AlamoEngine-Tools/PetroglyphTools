@@ -117,11 +117,11 @@ public class MegDataEntryHolderBaseTest
         var noneFound = archive.EntriesWithCrc(new Crc32(-1));
         Assert.Empty(noneFound);
 
-        var last = archive.LastEntryWithCrc(new Crc32(0));
-        Assert.Equal("b", last!.FilePath);
+        var first = archive.FirstEntryWithCrc(new Crc32(0));
+        Assert.Equal("a", first!.FilePath);
 
-        var lastButNone = archive.LastEntryWithCrc(new Crc32(-1));
-        Assert.Null(lastButNone);
+        var firstButNone = archive.FirstEntryWithCrc(new Crc32(-1));
+        Assert.Null(firstButNone);
     }
 
     [Theory]
@@ -136,15 +136,17 @@ public class MegDataEntryHolderBaseTest
     [InlineData("a.txt", new[] { "a.xml" }, new string[] { })]
     [InlineData("**/a.txt", new[] { "a.txt", "b.txt", "new/a.txt" }, new[] { "a.txt", "new/a.txt" })]
     [InlineData("**/new/a.txt", new[] { "a.txt", "c:/new/a.txt", "new/a.txt" }, new[] { "c:/new/a.txt", "new/a.txt" })]
+    // Checks case sensitivity
+    [InlineData("NEW/a.txt", new[] { "a.txt", "a.xml", "new/a.txt" }, new[] { "new/a.txt" }, true)]
     // Checks case insensitivity
-    [InlineData("NEW/a.txt", new[] { "a.txt", "a.xml", "new/a.txt" }, new[] { "new/a.txt" })]
+    [InlineData("NEW/a.txt", new[] { "a.txt", "a.xml", "new/a.txt" }, new string[0])]
     // Below are unusual cases and the behavior is highly dependent on the library used for globbing
     // On a real file system, this is a false positive ("new/../a.txt" should NOT be present)
     // and also this is a false negative ("./a.txt" should be present)
     [InlineData("a.txt", new[] { "./a.txt", "new/../a.txt" }, new string[] { })]
     // On a real file system, this is a false positive ("new/../a.txt" should NOT be present)
     [InlineData("new/**/a.txt", new[] { "new/../a.txt", "new/././a.txt" }, new[] { "new/../a.txt", "new/././a.txt" })]
-    public void Test_FindAllEntries(string pattern, string[] files, string[] expectedMatches)
+    public void Test_FindAllEntries(string pattern, string[] files, string[] expectedMatches, bool caseInsensitive = false)
     {
 
         var megFiles = files.Select(f =>
@@ -154,14 +156,9 @@ public class MegDataEntryHolderBaseTest
             return entry.Object;
         }).ToList();
         var meg = new TestArchive(megFiles);
-        var entries = meg.FindAllEntries(pattern).Select(e => e.FilePath).ToList();
+        var entries = meg.FindAllEntries(pattern, caseInsensitive).Select(e => e.FilePath).ToList();
         Assert.Equal(expectedMatches, entries);
     }
 
-    private class TestArchive : MegDataEntryHolderBase<IMegDataEntry>
-    {
-        public TestArchive(IList<IMegDataEntry> entries) : base(entries)
-        {
-        }
-    }
+    private class TestArchive(IList<IMegDataEntry> entries) : MegDataEntryHolderBase<IMegDataEntry>(entries);
 }

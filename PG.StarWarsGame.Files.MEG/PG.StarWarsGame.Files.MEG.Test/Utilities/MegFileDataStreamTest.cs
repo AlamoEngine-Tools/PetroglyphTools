@@ -55,7 +55,7 @@ public class MegFileDataStreamTest
 
         stream.Dispose();
         Assert.Throws<ObjectDisposedException>(() => ms.Position);
-        Assert.Throws<ObjectDisposedException>(() => stream.Read(Array.Empty<byte>(), 0, 0));
+        Assert.Throws<ObjectDisposedException>(() => stream.Read([], 0, 0));
 
         // Double Dispose should not throw
         stream.Dispose();
@@ -68,11 +68,11 @@ public class MegFileDataStreamTest
         var stream = new MegFileDataStream( baseStream, 0, 0);
 
         Assert.Throws<ArgumentNullException>(() => stream.Read(null!, 0, 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Read(Array.Empty<byte>(), -1, 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Read(Array.Empty<byte>(), 0, -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Read([], -1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Read([], 0, -1));
 
         baseStream.DoNotRead();
-        Assert.Throws<NotSupportedException>(() => stream.Read(Array.Empty<byte>(), 0, 0));
+        Assert.Throws<NotSupportedException>(() => stream.Read([], 0, 0));
     }
 
     [Fact]

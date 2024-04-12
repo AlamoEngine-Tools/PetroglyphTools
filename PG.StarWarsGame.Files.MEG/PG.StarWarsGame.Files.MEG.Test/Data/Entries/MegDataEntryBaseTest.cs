@@ -26,22 +26,14 @@ public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.Te
         return new TestLocation();
     }
 
-    private class TestDataEntry : MegDataEntryBase<TestLocation>
+    private class TestDataEntry(string path, Crc32 crc32, TestLocation location)
+        : MegDataEntryBase<TestLocation>(location)
     {
-        public override string FilePath { get; }
-        public override Crc32 Crc32 { get; }
-
-        public TestDataEntry(string path, Crc32 crc32, TestLocation location) : base(location)
-        {
-            FilePath = path;
-            Crc32 = crc32;
-        }
+        public override string FilePath { get; } = path;
+        public override Crc32 Crc32 { get; } = crc32;
     }
 
-    public class TestLocation : IDataEntryLocation
-    {
-        
-    }
+    public class TestLocation : IDataEntryLocation;
 
 }
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -42,7 +41,7 @@ public partial class MegFileServiceTest
     [Fact]
     public void Test_CreateMegArchive_WithData()
     {
-        const string megFileName = "/a.meg";
+        const string megFileName = "a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 
@@ -71,7 +70,7 @@ public partial class MegFileServiceTest
     [InlineData(2u, 3u)]
     public void Test_CreateMegArchive_InvalidEntrySizeAndOffsets_Throws(uint size, uint offset)
     {
-        const string megFileName = "/a.meg";
+        const string megFileName = "a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 
@@ -93,7 +92,7 @@ public partial class MegFileServiceTest
     [Fact]
     public void Test_CreateMegArchive_MegFileExceeds4GB_Throws()
     {
-        const string megFileName = "/a.meg";
+        const string megFileName = "a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 

@@ -77,13 +77,13 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     }
 
     /// <inheritdoc />
-    public T? LastEntryWithCrc(Crc32 crc)
+    public T? FirstEntryWithCrc(Crc32 crc)
     {
-        return EntriesWithCrc(crc).LastOrDefault();
+        return EntriesWithCrc(crc).FirstOrDefault();
     }
 
     /// <inheritdoc />
-    public ReadOnlyFrugalList<T> FindAllEntries(string searchPattern)
+    public ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive)
     {
         Debug.Assert(_fileNames.Count == Entries.Count);
 
@@ -91,7 +91,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
             return ReadOnlyFrugalList<T>.Empty;
 
         var glob = Glob.Parse(searchPattern,
-            new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = true } });
+            new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = caseInsensitive } });
 
         var foundMatches = new FrugalList<T>();
 

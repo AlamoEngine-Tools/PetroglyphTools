@@ -37,7 +37,7 @@ public class MegVersionIdentifierTest
     [Fact]
     public void Test__GetMegFileVersion_EmptyStream()
     {
-        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(Array.Empty<byte>()), out _));
+        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream([]), out _));
     }
 
     [Fact]

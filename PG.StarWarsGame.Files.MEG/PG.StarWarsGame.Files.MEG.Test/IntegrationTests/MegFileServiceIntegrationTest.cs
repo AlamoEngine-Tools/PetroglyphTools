@@ -125,8 +125,8 @@ public class MegFileServiceIntegrationTest
     [Fact]
     public void Test_CreateMegArchive_EntryNotFoundInMeg_Throws()
     {
-        const string megFileName = "/test.meg";
-        const string newFileName = "/new.meg";
+        const string megFileName = "test.meg";
+        const string newFileName = "new.meg";
 
         _fileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
@@ -149,8 +149,8 @@ public class MegFileServiceIntegrationTest
     [Fact]
     public void Test_CreateMegArchive_EntryNotFoundOnFileSystem_Throws()
     {
-        const string megFileName = "/test.meg";
-        const string newFileName = "/new.meg";
+        const string megFileName = "test.meg";
+        const string newFileName = "new.meg";
 
         _fileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
@@ -170,7 +170,7 @@ public class MegFileServiceIntegrationTest
     [Fact]
     public void Test_CreateMegArchive_MegWithEntriesOfSameNameButWithDifferentData()
     {
-        const string megFileName = "/test.meg";
+        const string megFileName = "test.meg";
 
         var expectedBytes = new byte[]
         {
@@ -210,7 +210,7 @@ public class MegFileServiceIntegrationTest
     [Fact]
     public void Test_MegV1_WithEntries()
     {
-        const string megFileName = "/test.meg";
+        const string megFileName = "test.meg";
 
         _fileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
@@ -224,7 +224,7 @@ public class MegFileServiceIntegrationTest
                 "DATA/XML/GAMEOBJECTFILES.XML",
                 "DATA/XML/CAMPAIGNFILES.XML"
             },
-            NewMegFilePath = "/new.meg",
+            NewMegFilePath = "new.meg",
             NewMegFileVersion = MegFileVersion.V1,
             NewMegIsBinaryEqual = true
         };
@@ -234,7 +234,7 @@ public class MegFileServiceIntegrationTest
     [Fact]
     public void Test_MegV1_Empty()
     {
-        const string megFileName = "/test.meg";
+        const string megFileName = "test.meg";
         const string megResource = "Files.v1_empty.meg";
 
         _fileSystem.Initialize().WithFile(megFileName)
@@ -246,7 +246,7 @@ public class MegFileServiceIntegrationTest
             IsMegEncrypted = false,
             MegFileCount = 0,
             EntryNames = new List<string>(),
-            NewMegFilePath = "/new.meg",
+            NewMegFilePath = "new.meg",
             NewMegFileVersion = MegFileVersion.V1,
             NewMegIsBinaryEqual = true
         };
@@ -256,7 +256,7 @@ public class MegFileServiceIntegrationTest
     [Fact]
     public void Test_MegV1_EntriesHaveNonAsciiNames()
     {
-        const string megFileName = "/test.meg";
+        const string megFileName = "test.meg";
         const string megResource = "Files.v1_2_files_with_extended_ascii_name.meg";
 
         _fileSystem.Initialize().WithFile(megFileName)
@@ -272,7 +272,7 @@ public class MegFileServiceIntegrationTest
                 "TEST?.TXT",
                 "TEST?.TXT"
             },
-            NewMegFilePath = "/new.meg",
+            NewMegFilePath = "new.meg",
             NewMegFileVersion = MegFileVersion.V1,
             NewMegIsBinaryEqual = false
         };

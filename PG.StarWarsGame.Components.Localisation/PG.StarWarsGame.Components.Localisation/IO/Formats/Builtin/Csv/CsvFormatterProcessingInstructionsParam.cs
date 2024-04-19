@@ -24,7 +24,7 @@ public record CsvFormatterProcessingInstructionsParam : ILocalisationFormatterPr
     public char? Separator { get; init; } = ',';
 
     /// <summary>
-    ///     The character used wo wrap a key, eg. "MY_KEY"
+    ///     The character used to wrap a key, eg. "MY_KEY"
     /// </summary>
     public char? KeyWrapper { get; init; } = null;
 

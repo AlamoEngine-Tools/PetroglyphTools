@@ -16,15 +16,16 @@ namespace PG.StarWarsGame.Components.Localisation.Test.IO.Formats.Builtin.Csv.Tr
 
 public class TranslationCsvFormatterTest
 {
-    private readonly string _directoryPath = $"/tst/{nameof(TranslationCsvFormatterTest)}/{DateTimeOffset.Now.ToUnixTimeSeconds()}/";
+    private readonly string _directoryPath =
+        $"/tst/{nameof(TranslationCsvFormatterTest)}/{DateTimeOffset.Now.ToUnixTimeSeconds()}/";
 
     private readonly MockFileSystem _fileSystem = new();
     private readonly IServiceProvider _serviceProvider;
 
-    private TranslationCsvFormatter Formatter { get;  }
+    private TranslationCsvFormatter Formatter { get; }
     private TranslationCsvFormatDescriptor Descriptor { get; }
 
-    private IDirectoryInfo Directory { get;  }
+    private IDirectoryInfo Directory { get; }
 
     public TranslationCsvFormatterTest()
     {
@@ -58,9 +59,9 @@ public class TranslationCsvFormatterTest
         itemRepository1.TryCreate(de, new TranslationItem("KEY_01", "VALUE_01 - GERMAN"));
 
         itemRepository2.TryCreate(en, new TranslationItem("KEY_02", "VALUE_02 - ENGLISH"));
-        // itemRepository2.TryCreate(german, new TranslationItem("KEY_02", "VALUE_02 - GERMAN"));
+        itemRepository2.TryCreate(de, new TranslationItem("KEY_02", "VALUE_02 - GERMAN"));
 
-        // itemRepository3.TryCreate(english, new TranslationItem("KEY_03", "VALUE_03 - ENGLISH"));
+        itemRepository3.TryCreate(en, new TranslationItem("KEY_03", "VALUE_03 - ENGLISH"));
         itemRepository3.TryCreate(de, new TranslationItem("KEY_03", "VALUE_03 - GERMAN"));
 
         repository.TryCreate("KEY_00", itemRepository0);
@@ -76,9 +77,9 @@ public class TranslationCsvFormatterTest
     {
         var param = new CsvFormatterProcessingInstructionsParam
         {
-            Directory = Directory.FullName, 
-            FileName = "testfile", 
-            Separator= '='
+            Directory = Directory.FullName,
+            FileName = "testfile",
+            Separator = '='
         };
 
         Formatter.WithProcessingInstructions(param);
@@ -86,19 +87,19 @@ public class TranslationCsvFormatterTest
         var repository = CreateRepository();
         Formatter.Export(repository);
 
-        var fileEn = Directory.FullName + _fileSystem.Path.DirectorySeparatorChar +
-                     "testfile.en.csv"; // Workaround for IPath.Join shenanigans.
-        var fileDe = Directory.FullName + _fileSystem.Path.DirectorySeparatorChar +
-                     "testfile.de.csv"; // Workaround for IPath.Join shenanigans.
+        var fileEn =
+            _fileSystem.Path.Combine(Directory.FullName, "testfile.en.csv");
+        var fileDe =
+            _fileSystem.Path.Combine(Directory.FullName, "testfile.de.csv");
         Assert.True(_fileSystem.File.Exists(fileEn));
         Assert.True(_fileSystem.File.Exists(fileDe));
 
         var enContent = _fileSystem.File.ReadLines(fileEn);
-        var deContent = _fileSystem.File.ReadLines(fileEn);
+        var deContent = _fileSystem.File.ReadLines(fileDe);
 
         Assert.NotNull(enContent);
         Assert.NotNull(deContent);
 
-        //Assert.NotEqual(enContent, deContent);
+        Assert.NotEqual(enContent, deContent);
     }
 }

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-	    <IsPackable>false</IsPackable> <!--TODO: Enable when implemented-->
-	    
-	    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <IsPackable>false</IsPackable> <!--TODO: Enable when implemented-->
+
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <Title>PG.StarWarsGame.Localisation</Title>
         <Product>PG.StarWarsGame.Localisation</Product>
         <PackageId>AlamoEngineTools.PG.StarWarsGame.Localisation</PackageId>
@@ -26,66 +26,63 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
-        <PackageReference Include="System.IO.Abstractions" Version="21.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="System.IO.Abstractions" Version="21.0.2"/>
     </ItemGroup>
     <ItemGroup>
-        <None Remove="Data\Dat\EaW\de\creditstext_german.dat" />
-        <None Remove="Data\Dat\EaW\de\mastertextfile_german.dat" />
-        <None Remove="Data\Dat\EaW\en\creditstext_english.dat" />
-        <None Remove="Data\Dat\EaW\en\mastertextfile_english.dat" />
-        <None Remove="Data\Dat\EaW\es\creditstext_spanish.dat" />
-        <None Remove="Data\Dat\EaW\es\mastertextfile_spanish.dat" />
-        <None Remove="Data\Dat\EaW\fr\creditstext_french.dat" />
-        <None Remove="Data\Dat\EaW\fr\mastertextfile_french.dat" />
-        <None Remove="Data\Dat\EaW\it\creditstext_italian.dat" />
-        <None Remove="Data\Dat\EaW\it\mastertextfile_italian.dat" />
-        <None Remove="Data\Dat\FoC\de\creditstext_german.dat" />
-        <None Remove="Data\Dat\FoC\de\mastertextfile_german.dat" />
-        <None Remove="Data\Dat\FoC\en\creditstext_english.dat" />
-        <None Remove="Data\Dat\FoC\en\mastertextfile_english.dat" />
-        <None Remove="Data\Dat\FoC\es\creditstext_spanish.dat" />
-        <None Remove="Data\Dat\FoC\es\mastertextfile_spanish.dat" />
-        <None Remove="Data\Dat\FoC\fr\creditstext_french.dat" />
-        <None Remove="Data\Dat\FoC\fr\mastertextfile_french.dat" />
-        <None Remove="Data\Dat\FoC\it\creditstext_italian.dat" />
-        <None Remove="Data\Dat\FoC\it\mastertextfile_italian.dat" />
-        <None Remove="Old\**" />
-        <None Remove="Services\**" />
+        <None Remove="Data\Dat\EaW\de\creditstext_german.dat"/>
+        <None Remove="Data\Dat\EaW\de\mastertextfile_german.dat"/>
+        <None Remove="Data\Dat\EaW\en\creditstext_english.dat"/>
+        <None Remove="Data\Dat\EaW\en\mastertextfile_english.dat"/>
+        <None Remove="Data\Dat\EaW\es\creditstext_spanish.dat"/>
+        <None Remove="Data\Dat\EaW\es\mastertextfile_spanish.dat"/>
+        <None Remove="Data\Dat\EaW\fr\creditstext_french.dat"/>
+        <None Remove="Data\Dat\EaW\fr\mastertextfile_french.dat"/>
+        <None Remove="Data\Dat\EaW\it\creditstext_italian.dat"/>
+        <None Remove="Data\Dat\EaW\it\mastertextfile_italian.dat"/>
+        <None Remove="Data\Dat\FoC\de\creditstext_german.dat"/>
+        <None Remove="Data\Dat\FoC\de\mastertextfile_german.dat"/>
+        <None Remove="Data\Dat\FoC\en\creditstext_english.dat"/>
+        <None Remove="Data\Dat\FoC\en\mastertextfile_english.dat"/>
+        <None Remove="Data\Dat\FoC\es\creditstext_spanish.dat"/>
+        <None Remove="Data\Dat\FoC\es\mastertextfile_spanish.dat"/>
+        <None Remove="Data\Dat\FoC\fr\creditstext_french.dat"/>
+        <None Remove="Data\Dat\FoC\fr\mastertextfile_french.dat"/>
+        <None Remove="Data\Dat\FoC\it\creditstext_italian.dat"/>
+        <None Remove="Data\Dat\FoC\it\mastertextfile_italian.dat"/>
+        <None Remove="Old\**"/>
+        <None Remove="Services\**"/>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Old\Data\Dat\EaW\de\creditstext_german.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\de\mastertextfile_german.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\en\creditstext_english.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\en\mastertextfile_english.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\es\creditstext_spanish.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\es\mastertextfile_spanish.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\fr\creditstext_french.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\fr\mastertextfile_french.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\it\creditstext_italian.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\EaW\it\mastertextfile_italian.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\de\creditstext_german.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\de\mastertextfile_german.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\en\creditstext_english.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\en\mastertextfile_english.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\es\creditstext_spanish.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\es\mastertextfile_spanish.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\fr\creditstext_french.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\fr\mastertextfile_french.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\it\creditstext_italian.dat" />
-        <EmbeddedResource Include="Old\Data\Dat\FoC\it\mastertextfile_italian.dat" />
-        <EmbeddedResource Remove="Old\**" />
-        <EmbeddedResource Remove="Services\**" />
+        <EmbeddedResource Include="Old\Data\Dat\EaW\de\creditstext_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\de\mastertextfile_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\en\creditstext_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\en\mastertextfile_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\es\creditstext_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\es\mastertextfile_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\fr\creditstext_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\fr\mastertextfile_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\it\creditstext_italian.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\EaW\it\mastertextfile_italian.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\de\creditstext_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\de\mastertextfile_german.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\en\creditstext_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\en\mastertextfile_english.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\es\creditstext_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\es\mastertextfile_spanish.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\fr\creditstext_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\fr\mastertextfile_french.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\it\creditstext_italian.dat"/>
+        <EmbeddedResource Include="Old\Data\Dat\FoC\it\mastertextfile_italian.dat"/>
+        <EmbeddedResource Remove="Old\**"/>
+        <EmbeddedResource Remove="Services\**"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Remove="Old\**" />
-        <Compile Remove="Services\**" />
+        <Compile Remove="Old\**"/>
+        <Compile Remove="Services\**"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-        <ProjectReference Include="..\..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="IO\Formats\Builtin\Xml\" />
+        <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
+        <ProjectReference Include="..\..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj"/>
     </ItemGroup>
 </Project>

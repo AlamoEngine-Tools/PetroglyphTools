@@ -94,20 +94,27 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
     public IMegFile Load(string filePath)
     {
         ThrowHelper.ThrowIfNullOrEmpty(filePath);
-
         var fullPath = FileSystem.Path.GetFullPath(filePath);
-
         using var fs = FileSystem.FileStream.New(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        return Load(fs);
+    }
 
-        var megVersion = GetMegFileVersion(fs, out var encrypted);
+    public IMegFile Load(FileSystemStream stream)
+    {
+        if (stream == null) 
+            throw new ArgumentNullException(nameof(stream));
+
+        var startPosition = stream.Position;
+        var megVersion = GetMegFileVersion(stream, out var encrypted);
 
         if (encrypted)
             throw new NotImplementedException("Encrypted archives are currently not supported");
 
-        using var megFileInfo = new MegFileInformation(fullPath, megVersion);
+        using var megFileInfo = new MegFileInformation(FileSystem.Path.GetFullPath(stream.Name), megVersion);
 
-        fs.Seek(0, SeekOrigin.Begin);
-        var megMetadata = LoadAndValidateMetadata(fs, megFileInfo);
+        stream.Seek(startPosition, SeekOrigin.Begin);
+
+        var megMetadata = LoadAndValidateMetadata(stream, megFileInfo);
 
         var converter = BinaryServiceFactory.GetConverter(megVersion);
         var megArchive = converter.BinaryToModel(megMetadata);

@@ -55,6 +55,18 @@ public interface IMegFileService
     IMegFile Load(string filePath);
 
     /// <summary>
+    /// Loads a *.MEG metadata stream into a <see cref="IMegFile" />.
+    /// </summary>
+    /// <param name="stream">The MEG file path.</param>
+    /// <returns>The MEG file's metadata.</returns>
+    /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
+    /// <exception cref="NotSupportedException"><paramref name="stream"/> is not readable or seekable.</exception>
+    /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not a MEG archive.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
+    IMegFile Load(FileSystemStream stream);
+
+    /// <summary>
     /// Retrieves the <see cref="MegFileVersion"/> from a .MEG file.
     /// </summary>
     /// <param name="file">The .MEG file.</param>

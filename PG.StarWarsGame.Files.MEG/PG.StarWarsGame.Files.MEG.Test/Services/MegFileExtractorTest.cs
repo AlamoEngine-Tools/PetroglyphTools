@@ -1,18 +1,17 @@
 using System;
 using System.IO;
 using System.IO.Abstractions;
-
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
+using PG.StarWarsGame.Files.MEG.Utilities;
 using PG.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 using static PG.StarWarsGame.Files.MEG.Test.Data.Entries.MegDataEntryTest;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
-
 
 public class MegFileExtractorTest
 {
@@ -110,7 +109,8 @@ public class MegFileExtractorTest
     [Fact]
     public void Test_GetFileData()
     {
-        var megFileDataStream = new MemoryStream([1, 2, 3, 4]);
+        var ms = new MemoryStream([1, 2, 3, 4]);
+        var megFileDataStream = FromMemoryStream(ms);
 
         var entry = CreateEntry("file.txt");
         var meg = new Mock<IMegFile>();
@@ -162,7 +162,7 @@ public class MegFileExtractorTest
 
         Assert.False(_fileSystem.File.Exists("file.txt"));
 
-        _streamFactory.Setup(f => f.GetDataStream(location)).Returns(new MemoryStream(megFileData));
+        _streamFactory.Setup(f => f.GetDataStream(location)).Returns(FromMemoryStream(new MemoryStream(megFileData)));
 
         var extracted = _extractor.ExtractFile(location, "file.txt", false);
         
@@ -201,7 +201,7 @@ public class MegFileExtractorTest
         var meg = new Mock<IMegFile>();
         var location = new MegDataEntryLocationReference(meg.Object, entry);
 
-        _streamFactory.Setup(f => f.GetDataStream(location)).Returns(new MemoryStream(megFileData));
+        _streamFactory.Setup(f => f.GetDataStream(location)).Returns(FromMemoryStream(new MemoryStream(megFileData)));
 
         var extracted = _extractor.ExtractFile(location, "file.txt", true);
         Assert.True(extracted);
@@ -224,13 +224,18 @@ public class MegFileExtractorTest
         var location = new MegDataEntryLocationReference(meg.Object, entry);
 
 
-       _streamFactory.Setup(f => f.GetDataStream(location)).Returns(new MemoryStream(megFileData));
+       _streamFactory.Setup(f => f.GetDataStream(location)).Returns(FromMemoryStream(new MemoryStream(megFileData)));
 
         var extracted = _extractor.ExtractFile(location, filePathWhereToExtract, false);
         Assert.True(extracted);
 
         var actualFileData = _fileSystem.File.ReadAllBytes(filePathWhereToExtract);
         Assert.Equal(megFileData, actualFileData);
+    }
+
+    private MegFileDataStream FromMemoryStream(MemoryStream stream)
+    {
+        return new MegFileDataStream("path", stream, 0, (uint)stream.Length);
     }
 
     [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]

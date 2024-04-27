@@ -8,6 +8,7 @@ using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using AnakinRaW.CommonUtilities;
+using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -47,7 +48,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
     }
 
     /// <inheritdoc/>
-    public Stream GetFileData(MegDataEntryLocationReference dataEntryLocation)
+    public MegFileDataStream GetFileData(MegDataEntryLocationReference dataEntryLocation)
     {
         if (dataEntryLocation is null) 
             throw new ArgumentNullException(nameof(dataEntryLocation));

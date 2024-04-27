@@ -3,16 +3,33 @@
 
 using System;
 using System.IO;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Utilities;
 
-internal class MegFileDataStream : Stream
+/// <summary>
+/// Represent a read-only, non-seekable file stream that points to a single data entry inside a MEG file.
+/// </summary>
+public sealed class MegFileDataStream : Stream
 {
+    /// <summary>
+    /// Gets the path of the entry used the MEG archive.
+    /// </summary>
+    public string EntryPath { get; }
+
+    /// <inheritdoc />
     public override bool CanRead => true;
+
+    /// <inheritdoc />
     public override bool CanSeek => false;
+
+    /// <inheritdoc />
     public override bool CanWrite => false;
+
+    /// <inheritdoc />
     public override long Length => _dataSize;
 
+    /// <inheritdoc />
     public override long Position
     {
         get => _currentPos;
@@ -25,17 +42,20 @@ internal class MegFileDataStream : Stream
 
     private long _currentPos;
 
-    public MegFileDataStream(Stream baseStream, uint fileOffset, uint dataSize)
+    internal MegFileDataStream(string entryPath, Stream baseStream, uint fileOffset, uint dataSize)
     {
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+        
+        EntryPath = entryPath;
         _baseStream = baseStream ?? throw new ArgumentNullException(nameof(baseStream));
 
-        if (!_baseStream.CanRead || !_baseStream.CanSeek)
+        if (!baseStream.CanRead || !baseStream.CanSeek)
             throw new ArgumentException("Base stream is not readable or seekable", nameof(baseStream));
 
-        if (fileOffset > _baseStream.Length)
+        if (fileOffset > baseStream.Length)
             throw new ArgumentException("MEG data offset exceeds total MEG archive size", nameof(fileOffset));
 
-        if (fileOffset + dataSize > _baseStream.Length)
+        if (fileOffset + dataSize > baseStream.Length)
             throw new ArgumentException("MEG data size exceeds total MEG archive size");
 
         _dataSize = dataSize;
@@ -44,10 +64,17 @@ internal class MegFileDataStream : Stream
         baseStream.Position = fileOffset;
     }
 
+    internal static MegFileDataStream CreateEmptyStream(string entryPath)
+    {
+        return new MegFileDataStream(entryPath, Null, 0, 0);
+    }
+
+    /// <inheritdoc />
     public override void Flush()
     {
     }
 
+    /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
         if (buffer is null)
@@ -83,21 +110,25 @@ internal class MegFileDataStream : Stream
         return bytesRead;
     }
 
+    /// <inheritdoc />
     public override long Seek(long offset, SeekOrigin origin)
     {
         throw new NotSupportedException("Seeking this stream is not supported");
     }
 
+    /// <inheritdoc />
     public override void SetLength(long value)
     {
         throw new NotSupportedException("Setting the length of this stream is not supported");
     }
 
+    /// <inheritdoc />
     public override void Write(byte[] buffer, int offset, int count)
     {
         throw new NotSupportedException("Writing to this stream is not supported");
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         try

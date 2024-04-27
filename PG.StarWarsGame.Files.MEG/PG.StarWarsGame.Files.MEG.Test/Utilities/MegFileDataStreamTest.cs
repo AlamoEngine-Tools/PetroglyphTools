@@ -12,22 +12,25 @@ public class MegFileDataStreamTest
     [Fact]
     public void Test_Ctor_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new MegFileDataStream(null!, 0, 0));
+        Assert.Throws<ArgumentNullException>(() => new MegFileDataStream("path", null!, 0, 0));
+        Assert.Throws<ArgumentNullException>(() => new MegFileDataStream(null!, Stream.Null, 0, 0));
+        Assert.Throws<ArgumentException>(() => new MegFileDataStream("", Stream.Null, 0, 0));
 
-        Assert.Throws<ArgumentException>(() => new MegFileDataStream(new NonReadableStream(), 0, 0));
-        Assert.Throws<ArgumentException>(() => new MegFileDataStream(new NonSeekableStream(), 0, 0));
+        Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", new NonReadableStream(), 0, 0));
+        Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", new NonSeekableStream(), 0, 0));
 
 
-        Assert.Throws<ArgumentException>(() => new MegFileDataStream(Stream.Null, 1, 0));
-        Assert.Throws<ArgumentException>(() => new MegFileDataStream(Stream.Null, 0, 1));
+        Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", Stream.Null, 1, 0));
+        Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", Stream.Null, 0, 1));
     }
 
     [Fact]
     public void Test_Ctor()
     {
         var ms = new MemoryStream(new byte[20]);
-        var stream = new MegFileDataStream(ms, 0, 5);
+        var stream = new MegFileDataStream("path", ms, 0, 5);
 
+        Assert.Equal("path", stream.EntryPath);
         Assert.True(stream.CanRead);
         Assert.False(stream.CanSeek);
         Assert.False(stream.CanWrite);
@@ -38,7 +41,7 @@ public class MegFileDataStreamTest
     public void Test_NotSupportedOperations()
     {
         var ms = new MemoryStream();
-        var stream = new MegFileDataStream(ms, 0, 0);
+        var stream = new MegFileDataStream("path", ms, 0, 0);
 
         Assert.Throws<NotSupportedException>(() => stream.SetLength(1));
         Assert.Throws<NotSupportedException>(() => stream.Position = 1);
@@ -51,7 +54,7 @@ public class MegFileDataStreamTest
     public void Test_Dispose()
     {
         var ms = new MemoryStream();
-        var stream = new MegFileDataStream(ms, 0, 0);
+        var stream = new MegFileDataStream("path", ms, 0, 0);
 
         stream.Dispose();
         Assert.Throws<ObjectDisposedException>(() => ms.Position);
@@ -65,7 +68,7 @@ public class MegFileDataStreamTest
     public void Test_Read_Throws()
     {
         var baseStream = new CustomStream();
-        var stream = new MegFileDataStream( baseStream, 0, 0);
+        var stream = new MegFileDataStream("path", baseStream, 0, 0);
 
         Assert.Throws<ArgumentNullException>(() => stream.Read(null!, 0, 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => stream.Read([], -1, 0));
@@ -79,7 +82,7 @@ public class MegFileDataStreamTest
     public void Test_Read_ThrowsOutOfRange_Computed()
     {
         var baseStream = new MemoryStream([1, 2, 3]);
-        var stream = new MegFileDataStream(baseStream, 0, 3);
+        var stream = new MegFileDataStream("path", baseStream, 0, 3);
 
         var buffer = new byte[1];
         Assert.Throws<ArgumentOutOfRangeException>(() => stream.Read(buffer, 2, 0));
@@ -94,7 +97,7 @@ public class MegFileDataStreamTest
         var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
         var ms = new MemoryStream(source);
 
-        var stream = new MegFileDataStream(ms, 4, 3);
+        var stream = new MegFileDataStream("path", ms, 4, 3);
 
         var data = new byte[] { 99, 99, 99, 99, 99 };
         Assert.Equal(3, stream.Read(data, 1, 4));
@@ -108,7 +111,7 @@ public class MegFileDataStreamTest
         var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
         var ms = new MemoryStream(source);
 
-        var stream = new MegFileDataStream(ms, 4, 3);
+        var stream = new MegFileDataStream("path", ms, 4, 3);
 
         var dataMs = new MemoryStream(new byte[4]);
         stream.CopyTo(dataMs);
@@ -122,7 +125,7 @@ public class MegFileDataStreamTest
         var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
         var ms = new MemoryStream(source);
 
-        var stream = new MegFileDataStream(ms, 4, 3);
+        var stream = new MegFileDataStream("path", ms, 4, 3);
 
 
         var data = new byte[] {99, 99, 99, 99, 99};
@@ -148,7 +151,7 @@ public class MegFileDataStreamTest
         var source = new byte[] { 1, 2, 3 };
         var ms = new MemoryStream(source);
 
-        var stream = new MegFileDataStream(ms, 0, 3);
+        var stream = new MegFileDataStream("path", ms, 0, 3);
 
 
         var data = new byte[] { 99, 99, 99, 99, 99 };
@@ -164,9 +167,26 @@ public class MegFileDataStreamTest
     public void Test_Flush_NOP()
     {
         var ms = new MemoryStream();
-        var stream = new MegFileDataStream(ms, 0, 0);
+        var stream = new MegFileDataStream("path", ms, 0, 0);
 
         stream.Flush();
+    }
+
+    [Fact]
+    public void Test_EmptyDataStream()
+    {
+        var stream = MegFileDataStream.CreateEmptyStream("path");
+
+        Assert.Equal("path", stream.EntryPath);
+        Assert.Equal(0, stream.Length);
+
+        var buffer = new byte[3] { 1, 1, 1 };
+        var read = stream.Read(buffer, 0, 3);
+
+        Assert.Equal([1, 1, 1], buffer);
+        Assert.Equal(0, read);
+
+        stream.Dispose();
     }
 
     private class NonReadableStream : Stream

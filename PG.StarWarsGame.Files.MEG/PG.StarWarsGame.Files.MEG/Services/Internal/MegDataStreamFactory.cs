@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Utilities;
 
@@ -25,7 +26,7 @@ internal sealed class MegDataStreamFactory(IServiceProvider serviceProvider)
         return GetDataStream(originInfo.MegFileLocation!);
     }
 
-    public Stream GetDataStream(MegDataEntryLocationReference locationReference)
+    public MegFileDataStream GetDataStream(MegDataEntryLocationReference locationReference)
     {
         if (locationReference == null) 
             throw new ArgumentNullException(nameof(locationReference));
@@ -38,21 +39,22 @@ internal sealed class MegDataStreamFactory(IServiceProvider serviceProvider)
             throw new NotImplementedException("Encrypted archives are currently not supported");
         }
 
-        return CreateDataStream(locationReference.MegFile.FilePath, locationReference.DataEntry.Location.Offset,
-            locationReference.DataEntry.Location.Size);
+        return CreateDataStream(locationReference.MegFile.FilePath, locationReference.DataEntry);
     }
 
-    private Stream CreateDataStream(string path, uint offset, uint size)
+    private MegFileDataStream CreateDataStream(string megFilePath, MegDataEntry entry)
     {
-        if (!FileSystem.File.Exists(path))
-            throw new FileNotFoundException($"MEG file '{path}' does not exist", path);
+        if (!FileSystem.File.Exists(megFilePath))
+            throw new FileNotFoundException($"MEG file '{megFilePath}' does not exist", megFilePath);
 
         // Cause MIKE.NL's tool uses the offset megFile[megSize + 1] for empty Entries we would cause an ArgumentOutOfRangeException
         // when trying to access this index on a real file. Therefore, we return the Null stream.
-        if (size == 0)
-            return Stream.Null;
+        if (entry.Location.Size == 0)
+            return MegFileDataStream.CreateEmptyStream(entry.FilePath);
 
         var fs = Services.GetRequiredService<IFileSystem>();
-        return new MegFileDataStream(fs.FileStream.New(path, FileMode.Open, FileAccess.Read, FileShare.Read), offset, size);
+
+        var megFileStream = fs.FileStream.New(megFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        return new MegFileDataStream(entry.FilePath, megFileStream, entry.Location.Offset, entry.Location.Size);
     }
 }

@@ -20,13 +20,13 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services;
 public partial class MegFileServiceTest
 { 
     [Fact]
-    public void Test_Load__ThrowFileNotFound()
+    public void Test_Load_ThrowFileNotFound()
     {
         Assert.Throws<FileNotFoundException>(() => _megFileService.Load("test.meg"));
     }
 
     [Fact]
-    public void Test_Load__SizeValidationFails()
+    public void Test_Load_SizeValidationFails()
     {
         var encrypted = false;
         var version = MegFileVersion.V2;
@@ -46,7 +46,7 @@ public partial class MegFileServiceTest
     }
 
     [Fact]
-    public void Test_Load__BinaryReaderThrows()
+    public void Test_Load_BinaryReaderThrows()
     {
         const string fileData = "some random data";
         var encrypted = false;
@@ -74,7 +74,7 @@ public partial class MegFileServiceTest
     }
 
     [Fact]
-    public void Test_Load__InvalidBinary()
+    public void Test_Load_InvalidBinary()
     {
         const string fileData = "some random data";
         var encrypted = false;

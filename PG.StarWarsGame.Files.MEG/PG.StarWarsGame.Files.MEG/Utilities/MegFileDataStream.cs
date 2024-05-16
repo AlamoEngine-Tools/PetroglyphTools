@@ -40,9 +40,6 @@ public sealed class MegFileDataStream : Stream
 
             if (value < 0)
                 throw new ArgumentOutOfRangeException(nameof(value), "value cannot be negative");
-            if (value >= Length)
-                throw new ArgumentOutOfRangeException(nameof(value),
-                    "cannot set position beyond the length of this stream.");
 
             _currentPos = value;
             _baseStream.Seek(_fileOffset + value, SeekOrigin.Begin);
@@ -104,6 +101,9 @@ public sealed class MegFileDataStream : Stream
 
         if (buffer.Length - offset < count)
             throw new ArgumentOutOfRangeException();
+
+        if (!_baseStream.CanRead)
+            throw new NotSupportedException("Stream is not readable");
 
         var bytesRemaining = _dataSize - _currentPos;
 

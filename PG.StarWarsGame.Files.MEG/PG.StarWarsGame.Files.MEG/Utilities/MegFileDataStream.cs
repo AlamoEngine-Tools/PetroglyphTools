@@ -21,7 +21,7 @@ public sealed class MegFileDataStream : Stream
     public override bool CanRead => true;
 
     /// <inheritdoc />
-    public override bool CanSeek => false;
+    public override bool CanSeek => true;
 
     /// <inheritdoc />
     public override bool CanWrite => false;
@@ -33,11 +33,22 @@ public sealed class MegFileDataStream : Stream
     public override long Position
     {
         get => _currentPos;
-        set => throw new NotSupportedException();
+        set
+        {
+            if (_baseStream is null)
+                throw new ObjectDisposedException(null);
+
+            if (value < 0)
+                throw new ArgumentOutOfRangeException(nameof(value), "value cannot be negative");
+
+            _currentPos = value;
+            _baseStream.Seek(_fileOffset + value, SeekOrigin.Begin);
+        }
     }
 
     private Stream? _baseStream;
 
+    private readonly uint _fileOffset;
     private readonly uint _dataSize;
 
     private long _currentPos;
@@ -48,6 +59,7 @@ public sealed class MegFileDataStream : Stream
         
         EntryPath = entryPath;
         _baseStream = baseStream ?? throw new ArgumentNullException(nameof(baseStream));
+        _fileOffset = fileOffset;
 
         if (!baseStream.CanRead || !baseStream.CanSeek)
             throw new ArgumentException("Base stream is not readable or seekable", nameof(baseStream));
@@ -87,11 +99,11 @@ public sealed class MegFileDataStream : Stream
         if (_baseStream is null)
             throw new ObjectDisposedException(null);
 
-        if (!_baseStream.CanRead)
-            throw new NotSupportedException("Underlying stream is not readable");
-
         if (buffer.Length - offset < count)
             throw new ArgumentOutOfRangeException();
+
+        if (!_baseStream.CanRead)
+            throw new NotSupportedException("Stream is not readable");
 
         var bytesRemaining = _dataSize - _currentPos;
 
@@ -113,8 +125,24 @@ public sealed class MegFileDataStream : Stream
     /// <inheritdoc />
     public override long Seek(long offset, SeekOrigin origin)
     {
-        throw new NotSupportedException("Seeking this stream is not supported");
+        if (_baseStream is null)
+            throw new ObjectDisposedException(null);
+
+        return SeekCore(offset, origin switch
+        {
+            SeekOrigin.Begin => 0,
+            SeekOrigin.Current => _currentPos,
+            SeekOrigin.End => Length,
+            _ => throw new ArgumentOutOfRangeException(nameof(origin), origin, null)
+        });
     }
+
+    private long SeekCore(long offset, long loc)
+    {
+        var newPosition = unchecked(loc + (int)offset);
+        return Position = newPosition;
+    }
+
 
     /// <inheritdoc />
     public override void SetLength(long value)

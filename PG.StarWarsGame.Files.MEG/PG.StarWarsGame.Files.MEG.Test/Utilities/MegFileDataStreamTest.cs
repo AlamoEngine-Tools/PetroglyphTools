@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
-
 using PG.StarWarsGame.Files.MEG.Utilities;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Utilities;
-
 
 public class MegFileDataStreamTest
 {
@@ -32,7 +30,7 @@ public class MegFileDataStreamTest
 
         Assert.Equal("path", stream.EntryPath);
         Assert.True(stream.CanRead);
-        Assert.False(stream.CanSeek);
+        Assert.True(stream.CanSeek);
         Assert.False(stream.CanWrite);
         Assert.Equal(5, stream.Length);
     }
@@ -44,8 +42,6 @@ public class MegFileDataStreamTest
         var stream = new MegFileDataStream("path", ms, 0, 0);
 
         Assert.Throws<NotSupportedException>(() => stream.SetLength(1));
-        Assert.Throws<NotSupportedException>(() => stream.Position = 1);
-        Assert.Throws<NotSupportedException>(() => stream.Seek(1, SeekOrigin.Begin));
         Assert.Throws<NotSupportedException>(() => stream.Write(new byte[1], 0, 0));
 
     }
@@ -163,6 +159,55 @@ public class MegFileDataStreamTest
         Assert.Throws<InvalidOperationException>(() => stream.Read(data, 0, 1));
     }
 
+
+    [Fact]
+    public void Test_Position()
+    {
+        var source = new byte[] { 9, 9, 9, 1, 2, 3, 9, 9, 9 };
+        var ms = new MemoryStream(source);
+
+        var stream = new MegFileDataStream("path", ms, 3, 3);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Position = -1);
+
+        stream.Position = 1;
+        Assert.Equal(2, stream.ReadByte());
+        stream.Position = 0;
+        Assert.Equal(1, stream.ReadByte());
+        stream.Position = 2;
+        Assert.Equal(3, stream.ReadByte());
+        stream.Position = 3;
+        Assert.Equal(-1, stream.ReadByte());
+    }
+
+    [Fact]
+    public void Test_Seek()
+    {
+        var source = new byte[] { 9, 9, 9, 1, 2, 3, 9, 9, 9 };
+        var ms = new MemoryStream(source);
+
+        var stream = new MegFileDataStream("path", ms, 3, 3);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Seek(-1, SeekOrigin.Begin));
+
+        Assert.Equal(1, stream.Seek(1, SeekOrigin.Begin));
+        Assert.Equal(1, stream.Position);
+        Assert.Equal(2, stream.ReadByte());
+
+        Assert.Equal(0, stream.Seek(-2, SeekOrigin.Current));
+        Assert.Equal(0, stream.Position);
+        Assert.Equal(1, stream.ReadByte());
+
+        stream.Position = 0;
+        Assert.Equal(2, stream.Seek(2, SeekOrigin.Current));
+        Assert.Equal(2, stream.Position);
+        Assert.Equal(3, stream.ReadByte());
+
+        Assert.Equal(3, stream.Seek(0, SeekOrigin.End));
+        Assert.Equal(3, stream.Position);
+        Assert.Equal(-1, stream.ReadByte());
+    }
+
     [Fact]
     public void Test_Flush_NOP()
     {
@@ -180,7 +225,7 @@ public class MegFileDataStreamTest
         Assert.Equal("path", stream.EntryPath);
         Assert.Equal(0, stream.Length);
 
-        var buffer = new byte[3] { 1, 1, 1 };
+        var buffer = new byte[] { 1, 1, 1 };
         var read = stream.Read(buffer, 0, 3);
 
         Assert.Equal([1, 1, 1], buffer);

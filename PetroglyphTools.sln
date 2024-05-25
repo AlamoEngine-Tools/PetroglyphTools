@@ -27,6 +27,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Testing", "PG.Testing\PG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.Benchmarks", "PG.Benchmarks\PG.Benchmarks.csproj", "{469BAFA4-7C54-4736-B349-3D6E84AB33FA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.StarWarsGame.Files.ALO", "PG.StarWarsGame.Files.ALO\PG.StarWarsGame.Files.ALO\PG.StarWarsGame.Files.ALO.csproj", "{B7F36C3D-9DDC-4BD3-9810-A859DA016E28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.StarWarsGame.Files.ChunkFiles", "PG.StarWarsGame.Files.ChunkFiles\PG.StarWarsGame.Files.ChunkFiles\PG.StarWarsGame.Files.ChunkFiles.csproj", "{F9E0647E-E74F-432A-9BD3-899E512E3F47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +77,14 @@ Global
 		{469BAFA4-7C54-4736-B349-3D6E84AB33FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{469BAFA4-7C54-4736-B349-3D6E84AB33FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{469BAFA4-7C54-4736-B349-3D6E84AB33FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7F36C3D-9DDC-4BD3-9810-A859DA016E28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7F36C3D-9DDC-4BD3-9810-A859DA016E28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7F36C3D-9DDC-4BD3-9810-A859DA016E28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7F36C3D-9DDC-4BD3-9810-A859DA016E28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9E0647E-E74F-432A-9BD3-899E512E3F47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E0647E-E74F-432A-9BD3-899E512E3F47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E0647E-E74F-432A-9BD3-899E512E3F47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E0647E-E74F-432A-9BD3-899E512E3F47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

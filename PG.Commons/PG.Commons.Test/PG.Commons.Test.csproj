@@ -31,4 +31,7 @@
 		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
 		<ProjectReference Include="..\PG.Commons\PG.Commons.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="IO\" />
+	</ItemGroup>
 </Project>

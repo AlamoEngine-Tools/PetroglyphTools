@@ -4,13 +4,14 @@
 using System;
 using System.IO;
 using AnakinRaW.CommonUtilities;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Utilities;
 
 /// <summary>
 /// Represent a read-only, non-seekable file stream that points to a single data entry inside a MEG file.
 /// </summary>
-public sealed class MegFileDataStream : Stream
+public sealed class MegFileDataStream : Stream, IMegFileDataStream
 {
     /// <summary>
     /// Gets the path of the entry used the MEG archive.
@@ -53,7 +54,16 @@ public sealed class MegFileDataStream : Stream
 
     private long _currentPos;
 
-    internal MegFileDataStream(string entryPath, Stream baseStream, uint fileOffset, uint dataSize)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="entryPath"></param>
+    /// <param name="baseStream"></param>
+    /// <param name="fileOffset"></param>
+    /// <param name="dataSize"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    public MegFileDataStream(string entryPath, Stream baseStream, uint fileOffset, uint dataSize)
     {
         ThrowHelper.ThrowIfNullOrEmpty(entryPath);
         
@@ -76,7 +86,12 @@ public sealed class MegFileDataStream : Stream
         baseStream.Position = fileOffset;
     }
 
-    internal static MegFileDataStream CreateEmptyStream(string entryPath)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="entryPath"></param>
+    /// <returns></returns>
+    public static MegFileDataStream CreateEmptyStream(string entryPath)
     {
         return new MegFileDataStream(entryPath, Null, 0, 0);
     }

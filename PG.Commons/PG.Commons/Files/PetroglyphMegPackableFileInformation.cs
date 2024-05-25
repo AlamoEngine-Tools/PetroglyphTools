@@ -25,4 +25,11 @@ public abstract record PetroglyphMegPackableFileInformation : PetroglyphFileInfo
     {
         IsInsideMeg = isInMeg;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PetroglyphFileInformation"/> class.
+    /// </summary>
+    protected PetroglyphMegPackableFileInformation()
+    {
+    }
 }

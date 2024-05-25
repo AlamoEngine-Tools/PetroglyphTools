@@ -25,7 +25,7 @@ public interface IPetroglyphFileHolder : IDisposable
     object Content { get; }
 
     /// <summary>
-    /// Gets the relative or absolute file path e.g, "c:/my/path/myfile.txt"
+    /// Gets the relative or absolute file path e.g, "c:/my/path/myfile.txt".
     /// </summary>
     /// <remarks>
     /// Relative paths are only allowed if the file is packed inside a MEG archive.
@@ -33,8 +33,12 @@ public interface IPetroglyphFileHolder : IDisposable
     string FilePath { get; }
 
     /// <summary>
-    /// The absolute path to the directory of the file.
+    /// The relative or absolute directory path of the file e.g, "my/path"
+    /// or <see cref="string.Empty"/> if the file does not contain directory information.
     /// </summary>
+    /// <remarks>
+    /// Relative or empty paths are only allowed if the file is packed inside a MEG archive.
+    /// </remarks>
     string Directory { get; }
 
     /// <summary>

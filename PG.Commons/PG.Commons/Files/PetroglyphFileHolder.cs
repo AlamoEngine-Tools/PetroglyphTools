@@ -66,11 +66,14 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
     /// <summary>
     /// Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TParam}" /> class.
     /// </summary>
+    /// <remarks>
+    /// <paramref name="fileInformation"/> can be safely disposed after initialization without affecting <see cref="FileInformation"/>.
+    /// </remarks>
     /// <param name="model">The data model of this holder.</param>
-    /// <param name="fileInformation">The creation param.</param>
+    /// <param name="fileInformation">The file information for this holder.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" /> for this instance.</param>
     /// <exception cref="ArgumentNullException"><paramref name="model"/> or <paramref name="fileInformation"/> or <paramref name="serviceProvider"/> is <see langword="null" />.</exception>
-    /// <exception cref="FileNotFoundException">The underlying file of the <see cref="IPetroglyphFileHolder{TModel,TFileInfo}"/> does not exist.</exception>
+    /// <exception cref="FileNotFoundException">The underlying local file of the <see cref="IPetroglyphFileHolder{TModel,TFileInfo}"/> does not exist.</exception>
     protected PetroglyphFileHolder(TModel model, TFileInfo fileInformation, IServiceProvider serviceProvider)
     {
         if (model == null) 
@@ -97,6 +100,10 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
         if (fileInformation is PetroglyphMegPackableFileInformation { IsInsideMeg: true })
         {
             FilePath = fileInformation.FilePath;
+            Directory = FileSystem.Path.GetDirectoryName(fileInformation.FilePath) ??
+                        throw new InvalidOperationException($"No directory found for file '{FilePath}'");
+
+            _internalFileInformation = fileInformation with { };
         }
         else
         {
@@ -106,13 +113,12 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
 
             // Use absolute paths for local files.
             FilePath = fileInfo.FullName;
+            Directory = fileInfo.DirectoryName ??
+                        throw new InvalidOperationException($"No directory found for file '{FilePath}'");
+
+            // Create a copy with the full file path.
+            _internalFileInformation = fileInformation with { FilePath = FilePath };
         }
-
-        Directory = fileInfo.DirectoryName ??
-                    throw new InvalidOperationException($"No directory found for file '{FilePath}'");
-
-        // Create a copy with the full file path.
-        _internalFileInformation = fileInformation with { FilePath = FilePath };
     }
 
     /// <inheritdoc />
@@ -121,5 +127,7 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
         base.DisposeManagedResources();
         _internalFileInformation?.Dispose();
         _internalFileInformation = null!;
+        if (Content is IDisposable disposableContent)
+            disposableContent.Dispose();
     }
 }

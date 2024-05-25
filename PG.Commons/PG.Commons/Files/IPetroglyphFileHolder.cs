@@ -6,13 +6,9 @@ using System;
 namespace PG.Commons.Files;
 
 /// <summary>
-/// A generic wrapper around Petroglyph game files that holds the file content in an accessible data structure as well as other file information.
+/// A wrapper around Petroglyph game files that holds the file content in an accessible data structure as well as other file information.
 /// </summary>
-/// <typeparam name="TModel">The type of the content this file holds.</typeparam>
-/// <typeparam name="TFileInfo">The type of the file information.</typeparam>
-public interface IPetroglyphFileHolder<out TModel, out TFileInfo> : IDisposable
-    where TModel : notnull
-    where TFileInfo : PetroglyphFileInformation
+public interface IPetroglyphFileHolder : IDisposable
 {
     /// <summary>
     /// Gets a copy of the file information. 
@@ -21,13 +17,13 @@ public interface IPetroglyphFileHolder<out TModel, out TFileInfo> : IDisposable
     /// The returned file information can be safely disposed without affecting this instance.
     /// </remarks>
     /// <exception cref="ObjectDisposedException">The current instance is already disposed.</exception>
-    TFileInfo FileInformation { get; }
+    PetroglyphFileInformation FileInformation { get; }
 
     /// <summary>
     /// Gets the data model of the alamo file in a usable data format.
     /// </summary>
-    TModel Content { get; }
-    
+    object Content { get; }
+
     /// <summary>
     /// Gets the absolute file path e.g, "c:/my/path/myfile.txt"
     /// </summary>
@@ -42,4 +38,28 @@ public interface IPetroglyphFileHolder<out TModel, out TFileInfo> : IDisposable
     /// The file name with extension, e.g, "myfile.txt".
     /// </summary>
     string FileName { get; }
+}
+
+/// <summary>
+/// A generic wrapper around Petroglyph game files that holds the file content in an accessible data structure as well as other file information.
+/// </summary>
+/// <typeparam name="TModel">The type of the content this file holds.</typeparam>
+/// <typeparam name="TFileInfo">The type of the file information.</typeparam>
+public interface IPetroglyphFileHolder<out TModel, out TFileInfo> : IPetroglyphFileHolder
+    where TModel : notnull
+    where TFileInfo : PetroglyphFileInformation
+{
+    /// <summary>
+    /// Gets a copy of the file information. 
+    /// </summary>
+    /// <remarks>
+    /// The returned file information can be safely disposed without affecting this instance.
+    /// </remarks>
+    /// <exception cref="ObjectDisposedException">The current instance is already disposed.</exception>
+    new TFileInfo FileInformation { get; }
+
+    /// <summary>
+    /// Gets the data model of the alamo file in a usable data format.
+    /// </summary>
+    new TModel Content { get; }
 }

@@ -38,7 +38,11 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
         }
     }
 
-    /// <inheritdoc />
+    object IPetroglyphFileHolder.Content => Content;
+
+    PetroglyphFileInformation IPetroglyphFileHolder.FileInformation => FileInformation;
+
+    /// <inheritdoc cref="Content"/>
     public TModel Content { get; }
 
     /// <inheritdoc />

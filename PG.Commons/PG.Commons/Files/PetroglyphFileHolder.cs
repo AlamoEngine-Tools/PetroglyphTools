@@ -89,13 +89,24 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
         if (string.IsNullOrEmpty(fileInfo.Name))
             throw new ArgumentException($"The specified path '{fileInfo.FullName}' is not a valid file path.");
 
+        var fileName = fileInfo.Name;
+        ThrowHelper.ThrowIfNullOrEmpty(fileName);
+
         FileName = fileInfo.Name;
 
-        // This also already ensures that file name is not null or empty.
-        if (!fileInfo.Exists)
-            throw new FileNotFoundException($"MEG file '{fileInfo.FullName}' not found.", fileInfo.FullName);
-        
-        FilePath = fileInfo.FullName;
+        if (fileInformation is PetroglyphMegPackableFileInformation { IsInsideMeg: true })
+        {
+            FilePath = fileInformation.FilePath;
+        }
+        else
+        {
+            // We can only check whether the file exists if it is a local file.
+            if (!fileInfo.Exists)
+                throw new FileNotFoundException($"MEG file '{fileInfo.FullName}' not found.", fileInfo.FullName);
+
+            // Use absolute paths for local files.
+            FilePath = fileInfo.FullName;
+        }
 
         Directory = fileInfo.DirectoryName ??
                     throw new InvalidOperationException($"No directory found for file '{FilePath}'");

@@ -25,8 +25,11 @@ public interface IPetroglyphFileHolder : IDisposable
     object Content { get; }
 
     /// <summary>
-    /// Gets the absolute file path e.g, "c:/my/path/myfile.txt"
+    /// Gets the relative or absolute file path e.g, "c:/my/path/myfile.txt"
     /// </summary>
+    /// <remarks>
+    /// Relative paths are only allowed if the file is packed inside a MEG archive.
+    /// </remarks>
     string FilePath { get; }
 
     /// <summary>

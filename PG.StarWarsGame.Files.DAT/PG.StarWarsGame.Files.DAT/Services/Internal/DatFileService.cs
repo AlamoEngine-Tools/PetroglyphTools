@@ -58,7 +58,7 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
         if (requestedFileType == DatFileType.NotOrdered && datModel is ISortedDatModel sorted)
             datModel = sorted.ToUnsortedModel();
 
-        if (requestedFileType == DatFileType.OrderedByCrc32 && datModel is IUnsortedDatModel unsorted)
+        if (requestedFileType == DatFileType.OrderedByCrc32 && datModel is IUnsortedDatModel)
             throw new NotSupportedException("Unsorted DAT file cannot be loaded as sorted DAT file");
 
         var filePath = FileSystem.Path.GetFullPath(fileStream.Name);

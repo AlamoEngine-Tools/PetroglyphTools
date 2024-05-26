@@ -4,17 +4,16 @@
 using System;
 using System.IO;
 using AnakinRaW.CommonUtilities;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Utilities;
 
 /// <summary>
 /// Represent a read-only, non-seekable file stream that points to a single data entry inside a MEG file.
 /// </summary>
-public sealed class MegFileDataStream : Stream
+public sealed class MegFileDataStream : Stream, IMegFileDataStream
 {
-    /// <summary>
-    /// Gets the path of the entry used the MEG archive.
-    /// </summary>
+    /// <inheritdoc />
     public string EntryPath { get; }
 
     /// <inheritdoc />

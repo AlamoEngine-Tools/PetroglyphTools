@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Utilities;
 using Xunit;
 
@@ -7,6 +8,12 @@ namespace PG.StarWarsGame.Files.MEG.Test.Utilities;
 
 public class MegFileDataStreamTest
 {
+    [Fact]
+    public void Test_ImplementsInterface()
+    {
+        Assert.True(typeof(IMegFileDataStream).IsAssignableFrom(typeof(MegFileDataStream)));
+    }
+
     [Fact]
     public void Test_Ctor_Throws()
     {

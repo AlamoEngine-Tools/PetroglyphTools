@@ -34,4 +34,22 @@ public interface ICrc32HashingService
     /// <param name="data">The stream to hash.</param>
     /// <returns>The CRC32 hash of the provided stream.</returns>
     Crc32 GetCrc32(Stream data);
+
+    /// <summary>
+    /// Computes the CRC-32 hash of the provided character span.
+    /// </summary>
+    /// <param name="value">The string to get the CRC32 hash for.</param>
+    /// <param name="encoding">The encoding to use for interpreting the string value.</param>
+    /// <returns>The CRC32 hash of the provided string.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> or <paramref name="encoding"/> is <see langword="null"/>.</exception>
+    Crc32 GetCrc32(ReadOnlySpan<char> value, Encoding encoding);
+
+    /// <summary>
+    /// Computes the CRC-32 hash of the upper-cased provided character span. Upper-casing is performed using the invariant culture. 
+    /// </summary>
+    /// <param name="value">The string to get the CRC32 hash for.</param>
+    /// <param name="encoding">The encoding to use for interpreting the string value.</param>
+    /// <returns>The CRC32 hash of the provided string.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> or <paramref name="encoding"/> is <see langword="null"/>.</exception>
+    Crc32 GetCrc32Upper(ReadOnlySpan<char> value, Encoding encoding);
 }

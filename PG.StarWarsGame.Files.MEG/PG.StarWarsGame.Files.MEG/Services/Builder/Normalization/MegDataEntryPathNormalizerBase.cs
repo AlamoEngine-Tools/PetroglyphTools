@@ -1,8 +1,6 @@
 using System;
 using System.Buffers;
-using System.Globalization;
 using System.IO.Abstractions;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services.Builder.Normalization;
 
@@ -36,12 +34,11 @@ public abstract class MegDataEntryPathNormalizerBase : BuilderEntryNormalizerBas
         char[]? pooledCharArray = null;
         try
         {
-            // Since normalization *might* add a few  
-            var buffer = entry.Length + 10 > 260
+            var buffer = entry.Length > 260
                 ? pooledCharArray = ArrayPool<char>.Shared.Rent(entry.Length)
                 : stackalloc char[260];
 
-            var length = Normalize(entry, buffer);
+            var length = Normalize(entry.AsSpan(), buffer);
             var result = buffer.Slice(0, length);
             return result.ToString();
         }
@@ -55,6 +52,17 @@ public abstract class MegDataEntryPathNormalizerBase : BuilderEntryNormalizerBas
     /// <inheritdoc />
     public bool TryNormalize(ReadOnlySpan<char> filePath, Span<char> destination, out int charsWritten, out string? notNormalizedMessage)
     {
-        throw new NotImplementedException();
+        try
+        {
+            charsWritten = Normalize(filePath, destination);
+            notNormalizedMessage = null;
+            return true;
+        }
+        catch (Exception e)
+        {
+            charsWritten = 0;
+            notNormalizedMessage = e.Message;
+            return false;
+        }
     }
 }

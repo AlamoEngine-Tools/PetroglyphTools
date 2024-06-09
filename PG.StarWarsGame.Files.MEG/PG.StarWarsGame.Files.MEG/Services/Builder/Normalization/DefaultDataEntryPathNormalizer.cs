@@ -8,6 +8,11 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 /// </summary>
 public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerBase
 {
+    private static readonly PathNormalizeOptions DefaultNormalizeOptions = new()
+    {
+        UnifyDirectorySeparators = true,
+        UnifyCase = UnifyCasingKind.UpperCaseForce
+    };
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultDataEntryPathNormalizer"/> class.
@@ -18,15 +23,8 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     }
 
     /// <inheritdoc />
-    public override string Normalize(string filePath)
-    {
-        return PathNormalizer.Normalize(filePath,
-            new PathNormalizeOptions {  UnifyDirectorySeparators = true, UnifyCase = UnifyCasingKind.UpperCaseForce });
-    }
-
-    /// <inheritdoc />
     public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
     {
-        throw new NotImplementedException();
+        return PathNormalizer.Normalize(filePath, destination, DefaultNormalizeOptions);
     }
 }

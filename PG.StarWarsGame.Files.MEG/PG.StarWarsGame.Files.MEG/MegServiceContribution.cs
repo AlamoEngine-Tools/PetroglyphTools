@@ -32,8 +32,8 @@ public class MegServiceContribution : IServiceContribution
 
         serviceCollection.AddSingleton<IDataEntryPathResolver>(sp => new PetroglyphRelativeDataEntryPathResolver(sp));
 
-        serviceCollection.AddTransient<IMegBinaryValidator>(sp => new MegBinaryValidator(sp));
-        serviceCollection.AddTransient<IFileTableValidator>(_ => new MegFileTableValidator());
-        serviceCollection.AddTransient<IMegFileSizeValidator>(_ => new MegFileSizeValidator());
+        serviceCollection.AddSingleton<IMegBinaryValidator>(sp => new MegBinaryValidator(sp));
+        serviceCollection.AddSingleton<IFileTableValidator>(_ => new MegFileTableValidator());
+        serviceCollection.AddSingleton<IMegFileSizeValidator>(_ => new MegFileSizeValidator());
     }
 }

@@ -13,7 +13,7 @@ public class MegFileTableValidatorTest
     {
         var fileTable = new Mock<IMegFileTable>();
         var validator = new MegFileTableValidator();
-        Assert.True(validator.Validate(fileTable.Object).IsValid);
+        Assert.True(validator.Validate(fileTable.Object));
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[2]).Returns(entry3.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.True(validator.Validate(fileTable.Object).IsValid);
+        Assert.True(validator.Validate(fileTable.Object));
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[1]).Returns(entry2.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.False(validator.Validate(fileTable.Object).IsValid);
+        Assert.False(validator.Validate(fileTable.Object));
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[1]).Returns(entry2.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.False(validator.Validate(fileTable.Object).IsValid);
+        Assert.False(validator.Validate(fileTable.Object));
     }
 
     [Fact]
@@ -93,6 +93,6 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[1]).Returns(entry2.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.False(validator.Validate(fileTable.Object).IsValid);
+        Assert.False(validator.Validate(fileTable.Object));
     }
 }

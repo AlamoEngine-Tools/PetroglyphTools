@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
 using PG.Commons.Services;
@@ -154,8 +153,8 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
             BytesRead = bytesRead
         });
 
-        if (!validationResult.IsValid)
-            throw new BinaryCorruptedException($"Unable to read .MEG archive: {validationResult.Errors.First().ErrorMessage}");
+        if (!validationResult)
+            throw new BinaryCorruptedException($"Unable to read .MEG archive");
 
         return megMetadata;
     }

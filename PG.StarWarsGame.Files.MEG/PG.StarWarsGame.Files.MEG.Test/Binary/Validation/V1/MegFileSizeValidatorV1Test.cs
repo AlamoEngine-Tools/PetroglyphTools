@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using FluentValidation.TestHelper;
-
 using Moq;
 using PG.Commons.Binary;
 using PG.Commons.Hashing;
@@ -29,17 +27,17 @@ public class MegFileSizeValidatorV1Test
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
         var validator = new V1SizeValidator();
-        Assert.True(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.Validate(sizeInfo.Object));
 
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 1);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size);
-        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
 
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size);
         sizeInfo.SetupGet(s => s.BytesRead).Returns(metadata.Size - 1);
-        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
     }
 
     [Fact]
@@ -62,11 +60,11 @@ public class MegFileSizeValidatorV1Test
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
         var validator = new V1SizeValidator();
-        Assert.True(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.Validate(sizeInfo.Object));
 
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 1);
-        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
     }
 
     [Fact]
@@ -91,9 +89,9 @@ public class MegFileSizeValidatorV1Test
         sizeInfo.SetupGet(s => s.Metadata).Returns(metadata);
 
         var validator = new V1SizeValidator();
-        Assert.True(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.Validate(sizeInfo.Object));
 
         sizeInfo.SetupGet(s => s.FileSize).Returns(metadata.Size + 3 + 5 + 99);
-        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
     }
 }

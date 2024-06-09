@@ -1,5 +1,4 @@
 using System;
-using FluentValidation.TestHelper;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
@@ -13,7 +12,7 @@ public class MegFileSizeValidatorTest
     public void Test__Validate_Null()
     {
         var validator = new MegFileSizeValidator();
-        Assert.Throws<ArgumentNullException>(() => validator.TestValidate((IMegBinaryValidationInformation)null!));
+        Assert.Throws<ArgumentNullException>(() => validator.Validate(null!));
     }
 
     [Fact]
@@ -26,7 +25,7 @@ public class MegFileSizeValidatorTest
 
         var validator = new MegFileSizeValidator();
 
-        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
     }
 
     [Theory]
@@ -46,7 +45,7 @@ public class MegFileSizeValidatorTest
 
         var validator = new MegFileSizeValidator(); 
         
-        Assert.False(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
     }
 
     [Theory]
@@ -62,6 +61,6 @@ public class MegFileSizeValidatorTest
 
         var validator = new MegFileSizeValidator();
 
-        Assert.True(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.Validate(sizeInfo.Object));
     }
 }

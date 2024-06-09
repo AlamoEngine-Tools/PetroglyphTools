@@ -1,4 +1,3 @@
-
 using Moq;
 using System.IO;
 using System;
@@ -9,7 +8,6 @@ using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation.V1;
-
 
 public class MegFileSizeValidatorV1IntegrationTest
 {
@@ -38,7 +36,7 @@ public class MegFileSizeValidatorV1IntegrationTest
             Metadata = metadata
         };
 
-        Assert.True(_validator.Validate(sizeInfo).IsValid);
+        Assert.True(_validator.Validate(sizeInfo));
     }
 
     [Theory]
@@ -59,11 +57,11 @@ public class MegFileSizeValidatorV1IntegrationTest
             Metadata = metadata
         };
 
-        Assert.False(_validator.Validate(sizeInfo).IsValid);
-        Assert.False(_validator.Validate(sizeInfo).IsValid);
-        Assert.False(_validator.Validate(sizeInfo).IsValid);
+        Assert.False(_validator.Validate(sizeInfo));
+        Assert.False(_validator.Validate(sizeInfo));
+        Assert.False(_validator.Validate(sizeInfo));
 
-        Assert.False(_validator.Validate(sizeInfo).IsValid);
-        Assert.False(_validator.Validate(sizeInfo).IsValid);
+        Assert.False(_validator.Validate(sizeInfo));
+        Assert.False(_validator.Validate(sizeInfo));
     }
 }

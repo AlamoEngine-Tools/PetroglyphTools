@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using FluentValidation.Results;
-
 using Moq;
 using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -38,7 +35,7 @@ public partial class MegFileServiceTest
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegVersionIdentifier))).Returns(_versionIdentifier.Object);
 
         _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("Fail", "Fail") }));
+            .Returns(false);
 
         _fileSystem.Initialize().WithFile("test.meg");
 
@@ -55,7 +52,7 @@ public partial class MegFileServiceTest
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
 
         _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
 
@@ -85,7 +82,7 @@ public partial class MegFileServiceTest
         _versionIdentifier.Setup(v => v.GetMegFileVersion(It.IsAny<Stream>(), out encrypted)).Returns(version);
 
         _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
-            .Returns(new ValidationResult(new List<ValidationFailure>{ new("name", "error") }));
+            .Returns(false);
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
 
@@ -121,7 +118,7 @@ public partial class MegFileServiceTest
             }).Returns(version);
 
         _binaryValidator.Setup(v => v.Validate(It.IsAny<IMegBinaryValidationInformation>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         _binaryServiceFactory.Setup(f => f.GetReader(version)).Returns(_megBinaryReader.Object);
         _binaryServiceFactory.Setup(f => f.GetConverter(version)).Returns(_megBinaryConverter.Object);

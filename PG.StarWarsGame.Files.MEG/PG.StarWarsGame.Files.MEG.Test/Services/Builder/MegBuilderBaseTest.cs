@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
-
 using Moq;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -22,7 +20,6 @@ using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
-
 
 public class MegBuilderBaseTest
 {
@@ -206,7 +203,7 @@ public class MegBuilderBaseTest
                 Assert.Same(fileInfo, data.FileInformation);
                 Assert.Single(data.DataEntries);
             })
-            .Returns(new ValidationResult());
+            .Returns(MegFileInfoValidationResult.Valid);
 
         
         builder.AddFile(fileToAdd, inputEntryPath);
@@ -837,7 +834,7 @@ public class MegBuilderBaseTest
 
         // Default Validator always passes
         _infoValidator.Setup(v => v.Validate(It.IsAny<MegBuilderFileInformationValidationData>()))
-            .Returns(new ValidationResult());
+            .Returns(MegFileInfoValidationResult.Valid);
 
         return new TestingMegBuilder(
             overwrite,

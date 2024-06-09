@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Text;
-using FluentValidation.Results;
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -22,7 +21,7 @@ public class SortedDatBuilderBaseTest : DatBuilderBaseTest
     [Fact]
     public void Test_AddEntry_Sorted()
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
+        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(true);
 
         HashingService.Setup(h => h.GetCrc32("key1", Encoding.ASCII)).Returns(new Crc32(1));
         HashingService.Setup(h => h.GetCrc32("key2", Encoding.ASCII)).Returns(new Crc32(2));

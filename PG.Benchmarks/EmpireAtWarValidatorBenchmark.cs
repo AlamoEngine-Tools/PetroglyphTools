@@ -23,8 +23,8 @@ public class EmpireAtWarValidatorBenchmark
 
     private MegFileDataEntryBuilderInfo[] _toValidate;
 
-    //[Params(2000, 200_000)]
-    [Params(2000)]
+    [Params(2000, 200_000)]
+    //[Params(2000)]
     public int N;
 
     [GlobalSetup]
@@ -45,7 +45,7 @@ public class EmpireAtWarValidatorBenchmark
     }
 
     [Benchmark(Baseline = true)]
-    public void ReadBytesAndGetString()
+    public void Validate()
     {
         for (var i = 0; i < N; i++)
         {

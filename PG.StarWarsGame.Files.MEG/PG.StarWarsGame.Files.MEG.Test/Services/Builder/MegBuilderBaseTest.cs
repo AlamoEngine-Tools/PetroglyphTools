@@ -431,7 +431,7 @@ public class MegBuilderBaseTest
                 // Assert that the validator already has the encoded (and thus normalized) path.
                 Assert.Equal(expectedEncodedEntry, builderInfo.FilePath);
             })
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("someError", "some error") }));
+            .Returns(false);
 
         var result = builder.AddFile(fileToAdd, inputEntryPath);
 
@@ -473,7 +473,7 @@ public class MegBuilderBaseTest
 
         // Default Validator always passes
         _entryValidator.Setup(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
@@ -781,7 +781,7 @@ public class MegBuilderBaseTest
                 // Assert that the validator already has the encoded (and thus normalized) path.
                 Assert.Equal(expectedEncodedEntry, builderInfo.FilePath);
             })
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("someError", "some error") }));
+            .Returns(false);
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry), overridePath);
 
@@ -833,7 +833,7 @@ public class MegBuilderBaseTest
 
         // Default Validator always passes
         _entryValidator.Setup(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         // Default Validator always passes
         _infoValidator.Setup(v => v.Validate(It.IsAny<MegBuilderFileInformationValidationData>()))

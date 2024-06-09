@@ -68,8 +68,8 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
         var encodedKey = encoding.EncodeString(key, encoding.GetByteCountPG(key.Length));
         
         var keyValidation = KeyValidator.Validate(encodedKey);
-        if (!keyValidation.IsValid)
-            return AddEntryResult.EntryNotAdded(AddEntryState.InvalidKey, keyValidation.ToString());
+        if (!keyValidation)
+            return AddEntryResult.EntryNotAdded(AddEntryState.InvalidKey, "The key is not valid.");
 
         var crc = _hashingService.GetCrc32(encodedKey, encoding);
 
@@ -118,7 +118,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     {
         if (key == null) 
             throw new ArgumentNullException(nameof(key));
-        return KeyValidator.Validate(key).IsValid;
+        return KeyValidator.Validate(key);
     }
 
     /// <inheritdoc />

@@ -25,7 +25,7 @@ public class EmpireAtWarMegDataEntryValidatorTest
     [MemberData(nameof(ValidTestData))]
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.True(_validator.Validate(builderInfo).IsValid);
+        Assert.True(_validator.Validate(builderInfo));
     }
 
     [Theory]
@@ -34,7 +34,7 @@ public class EmpireAtWarMegDataEntryValidatorTest
     [MemberData(nameof(InvalidTestDataEaw))]
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.False(_validator.Validate(builderInfo).IsValid);
+        Assert.False(_validator.Validate(builderInfo));
     }
 
     public static IEnumerable<object[]> ValidTestData()

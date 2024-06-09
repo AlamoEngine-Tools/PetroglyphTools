@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
-using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using PG.Commons.Hashing;
@@ -56,8 +55,8 @@ public abstract class DatBuilderBaseTest
     public void Test_IsKeyValid()
     {
         KeyValidator.SetupSequence(v => v.Validate("key"))
-            .Returns(new ValidationResult())
-            .Returns(new ValidationResult([new ValidationFailure("error", "error")]));
+            .Returns(true)
+            .Returns(false);
         var builder = CreateBuilder();
 
         Assert.Throws<ArgumentNullException>(() => builder.Object.IsKeyValid(null!));
@@ -70,7 +69,7 @@ public abstract class DatBuilderBaseTest
     [Fact]
     public void Test_Clear()
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
+        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(true);
        
         var builder = CreateBuilder();
        
@@ -91,7 +90,7 @@ public abstract class DatBuilderBaseTest
     public void Test_Remove()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         var builder = CreateBuilder();
         builder.SetupGet(b => b.KeyOverwriteBehavior).Returns(BuilderOverrideKind.AllowDuplicate);
@@ -121,7 +120,7 @@ public abstract class DatBuilderBaseTest
     [Fact]
     public void Test_Dispose_ThrowsOnAddingMethods()
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
+        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(true);
 
         var builder = CreateBuilder();
 
@@ -147,7 +146,7 @@ public abstract class DatBuilderBaseTest
     public void Test_AddEntry_Throws()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         var builder = CreateBuilder();
 
@@ -159,7 +158,7 @@ public abstract class DatBuilderBaseTest
     public void Test_AddEntry()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         var builder = CreateBuilder();
         builder.SetupGet(b => b.KeyOverwriteBehavior)
@@ -178,7 +177,7 @@ public abstract class DatBuilderBaseTest
     public void Test_AddEntry_DoNotAllowDuplicates()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         var builder = CreateBuilder();
         builder.SetupGet(b => b.KeyOverwriteBehavior)
@@ -197,7 +196,7 @@ public abstract class DatBuilderBaseTest
     public void Test_AddEntry_OverwriteDuplicates()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         var builder = CreateBuilder();
         builder.SetupGet(b => b.KeyOverwriteBehavior)
@@ -218,7 +217,7 @@ public abstract class DatBuilderBaseTest
     public void Test_AddEntry_AllowDuplicates()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
         HashingService.Setup(h => h.GetCrc32("key", Encoding.ASCII)).Returns(new Crc32(1));
         HashingService.Setup(h => h.GetCrc32("key1", Encoding.ASCII)).Returns(new Crc32(2));
 
@@ -244,7 +243,7 @@ public abstract class DatBuilderBaseTest
     public void Test_AddEntry_PerformsEncoding()
     {
         KeyValidator.Setup(v => v.Validate("key???"))
-            .Returns(new ValidationResult()); 
+            .Returns(true); 
 
         var builder = CreateBuilder();
 
@@ -261,7 +260,7 @@ public abstract class DatBuilderBaseTest
     public void Test_AddEntry_InvalidKey()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("error", "error") }));
+            .Returns(false);
 
         HashingService.Setup(h => h.GetCrc32("key", Encoding.ASCII)).Returns(new Crc32(2));
 
@@ -279,7 +278,7 @@ public abstract class DatBuilderBaseTest
     public void Test_BuildModel()
     {
         KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+            .Returns(true);
 
         var builder = CreateBuilder();
 

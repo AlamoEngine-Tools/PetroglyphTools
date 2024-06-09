@@ -39,32 +39,35 @@ public class EmpireAtWarMegDataEntryValidatorTest
 
     public static IEnumerable<object[]> ValidTestData()
     {
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".path"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path\\text.txt"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("PATH"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".PATH"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("PATH\\TEST.TXT"))];
     }
 
     public static IEnumerable<object[]> InvalidTestDataEaw()
     {
+        // We do not allow lower case chars 
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.txt"))];
+
         // We do not allow linux path separators. 
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path/test.txt"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("PATH/TEST.TXT"))];
 
         // We do not allow non-ASCII characters
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("testNonAsciiÖ.txt"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("nonAsciiÖ/test.txt"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("testNonAscii😅.txt"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TESTNONASCIIÖ.TXT"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("NONASCIIÖ/TEST.TXT"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TESTNONASCII😅.TXT"))];
 
         // We do not allow any Windows illegal file names
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test?.txt"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test.txt\0"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test*.txt"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test|"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST?.TXT"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.TXT\0"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST*.TXT"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST|"))];
 
         // We do not allow directory operators
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".\\test.txt"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("my\\..\\test.txt"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".\\TEST.TXT"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("MY\\..\\TEST.TXT"))];
 
         // We do not allow encrypted entries
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("PATH"), overrideEncrypted: true)];
     }
 }

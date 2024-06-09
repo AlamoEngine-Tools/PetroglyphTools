@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.FileSystem;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;

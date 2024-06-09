@@ -4,9 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;

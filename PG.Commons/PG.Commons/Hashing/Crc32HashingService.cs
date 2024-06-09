@@ -6,10 +6,8 @@ using System.Buffers;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using AnakinRaW.CommonUtilities.Extensions;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Utilities;
 
 namespace PG.Commons.Hashing;
 
@@ -45,26 +43,11 @@ internal class Crc32HashingService : ICrc32HashingService
         return new Crc32(checksum);
     }
 
-    public Crc32 GetCrc32(ReadOnlySpan<char> value, Encoding encoding)
+    public unsafe Crc32 GetCrc32(ReadOnlySpan<char> value, Encoding encoding)
     {
-        byte[]? pooledByteArray = null;
-        try
-        {
-            var expectedSize = encoding.GetByteCountPG(value.Length);
-
-            var buffer = expectedSize > 260
-                ? pooledByteArray = ArrayPool<byte>.Shared.Rent(expectedSize)
-                : stackalloc byte[expectedSize];
-
-            var bytes = encoding.GetBytesReadOnly(value, buffer);
-
-            return GetCrc32(bytes);
-        }
-        finally
-        {
-            if (pooledByteArray is not null)
-                ArrayPool<byte>.Shared.Return(pooledByteArray);
-        }
+        Span<byte> checksum = stackalloc byte[sizeof(Crc32)];
+        _hashingService.GetHash(value, checksum, encoding, Crc32Hashing.Crc32HashKey);
+        return new Crc32(checksum);
     }
 
     public Crc32 GetCrc32Upper(ReadOnlySpan<char> value, Encoding encoding)

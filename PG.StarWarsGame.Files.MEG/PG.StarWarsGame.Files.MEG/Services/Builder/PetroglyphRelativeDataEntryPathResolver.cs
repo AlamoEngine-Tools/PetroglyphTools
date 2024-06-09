@@ -15,17 +15,18 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
     {
         var fullBase = PathNormalizer.Normalize(_fileSystem.Path.GetFullPath(basePath), PathNormalizeOptions.EnsureTrailingSeparator);
 
+        var pathSpan = path.AsSpan();
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            path = PrepareForPossibleDriveRelativePath(path, fullBase.AsSpan());
+            pathSpan = PrepareForPossibleDriveRelativePath(pathSpan, fullBase.AsSpan());
 
         // Needs to be after relative drive preparation (e.g, if path was just "C:")
-        if (string.IsNullOrEmpty(path))
+        if (pathSpan.Length == 0)
             return null;
 
-        if (_fileSystem.Path.HasTrailingDirectorySeparator(path!))
+        if (_fileSystem.Path.HasTrailingDirectorySeparator(pathSpan!))
             return null;
 
-        var relativePath = _fileSystem.Path.GetRelativePathEx(fullBase, path!);
+        var relativePath = _fileSystem.Path.GetRelativePathEx(fullBase, pathSpan.ToString());
 
         var fullRelativePathToBase = _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(fullBase, relativePath));
 
@@ -42,16 +43,16 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
     }
 
 
-    private string? PrepareForPossibleDriveRelativePath(string? path, ReadOnlySpan<char> rootPath)
+    private ReadOnlySpan<char> PrepareForPossibleDriveRelativePath(ReadOnlySpan<char> path, ReadOnlySpan<char> rootPath)
     {
-        if (path is null)
-            return null;
+        if (path.Length == 0)
+            return ReadOnlySpan<char>.Empty;
         if (_fileSystem.Path.IsDriveRelative(path, out var driveLetter))
         {
             var rootPathDrive = GetVolumeNameFromFullyQualifiedPath(_fileSystem, rootPath);
 
             if (rootPathDrive.HasValue && char.ToUpperInvariant(rootPathDrive.Value) == char.ToUpperInvariant(driveLetter.Value))
-                path = path.Substring(2);
+                path = path.Slice(2);
         }
         return path;
     }
@@ -59,12 +60,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
     // By design this method does not correctly handle stuff like Device paths (e.g, //./C:/)
     private static char? GetVolumeNameFromFullyQualifiedPath(IFileSystem fileSystem, ReadOnlySpan<char> fullyQualifiedPath)
     {
-
-#if NETSTANDARD2_0
-        var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath.ToString()).AsSpan();
-#else
-            var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath);
-#endif
+        var root = fileSystem.Path.GetPathRoot(fullyQualifiedPath);
 
         if (root.Length < 3)
             return null;

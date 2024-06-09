@@ -172,7 +172,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
         if (string.IsNullOrEmpty(actualFilePath))
             throw new InvalidOperationException("filePath cannot be null");
 
-        actualFilePath = EncodePath(actualFilePath);
+        actualFilePath = EncodePath(actualFilePath.AsSpan());
 
         if (_dataEntries.TryGetValue(actualFilePath, out var currentInfo))
         {
@@ -191,7 +191,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
         return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
     }
 
-    private static string EncodePath(string actualFilePath)
+    private static string EncodePath(ReadOnlySpan<char> actualFilePath)
     {
         var encoding = MegFileConstants.MegDataEntryPathEncoding;
         return encoding.EncodeString(actualFilePath, encoding.GetByteCountPG(actualFilePath.Length));

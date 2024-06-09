@@ -8,14 +8,13 @@ namespace PG.Commons.Services.Builder.Normalization;
 /// <summary>
 /// Base class for an <see cref="IBuilderEntryNormalizer{T}"/>.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The type of the element that shall be normalized.</typeparam>
 public abstract class BuilderEntryNormalizerBase<T> : IBuilderEntryNormalizer<T>
 {
     /// <summary>
     /// Gets the file system.
     /// </summary>
     protected IServiceProvider ServiceProvider { get; }
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BuilderEntryNormalizerBase{T}"/> class.

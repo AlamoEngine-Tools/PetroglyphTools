@@ -25,6 +25,13 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
             if (pathSpan.IndexOf('/') != -1)
                 return false;
 
+            Span<char> upperBuffer = stackalloc char[260];
+            var length = pathSpan.ToUpperInvariant(upperBuffer);
+            var upper = upperBuffer.Slice(0, length);
+
+            if (upper.Length != pathSpan.Length || !pathSpan.Equals(upper, StringComparison.Ordinal))
+                return false;
+
             try
             {
                 var fileName = FileSystem.Path.GetFileName(pathSpan);

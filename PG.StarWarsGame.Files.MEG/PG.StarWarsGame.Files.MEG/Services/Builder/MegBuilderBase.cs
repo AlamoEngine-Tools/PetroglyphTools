@@ -184,7 +184,8 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
 
         var entryValidation = DataEntryValidator.Validate(infoToAdd);
         if (!entryValidation)
-            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry, "The entry is not valid.");
+            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
+                $"The entry '{infoToAdd.FilePath}' is not valid.");
 
         _dataEntries[actualFilePath] = infoToAdd;
 

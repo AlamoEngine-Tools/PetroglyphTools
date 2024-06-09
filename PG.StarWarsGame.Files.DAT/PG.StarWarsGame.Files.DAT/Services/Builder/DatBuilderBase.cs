@@ -65,21 +65,21 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
             throw new ArgumentNullException(nameof(value));
 
         var encoding = DatFileConstants.TextKeyEncoding;
+        
         var encodedKey = encoding.EncodeString(key, encoding.GetByteCountPG(key.Length));
         
         var keyValidation = KeyValidator.Validate(encodedKey);
         if (!keyValidation)
             return AddEntryResult.EntryNotAdded(AddEntryState.InvalidKey, "The key is not valid.");
-
-        var crc = _hashingService.GetCrc32(encodedKey, encoding);
-
-        var entry = new DatStringEntry(encodedKey, crc, value, key);
-
-        var containsKey = _entries.ContainsKey(entry.Key, out var oldValue);
+        
+        var containsKey = _entries.ContainsKey(encodedKey, out var oldValue);
 
         if (containsKey && KeyOverwriteBehavior == BuilderOverrideKind.NoOverwrite)
-            return AddEntryResult.FromDuplicate(entry);
+            return AddEntryResult.FromDuplicate(oldValue);
 
+
+        var crc = _hashingService.GetCrc32(encodedKey, encoding);
+        var entry = new DatStringEntry(encodedKey, crc, value, key);
 
         if (KeyOverwriteBehavior == BuilderOverrideKind.AllowDuplicate)
         {

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
+
 namespace PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
 /// <summary>
@@ -21,5 +23,11 @@ public sealed class NotNullKeyValidator : IDatKeyValidator
     public bool Validate(string? key)
     {
         return key is not null;
+    }
+
+    /// <inheritdoc />
+    public bool Validate(ReadOnlySpan<char> key)
+    {
+        return key != null;
     }
 }

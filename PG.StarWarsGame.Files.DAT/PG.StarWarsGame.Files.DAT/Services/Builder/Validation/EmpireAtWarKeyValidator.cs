@@ -20,15 +20,19 @@ public sealed class EmpireAtWarKeyValidator : IDatKeyValidator
     /// <inheritdoc />
     public bool Validate(string? key)
     {
-        var span = key.AsSpan();
+        return Validate(key.AsSpan());
+    }
 
-        if (span.Length == 0 || span.IsWhiteSpace())
+    /// <inheritdoc />
+    public bool Validate(ReadOnlySpan<char> key)
+    {
+        if (key.Length == 0 || key.IsWhiteSpace())
             return false;
 
-        if (span[0] == ' ' || span[span.Length -1] == ' ')
+        if (key[0] == ' ' || key[key.Length - 1] == ' ')
             return false;
 
-        foreach (var c in span)
+        foreach (var c in key)
         {
             if ((uint)(c - '\x0020') > '\x007F' - '\x0020') // (c >= '\x0020' && c <= '\x007F')
                 return false;

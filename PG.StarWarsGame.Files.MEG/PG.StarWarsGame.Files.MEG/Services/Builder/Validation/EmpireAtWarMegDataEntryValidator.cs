@@ -1,5 +1,5 @@
 using System;
-using AnakinRaW.CommonUtilities.FileSystem.Normalization;
+using AnakinRaW.CommonUtilities.FileSystem;
 using FluentValidation;
 using PG.Commons.Utilities;
 
@@ -20,20 +20,17 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
 
         RuleFor(info => info.FilePath).Must(path =>
         {
-            var normalized = PathNormalizer.Normalize(path,
-                new PathNormalizeOptions { UnifyDirectorySeparators = true, UnifySeparatorKind = DirectorySeparatorKind.Windows });
-            if (!normalized.Equals(path))
+            var pathSpan = path.AsSpan();
+
+            if (pathSpan.IndexOf('/') != -1)
                 return false;
 
             try
             {
-                var systemNormalized = PathNormalizer.Normalize(path,
-                    new PathNormalizeOptions { UnifyDirectorySeparators = true });
-
-                var fileName = FileSystem.Path.GetFileName(systemNormalized);
+                var fileName = FileSystem.Path.GetFileName(pathSpan);
                 return FileNameUtilities.IsValidFileName(fileName, out _);
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return false;
             }

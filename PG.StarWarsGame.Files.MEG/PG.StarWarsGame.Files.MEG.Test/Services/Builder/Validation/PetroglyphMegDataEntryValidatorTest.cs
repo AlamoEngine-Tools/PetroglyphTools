@@ -59,6 +59,9 @@ public class PetroglyphMegDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("a/./test.txt"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("../test.txt"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("a/../test.txt"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("a/.."))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".."))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("."))];
 
         // We do not allow absolute, rooted or URI paths
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("C:/test.txt"))];
@@ -72,6 +75,10 @@ public class PetroglyphMegDataEntryValidatorTest
 
         // We do not allow paths with are longer than 256 characters, as that's the default Windows limit.
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new string('a', 261)))];
+
+        // Because XML parsing is sometimes done on space as delimiter, we cannot use them
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("thisIsAPathWithA Space"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("my/path with/space"))];
     }
 
     public static string GetValidationDataDisplayName(MethodInfo methodInfo, object[] data)

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using AnakinRaW.CommonUtilities.FileSystem.Validation;
 
@@ -25,18 +24,16 @@ public static class FileNameUtilities
     /// <param name="filename">The filename to check.</param>
     /// <param name="result">Detailed information status. Can be used for error message reporting.</param>
     /// <returns><see langword="true"/> when the filename is valid; <see langword="false"/> otherwise.</returns>
-    public static bool IsValidFileName([NotNullWhen(true)] string? filename, out FileNameValidationResult result)
-    { 
+    public static bool IsValidFileName(ReadOnlySpan<char> filename, out FileNameValidationResult result)
+    {
         var validator = WindowsFileNameValidator.Instance;
 
-        var filenameSpan = filename.AsSpan();
-
-        result = validator.IsValidFileName(filenameSpan);
+        result = validator.IsValidFileName(filename);
 
         if (result != FileNameValidationResult.Valid)
             return false;
 
-        if (ContainsInvalidPGChars(filenameSpan))
+        if (ContainsInvalidPGChars(filename))
         {
             result = FileNameValidationResult.InvalidCharacter;
             return false;

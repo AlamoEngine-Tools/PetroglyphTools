@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.FileSystem;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
@@ -33,35 +34,38 @@ public abstract class PetroglyphMegDataEntryValidator : NullableAbstractValidato
 
         FileSystem = serviceProvider.GetRequiredService<IFileSystem>();
         RuleFor(e => e.FilePath)
-            .NotNull()
-            .NotEmpty()
-            .Length(1, 260)
             .Must(path =>
             {
-                if (FileSystem.Path.HasTrailingDirectorySeparator(path))
+                var pathSpan = path.AsSpan();
+
+                if (pathSpan.Length is 0 or > 260)
                     return false;
 
-                // On Linux this is ':' which conveniently also forbids things like "C:/" too.
-                // On Windows this is ';'
-                if (path.IndexOf(FileSystem.Path.PathSeparator) != -1)
+                if (FileSystem.Path.HasTrailingDirectorySeparator(pathSpan))
                     return false;
-                
+
+                // We do not allow spaces, as for XML parsing, spaces are also used as delimiters in lists (e.g, SFX Samples)
+                // Also, on Linux this is ':' which conveniently also forbids things like "C:/" too. On Windows this is ';'
+                if (pathSpan.IndexOfAny(' ', FileSystem.Path.PathSeparator) != -1)
+                    return false;
+
                 try
                 {
-                    var normalized = PathNormalizer
-                        .Normalize(path, new PathNormalizeOptions
-                        {
-                            UnifyDirectorySeparators = true,
-                            TrailingDirectorySeparatorBehavior = TrailingDirectorySeparatorBehavior.Trim
-                        });
-
-                    if (FileSystem.Path.IsPathRooted(normalized))
+                    if (FileSystem.Path.IsPathRooted(pathSpan))
                         return false;
 
+                    Span<char> buffer = stackalloc char[260];
+                    var length = PathNormalizer.Normalize(pathSpan, buffer, new PathNormalizeOptions
+                    {
+                        UnifyDirectorySeparators = true,
+                        TrailingDirectorySeparatorBehavior = TrailingDirectorySeparatorBehavior.Trim
+                    });
+
+                    var normalized = buffer.Slice(0, length).ToString();
 
                     var fullNormalized = FileSystem.Path.GetFullPath(normalized);
 
-                    var currentDirectory = FileSystem.Path.GetFullPath(FileSystem.Directory.GetCurrentDirectory());
+                    var currentDirectory = FileSystem.Directory.GetCurrentDirectory();
                     var combined = FileSystem.Path.Combine(currentDirectory, normalized);
 
                     return combined.Equals(fullNormalized, StringComparison.Ordinal);

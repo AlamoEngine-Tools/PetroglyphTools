@@ -83,18 +83,6 @@ public class PetroglyphMegFileInformationValidatorTest
         return new MegBuilderFileInformationValidationData(megFileInformation, entries);
     }
 
-    public static string GetValidationDataDisplayName(MethodInfo methodInfo, object[] data)
-    {
-        var info = data[0] as MegBuilderFileInformationValidationData;
-        var fileInfo = info?.FileInformation;
-        var filePath = fileInfo?.FilePath;
-
-        if (filePath is not null && filePath.Length > 30)
-            filePath = filePath.Substring(0, 30) + "..." + filePath.Length + "]";
-
-        return $"{methodInfo.Name} (Path={filePath}, Version={fileInfo?.FileVersion}, Encrypted={fileInfo?.HasEncryption}, Entries={info?.DataEntries.Count})";
-    }
-
     class TestPetroglyphMegFileInformationValidator(IServiceProvider serviceProvider)
         : PetroglyphMegFileInformationValidator(serviceProvider);
 }

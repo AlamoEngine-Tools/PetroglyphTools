@@ -13,6 +13,7 @@ class Benchmark
         //BenchmarkRunner.Run<GetStringFromBinary>();
         //BenchmarkRunner.Run<EncodeString>();
         //BenchmarkRunner.Run<ContainsInvalidCharsBenchmark>();
-        BenchmarkRunner.Run<DatBuilderBenchmark>();
+        //BenchmarkRunner.Run<DatBuilderBenchmark>();
+        BenchmarkRunner.Run<EmpireAtWarValidatorBenchmark>();
     }
 }

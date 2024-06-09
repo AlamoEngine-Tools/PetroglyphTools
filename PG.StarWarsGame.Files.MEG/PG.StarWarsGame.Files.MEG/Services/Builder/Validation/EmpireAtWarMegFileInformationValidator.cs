@@ -27,8 +27,9 @@ public sealed class EmpireAtWarMegFileInformationValidator : PetroglyphMegFileIn
             {
                 try
                 {
+                    // TODO: Span
                     var fileName = FileSystem.Path.GetFileName(path);
-                    if (!FileNameUtilities.IsValidFileName(fileName, out _))
+                    if (!FileNameUtilities.IsValidFileName(fileName.AsSpan(), out _))
                         return false;
                     return true;
                 }

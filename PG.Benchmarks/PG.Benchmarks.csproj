@@ -27,5 +27,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
+		<ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
 	</ItemGroup>
 </Project>

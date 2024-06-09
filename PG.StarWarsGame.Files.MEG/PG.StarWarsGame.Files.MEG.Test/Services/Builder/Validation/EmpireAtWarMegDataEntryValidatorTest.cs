@@ -60,6 +60,10 @@ public class EmpireAtWarMegDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test*.txt"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test|"))];
 
+        // We do not allow directory operators
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".\\test.txt"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("my\\..\\test.txt"))];
+
         // We do not allow encrypted entries
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)];
     }

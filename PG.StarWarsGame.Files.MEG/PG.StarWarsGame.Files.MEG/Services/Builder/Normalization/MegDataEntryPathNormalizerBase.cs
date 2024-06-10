@@ -25,12 +25,14 @@ public abstract class MegDataEntryPathNormalizerBase : BuilderEntryNormalizerBas
         FileSystem = ServiceProvider.GetRequiredService<IFileSystem>();
     }
 
+    // TODO: Use ValueStringBuilder
     /// <inheritdoc />
     public abstract int Normalize(ReadOnlySpan<char> filePath, Span<char> destination);
 
     /// <inheritdoc />
     public override string Normalize(string entry)
     {
+        // TODO: Use ValueStringBuilder
         char[]? pooledCharArray = null;
         try
         {

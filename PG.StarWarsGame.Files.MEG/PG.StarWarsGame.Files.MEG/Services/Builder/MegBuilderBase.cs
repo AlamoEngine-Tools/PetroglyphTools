@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
-using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -13,6 +12,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using AnakinRaW.CommonUtilities;
+using PG.Commons.Hashing;
 using PG.Commons.Services.Builder;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
@@ -22,7 +22,8 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// </summary>
 public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>, IMegBuilder
 {
-    private readonly Dictionary<string, MegFileDataEntryBuilderInfo> _dataEntries = new();
+    private readonly Dictionary<Crc32, MegFileDataEntryBuilderInfo> _dataEntries = new();
+    private readonly ICrc32HashingService _hashingService;
 
     /// <inheritdoc />
     public sealed override IReadOnlyCollection<MegFileDataEntryBuilderInfo> BuilderData => DataEntries;
@@ -73,15 +74,16 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     /// <param name="services">The service provider.</param>
     protected MegBuilderBase(IServiceProvider services) : base(services)
     {
+        _hashingService = services.GetRequiredService<ICrc32HashingService>();
     }
 
     /// <inheritdoc/>
-    public AddDataEntryToBuilderResult AddFile(string filePath, string filePathInMeg, bool encrypt = false)
+    public unsafe AddDataEntryToBuilderResult AddFile(string filePath, string entryPath, bool encrypt = false)
     {
         ThrowIfDisposed();
 
         ThrowHelper.ThrowIfNullOrEmpty(filePath);
-        ThrowHelper.ThrowIfNullOrEmpty(filePathInMeg);
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
 
         var fileInfo = FileSystem.FileInfo.New(filePath);
         if (!fileInfo.Exists)
@@ -94,13 +96,16 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
                 $"Source file '{fileInfo.FullName}' is larger than 4GB.");
         }
 
-        return AddBuilderInfo(filePathInMeg,
-            actualFilePath =>
-                MegFileDataEntryBuilderInfo.FromFile(fileInfo.FullName, actualFilePath, (uint?)fileSize, encrypt));
+        return AddBuilderInfo(
+            entryPath.AsSpan(),
+            (uint?)fileSize,
+            encrypt,
+            &OriginInfoFromFile, 
+            fileInfo.FullName);
     }
 
     /// <inheritdoc/>
-    public AddDataEntryToBuilderResult AddEntry(
+    public unsafe AddDataEntryToBuilderResult AddEntry(
         MegDataEntryLocationReference entryReference,
         string? overridePathInMeg = null,
         bool? overrideEncrypt = null)
@@ -110,22 +115,37 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
         if (entryReference == null)
             throw new ArgumentNullException(nameof(entryReference));
 
-        var filePath = overridePathInMeg ?? entryReference.DataEntry.FilePath;
-        ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        var entryPath = overridePathInMeg ?? entryReference.DataEntry.FilePath;
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
 
         var encrypt = overrideEncrypt ?? entryReference.DataEntry.Encrypted;
 
         if (!entryReference.Exists)
             return AddDataEntryToBuilderResult.FromEntryNotFound(entryReference);
 
-        return AddBuilderInfo(filePath,
-            actualFilePath => MegFileDataEntryBuilderInfo.FromEntryReference(entryReference, actualFilePath, encrypt));
+        return AddBuilderInfo(
+            entryPath.AsSpan(), 
+            entryReference.DataEntry.Location.Size,
+            encrypt,
+            &OriginInfoFromLocation, 
+            entryReference);
+    }
+
+    private static MegDataEntryOriginInfo OriginInfoFromFile(string filePath)
+    {
+        return new MegDataEntryOriginInfo(filePath);
+    }
+
+    private static MegDataEntryOriginInfo OriginInfoFromLocation(MegDataEntryLocationReference location)
+    {
+        return new MegDataEntryOriginInfo(location);
     }
 
     /// <inheritdoc/>
     public bool Remove(MegFileDataEntryBuilderInfo info)
     {
-        return _dataEntries.Remove(info.FilePath);
+        var crc = _hashingService.GetCrc32(info.FilePath, MegFileConstants.MegDataEntryPathEncoding);
+        return _dataEntries.Remove(crc);
     }
 
     /// <inheritdoc/>
@@ -159,42 +179,65 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
         base.DisposeManagedResources();
         _dataEntries.Clear();
     }
-
-    private AddDataEntryToBuilderResult AddBuilderInfo(string filePath, Func<string, MegFileDataEntryBuilderInfo> createBuilderInfo)
+    
+    private unsafe AddDataEntryToBuilderResult AddBuilderInfo<T>(
+        ReadOnlySpan<char> entryPath, 
+        uint? size,
+        bool encrypt,
+        delegate*<T, MegDataEntryOriginInfo> originInfoFactory,
+        T state)
     {
-        ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        if (entryPath.Length == 0)
+            throw new ArgumentException("entryPath cannot be empty", nameof(entryPath));
 
-        var actualFilePath = filePath;
 
-        if (NormalizesEntryPaths && !DataEntryPathNormalizer.TryNormalize(ref actualFilePath, out var message))
-            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
-
-        if (string.IsNullOrEmpty(actualFilePath))
-            throw new InvalidOperationException("filePath cannot be null");
-
-        actualFilePath = EncodePath(actualFilePath.AsSpan());
-
-        if (_dataEntries.TryGetValue(actualFilePath, out var currentInfo))
+        scoped var actualEntryPath = entryPath;
+        
+        if (NormalizesEntryPaths)
         {
-            if (!OverwritesDuplicateEntries)
-                return AddDataEntryToBuilderResult.FromDuplicate(actualFilePath);
+            Span<char> entryPathBuffer = stackalloc char[260];
+            if (!DataEntryPathNormalizer.TryNormalize(entryPath, entryPathBuffer, out var entryPathLength, out var message))
+                return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
+
+            var r = entryPathBuffer.Slice(0, entryPathLength);
+            actualEntryPath = r;
         }
 
-        var infoToAdd = createBuilderInfo(actualFilePath);
+        if (actualEntryPath.Length == 0)
+            throw new InvalidOperationException("entryPath cannot be null");
 
-        var entryValidation = DataEntryValidator.Validate(infoToAdd);
-        if (!entryValidation)
+        var encodedFilePath = EncodeEntryPath(actualEntryPath, out var finalCrc);
+
+        if (_dataEntries.TryGetValue(finalCrc, out var currentInfo))
+        {
+            if (!OverwritesDuplicateEntries)
+                return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
+        }
+
+        var validationResult = DataEntryValidator.Validate(encodedFilePath, encrypt, size);
+        if (!validationResult)
             return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
-                $"The entry '{infoToAdd.FilePath}' is not valid.");
+                $"The entry with entry path '{encodedFilePath.ToString()}' is not valid.");
 
-        _dataEntries[actualFilePath] = infoToAdd;
+
+
+        var infoToAdd = new MegFileDataEntryBuilderInfo(originInfoFactory(state), encodedFilePath.ToString(), size, encrypt);
+
+        _dataEntries[finalCrc] = infoToAdd;
 
         return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
     }
 
-    private static string EncodePath(ReadOnlySpan<char> actualFilePath)
+    private ReadOnlySpan<char> EncodeEntryPath(ReadOnlySpan<char> entryPath, out Crc32 crc)
     {
         var encoding = MegFileConstants.MegDataEntryPathEncoding;
-        return encoding.EncodeString(actualFilePath, encoding.GetByteCountPG(actualFilePath.Length));
+        
+        Span<char> destination = new char[260]; 
+        
+        encoding.Encode(entryPath, destination, out var length);
+        
+        ReadOnlySpan<char> encodedName = destination.Slice(0, length);
+        crc = _hashingService.GetCrc32(encodedName, encoding);
+        return destination.Slice(0, length);
     }
 }

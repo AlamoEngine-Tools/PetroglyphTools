@@ -22,11 +22,9 @@ internal class Crc32HashingService : ICrc32HashingService
         _hashingService = serviceProvider.GetRequiredService<IHashingService>();
     }
 
-    public unsafe Crc32 GetCrc32(string value, Encoding encoding)
+    public Crc32 GetCrc32(string value, Encoding encoding)
     {
-        Span<byte> checksum = stackalloc byte[sizeof(Crc32)];
-        _hashingService.GetHash(value, encoding, checksum, Crc32Hashing.Crc32HashKey);
-        return new Crc32(checksum);
+        return GetCrc32(value.AsSpan(), encoding);
     }
 
     public unsafe Crc32 GetCrc32(ReadOnlySpan<byte> data)

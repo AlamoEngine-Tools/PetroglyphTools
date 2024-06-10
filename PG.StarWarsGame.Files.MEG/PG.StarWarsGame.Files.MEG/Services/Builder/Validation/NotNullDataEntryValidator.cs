@@ -29,4 +29,10 @@ public sealed class NotNullDataEntryValidator : IBuilderInfoValidator
             return false;
         return true;
     }
+
+    /// <inheritdoc />
+    public bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
+    {
+        return true;
+    }
 }

@@ -91,7 +91,7 @@ public static class EncodingExtensions
                 : stackalloc byte[numBytes];
 
             var bytes = e.GetBytesReadOnly(source, buffer);
-
+            
             fixed (byte* pBytes = bytes)
             fixed (char* pChar = dest)
                 bytesWritten = e.GetChars(pBytes, bytes.Length, pChar, dest.Length);

@@ -1,7 +1,6 @@
 using System;
 using AnakinRaW.CommonUtilities.FileSystem;
 using PG.Commons.Utilities;
-using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -18,30 +17,29 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
     {
     }
 
+
     /// <inheritdoc />
-    public override bool Validate(MegFileDataEntryBuilderInfo? builderInfo)
+    public override bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
     {
-        if (!base.Validate(builderInfo))
+        if (!base.Validate(entryPath, encrypted, size))
             return false;
 
-        if (builderInfo!.Encrypted)
+        if (encrypted)
             return false;
 
-        var pathSpan = builderInfo.FilePath.AsSpan();
-
-        if (pathSpan.IndexOf('/') != -1)
+        if (entryPath.IndexOf('/') != -1)
             return false;
 
         Span<char> upperBuffer = stackalloc char[260];
-        var length = pathSpan.ToUpperInvariant(upperBuffer);
+        var length = entryPath.ToUpperInvariant(upperBuffer);
         var upper = upperBuffer.Slice(0, length);
 
-        if (upper.Length != pathSpan.Length || !pathSpan.Equals(upper, StringComparison.Ordinal))
+        if (upper.Length != entryPath.Length || !entryPath.Equals(upper, StringComparison.Ordinal))
             return false;
 
         try
         {
-            var fileName = FileSystem.Path.GetFileName(pathSpan);
+            var fileName = FileSystem.Path.GetFileName(entryPath);
             return FileNameUtilities.IsValidFileName(fileName, out _);
         }
         catch (Exception)

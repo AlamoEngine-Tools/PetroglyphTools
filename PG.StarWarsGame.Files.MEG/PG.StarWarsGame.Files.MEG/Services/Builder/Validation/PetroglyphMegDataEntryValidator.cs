@@ -28,31 +28,35 @@ public abstract class PetroglyphMegDataEntryValidator : IBuilderInfoValidator
 
 
     /// <inheritdoc />
-    public virtual bool Validate(MegFileDataEntryBuilderInfo? builderInfo)
+    public bool Validate(MegFileDataEntryBuilderInfo? builderInfo)
     {
         if (builderInfo is null)
             return false;
 
-        var pathSpan = builderInfo.FilePath.AsSpan();
+        return Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size);
+    }
 
-        if (pathSpan.Length is 0 or > 260)
+    /// <inheritdoc />
+    public virtual bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
+    { 
+        if (entryPath.Length is 0 or > 260)
             return false;
 
-        if (FileSystem.Path.HasTrailingDirectorySeparator(pathSpan))
+        if (FileSystem.Path.HasTrailingDirectorySeparator(entryPath))
             return false;
 
         // We do not allow spaces, as for XML parsing, spaces are also used as delimiters in lists (e.g, SFX Samples)
         // Also, on Linux this is ':' which conveniently also forbids things like "C:/" too. On Windows this is ';'
-        if (pathSpan.IndexOfAny(' ', FileSystem.Path.PathSeparator) != -1)
+        if (entryPath.IndexOfAny(' ', FileSystem.Path.PathSeparator) != -1)
             return false;
 
         try
         {
-            if (FileSystem.Path.IsPathRooted(pathSpan))
+            if (FileSystem.Path.IsPathRooted(entryPath))
                 return false;
 
             Span<char> buffer = stackalloc char[260];
-            var length = PathNormalizer.Normalize(pathSpan, buffer, new PathNormalizeOptions
+            var length = PathNormalizer.Normalize(entryPath, buffer, new PathNormalizeOptions
             {
                 UnifyDirectorySeparators = true,
                 TrailingDirectorySeparatorBehavior = TrailingDirectorySeparatorBehavior.Trim

@@ -1,3 +1,4 @@
+using System;
 using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
@@ -13,4 +14,10 @@ public interface IBuilderInfoValidator
     /// <param name="builderInfo"></param>
     /// <returns></returns>
     bool Validate(MegFileDataEntryBuilderInfo builderInfo);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size);
 }

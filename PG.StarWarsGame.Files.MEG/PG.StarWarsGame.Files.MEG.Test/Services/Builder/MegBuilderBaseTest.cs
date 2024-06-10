@@ -7,7 +7,6 @@ using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using PG.Commons.Extensibility;
-using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -311,7 +310,25 @@ public class MegBuilderBaseTest
     }
 
     [Fact]
-    public void Test_AddFile_AssureEncoding()
+    public void Test_AddFile_AssureEncoding_WithNormalization()
+    {
+        const string fileToAdd = "file.txt";
+        const string expectedEncodedEntry = "path/fileWithNonAscii?.txt";
+
+        var inputEntryPath = "path/fileWithNonAsciiÖ.txt";
+
+        _fileSystem.Initialize().WithFile(fileToAdd);
+
+        // Make sure the normalizer triggers
+        var builder = CreateBuilder(false, false, input => input);
+
+        var result = builder.AddFile(fileToAdd, inputEntryPath);
+        Assert.True(result.Added);
+        Assert.Equal(expectedEncodedEntry, result.AddedBuilderInfo.FilePath);
+    }
+
+    [Fact]
+    public void Test_AddFile_AssureEncoding_WithoutNormalization()
     {
         const string fileToAdd = "file.txt";
         const string expectedEncodedEntry = "path/fileWithNonAscii?.txt";
@@ -325,6 +342,24 @@ public class MegBuilderBaseTest
         var result = builder.AddFile(fileToAdd, inputEntryPath);
         Assert.True(result.Added);
         Assert.Equal(expectedEncodedEntry, result.AddedBuilderInfo.FilePath);
+    }
+
+    [Fact]
+    public void Test_AddFile_LongStringHandling()
+    {
+        const string fileToAdd = "file.txt";
+
+        var firstPart = new string('a', 150);
+        var secondPart = new string('ö', 150);
+
+        _fileSystem.Initialize().WithFile(fileToAdd);
+
+        // Make sure the normalizer triggers
+        var builder = CreateBuilder(false, false, input => input.Replace('a', 'b'));
+
+        var result = builder.AddFile(fileToAdd, firstPart + secondPart);
+        Assert.True(result.Added);
+        Assert.Equal(new string('b', 150) + new string('?', 150), result.AddedBuilderInfo.FilePath);
     }
 
     [Fact]
@@ -539,7 +574,7 @@ public class MegBuilderBaseTest
     [InlineData("file.txt", "new.txt")]
     public void Test_AddEntry_Normalizer(string orgPath, string? overridePath)
     {
-        const string normalizedPath = "NORMALIZED";
+        const string normalizedPath = "norm";
 
         var inputEntryPath = overridePath ?? orgPath;
 
@@ -592,6 +627,30 @@ public class MegBuilderBaseTest
     }
 
     [Fact]
+    public void Test_AddEntry_Normalizer_LongerThanOriginal_Throws()
+    {
+        const string input = "entry.txt";
+
+        var entry = MegDataEntryTest.CreateEntry(input, default, default, false, null);
+        var archive = new MegArchive(new List<MegDataEntry>
+        {
+            entry
+        });
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.Archive).Returns(archive);
+
+
+        var builder = CreateBuilder(false, false, i =>
+        {
+            Assert.Equal(input, i);
+            return input + "a";
+        });
+
+        Assert.Throws<InvalidOperationException>(() =>
+            builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry)));
+    }
+
+    [Fact]
     public void Test_AddEntry_AssureEncoding()
     {
         const string entryPath = "file.txt";
@@ -606,7 +665,8 @@ public class MegBuilderBaseTest
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.Archive).Returns(archive);
 
-        var builder = CreateBuilder(false, false, null);
+        // Make sure the normalizer triggers
+        var builder = CreateBuilder(false, false, input => input);
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry), overridePath);
         Assert.True(result.Added);
@@ -811,11 +871,11 @@ public class MegBuilderBaseTest
     }
 
     private class TestEntryNormalizer(Func<string, string> normalizeAction, IServiceProvider serviceProvider) : MegDataEntryPathNormalizerBase(serviceProvider)
-    {
+    { 
         public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
         {
-            var result = normalizeAction(filePath.ToString());
-            result.AsSpan().CopyTo(destination);
+            var result = normalizeAction(filePath.ToString()).AsSpan();
+            result.CopyTo(destination);
             return result.Length;
         }
     }

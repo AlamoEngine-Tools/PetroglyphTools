@@ -14,6 +14,7 @@ class Benchmark
         //BenchmarkRunner.Run<EncodeString>();
         //BenchmarkRunner.Run<ContainsInvalidCharsBenchmark>();
         //BenchmarkRunner.Run<DatBuilderBenchmark>();
-        BenchmarkRunner.Run<EmpireAtWarValidatorBenchmark>();
+        //BenchmarkRunner.Run<EmpireAtWarValidatorBenchmark>();
+        BenchmarkRunner.Run<EmpireAtWarMegBuilderBenchmark>();
     }
 }

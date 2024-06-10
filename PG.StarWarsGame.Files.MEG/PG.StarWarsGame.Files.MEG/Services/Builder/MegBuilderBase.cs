@@ -14,6 +14,10 @@ using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using AnakinRaW.CommonUtilities;
 using PG.Commons.Hashing;
 using PG.Commons.Services.Builder;
+using System.Buffers;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -192,52 +196,67 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
 
 
         scoped var actualEntryPath = entryPath;
-        
-        if (NormalizesEntryPaths)
+        scoped Span<char> entryPathBuffer;
+
+        char[]? pooledCharArray = null;
+
+        if (entryPath.Length > 260)
+            entryPathBuffer = pooledCharArray = ArrayPool<char>.Shared.Rent(entryPath.Length);
+        else
+            entryPathBuffer = stackalloc char[260];
+
+        try
         {
-            Span<char> entryPathBuffer = stackalloc char[260];
-            if (!DataEntryPathNormalizer.TryNormalize(entryPath, entryPathBuffer, out var entryPathLength, out var message))
-                return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
+            if (NormalizesEntryPaths)
+            {
+                if (!DataEntryPathNormalizer.TryNormalize(actualEntryPath, entryPathBuffer, out var length, out var message))
+                    return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
 
-            var r = entryPathBuffer.Slice(0, entryPathLength);
-            actualEntryPath = r;
+                if (length > entryPath.Length)
+                    throw new InvalidOperationException("Normalization must not add new characters");
+
+                actualEntryPath = entryPathBuffer.Slice(0, length);
+            }
+
+            if (actualEntryPath.Length == 0)
+                throw new InvalidOperationException("entryPath cannot be null");
+
+
+            actualEntryPath = EncodeEntryPath(actualEntryPath, entryPathBuffer, out var finalCrc);
+
+            if (_dataEntries.TryGetValue(finalCrc, out var currentInfo))
+            {
+                if (!OverwritesDuplicateEntries)
+                    return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
+            }
+
+            var validationResult = DataEntryValidator.Validate(actualEntryPath, encrypt, size);
+            if (!validationResult)
+                return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
+                    $"The entry with entry path '{actualEntryPath.ToString()}' is not valid.");
+
+
+            var infoToAdd = new MegFileDataEntryBuilderInfo(originInfoFactory(state), actualEntryPath.ToString(), size, encrypt);
+
+            _dataEntries[finalCrc] = infoToAdd;
+
+            return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
         }
-
-        if (actualEntryPath.Length == 0)
-            throw new InvalidOperationException("entryPath cannot be null");
-
-        var encodedFilePath = EncodeEntryPath(actualEntryPath, out var finalCrc);
-
-        if (_dataEntries.TryGetValue(finalCrc, out var currentInfo))
+        finally
         {
-            if (!OverwritesDuplicateEntries)
-                return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
+            if (pooledCharArray is not null)
+                ArrayPool<char>.Shared.Return(pooledCharArray);
         }
-
-        var validationResult = DataEntryValidator.Validate(encodedFilePath, encrypt, size);
-        if (!validationResult)
-            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
-                $"The entry with entry path '{encodedFilePath.ToString()}' is not valid.");
-
-
-
-        var infoToAdd = new MegFileDataEntryBuilderInfo(originInfoFactory(state), encodedFilePath.ToString(), size, encrypt);
-
-        _dataEntries[finalCrc] = infoToAdd;
-
-        return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
     }
 
-    private ReadOnlySpan<char> EncodeEntryPath(ReadOnlySpan<char> entryPath, out Crc32 crc)
+    private ReadOnlySpan<char> EncodeEntryPath(ReadOnlySpan<char> entryPath, Span<char> buffer, out Crc32 crc)
     {
         var encoding = MegFileConstants.MegDataEntryPathEncoding;
-        
-        Span<char> destination = new char[260]; 
-        
-        encoding.Encode(entryPath, destination, out var length);
-        
-        ReadOnlySpan<char> encodedName = destination.Slice(0, length);
-        crc = _hashingService.GetCrc32(encodedName, encoding);
-        return destination.Slice(0, length);
+        encoding.Encode(entryPath, buffer, out var length);
+        var result = buffer.Slice(0, length);
+
+        crc = _hashingService.GetCrc32(result, encoding);
+
+        return result;
     }
 }

@@ -60,12 +60,14 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var result2 = _eawMegBuilder.AddFile("entry.txt", entry2!);
         var result2a = _eawMegBuilder.AddFile("entry.txt", "/game/corruption/data/xml/entry2.txt");
         var result3 = _eawMegBuilder.AddFile("entry.txt", "/other/corruption/data/xml/entry3.txt");
+        var result4 = _eawMegBuilder.AddFile("entry.txt", "/game/corruption/data/xml/entry4ÖÄÜ.txt");
 
         Assert.True(result1.Added);
         Assert.False(result1a.Added);
         Assert.True(result2.Added);
         Assert.False(result2a.Added);
         Assert.False(result3.Added);
+        Assert.False(result4.Added);
 
         Assert.Equal("ENTRY1.TXT", result1.AddedBuilderInfo!.FilePath);
         Assert.Equal("XML\\ENTRY2.TXT", result2.AddedBuilderInfo!.FilePath);

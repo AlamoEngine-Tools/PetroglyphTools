@@ -14,12 +14,13 @@ namespace PG.Benchmarks;
 
 [ExcludeFromCodeCoverage]
 [SimpleJob(RuntimeMoniker.Net80)]
+[SimpleJob(RuntimeMoniker.Net48)]
 [MemoryDiagnoser]
 public class DatBuilderBenchmark
 {
     private static readonly Random Random = new(1138);
 
-    [Params(8_000, 80_000)]
+    [Params(8_000)]
     public int N;
 
     private string[] _keys;
@@ -35,8 +36,8 @@ public class DatBuilderBenchmark
 
         for (int i = 0; i < N; i++)
         {
-            _keys[i] = RandomString(Random.Next(1, 20));
-            _values[i] = RandomString(Random.Next(1, 200));
+            _keys[i] = RandomString(Random.Next(10, 30));
+            _values[i] = RandomString(Random.Next(15, 200));
         }
 
         var sc = new ServiceCollection();
@@ -58,7 +59,7 @@ public class DatBuilderBenchmark
 
     private static string RandomString(int length)
     {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ -öäü";
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
         return new string(Enumerable.Repeat(chars, length)
             .Select(s => s[Random.Next(s.Length)]).ToArray());
     }

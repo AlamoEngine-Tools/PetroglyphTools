@@ -19,6 +19,6 @@ public class DatServiceContribution : IServiceContribution
             .AddSingleton<IDatModelService>(sp => new DatModelService(sp))
             .AddTransient<IDatFileReader>(sp => new DatFileReader(sp))
             .AddTransient<IDatBinaryConverter>(sp => new DatBinaryConverter(sp))
-            .AddSingleton(sp => new EmpireAtWarKeyValidator());
+            .AddSingleton(new EmpireAtWarKeyValidator());
     }
 }

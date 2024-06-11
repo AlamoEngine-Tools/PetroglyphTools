@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
-using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.Commons.Services.Builder;
@@ -22,7 +21,7 @@ namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 /// </summary>
 public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEntry>, DatFileInformation>, IDatBuilder
 {
-    private readonly KeyValuePairList<string, DatStringEntry> _entries = new();
+    private readonly Crc32KeyedList<DatStringEntry> _entries;
 
     private readonly ICrc32HashingService _hashingService;
 
@@ -34,7 +33,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     public abstract DatFileType TargetKeySortOrder { get; }
 
     /// <inheritdoc />
-    public abstract BuilderOverrideKind KeyOverwriteBehavior { get; }
+    public BuilderOverrideKind KeyOverwriteBehavior { get; }
 
     /// <inheritdoc />
     public IReadOnlyList<DatStringEntry> Entries => _entries.GetValueList();
@@ -48,10 +47,13 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     /// <summary>
     /// Initializes a new instance of the <see cref="DatBuilderBase"/> class.
     /// </summary>
+    /// <param name="overrideKind"></param>
     /// <param name="services">The service provider.</param>
-    protected DatBuilderBase(IServiceProvider services) : base(services)
+    protected DatBuilderBase(BuilderOverrideKind overrideKind, IServiceProvider services) : base(services)
     {
+        KeyOverwriteBehavior = overrideKind;
         _hashingService = Services.GetRequiredService<ICrc32HashingService>();
+        _entries = new Crc32KeyedList<DatStringEntry>(KeyOverwriteBehavior);
     }
 
     /// <inheritdoc />
@@ -65,46 +67,56 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
             throw new ArgumentNullException(nameof(value));
 
         var encoding = DatFileConstants.TextKeyEncoding;
-        
-        var encodedKey = encoding.EncodeString(key, encoding.GetByteCountPG(key.Length));
-        
+
+
+        scoped var encodedKey = key.AsSpan();
+
+        var requiredLength = encoding.GetByteCountPG(key.Length);
+        var keyBuffer = requiredLength > 260
+            ? new char[requiredLength]
+            : stackalloc char[requiredLength];
+
+        encoding.Encode(encodedKey, keyBuffer, out var actualLength);
+        if (actualLength != requiredLength)
+            throw new InvalidOperationException("Encoding produces invalid string.");
+
+        encodedKey = keyBuffer;
+
         var keyValidation = KeyValidator.Validate(encodedKey);
         if (!keyValidation)
-            return AddEntryResult.EntryNotAdded(AddEntryState.InvalidKey, "The key is not valid.");
-        
-        var containsKey = _entries.ContainsKey(encodedKey, out var oldValue);
-
-        if (containsKey && KeyOverwriteBehavior == BuilderOverrideKind.NoOverwrite)
-            return AddEntryResult.FromDuplicate(oldValue);
-
+            return AddEntryResult.NotAdded(AddEntryState.InvalidKey, "The key is not valid.");
 
         var crc = _hashingService.GetCrc32(encodedKey, encoding);
-        var entry = new DatStringEntry(encodedKey, crc, value, key);
+
+        var containsKey = _entries.ContainsKey(crc, out var existingValue);
+
+        if (containsKey && KeyOverwriteBehavior == BuilderOverrideKind.NoOverwrite)
+            return AddEntryResult.NotAddedDuplicate(existingValue);
+
+
+        var entry = new DatStringEntry(encodedKey.ToString(), crc, value, key);
 
         if (KeyOverwriteBehavior == BuilderOverrideKind.AllowDuplicate)
         {
-            _entries.Add(entry.Key, entry);
+            _entries.AddOrReplace(crc, entry);
             return AddEntryResult.EntryAdded(entry, containsKey);
         }
 
-        if (!containsKey)
-            _entries.Add(entry.Key, entry);
-        else
-            _entries.Replace(entry.Key, entry);
-
-        return AddEntryResult.EntryAdded(entry, oldValue);
+        _entries.AddOrReplace(crc, entry);
+        return AddEntryResult.EntryAdded(entry, existingValue);
     }
 
     /// <inheritdoc />
     public bool Remove(DatStringEntry entry)
     {
-        return _entries.Remove(entry.Key, entry);
+        return _entries.Remove(entry.Crc32, entry);
     }
 
     /// <inheritdoc />
     public bool RemoveAllKeys(string key)
     {
-        return _entries.RemoveAll(key);
+        var crc = _hashingService.GetCrc32(key.AsSpan(), DatFileConstants.TextKeyEncoding);
+        return _entries.RemoveAll(crc);
     }
 
     /// <inheritdoc />

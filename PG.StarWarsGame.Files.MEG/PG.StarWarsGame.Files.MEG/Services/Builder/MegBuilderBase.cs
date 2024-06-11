@@ -1,3 +1,6 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -15,9 +18,6 @@ using AnakinRaW.CommonUtilities;
 using PG.Commons.Hashing;
 using PG.Commons.Services.Builder;
 using System.Buffers;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -196,14 +196,12 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
 
 
         scoped var actualEntryPath = entryPath;
-        scoped Span<char> entryPathBuffer;
 
         char[]? pooledCharArray = null;
 
-        if (entryPath.Length > 260)
-            entryPathBuffer = pooledCharArray = ArrayPool<char>.Shared.Rent(entryPath.Length);
-        else
-            entryPathBuffer = stackalloc char[260];
+        var entryPathBuffer = entryPath.Length > 260
+            ? pooledCharArray = ArrayPool<char>.Shared.Rent(entryPath.Length)
+            : stackalloc char[260];
 
         try
         {
@@ -213,7 +211,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
                     return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
 
                 if (length > entryPath.Length)
-                    throw new InvalidOperationException("Normalization must not add new characters");
+                    throw new InvalidOperationException("Normalized entry path must not be larger than original path.");
 
                 actualEntryPath = entryPathBuffer.Slice(0, length);
             }
@@ -222,23 +220,23 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
                 throw new InvalidOperationException("entryPath cannot be null");
 
 
-            actualEntryPath = EncodeEntryPath(actualEntryPath, entryPathBuffer, out var finalCrc);
-
-            if (_dataEntries.TryGetValue(finalCrc, out var currentInfo))
-            {
-                if (!OverwritesDuplicateEntries)
-                    return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
-            }
+            actualEntryPath = EncodeEntryPath(actualEntryPath, entryPathBuffer, out var crc);
 
             var validationResult = DataEntryValidator.Validate(actualEntryPath, encrypt, size);
             if (!validationResult)
                 return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
                     $"The entry with entry path '{actualEntryPath.ToString()}' is not valid.");
 
+            
+            if (_dataEntries.TryGetValue(crc, out var currentInfo))
+            {
+                if (!OverwritesDuplicateEntries)
+                    return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
+            }
 
             var infoToAdd = new MegFileDataEntryBuilderInfo(originInfoFactory(state), actualEntryPath.ToString(), size, encrypt);
 
-            _dataEntries[finalCrc] = infoToAdd;
+            _dataEntries[crc] = infoToAdd;
 
             return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
         }

@@ -1,3 +1,6 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.FileSystem;
@@ -12,6 +15,17 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </summary>
 public abstract class PetroglyphMegDataEntryValidator : IBuilderInfoValidator
 {
+    /// <summary>
+    /// The max number of characters allowed in a PG game for entry paths.
+    /// </summary>
+    protected const int PetroglyphMaxFilePathLength = 260;
+
+    // Normalization must not trim trailing directory separators, as otherwise we can't check for that constraint.
+    private static readonly PathNormalizeOptions PetroglyphPathNormalizeOptions = new()
+    {
+        UnifyDirectorySeparators = true
+    };
+
     /// <summary>
     /// Gets the file system.
     /// </summary>
@@ -39,30 +53,27 @@ public abstract class PetroglyphMegDataEntryValidator : IBuilderInfoValidator
     /// <inheritdoc />
     public virtual bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
     { 
-        if (entryPath.Length is 0 or > 260)
+        if (entryPath.Length is 0 or > PetroglyphMaxFilePathLength)
             return false;
-
-        if (FileSystem.Path.HasTrailingDirectorySeparator(entryPath))
-            return false;
-
-        // We do not allow spaces, as for XML parsing, spaces are also used as delimiters in lists (e.g, SFX Samples)
-        // Also, on Linux this is ':' which conveniently also forbids things like "C:/" too. On Windows this is ';'
+        
+        // We do not allow spaces, as for XML parsing, as they are also used as delimiters in lists (e.g, SFX Samples)
+        // Also, we exclude path separator which is ':' on Linux which conveniently also forbids things like "C:/" on linux systems too.
+        // On Windows this is ';'
         if (entryPath.IndexOfAny(' ', FileSystem.Path.PathSeparator) != -1)
             return false;
 
         try
         {
-            if (FileSystem.Path.IsPathRooted(entryPath))
-                return false;
-
-            Span<char> buffer = stackalloc char[260];
-            var length = PathNormalizer.Normalize(entryPath, buffer, new PathNormalizeOptions
-            {
-                UnifyDirectorySeparators = true,
-                TrailingDirectorySeparatorBehavior = TrailingDirectorySeparatorBehavior.Trim
-            });
-
+            Span<char> buffer = stackalloc char[PetroglyphMaxFilePathLength];
+            var length = PathNormalizer.Normalize(entryPath, buffer, PetroglyphPathNormalizeOptions);
+            
             var normalized = buffer.Slice(0, length).ToString();
+
+            // We need to perform the following checks after system-dependent normalization
+            if (FileSystem.Path.IsPathRooted(normalized))
+                return false;
+            if (FileSystem.Path.HasTrailingDirectorySeparator(normalized))
+                return false;
 
             var fullNormalized = FileSystem.Path.GetFullPath(normalized);
 

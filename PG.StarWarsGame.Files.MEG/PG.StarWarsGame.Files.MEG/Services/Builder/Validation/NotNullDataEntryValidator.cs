@@ -1,3 +1,6 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using PG.StarWarsGame.Files.MEG.Data;
 
@@ -16,13 +19,8 @@ public sealed class NotNullDataEntryValidator : IBuilderInfoValidator
     private NotNullDataEntryValidator()
     {
     }
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="builderInfo"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+
+    /// <inheritdoc />
     public bool Validate(MegFileDataEntryBuilderInfo? builderInfo)
     {
         if (builderInfo is null)

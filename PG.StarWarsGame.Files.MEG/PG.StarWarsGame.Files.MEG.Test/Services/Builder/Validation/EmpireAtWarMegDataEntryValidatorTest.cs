@@ -46,6 +46,9 @@ public class EmpireAtWarMegDataEntryValidatorTest
 
     public static IEnumerable<object[]> InvalidTestDataEaw()
     {
+        // Check for trailing directory separator
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST//"))];
+
         // We do not allow lower case chars 
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.txt"))];
 
@@ -66,6 +69,8 @@ public class EmpireAtWarMegDataEntryValidatorTest
         // We do not allow directory operators
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".\\TEST.TXT"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("MY\\..\\TEST.TXT"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("."))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("\\."))];
 
         // We do not allow encrypted entries
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("PATH"), overrideEncrypted: true)];

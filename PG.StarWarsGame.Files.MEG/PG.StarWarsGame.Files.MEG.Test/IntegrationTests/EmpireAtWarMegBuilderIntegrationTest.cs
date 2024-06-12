@@ -50,6 +50,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var entry1 = _eawMegBuilder.ResolveEntryPath("entry1.txt");
         var entry2 = _eawMegBuilder.ResolveEntryPath("/game/corruption/data/xml/entry2.txt");
         var entry3 = _eawMegBuilder.ResolveEntryPath("/other/corruption/data/xml/entry3.txt");
+        var entry4 = _eawMegBuilder.ResolveEntryPath("/game/corruption/data/xml/entry4ÖÄÜ.txt");
 
         Assert.Equal("entry1.txt", entry1);
         Assert.Equal(PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry2);
@@ -60,7 +61,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var result2 = _eawMegBuilder.AddFile("entry.txt", entry2!);
         var result2a = _eawMegBuilder.AddFile("entry.txt", "/game/corruption/data/xml/entry2.txt");
         var result3 = _eawMegBuilder.AddFile("entry.txt", "/other/corruption/data/xml/entry3.txt");
-        var result4 = _eawMegBuilder.AddFile("entry.txt", "/game/corruption/data/xml/entry4ÖÄÜ.txt");
+        var result4 = _eawMegBuilder.AddFile("entry.txt", entry4!);
 
         Assert.True(result1.Added);
         Assert.False(result1a.Added);

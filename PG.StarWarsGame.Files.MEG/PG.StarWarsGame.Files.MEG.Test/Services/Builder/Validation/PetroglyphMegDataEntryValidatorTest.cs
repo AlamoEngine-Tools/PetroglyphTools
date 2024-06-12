@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +10,6 @@ using System.Reflection;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
-
 
 public class PetroglyphMegDataEntryValidatorTest
 {
@@ -52,7 +50,9 @@ public class PetroglyphMegDataEntryValidatorTest
     {
         // We do not allow directory names
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("dir/"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("dir\\"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("/"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("\\"))];
 
         // We do not allow directory operators
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("./test.txt"))];
@@ -73,7 +73,7 @@ public class PetroglyphMegDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(@"\\Server2\Share\Test\Foo.txt\t"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("//Server2/Share/Test/Foo.txt/t"))];
 
-        // We do not allow paths with are longer than 256 characters, as that's the default Windows limit.
+        // We do not allow paths with are longer than PG max allowed characters, which is 260.
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new string('a', 261)))];
 
         // Because XML parsing is sometimes done on space as delimiter, we cannot use them

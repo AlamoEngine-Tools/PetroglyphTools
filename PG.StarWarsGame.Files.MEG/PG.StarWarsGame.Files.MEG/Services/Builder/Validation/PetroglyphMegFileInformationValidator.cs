@@ -14,6 +14,11 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 public abstract class PetroglyphMegFileInformationValidator : IMegFileInformationValidator
 {
     /// <summary>
+    /// The max number of characters allowed in a PG game for file paths.
+    /// </summary>
+    protected const int PetroglyphMaxFilePathLength = 260;
+
+    /// <summary>
     /// Gets the file system.
     /// </summary>
     protected IFileSystem FileSystem { get; }
@@ -34,7 +39,7 @@ public abstract class PetroglyphMegFileInformationValidator : IMegFileInformatio
             return MegFileInfoValidationResult.Failed;
 
         var fileName = FileSystem.Path.GetFileName(infoValidationData.FileInformation.FilePath.AsSpan());
-        return fileName.Length <= 260
+        return fileName.Length <= PetroglyphMaxFilePathLength
             ? MegFileInfoValidationResult.Valid
             : MegFileInfoValidationResult.FromFailed("File path is too long.");
     }

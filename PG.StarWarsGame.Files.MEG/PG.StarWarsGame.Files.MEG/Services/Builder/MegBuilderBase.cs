@@ -18,6 +18,7 @@ using AnakinRaW.CommonUtilities;
 using PG.Commons.Hashing;
 using PG.Commons.Services.Builder;
 using System.Buffers;
+using AnakinRaW.CommonUtilities.Extensions;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -199,6 +200,8 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
 
         char[]? pooledCharArray = null;
 
+        // This works, because normalization must not add chars
+        // and #chars == #bytes required for encoding entry paths.
         var entryPathBuffer = entryPath.Length > 260
             ? pooledCharArray = ArrayPool<char>.Shared.Rent(entryPath.Length)
             : stackalloc char[260];
@@ -250,11 +253,10 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     private ReadOnlySpan<char> EncodeEntryPath(ReadOnlySpan<char> entryPath, Span<char> buffer, out Crc32 crc)
     {
         var encoding = MegFileConstants.MegDataEntryPathEncoding;
-        encoding.Encode(entryPath, buffer, out var length);
+        var requiredBytes = encoding.GetByteCountPG(entryPath.Length);
+        var length = encoding.EncodeString(entryPath, buffer, requiredBytes);
         var result = buffer.Slice(0, length);
-
         crc = _hashingService.GetCrc32(result, encoding);
-
         return result;
     }
 }

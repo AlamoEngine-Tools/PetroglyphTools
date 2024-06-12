@@ -18,8 +18,8 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="AnakinRaW.CommonUtilities" Version="12.0.15-beta" />
-		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="12.0.15-beta" />
+		<PackageReference Include="AnakinRaW.CommonUtilities" Version="12.0.17-beta" />
+		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="12.0.17-beta" />
 		<PackageReference Include="IsExternalInit" Version="1.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

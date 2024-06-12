@@ -11,7 +11,7 @@ namespace PG.Commons.Binary;
 /// <summary>
 /// A read-only list of binary items. 
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The type of the table's items</typeparam>
 public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
 {
     /// <summary>

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.Commons.Services.Builder;
@@ -72,11 +73,13 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
         scoped var encodedKey = key.AsSpan();
 
         var requiredLength = encoding.GetByteCountPG(key.Length);
+        
+        // This works, because #bytes == #chars for keys
         var keyBuffer = requiredLength > 260
             ? new char[requiredLength]
             : stackalloc char[requiredLength];
 
-        encoding.Encode(encodedKey, keyBuffer, out var actualLength);
+        var actualLength = encoding.EncodeString(encodedKey, keyBuffer, requiredLength);
         if (actualLength != requiredLength)
             throw new InvalidOperationException("Encoding produces invalid string.");
 

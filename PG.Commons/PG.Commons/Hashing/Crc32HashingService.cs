@@ -53,7 +53,7 @@ internal class Crc32HashingService : ICrc32HashingService
         char[]? pooledCharArray = null;
         try
         {
-            var buffer = value.Length > 260
+            var buffer = value.Length > 265
                 ? pooledCharArray = ArrayPool<char>.Shared.Rent(value.Length)
                 : stackalloc char[value.Length];
 

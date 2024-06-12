@@ -9,45 +9,9 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 public interface IMegFileInformationValidator
 {
     /// <summary>
-    /// 
+    /// Validates a specified MEG file information to the rules of this instance.
     /// </summary>
-    /// <param name="infoValidationData"></param>
-    /// <returns></returns>
+    /// <param name="infoValidationData">The file information to validate</param>
+    /// <returns><see langword="true"/> if <paramref name="infoValidationData"/> is valid; otherwise, <see langword="false"/>.</returns>
     MegFileInfoValidationResult Validate(MegBuilderFileInformationValidationData infoValidationData);
-}
-
-/// <summary>
-/// 
-/// </summary>
-public struct MegFileInfoValidationResult
-{
-    internal static readonly MegFileInfoValidationResult Failed = default;
-
-    internal static readonly MegFileInfoValidationResult Valid = new(true);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public string? FailReason { get; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public bool IsValid { get; }
-
-    private MegFileInfoValidationResult(string? failReason)
-    {
-        IsValid = false;
-        FailReason = failReason;
-    }
-
-    internal MegFileInfoValidationResult(bool isValid)
-    {
-        IsValid = isValid;
-    }
-
-    internal static MegFileInfoValidationResult FromFailed(string? message)
-    {
-        return new MegFileInfoValidationResult(message);
-    }
 }

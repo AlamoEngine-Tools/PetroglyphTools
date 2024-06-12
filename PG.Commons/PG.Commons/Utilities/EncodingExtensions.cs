@@ -1,7 +1,7 @@
-﻿using AnakinRaW.CommonUtilities.Extensions;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
-using System.Buffers;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -70,36 +70,5 @@ public static class EncodingExtensions
         var asciiType = typeof(ASCIIEncoding);
         return encodingType == asciiType ||
                (asciiType.IsAssignableFrom(encodingType) && encodingType.Assembly == asciiType.Assembly);
-    }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="e"></param>
-    /// <param name="source"></param>
-    /// <param name="dest"></param>
-    /// <param name="bytesWritten"></param>
-    public static unsafe void Encode(this Encoding e, ReadOnlySpan<char> source, Span<char> dest, out int bytesWritten)
-    {
-        var numBytes = e.GetMaxByteCount(source.Length);
-        byte[]? pooledByteArray = null;
-        try
-        {
-            var buffer = numBytes > 260
-                ? pooledByteArray = ArrayPool<byte>.Shared.Rent(numBytes)
-                : stackalloc byte[numBytes];
-
-            var bytes = e.GetBytesReadOnly(source, buffer);
-            
-            fixed (byte* pBytes = bytes)
-            fixed (char* pChar = dest)
-                bytesWritten = e.GetChars(pBytes, bytes.Length, pChar, dest.Length);
-        }
-        finally
-        {
-            if (pooledByteArray is not null)
-                ArrayPool<byte>.Shared.Return(pooledByteArray);
-        }
     }
 }

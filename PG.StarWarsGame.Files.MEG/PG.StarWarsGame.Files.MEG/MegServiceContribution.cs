@@ -25,7 +25,7 @@ public class MegServiceContribution : IServiceContribution
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
         serviceCollection.AddSingleton<IMegDataStreamFactory>(sp => new MegDataStreamFactory(sp));
-        serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(sp => new VirtualMegArchiveBuilder());
+        serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(_ => new VirtualMegArchiveBuilder());
 
         serviceCollection.AddSingleton(sp => new EmpireAtWarMegFileInformationValidator(sp));
         serviceCollection.AddSingleton(sp => new EmpireAtWarMegDataEntryValidator(sp));

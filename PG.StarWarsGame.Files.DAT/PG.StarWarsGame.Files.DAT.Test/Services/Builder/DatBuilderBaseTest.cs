@@ -175,6 +175,23 @@ public abstract class DatBuilderBaseTest
     [InlineData(BuilderOverrideKind.NoOverwrite)]
     [InlineData(BuilderOverrideKind.Overwrite)]
     [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_AddEntry_EmptyString(BuilderOverrideKind overrideKind)
+    {
+        var builder = CreateBuilder(overrideKind);
+
+        var result = builder.Object.AddEntry("", "value");
+
+        Assert.True(result.Added);
+        Assert.False(result.WasOverwrite);
+        Assert.Equal(AddEntryState.Added, result.Status);
+        Assert.Single(builder.Object.BuilderData);
+        Assert.Equal("value", builder.Object.BuilderData.First().Value);
+    }
+
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
     public void Test_AddEntry(BuilderOverrideKind overrideKind)
     {
         var builder = CreateBuilder(overrideKind);

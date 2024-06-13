@@ -10,10 +10,28 @@ using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
-internal class Crc32KeyedList<TValue>(BuilderOverrideKind overrideBehavior) where TValue : IHasCrc32
+/// <summary>
+/// Specialized list that holds CRC32 hashable objects and allows fast [O(1)]
+/// retrieval and modification to the first entry of a specific CRC32 checksum
+/// </summary>
+/// <typeparam name="TValue">The type of hashable elements in the list.</typeparam>
+internal class Crc32KeyedList<TValue> where TValue : IHasCrc32
 {
     private readonly Dictionary<Crc32, int> _keysWithIndexOfFirst = new();
     private readonly List<TValue> _items = new();
+    private readonly BuilderOverrideKind _overrideBehavior;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Crc32KeyedList{TValue}"/> class and the specified override behavior.
+    /// </summary>
+    /// <param name="overrideBehavior">
+    /// Specifies how the list shall behave if elements are get added
+    /// where the checksum of the element is already present in the list.
+    /// </param>
+    public Crc32KeyedList(BuilderOverrideKind overrideBehavior)
+    {
+        _overrideBehavior = overrideBehavior;
+    }
 
     public bool ContainsKey(Crc32 key, [MaybeNullWhen(false)] out TValue firstOrDefault)
     {
@@ -30,10 +48,10 @@ internal class Crc32KeyedList<TValue>(BuilderOverrideKind overrideBehavior) wher
         var containsKey = _keysWithIndexOfFirst.TryGetValue(key, out var index);
         if (containsKey)
         {
-            if (overrideBehavior == BuilderOverrideKind.NoOverwrite)
+            if (_overrideBehavior == BuilderOverrideKind.NoOverwrite)
                 throw new ArgumentException("This instance does not allow duplicates.", nameof(key));
 
-            if (overrideBehavior == BuilderOverrideKind.Overwrite)
+            if (_overrideBehavior == BuilderOverrideKind.Overwrite)
             {
                 _items[index] = value;
                 return;

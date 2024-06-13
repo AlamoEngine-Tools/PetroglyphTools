@@ -27,6 +27,7 @@ public class PetroglyphMegDataEntryValidatorTest
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
         Assert.True(_validator.Validate(builderInfo));
+        Assert.True(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
     [Theory]
@@ -35,6 +36,8 @@ public class PetroglyphMegDataEntryValidatorTest
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
         Assert.False(_validator.Validate(builderInfo));
+        if (builderInfo is not null)
+            Assert.False(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
     public static IEnumerable<object[]> ValidTestData()

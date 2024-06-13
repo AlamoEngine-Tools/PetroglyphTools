@@ -82,6 +82,5 @@ public class FileNameUtilitiesTest
     {
         Assert.False(FileNameUtilities.IsValidFileName(fileName.AsSpan(), out var result));
         Assert.Equal(expectedResult, result);
-        
     }
 }

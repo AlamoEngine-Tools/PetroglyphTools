@@ -3,6 +3,7 @@
 
 using System;
 using System.Buffers;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -58,6 +59,7 @@ internal class Crc32HashingService : ICrc32HashingService
                 : stackalloc char[value.Length];
 
             var bytesRead = value.ToUpper(buffer, CultureInfo.InvariantCulture);
+            Debug.Assert(bytesRead == value.Length);
 
             return GetCrc32(buffer.Slice(0, bytesRead), encoding);
         }

@@ -15,17 +15,36 @@ public abstract class DataEntryPathNormalizerTestBase
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
+        var buffer = new char[source?.Length ?? 0];
         Assert.ThrowsAny<Exception>(() => normalizer.Normalize(source));
+        Assert.ThrowsAny<Exception>(() => normalizer.Normalize(source.AsSpan(), buffer));
 
         var copy = source;
-        var success = normalizer.TryNormalize(ref copy, out _);
-        Assert.False(success);
+        Assert.False(normalizer.TryNormalize(ref copy, out _));
+        Assert.False(normalizer.TryNormalize(source.AsSpan(), buffer, out _, out _));
     }
 
     protected void TestNormalizePathPasses(string source, string expected)
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
+        Test_Normalize_Pass(normalizer, source, expected);
+        Test_Normalize_Pass_Span(normalizer, source, expected);
+    }
+
+    private void Test_Normalize_Pass_Span(IMegDataEntryPathNormalizer normalizer, string source, string expected)
+    {
+        var buffer = new char[source.Length];
+        var length = normalizer.Normalize(source.AsSpan(), buffer);
+        Assert.Equal(expected, buffer.AsSpan().Slice(0, length).ToString());
+
+        var success = normalizer.TryNormalize(source.AsSpan(), buffer, out length, out _);
+        Assert.True(success);
+        Assert.Equal(expected, buffer.AsSpan().Slice(0, length).ToString());
+    }
+
+    private void Test_Normalize_Pass(IMegDataEntryPathNormalizer normalizer, string source, string expected)
+    {
         var actual = normalizer.Normalize(source);
         Assert.Equal(expected, actual);
 

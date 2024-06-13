@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 using Xunit;
 
@@ -12,14 +13,16 @@ public class EmpireAtWarKeyValidatorTest
     [MemberData(nameof(ValidTestData))]
     public void TestValid(string key)
     {
-        Assert.True(_validator.Validate(key).IsValid);
+        Assert.True(_validator.Validate(key));
+        Assert.True(_validator.Validate(key.AsSpan()));
     }
 
     [Theory]
     [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(string key)
     {
-        Assert.False(_validator.Validate(key).IsValid);
+        Assert.False(_validator.Validate(key));
+        Assert.False(_validator.Validate(key.AsSpan()));
     }
 
     public static IEnumerable<object[]> ValidTestData()

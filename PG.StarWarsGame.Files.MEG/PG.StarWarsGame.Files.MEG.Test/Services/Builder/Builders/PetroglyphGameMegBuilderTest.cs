@@ -24,9 +24,9 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestSuite
 
     protected override void SetupServiceCollection(IServiceCollection serviceCollection)
     {
+        base.SetupServiceCollection(serviceCollection);
         serviceCollection.AddSingleton(EntryPathResolver.Object);
         serviceCollection.AddSingleton(sp => new PetroglyphDataEntryPathNormalizer(sp));
-        base.SetupServiceCollection(serviceCollection);
     }
 
     protected override MegBuilderBase CreateBuilder(IServiceProvider serviceProvider)
@@ -62,7 +62,8 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestSuite
     public void Test_ResolveEntryPath()
     {
         var builder = CreatePetroBuilder(BasePath, CreateServiceProvider());
-        EntryPathResolver.Setup(r => r.ResolvePath("somePath", builder.BaseDirectory)).Returns("someReturn");
+        EntryPathResolver.Setup(r => r.ResolvePath("somePath", builder.BaseDirectory))
+            .Returns("someReturn");
         Assert.Equal("someReturn", builder.ResolveEntryPath("somePath"));
     }
 }

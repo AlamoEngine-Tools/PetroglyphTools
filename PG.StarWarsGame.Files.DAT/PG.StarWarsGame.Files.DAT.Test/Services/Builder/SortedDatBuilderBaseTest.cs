@@ -1,8 +1,5 @@
 ﻿using System.Linq;
-using System.Text;
-using FluentValidation.Results;
 using Moq;
-using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using Xunit;
@@ -11,51 +8,46 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
 public class SortedDatBuilderBaseTest : DatBuilderBaseTest
 {
-    protected override Mock<DatBuilderBase> CreateBuilder()
+    protected override Mock<DatBuilderBase> CreateBuilder(BuilderOverrideKind overrideKind)
     {
-        var builder = new Mock<DatBuilderBase>(CreateServiceProvider());
+        var builder = new Mock<DatBuilderBase>(overrideKind, CreateServiceProvider());
         builder.SetupGet(b => b.TargetKeySortOrder).Returns(DatFileType.OrderedByCrc32);
-        builder.SetupGet(b => b.KeyValidator).Returns(KeyValidator.Object);
+        builder.SetupGet(b => b.KeyValidator).Returns(KeyValidator);
         return builder;
     }
 
-    [Fact]
-    public void Test_AddEntry_Sorted()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_AddEntry_Sorted(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
+        var builder = CreateBuilder(overrideKind);
 
-        HashingService.Setup(h => h.GetCrc32("key1", Encoding.ASCII)).Returns(new Crc32(1));
-        HashingService.Setup(h => h.GetCrc32("key2", Encoding.ASCII)).Returns(new Crc32(2));
-
-        var builder = CreateBuilder();
-
-        // Add 2 before 1
-        var result2 = builder.Object.AddEntry("key2", "value2");
-        var result1 = builder.Object.AddEntry("key1", "value1");
+        // Crc32 of 'key' < 'other'
+        var entry1 = builder.Object.AddEntry("other", "value2");
+        var entry2 = builder.Object.AddEntry("key", "value1");
 
 
-        Assert.True(result1.Added);
-        Assert.True(result2.Added);
+        Assert.True(entry1.Added);
+        Assert.True(entry2.Added);
 
         Assert.Equal(
             [
-                new("key1", new Crc32(1), "value1"),
-                new("key2", new Crc32(2), "value2")
+                "key", "other"
             ],
-            builder.Object.BuilderData.ToList());
+            builder.Object.BuilderData.Select(x => x.Key).ToList());
 
         Assert.Equal(
             [
-                new("key1", new Crc32(1), "value1"),
-                new("key2", new Crc32(2), "value2")
+                "key", "other"
             ],
-            builder.Object.SortedEntries.ToList());
+            builder.Object.SortedEntries.Select(x => x.Key).ToList());
 
         Assert.Equal(
             [
-                new("key2", new Crc32(2), "value2"),
-                new("key1", new Crc32(1), "value1")
+                "other", "key"
             ],
-            builder.Object.Entries.ToList());
+            builder.Object.Entries.Select(x => x.Key).ToList());
     }
 }

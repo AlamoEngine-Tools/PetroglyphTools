@@ -1,6 +1,4 @@
 using System;
-using FluentValidation;
-using FluentValidation.TestHelper;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
@@ -33,7 +31,7 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // true | true --> true
-        Assert.True(validator.TestValidate(info.Object).IsValid);
+        Assert.True(validator.Validate(info.Object));
     }
 
     [Fact]
@@ -52,7 +50,7 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // false | true --> false
-        Assert.False(validator.TestValidate(info.Object).IsValid);
+        Assert.False(validator.Validate(info.Object));
     }
 
     [Fact]
@@ -71,7 +69,7 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // true | false --> false
-        Assert.False(validator.TestValidate(info.Object).IsValid);
+        Assert.False(validator.Validate(info.Object));
     }
 
     [Fact]
@@ -90,26 +88,26 @@ public class MegBinaryValidatorTest
         var validator = new MegBinaryValidator(sp.Object);
 
         // false | false --> false
-        Assert.False(validator.TestValidate(info.Object).IsValid);
+        Assert.False(validator.Validate(info.Object));
     }
 
-    private class ValidSizeValidator : AbstractValidator<IMegBinaryValidationInformation>, IMegFileSizeValidator;
-
-    private class ValidFileTableValidator : AbstractValidator<IMegFileTable>, IFileTableValidator;
-
-    private class InvalidSizeValidator : AbstractValidator<IMegBinaryValidationInformation>, IMegFileSizeValidator
+    private class ValidSizeValidator : IMegFileSizeValidator
     {
-        public InvalidSizeValidator()
-        {
-            RuleFor(i => i).Must(_ => false);
-        }
+        public bool Validate(IMegBinaryValidationInformation info) => true;
     }
 
-    private class InvalidFileTableValidator : AbstractValidator<IMegFileTable>, IFileTableValidator
+    private class ValidFileTableValidator : IFileTableValidator
     {
-        public InvalidFileTableValidator()
-        {
-            RuleFor(i => i).Must(_ => false);
-        }
+        public bool Validate(IMegFileTable fileTable) => true;
+    }
+
+    private class InvalidSizeValidator : IMegFileSizeValidator
+    {
+        public bool Validate(IMegBinaryValidationInformation info) => false;
+    }
+
+    private class InvalidFileTableValidator : IFileTableValidator
+    {
+        public bool Validate(IMegFileTable fileTable) => false;
     }
 }

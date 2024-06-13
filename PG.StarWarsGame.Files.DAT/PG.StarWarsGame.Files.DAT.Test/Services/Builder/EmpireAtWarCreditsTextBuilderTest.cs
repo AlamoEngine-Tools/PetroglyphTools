@@ -48,5 +48,10 @@ public class EmpireAtWarCreditsTextBuilderTest
 
         result = builder.AddEntry("Corulag", "someValue");
         Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+
+        result = builder.AddEntry("Corulag", "someOtherValue");
+        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+
+        Assert.Equal(4, builder.BuilderData.Count);
     }
 }

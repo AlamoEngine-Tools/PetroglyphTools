@@ -18,9 +18,6 @@ public sealed class EmpireAtWarMasterTextBuilder : DatBuilderBase
     /// <remarks>An instance of this class always returns <see cref="DatFileType.OrderedByCrc32"/>.</remarks>
     public override DatFileType TargetKeySortOrder => DatFileType.OrderedByCrc32;
 
-    /// <inheritdoc/>
-    public override BuilderOverrideKind KeyOverwriteBehavior { get; }
-
     /// <inheritdoc />
     public override IDatKeyValidator KeyValidator { get; }
 
@@ -29,9 +26,9 @@ public sealed class EmpireAtWarMasterTextBuilder : DatBuilderBase
     /// </summary>
     /// <param name="overwriteDuplicates"></param>
     /// <param name="services">The service provider.</param>
-    public EmpireAtWarMasterTextBuilder(bool overwriteDuplicates, IServiceProvider services) : base(services)
+    public EmpireAtWarMasterTextBuilder(bool overwriteDuplicates, IServiceProvider services) 
+        : base(overwriteDuplicates ? BuilderOverrideKind.Overwrite : BuilderOverrideKind.NoOverwrite, services)
     {
-        KeyOverwriteBehavior = overwriteDuplicates ? BuilderOverrideKind.Overwrite : BuilderOverrideKind.NoOverwrite;
         KeyValidator = Services.GetRequiredService<EmpireAtWarKeyValidator>();
     }
 }

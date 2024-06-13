@@ -24,4 +24,14 @@ public class HashCodeCrc32HashingService : ICrc32HashingService
         var bytes = new byte[data.Length];
         return GetCrc32(bytes.AsSpan());
     }
+
+    public Crc32 GetCrc32(ReadOnlySpan<char> value, Encoding encoding)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Crc32 GetCrc32Upper(ReadOnlySpan<char> value, Encoding encoding)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -40,6 +40,10 @@ public class Crc32HashingService_IntegrationTest
         Assert.Equal((int)expectedChecksum, (int)crc);
         Assert.Equal((uint)expectedChecksum, (uint)crc);
 
+        crc = _crc32HashingService.GetCrc32(value.AsSpan(), Encoding.ASCII);
+        Assert.Equal((int)expectedChecksum, (int)crc);
+        Assert.Equal((uint)expectedChecksum, (uint)crc);
+
 
         var bytes = Encoding.ASCII.GetBytes(value);
         crc = _crc32HashingService.GetCrc32(new ReadOnlySpan<byte>(bytes));
@@ -52,11 +56,32 @@ public class Crc32HashingService_IntegrationTest
         Assert.Equal((uint)expectedChecksum, (uint)crc);
     }
 
+    [Theory]
+    [InlineData("", 0)]
+    [InlineData("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", 72402613)]
+    [InlineData("XML\\ABCDEF", 4133962033)]
+    [InlineData("a", 3554254475)]
+    [InlineData("abcdefghijklmnopqrstuvwxyz0123456789", 374730529)]
+
+    public void Test_GetCrc32Upper(string input, long expectedCrc)
+    {
+        var crc = _crc32HashingService.GetCrc32Upper(input.AsSpan(), Encoding.ASCII);
+        Assert.Equal((int)expectedCrc, (int)crc);
+        Assert.Equal((uint)expectedCrc, (uint)crc);
+    }
     [Fact]
     public void Test_GetChecksum_String_Encoding_Ambiguity()
     {
         var crc1 = _crc32HashingService.GetCrc32("Ä", Encoding.ASCII);
         var crc2 = _crc32HashingService.GetCrc32("ü", Encoding.ASCII);
+        Assert.Equal(crc1, crc2);
+
+        crc1 = _crc32HashingService.GetCrc32("Ä".AsSpan(), Encoding.ASCII);
+        crc2 = _crc32HashingService.GetCrc32("ü".AsSpan(), Encoding.ASCII);
+        Assert.Equal(crc1, crc2);
+
+        crc1 = _crc32HashingService.GetCrc32Upper("Ä".AsSpan(), Encoding.ASCII);
+        crc2 = _crc32HashingService.GetCrc32Upper("ü".AsSpan(), Encoding.ASCII);
         Assert.Equal(crc1, crc2);
     }
 
@@ -65,6 +90,14 @@ public class Crc32HashingService_IntegrationTest
     {
         var crc1 = _crc32HashingService.GetCrc32("Ä", Encoding.Unicode);
         var crc2 = _crc32HashingService.GetCrc32("ü", Encoding.Unicode);
+        Assert.NotEqual(crc1, crc2);
+
+        crc1 = _crc32HashingService.GetCrc32("Ä".AsSpan(), Encoding.Unicode);
+        crc2 = _crc32HashingService.GetCrc32("ü".AsSpan(), Encoding.Unicode);
+        Assert.NotEqual(crc1, crc2);
+
+        crc1 = _crc32HashingService.GetCrc32Upper("Ä".AsSpan(), Encoding.Unicode);
+        crc2 = _crc32HashingService.GetCrc32Upper("ü".AsSpan(), Encoding.Unicode);
         Assert.NotEqual(crc1, crc2);
     }
 }

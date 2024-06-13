@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
-using FluentValidation.Results;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using PG.Commons.Hashing;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
@@ -20,29 +19,33 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
 public abstract class DatBuilderBaseTest
 {
-    protected readonly Mock<IDatKeyValidator> KeyValidator = new();
     protected readonly MockFileSystem FileSystem = new();
     protected readonly Mock<IDatFileService> DatFileService = new();
-    protected readonly Mock<ICrc32HashingService> HashingService = new();
 
-    protected abstract Mock<DatBuilderBase> CreateBuilder();
+    protected readonly TestKeyValidator KeyValidator = new();
+
+    protected abstract Mock<DatBuilderBase> CreateBuilder(BuilderOverrideKind overrideKind);
     
     protected IServiceProvider CreateServiceProvider()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(FileSystem);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        sc.CollectPgServiceContributions();
+       
         sc.AddSingleton(_ => DatFileService.Object);
-        sc.AddSingleton(_ => KeyValidator.Object);
-        sc.AddSingleton(_ => HashingService.Object);
         return sc.BuildServiceProvider();
     }
 
-    [Fact]
-    public void Test_Ctor()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_Ctor(BuilderOverrideKind overrideKind)
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(FileSystem);
-        var builderMock = new Mock<DatBuilderBase>(CreateServiceProvider()) { CallBase = true };
+        var builderMock = new Mock<DatBuilderBase>(overrideKind, CreateServiceProvider()) { CallBase = true };
 
         var builder = builderMock.Object;
 
@@ -50,30 +53,31 @@ public abstract class DatBuilderBaseTest
         Assert.NotNull(builder.BuilderData);
         Assert.NotNull(builder.SortedEntries);
         Assert.NotNull(builder.Entries);
+        Assert.Equal(overrideKind, builder.KeyOverwriteBehavior);
     }
 
-    [Fact]
-    public void Test_IsKeyValid()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_IsKeyValid(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.SetupSequence(v => v.Validate("key"))
-            .Returns(new ValidationResult())
-            .Returns(new ValidationResult([new ValidationFailure("error", "error")]));
-        var builder = CreateBuilder();
+        var builder = CreateBuilder(overrideKind);
 
         Assert.Throws<ArgumentNullException>(() => builder.Object.IsKeyValid(null!));
         Assert.True(builder.Object.IsKeyValid("key"));
-        Assert.False(builder.Object.IsKeyValid("key"));
+        Assert.False(builder.Object.IsKeyValid("INVALID"));
     }
 
     #region Clear/Remove/Dispose
 
-    [Fact]
-    public void Test_Clear()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_Clear(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
-       
-        var builder = CreateBuilder();
-       
+        var builder = CreateBuilder(overrideKind);
 
         var entries = builder.Object.BuilderData;
         Assert.Empty(entries);
@@ -87,17 +91,16 @@ public abstract class DatBuilderBaseTest
         Assert.Empty(builder.Object.BuilderData);
     }
 
-    [Fact]
-    public void Test_Remove()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_Remove(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+        var builder = CreateBuilder(overrideKind);
 
-        var builder = CreateBuilder();
-        builder.SetupGet(b => b.KeyOverwriteBehavior).Returns(BuilderOverrideKind.AllowDuplicate);
-        
-        builder.Object.AddEntry("key", "value");
-        builder.Object.AddEntry("key1", "other");
+        var keyEntry = builder.Object.AddEntry("key", "value");
+        var key1Entry = builder.Object.AddEntry("key1", "other");
 
         Assert.Equal(2, builder.Object.BuilderData.Count);
 
@@ -106,24 +109,37 @@ public abstract class DatBuilderBaseTest
 
         Assert.Equal(2, builder.Object.BuilderData.Count);
 
-        Assert.True(builder.Object.Remove(new DatStringEntry("key1", new Crc32(0), "other")));
+        Assert.True(builder.Object.Remove(new DatStringEntry("key1", key1Entry.AddedEntry!.Value.Crc32, "other")));
 
         Assert.Equal([
-                new("key", new Crc32(0), "value")
-            ], 
+                new("key", keyEntry.AddedEntry!.Value.Crc32, "value")
+            ],
             builder.Object.BuilderData.ToList());
+
+        if (overrideKind == BuilderOverrideKind.AllowDuplicate)
+        {
+            builder.Object.AddEntry("key", "otherKeyValue2");
+            builder.Object.AddEntry("key", "otherKeyValue3");
+            Assert.Equal(3, builder.Object.BuilderData.Count);
+
+            Assert.True(builder.Object.Remove(new DatStringEntry("key", keyEntry.AddedEntry!.Value.Crc32, "otherKeyValue2")));
+
+            Assert.Equal(2, builder.Object.BuilderData.Count);
+        }
+
 
         Assert.True(builder.Object.RemoveAllKeys("key"));
 
         Assert.Empty(builder.Object.BuilderData);
     }
 
-    [Fact]
-    public void Test_Dispose_ThrowsOnAddingMethods()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_Dispose_ThrowsOnAddingMethods(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>())).Returns(new ValidationResult());
-
-        var builder = CreateBuilder();
+        var builder = CreateBuilder(overrideKind);
 
         builder.Object.Dispose();
 
@@ -143,27 +159,42 @@ public abstract class DatBuilderBaseTest
 
     #region AddEntry
 
-    [Fact]
-    public void Test_AddEntry_Throws()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_AddEntry_Throws(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
-
-        var builder = CreateBuilder();
+        var builder = CreateBuilder(overrideKind);
 
         Assert.Throws<ArgumentNullException>(() => builder.Object.AddEntry(null!, "value"));
         Assert.Throws<ArgumentNullException>(() => builder.Object.AddEntry("key", null!));
     }
 
-    [Fact]
-    public void Test_AddEntry()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_AddEntry_EmptyString(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
+        var builder = CreateBuilder(overrideKind);
 
-        var builder = CreateBuilder();
-        builder.SetupGet(b => b.KeyOverwriteBehavior)
-            .Returns(BuilderOverrideKind.NoOverwrite);
+        var result = builder.Object.AddEntry("", "value");
+
+        Assert.True(result.Added);
+        Assert.False(result.WasOverwrite);
+        Assert.Equal(AddEntryState.Added, result.Status);
+        Assert.Single(builder.Object.BuilderData);
+        Assert.Equal("value", builder.Object.BuilderData.First().Value);
+    }
+
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_AddEntry(BuilderOverrideKind overrideKind)
+    {
+        var builder = CreateBuilder(overrideKind);
 
         var result = builder.Object.AddEntry("key", "value");
 
@@ -177,57 +208,41 @@ public abstract class DatBuilderBaseTest
     [Fact]
     public void Test_AddEntry_DoNotAllowDuplicates()
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
-
-        var builder = CreateBuilder();
-        builder.SetupGet(b => b.KeyOverwriteBehavior)
-            .Returns(BuilderOverrideKind.NoOverwrite);
+        var builder = CreateBuilder(BuilderOverrideKind.NoOverwrite);
 
         builder.Object.AddEntry("key", "value");
         var result = builder.Object.AddEntry("key", "value1");
 
         Assert.False(result.Added);
         Assert.Equal(AddEntryState.NotAddedDuplicate, result.Status);
-        Assert.Single( builder.Object.BuilderData);
+        Assert.Single(builder.Object.BuilderData);
         Assert.Equal("value", builder.Object.BuilderData.First().Value);
     }
 
     [Fact]
     public void Test_AddEntry_OverwriteDuplicates()
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
-
-        var builder = CreateBuilder();
-        builder.SetupGet(b => b.KeyOverwriteBehavior)
-            .Returns(BuilderOverrideKind.Overwrite);
+        var builder = CreateBuilder(BuilderOverrideKind.Overwrite);
 
         builder.Object.AddEntry("key", "value");
+        builder.Object.AddEntry("1", "distract");
         var result = builder.Object.AddEntry("key", "value1");
 
         Assert.True(result.Added);
         Assert.True(result.WasOverwrite);
-        Assert.NotNull(result.OverwrittenEntry);
+        Assert.Equal("value", result.OverwrittenEntry.Value.Value);
         Assert.Equal(AddEntryState.AddedDuplicate, result.Status);
-        Assert.Single(builder.Object.BuilderData);
-        Assert.Equal("value1", builder.Object.BuilderData.First().Value);
+        Assert.Equal(2, builder.Object.BuilderData.Count);
+        Assert.Equal("value1", builder.Object.BuilderData.First(x => x.Crc32 == result.AddedEntry.Value.Crc32).Value);
     }
 
     [Fact]
     public void Test_AddEntry_AllowDuplicates()
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
-        HashingService.Setup(h => h.GetCrc32("key", Encoding.ASCII)).Returns(new Crc32(1));
-        HashingService.Setup(h => h.GetCrc32("key1", Encoding.ASCII)).Returns(new Crc32(2));
-
-        var builder = CreateBuilder();
-        builder.SetupGet(b => b.KeyOverwriteBehavior)
-            .Returns(BuilderOverrideKind.AllowDuplicate);
+        var builder = CreateBuilder(BuilderOverrideKind.AllowDuplicate);
 
         builder.Object.AddEntry("key", "value");
-        builder.Object.AddEntry("key1", "other");
+        builder.Object.AddEntry("other", "other");
         var result = builder.Object.AddEntry("key", "value1");
 
         Assert.True(result.Added);
@@ -240,13 +255,13 @@ public abstract class DatBuilderBaseTest
         Assert.Equal("value1", builder.Object.BuilderData.Last(e => e.Key == "key").Value);
     }
 
-    [Fact]
-    public void Test_AddEntry_PerformsEncoding()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_AddEntry_PerformsEncoding(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate("key???"))
-            .Returns(new ValidationResult()); 
-
-        var builder = CreateBuilder();
+        var builder = CreateBuilder(overrideKind);
 
         var result = builder.Object.AddEntry("keyÖÄÜ", "value");
 
@@ -257,17 +272,15 @@ public abstract class DatBuilderBaseTest
     }
 
 
-    [Fact]
-    public void Test_AddEntry_InvalidKey()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_AddEntry_InvalidKey(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("error", "error") }));
+        var builder = CreateBuilder(overrideKind);
 
-        HashingService.Setup(h => h.GetCrc32("key", Encoding.ASCII)).Returns(new Crc32(2));
-
-        var builder = CreateBuilder();
-
-        var result = builder.Object.AddEntry("key", "value");
+        var result = builder.Object.AddEntry("INVALID", "value");
 
         Assert.False(result.Added);
         Assert.Equal(AddEntryState.InvalidKey, result.Status);
@@ -275,13 +288,13 @@ public abstract class DatBuilderBaseTest
 
     #endregion
 
-    [Fact]
-    public void Test_BuildModel()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_BuildModel(BuilderOverrideKind overrideKind)
     {
-        KeyValidator.Setup(v => v.Validate(It.IsAny<string>()))
-            .Returns(new ValidationResult());
-
-        var builder = CreateBuilder();
+        var builder = CreateBuilder(overrideKind);
 
         builder.Object.AddEntry("key1", "value");
         builder.Object.AddEntry("key2", "value");
@@ -293,10 +306,13 @@ public abstract class DatBuilderBaseTest
         Assert.Equal(["key1", "key2", "key3"], model.Keys);
     }
 
-    [Fact]
-    public void Test_Build()
+    [Theory]
+    [InlineData(BuilderOverrideKind.NoOverwrite)]
+    [InlineData(BuilderOverrideKind.Overwrite)]
+    [InlineData(BuilderOverrideKind.AllowDuplicate)]
+    public void Test_Build(BuilderOverrideKind overrideKind)
     {
-        var builder = CreateBuilder();
+        var builder = CreateBuilder(overrideKind);
 
         DatFileService.Setup(s => s.CreateDatFile(It.IsAny<FileSystemStream>(), It.IsAny<IEnumerable<DatStringEntry>>(),
             builder.Object.TargetKeySortOrder))
@@ -313,5 +329,20 @@ public abstract class DatBuilderBaseTest
         }, false);
 
         Assert.Equal([1,2,3], FileSystem.File.ReadAllBytes("test.dat"));
+    }
+
+    protected class TestKeyValidator : IDatKeyValidator
+    {
+        public bool Validate(string key)
+        {
+            return Validate(key.AsSpan());
+        }
+
+        public bool Validate(ReadOnlySpan<char> key)
+        {
+            if (key.Equals("INVALID".AsSpan(), StringComparison.Ordinal))
+                return false;
+            return true;
+        }
     }
 }

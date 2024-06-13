@@ -40,7 +40,6 @@ public abstract class FileBuilderBase<TData, TFileInformation> : ServiceBase, IF
         // Prevent races by creating getting a copy of the current state
         var data = BuilderData;
 
-
         if (!ValidateFileInformationCore(fileInformation, data, out var reason))
             throw new InvalidOperationException($"Provided file parameters are not valid for this builder: {reason}");
 

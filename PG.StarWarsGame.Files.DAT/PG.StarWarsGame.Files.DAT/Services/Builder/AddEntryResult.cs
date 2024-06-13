@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using PG.StarWarsGame.Files.DAT.Data;
 
@@ -65,12 +66,12 @@ public readonly struct AddEntryResult
         return sb.ToString();
     }
 
-    internal static AddEntryResult EntryNotAdded(AddEntryState status, string? reason)
+    internal static AddEntryResult NotAdded(AddEntryState status, string? reason)
     {
         return new AddEntryResult(status, null, null, reason);
     }
 
-    internal static AddEntryResult FromDuplicate(DatStringEntry duplicateEntry)
+    internal static AddEntryResult NotAddedDuplicate(DatStringEntry duplicateEntry)
     {
         return new AddEntryResult(AddEntryState.NotAddedDuplicate, null, null,
             $"An entry of the same key '{duplicateEntry.Key}' already exists.");
@@ -84,8 +85,19 @@ public readonly struct AddEntryResult
 
     internal static AddEntryResult EntryAdded(DatStringEntry addedEntry, DatStringEntry oldEntry)
     {
-        DatStringEntry? overwrittenEntry = oldEntry.Equals(default) ? null : oldEntry;
+        DatStringEntry? overwrittenEntry = IsEntryDefault(in oldEntry) ? null : oldEntry;
         return new AddEntryResult(overwrittenEntry is null ? AddEntryState.Added : AddEntryState.AddedDuplicate,
             addedEntry, overwrittenEntry, null);
+    }
+
+    // Using ref here, cause DatStringEntry is 32 byte large and
+    // a ref is only IntPtr.Size (which is smaller than 32 byte on 32/64bit systems).
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsEntryDefault(in DatStringEntry entry)
+    {
+        // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (entry.Crc32 == default && entry.Value is null && entry.Key is null)
+            return true;
+        return false;
     }
 }

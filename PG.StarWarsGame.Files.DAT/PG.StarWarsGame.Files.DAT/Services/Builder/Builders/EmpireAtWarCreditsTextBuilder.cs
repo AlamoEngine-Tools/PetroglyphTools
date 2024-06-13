@@ -18,10 +18,6 @@ public sealed class EmpireAtWarCreditsTextBuilder : DatBuilderBase
     /// <remarks>An instance of this class always returns <see cref="DatFileType.NotOrdered"/>.</remarks>
     public override DatFileType TargetKeySortOrder => DatFileType.NotOrdered;
 
-    /// <inheritdoc/>
-    /// <remarks>An instance of this class always returns <see cref="BuilderOverrideKind.AllowDuplicate"/>.</remarks>
-    public override BuilderOverrideKind KeyOverwriteBehavior => BuilderOverrideKind.AllowDuplicate;
-
     /// <inheritdoc />
     public override IDatKeyValidator KeyValidator { get; }
 
@@ -29,7 +25,7 @@ public sealed class EmpireAtWarCreditsTextBuilder : DatBuilderBase
     /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextBuilder"/> class.
     /// </summary>
     /// <param name="services">The service provider.</param>
-    public EmpireAtWarCreditsTextBuilder(IServiceProvider services) : base(services)
+    public EmpireAtWarCreditsTextBuilder(IServiceProvider services) : base(BuilderOverrideKind.AllowDuplicate ,services)
     {
         KeyValidator = Services.GetRequiredService<EmpireAtWarKeyValidator>();
     }

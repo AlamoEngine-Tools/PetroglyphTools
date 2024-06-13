@@ -58,15 +58,15 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// Adds a local file as a data entry to the <see cref="IMegBuilder"/> and returns a status information to indicate whether the entry was successfully added. 
     /// </summary>
     /// <remarks>
-    /// The actual data entry's file path might be different to <paramref name="filePathInMeg"/> due to optional normalization and mandatory encoding.
+    /// The actual data entry's file path might be different to <paramref name="entryPath"/> due to optional normalization and mandatory encoding.
     /// </remarks>
     /// <param name="filePath">The local path to the file which get added as an data entry.</param>
-    /// <param name="filePathInMeg">The desired file path of the data entry inside the MEG archive.</param>
+    /// <param name="entryPath">The desired file path of the data entry inside the MEG archive.</param>
     /// <param name="encrypt">Indicates whether the data entry shall be encrypted.</param>
     /// <returns>The result of this operation.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="filePathInMeg"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="filePathInMeg"/> is empty.</exception>
-    AddDataEntryToBuilderResult AddFile(string filePath, string filePathInMeg, bool encrypt = false);
+    /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="entryPath"/> is empty.</exception>
+    AddDataEntryToBuilderResult AddFile(string filePath, string entryPath, bool encrypt = false);
 
     /// <summary>
     /// Adds an existing data entry to the <see cref="IMegBuilder"/> and returns a status information to indicate whether the entry was successfully added. 

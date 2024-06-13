@@ -1,4 +1,7 @@
-﻿using PG.Commons.DataTypes;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using PG.Commons.DataTypes;
 using System;
 using System.Collections.Generic;
 using PG.Commons.Hashing;

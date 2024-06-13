@@ -52,5 +52,17 @@ public class EmpireAtWarMasterTextBuilderTest
 
         result = builder.AddEntry("Corulag", "someValue");
         Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+
+        var dupResult = builder.AddEntry("Corulag", "someOtherValue");
+        if (overwrite)
+        {
+            Assert.True(dupResult.Added);
+            Assert.Equal("someOtherValue", dupResult.AddedEntry.Value.Value);
+            Assert.Equal("someValue", dupResult.OverwrittenEntry!.Value.Value);
+        }
+        else
+        {
+            Assert.False(dupResult.Added);
+        }
     }
 }

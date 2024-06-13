@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using FluentValidation.Results;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-
 using Moq;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -23,12 +23,10 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-
 public class MegBuilderBaseTest
 {
-    private readonly Mock<IBuilderInfoValidator> _entryValidator = new();
+    private TestBuilderInfoValidator _entryValidator = null!;
     private readonly Mock<IMegFileInformationValidator> _infoValidator = new();
-    private readonly Mock<IMegDataEntryPathNormalizer> _normalizer = new();
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IMegFileService> _megFileService = new();
 
@@ -39,6 +37,8 @@ public class MegBuilderBaseTest
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        sc.CollectPgServiceContributions();
         var builderMock = new Mock<MegBuilderBase>(sc.BuildServiceProvider()) { CallBase = true };
 
         var builder = builderMock.Object;
@@ -57,7 +57,8 @@ public class MegBuilderBaseTest
     [InlineData(false, false, false)]
     public void Test_Ctor_ConcreteInstance(bool overwrite, bool addFileSize, bool useNormalizer)
     {
-        var builder = CreateBuilder(overwrite, addFileSize, useNormalizer);
+        Func<string, string>? normalizeFunc = useNormalizer ? s => s : null;
+        var builder = CreateBuilder(overwrite, addFileSize, normalizeFunc);
         if (useNormalizer)
         {
             Assert.True(builder.NormalizesEntryPaths);
@@ -82,7 +83,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_AddFile_FileDoesNotExists()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var result = builder.AddFile("file.txt", "path/file.txt");
 
@@ -93,7 +94,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_GetDataEntries()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var entries = builder.DataEntries;
         Assert.Empty(entries);
@@ -117,7 +118,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_Clear()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var entries = builder.DataEntries;
         Assert.Empty(entries);
@@ -136,7 +137,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_Remove()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var entries = builder.DataEntries;
         Assert.Empty(entries);
@@ -157,7 +158,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_Dispose_ThrowsOnAddingOrBuildingMethods()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var entries = builder.DataEntries;
         Assert.Empty(entries);
@@ -196,7 +197,7 @@ public class MegBuilderBaseTest
 
         _fileSystem.Initialize().WithFile(fileToAdd);
 
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var fileInfo = new MegFileInformation("path", MegFileVersion.V2);
 
@@ -206,7 +207,7 @@ public class MegBuilderBaseTest
                 Assert.Same(fileInfo, data.FileInformation);
                 Assert.Single(data.DataEntries);
             })
-            .Returns(new ValidationResult());
+            .Returns(MegFileInfoValidationResult.Valid);
 
         
         builder.AddFile(fileToAdd, inputEntryPath);
@@ -229,7 +230,7 @@ public class MegBuilderBaseTest
 
         _fileSystem.Initialize().WithFile(fileToAdd);
 
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         Assert.Throws<ArgumentNullException>(() => builder.AddFile(fileToAdd, null!));
         Assert.Throws<ArgumentNullException>(() => builder.AddFile(null!, inputEntryPath));
@@ -245,7 +246,7 @@ public class MegBuilderBaseTest
 
         _fileSystem.Initialize().WithFile(fileToAdd);
 
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var result = builder.AddFile(fileToAdd, inputEntryPath, true);
 
@@ -260,8 +261,6 @@ public class MegBuilderBaseTest
         Assert.True(entry.Encrypted);
         Assert.Null(entry.Size);
         Assert.Equal(_fileSystem.Path.GetFullPath(fileToAdd), entry.OriginInfo.FilePath);
-
-        _entryValidator.Verify(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()), Times.Once);
     }
 
     delegate void NormalizerCallBack(ref string path, out string? message);
@@ -269,68 +268,49 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_AddFile_Normalizer()
     {
-        const string fileToAdd = "file.txt";
-        const bool normalizerResult = true;
+        const string fileToAdd = "file.txt"; 
         const string normalizedPath = "NORMALIZED";
 
         var inputEntryPath = "path/file.txt";
 
         _fileSystem.Initialize().WithFile(fileToAdd);
 
-        string? normalizerMessage = null;
+        var builder = CreateBuilder(false, false, input =>
+        {
+            Assert.Equal(inputEntryPath, input);
+            return normalizedPath;
 
-        var builder = CreateBuilder(false, false, true);
-
-        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
-            .Callback(new NormalizerCallBack((ref string path, out string? message) =>
-            {
-                message = null;
-
-                Assert.Equal(inputEntryPath, path);
-                path = normalizedPath;
-            })).Returns(normalizerResult);
+        });
 
         var result = builder.AddFile(fileToAdd, inputEntryPath);
 
         Assert.True(result.Added);
         Assert.Equal(normalizedPath, result.AddedBuilderInfo.FilePath);
-
-        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
     }
 
     [Fact]
     public void Test_AddFile_Normalizer_Fails()
     {
         const string fileToAdd = "file.txt";
-        const bool normalizerResult = false;
-        const string normalizedPath = "NORMALIZED";
 
         var inputEntryPath = "path/file.txt";
 
         _fileSystem.Initialize().WithFile(fileToAdd);
 
-        string? normalizerMessage = null;
-
-        var builder = CreateBuilder(false, false, true);
-
-        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
-            .Callback(new NormalizerCallBack((ref string path, out string? message) =>
-            {
-                message = null;
-                Assert.Equal(inputEntryPath, path);
-                path = normalizedPath;
-            })).Returns(normalizerResult);
+        var builder = CreateBuilder(false, false, input =>
+        {
+            Assert.Equal(inputEntryPath, input);
+            throw new Exception();
+        });
 
         var result = builder.AddFile(fileToAdd, inputEntryPath);
 
-        Assert.Equal(AddDataEntryToBuilderState.FailedNormalization,result.Status);
+        Assert.Equal(AddDataEntryToBuilderState.FailedNormalization, result.Status);
         Assert.Null(result.AddedBuilderInfo);
-
-        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
     }
 
     [Fact]
-    public void Test_AddFile_AssureEncoding()
+    public void Test_AddFile_AssureEncoding_WithNormalization()
     {
         const string fileToAdd = "file.txt";
         const string expectedEncodedEntry = "path/fileWithNonAscii?.txt";
@@ -339,23 +319,47 @@ public class MegBuilderBaseTest
 
         _fileSystem.Initialize().WithFile(fileToAdd);
 
-        string? normalizerMessage = null;
-
-        var builder = CreateBuilder(false, false, true);
-
-        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
-            .Callback(new NormalizerCallBack((ref string path, out string? message) =>
-            {
-                message = null;
-                // Assure that normalization is happening before encoding
-                Assert.Equal(inputEntryPath, path);
-            })).Returns(true);
+        // Make sure the normalizer triggers
+        var builder = CreateBuilder(false, false, input => input);
 
         var result = builder.AddFile(fileToAdd, inputEntryPath);
         Assert.True(result.Added);
         Assert.Equal(expectedEncodedEntry, result.AddedBuilderInfo.FilePath);
+    }
 
-        _normalizer.Verify(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage), Times.Once);
+    [Fact]
+    public void Test_AddFile_AssureEncoding_WithoutNormalization()
+    {
+        const string fileToAdd = "file.txt";
+        const string expectedEncodedEntry = "path/fileWithNonAscii?.txt";
+
+        var inputEntryPath = "path/fileWithNonAsciiÖ.txt";
+
+        _fileSystem.Initialize().WithFile(fileToAdd);
+
+        var builder = CreateBuilder(false, false, null);
+
+        var result = builder.AddFile(fileToAdd, inputEntryPath);
+        Assert.True(result.Added);
+        Assert.Equal(expectedEncodedEntry, result.AddedBuilderInfo.FilePath);
+    }
+
+    [Fact]
+    public void Test_AddFile_LongStringHandling()
+    {
+        const string fileToAdd = "file.txt";
+
+        var firstPart = new string('a', 150);
+        var secondPart = new string('ö', 150);
+
+        _fileSystem.Initialize().WithFile(fileToAdd);
+
+        // Make sure the normalizer triggers
+        var builder = CreateBuilder(false, false, input => input.Replace('a', 'b'));
+
+        var result = builder.AddFile(fileToAdd, firstPart + secondPart);
+        Assert.True(result.Added);
+        Assert.Equal(new string('b', 150) + new string('?', 150), result.AddedBuilderInfo.FilePath);
     }
 
     [Fact]
@@ -368,7 +372,7 @@ public class MegBuilderBaseTest
         _fileSystem.Initialize().WithFile(fileToAdd);
         _fileSystem.Initialize().WithFile(otherFileToAdd);
 
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         builder.AddFile(fileToAdd, inputEntryPath);
 
@@ -395,7 +399,7 @@ public class MegBuilderBaseTest
         _fileSystem.Initialize().WithFile(file);
         _fileSystem.Initialize().WithFile(otherFile);
 
-        var builder = CreateBuilder(true, false, false);
+        var builder = CreateBuilder(true, false, null);
 
         builder.AddFile(file, inputEntryPath);
 
@@ -423,22 +427,14 @@ public class MegBuilderBaseTest
 
         _fileSystem.Initialize().WithFile(fileToAdd);
 
-        var builder = CreateBuilder(false, false, false);
-
-        _entryValidator.Setup(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()))
-            .Callback((MegFileDataEntryBuilderInfo builderInfo) =>
-            {
-                // Assert that the validator already has the encoded (and thus normalized) path.
-                Assert.Equal(expectedEncodedEntry, builderInfo.FilePath);
-            })
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("someError", "some error") }));
+        var builder = CreateBuilder(false, false, null, false);
 
         var result = builder.AddFile(fileToAdd, inputEntryPath);
 
         Assert.Equal(AddDataEntryToBuilderState.InvalidEntry, result.Status);
         Assert.Empty(builder.DataEntries);
 
-        _entryValidator.Verify(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()), Times.Once);
+        Assert.Equal(expectedEncodedEntry, _entryValidator.Path);
     }
 
     [Fact]
@@ -449,7 +445,7 @@ public class MegBuilderBaseTest
 
         _fileSystem.Initialize().WithFile(fileToAdd).Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
 
-        var builder = CreateBuilder(false, true, false);
+        var builder = CreateBuilder(false, true, null);
 
         var result = builder.AddFile(fileToAdd, inputEntryPath, true);
 
@@ -457,8 +453,6 @@ public class MegBuilderBaseTest
         Assert.Equal(5u, result.AddedBuilderInfo.Size);
 
         Assert.Single(builder.DataEntries);
-
-        _entryValidator.Verify(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()), Times.Once);
     }
 
     [Fact]
@@ -467,13 +461,14 @@ public class MegBuilderBaseTest
         var fs = new Mock<IFileSystem>();
 
         var sc = new ServiceCollection();
+        sc.CollectPgServiceContributions();
         sc.AddSingleton(_ => fs.Object);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
         sc.AddSingleton(_ => _megFileService.Object);
         sc.AddSingleton(_ => _infoValidator.Object);
 
         // Default Validator always passes
-        _entryValidator.Setup(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()))
-            .Returns(new ValidationResult());
+        _entryValidator = new TestBuilderInfoValidator(true);
 
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
@@ -485,7 +480,7 @@ public class MegBuilderBaseTest
         fif.Setup(x => x.New(fileToAdd)).Returns(fi.Object);
         fs.Setup(x => x.FileInfo).Returns(fif.Object);
 
-        var builder = new TestingMegBuilder(false, true, _normalizer.Object, _entryValidator.Object,
+        var builder = new TestingMegBuilder(false, true, _entryValidator,
             _infoValidator.Object, sc.BuildServiceProvider());
 
         var result = builder.AddFile(fileToAdd, inputEntryPath, true);
@@ -501,7 +496,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_AddEntry_Throws()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         Assert.Throws<ArgumentNullException>(() => builder.AddEntry(null!, "path"));
         Assert.Throws<ArgumentException>(() =>
@@ -511,7 +506,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_AddEntry_EntryNotFound()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var entry = MegDataEntryTest.CreateEntry("file.txt");
 
@@ -528,7 +523,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_AddEntry()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var entry = MegDataEntryTest.CreateEntry("file.txt");
 
@@ -552,7 +547,7 @@ public class MegBuilderBaseTest
     [Fact]
     public void Test_AddEntry_OverrideProperties()
     {
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var entry = MegDataEntryTest.CreateEntry("file.txt", default, default, false, null);
 
@@ -579,12 +574,9 @@ public class MegBuilderBaseTest
     [InlineData("file.txt", "new.txt")]
     public void Test_AddEntry_Normalizer(string orgPath, string? overridePath)
     {
-        const bool normalizerResult = true;
-        const string normalizedPath = "NORMALIZED";
+        const string normalizedPath = "norm";
 
         var inputEntryPath = overridePath ?? orgPath;
-
-        string? normalizerMessage = null;
 
         var entry = MegDataEntryTest.CreateEntry(orgPath, default, default, false, null);
         var archive = new MegArchive(new List<MegDataEntry>
@@ -595,23 +587,16 @@ public class MegBuilderBaseTest
         meg.SetupGet(m => m.Archive).Returns(archive);
 
 
-        var builder = CreateBuilder(false, false, true);
-
-        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
-            .Callback(new NormalizerCallBack((ref string path, out string? message) =>
-            {
-                message = null;
-
-                Assert.Equal(inputEntryPath, path);
-                path = normalizedPath;
-            })).Returns(normalizerResult);
+        var builder = CreateBuilder(false, false, input =>
+        {
+            Assert.Equal(inputEntryPath, input);
+            return normalizedPath;
+        });
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry), overridePath);
 
         Assert.True(result.Added);
         Assert.Equal(normalizedPath, result.AddedBuilderInfo.FilePath);
-
-        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
     }
 
     [Theory]
@@ -619,12 +604,7 @@ public class MegBuilderBaseTest
     [InlineData("file.txt", "new.txt")]
     public void Test_AddEntry_Normalizer_Fails(string orgPath, string? overridePath)
     {
-        const bool normalizerResult = false;
-        const string normalizedPath = "NORMALIZED";
-
         var inputEntryPath = overridePath ?? orgPath;
-
-        string? normalizerMessage = null;
 
         var entry = MegDataEntryTest.CreateEntry(orgPath, default, default, false, null);
         var archive = new MegArchive(new List<MegDataEntry>
@@ -634,22 +614,40 @@ public class MegBuilderBaseTest
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.Archive).Returns(archive);
 
-        var builder = CreateBuilder(false, false, true);
-
-        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
-            .Callback(new NormalizerCallBack((ref string path, out string? message) =>
-            {
-                message = null;
-                Assert.Equal(inputEntryPath, path);
-                path = normalizedPath;
-            })).Returns(normalizerResult);
+        var builder = CreateBuilder(false, false, input =>
+        {
+            Assert.Equal(inputEntryPath, input);
+            throw new Exception();
+        });
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry), overridePath);
 
         Assert.Equal(AddDataEntryToBuilderState.FailedNormalization, result.Status);
         Assert.Null(result.AddedBuilderInfo);
+    }
 
-        _normalizer.Verify(n => n.TryNormalize(ref It.Ref<string>.IsAny, out normalizerMessage), Times.Once);
+    [Fact]
+    public void Test_AddEntry_Normalizer_LongerThanOriginal_Throws()
+    {
+        const string input = "entry.txt";
+
+        var entry = MegDataEntryTest.CreateEntry(input, default, default, false, null);
+        var archive = new MegArchive(new List<MegDataEntry>
+        {
+            entry
+        });
+        var meg = new Mock<IMegFile>();
+        meg.SetupGet(m => m.Archive).Returns(archive);
+
+
+        var builder = CreateBuilder(false, false, i =>
+        {
+            Assert.Equal(input, i);
+            return input + "a";
+        });
+
+        Assert.Throws<InvalidOperationException>(() =>
+            builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry)));
     }
 
     [Fact]
@@ -659,10 +657,6 @@ public class MegBuilderBaseTest
         const string overridePath = "newÄ.txt";
         const string expectedEntryPath = "new?.txt";
 
-        var inputEntryPath = overridePath;
-
-        string? normalizerMessage = null;
-
         var entry = MegDataEntryTest.CreateEntry(entryPath, default, default, false, null);
         var archive = new MegArchive(new List<MegDataEntry>
         {
@@ -671,21 +665,12 @@ public class MegBuilderBaseTest
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.Archive).Returns(archive);
 
-        var builder = CreateBuilder(false, false, true);
-
-        _normalizer.Setup(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage))
-            .Callback(new NormalizerCallBack((ref string path, out string? message) =>
-            {
-                message = null;
-                // Assure that normalization is happening before encoding
-                Assert.Equal(inputEntryPath, path);
-            })).Returns(true);
+        // Make sure the normalizer triggers
+        var builder = CreateBuilder(false, false, input => input);
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry), overridePath);
         Assert.True(result.Added);
         Assert.Equal(expectedEntryPath, result.AddedBuilderInfo.FilePath);
-
-        _normalizer.Verify(n => n.TryNormalize(ref inputEntryPath, out normalizerMessage), Times.Once);
     }
 
     [Theory]
@@ -705,7 +690,7 @@ public class MegBuilderBaseTest
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.Archive).Returns(archive);
 
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         // Use AddFile here to assert that AddFile and AddEntry work when combined.
         builder.AddFile(fileToAdd, overridePath ?? entryPath);
@@ -739,7 +724,7 @@ public class MegBuilderBaseTest
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.Archive).Returns(archive);
 
-        var builder = CreateBuilder(true, false, false);
+        var builder = CreateBuilder(true, false, null);
 
         // Use AddFile here to assert that AddFile and AddEntry work when combined.
         builder.AddFile(file, inputEntryPath);
@@ -773,22 +758,15 @@ public class MegBuilderBaseTest
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.Archive).Returns(archive);
 
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null, false);
 
-        _entryValidator.Setup(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()))
-            .Callback((MegFileDataEntryBuilderInfo builderInfo) =>
-            {
-                // Assert that the validator already has the encoded (and thus normalized) path.
-                Assert.Equal(expectedEncodedEntry, builderInfo.FilePath);
-            })
-            .Returns(new ValidationResult(new List<ValidationFailure> { new("someError", "some error") }));
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry), overridePath);
 
         Assert.Equal(AddDataEntryToBuilderState.InvalidEntry, result.Status);
         Assert.Empty(builder.DataEntries);
 
-        _entryValidator.Verify(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()), Times.Once);
+        Assert.Equal(expectedEncodedEntry, _entryValidator.Path);
     }
 
     #endregion
@@ -806,7 +784,7 @@ public class MegBuilderBaseTest
     {
         var fileInfo = new MegFileInformation("path/a.meg", MegFileVersion.V1);
 
-        var builder = CreateBuilder(false, false, false);
+        var builder = CreateBuilder(false, false, null);
 
         var expectedData = new byte[] { 1, 2, 3 };
 
@@ -825,25 +803,27 @@ public class MegBuilderBaseTest
 
     #endregion
 
-    private MegBuilderBase CreateBuilder(bool overwrite, bool addFileSize, bool useNormalizer)
+    private MegBuilderBase CreateBuilder(bool overwrite, bool addFileSize, Func<string, string>? normalizerAction, bool validationResult = true)
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        sc.CollectPgServiceContributions();
         sc.AddSingleton(_ => _megFileService.Object);
 
-        // Default Validator always passes
-        _entryValidator.Setup(v => v.Validate(It.IsAny<MegFileDataEntryBuilderInfo>()))
-            .Returns(new ValidationResult());
+        _entryValidator = new TestBuilderInfoValidator(validationResult);
+
+        if (normalizerAction is not null)
+            sc.AddSingleton<TestEntryNormalizer>(sp => new TestEntryNormalizer(normalizerAction, sp));
 
         // Default Validator always passes
         _infoValidator.Setup(v => v.Validate(It.IsAny<MegBuilderFileInformationValidationData>()))
-            .Returns(new ValidationResult());
+            .Returns(MegFileInfoValidationResult.Valid);
 
         return new TestingMegBuilder(
             overwrite,
             addFileSize,
-            useNormalizer ? _normalizer.Object : null,
-            _entryValidator.Object,
+            _entryValidator,
             _infoValidator.Object,
             sc.BuildServiceProvider());
     }
@@ -851,8 +831,7 @@ public class MegBuilderBaseTest
     private class TestingMegBuilder(
         bool overwrite,
         bool addFileSize,
-        IMegDataEntryPathNormalizer? normalizer,
-        IBuilderInfoValidator entryValidator,
+        TestBuilderInfoValidator entryValidator,
         IMegFileInformationValidator megFileInformationValidator,
         IServiceProvider services)
         : MegBuilderBase(services)
@@ -861,10 +840,43 @@ public class MegBuilderBaseTest
 
         public override bool AutomaticallyAddFileSizes { get; } = addFileSize;
 
-        public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer { get; } = normalizer;
+        public override IMegDataEntryPathNormalizer? DataEntryPathNormalizer => TestNormalizer;
+
+        public TestEntryNormalizer? TestNormalizer { get; } = services.GetService<TestEntryNormalizer>();
+
 
         public override IBuilderInfoValidator DataEntryValidator { get; } = entryValidator;
 
         public override IMegFileInformationValidator MegFileInformationValidator { get; } = megFileInformationValidator;
+    }
+
+    private class TestBuilderInfoValidator(bool validationResult) : IBuilderInfoValidator
+    {
+        public string Path { get; private set; }
+        public bool Encrypted { get; private set; }
+        public uint? Size { get; private set; }
+
+        public bool Validate(MegFileDataEntryBuilderInfo builderInfo)
+        {
+            return Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size);
+        }
+
+        public bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
+        {
+            Path = entryPath.ToString();
+            Encrypted = encrypted;
+            Size = size;
+            return validationResult;
+        }
+    }
+
+    private class TestEntryNormalizer(Func<string, string> normalizeAction, IServiceProvider serviceProvider) : MegDataEntryPathNormalizerBase(serviceProvider)
+    { 
+        public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+        {
+            var result = normalizeAction(filePath.ToString()).AsSpan();
+            result.CopyTo(destination);
+            return result.Length;
+        }
     }
 }

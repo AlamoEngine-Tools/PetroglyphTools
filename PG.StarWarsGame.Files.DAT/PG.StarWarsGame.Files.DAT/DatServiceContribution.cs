@@ -1,3 +1,6 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Attributes;
 using PG.Commons.Extensibility;
@@ -19,6 +22,6 @@ public class DatServiceContribution : IServiceContribution
             .AddSingleton<IDatModelService>(sp => new DatModelService(sp))
             .AddTransient<IDatFileReader>(sp => new DatFileReader(sp))
             .AddTransient<IDatBinaryConverter>(sp => new DatBinaryConverter(sp))
-            .AddSingleton(sp => new EmpireAtWarKeyValidator());
+            .AddSingleton(_ => new EmpireAtWarKeyValidator());
     }
 }

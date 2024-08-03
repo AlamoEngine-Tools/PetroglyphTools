@@ -4,3 +4,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("PG.StarWarsGame.Files.DAT.Test")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

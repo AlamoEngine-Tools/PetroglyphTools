@@ -1,24 +1,21 @@
 using System;
-using FluentValidation.TestHelper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
 
-[TestClass]
 public class MegFileSizeValidatorTest
 {
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
+    [Fact]
     public void Test__Validate_Null()
     {
         var validator = new MegFileSizeValidator();
-        validator.TestValidate((IMegBinaryValidationInformation)null!);
+        Assert.Throws<ArgumentNullException>(() => validator.Validate(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__Validate_MetadataNull()
     {
         var sizeInfo = new Mock<IMegBinaryValidationInformation>();
@@ -28,16 +25,16 @@ public class MegFileSizeValidatorTest
 
         var validator = new MegFileSizeValidator();
 
-        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
     }
 
-    [TestMethod]
-    [DataRow(-1L, 1L)]
-    [DataRow(0L, 0L)]
-    [DataRow(1L, -1L)]
-    [DataRow(0L, 1L)]
-    [DataRow(1L, 0L)]
-    [DataRow(2L, 1L)]
+    [Theory]
+    [InlineData(-1L, 1L)]
+    [InlineData(0L, 0L)]
+    [InlineData(1L, -1L)]
+    [InlineData(0L, 1L)]
+    [InlineData(1L, 0L)]
+    [InlineData(2L, 1L)]
     public void Test__Validate_NotValid(long readBytes, long size)
     {
         var metadata = new Mock<IMegFileMetadata>();
@@ -48,12 +45,12 @@ public class MegFileSizeValidatorTest
 
         var validator = new MegFileSizeValidator(); 
         
-        Assert.IsFalse(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.False(validator.Validate(sizeInfo.Object));
     }
 
-    [TestMethod]
-    [DataRow(1L, 12L)]
-    [DataRow(1L, 1L)]
+    [Theory]
+    [InlineData(1L, 12L)]
+    [InlineData(1L, 1L)]
     public void Test__Validate_IsValid(long readBytes, long size)
     {
         var metadata = new Mock<IMegFileMetadata>();
@@ -64,6 +61,6 @@ public class MegFileSizeValidatorTest
 
         var validator = new MegFileSizeValidator();
 
-        Assert.IsTrue(validator.TestValidate(sizeInfo.Object).IsValid);
+        Assert.True(validator.Validate(sizeInfo.Object));
     }
 }

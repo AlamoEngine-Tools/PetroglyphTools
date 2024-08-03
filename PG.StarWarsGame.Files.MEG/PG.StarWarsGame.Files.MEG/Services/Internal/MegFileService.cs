@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Binary;
 using PG.Commons.Services;
@@ -15,6 +14,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -85,28 +85,35 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         // The Archive itself is larger (Metadata + 4GB),
         // however the Metadata is still valid since no each part is within the uint32 range. 
         if (dataBytesWritten > uint.MaxValue)
-            ThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
+            MegThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
 
         Debug.Assert(dataBytesWritten == fileStream.Position);
     }
 
     public IMegFile Load(string filePath)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
-
+        ThrowHelper.ThrowIfNullOrEmpty(filePath);
         var fullPath = FileSystem.Path.GetFullPath(filePath);
-
         using var fs = FileSystem.FileStream.New(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        return Load(fs);
+    }
 
-        var megVersion = GetMegFileVersion(fs, out var encrypted);
+    public IMegFile Load(FileSystemStream stream)
+    {
+        if (stream == null) 
+            throw new ArgumentNullException(nameof(stream));
+
+        var startPosition = stream.Position;
+        var megVersion = GetMegFileVersion(stream, out var encrypted);
 
         if (encrypted)
             throw new NotImplementedException("Encrypted archives are currently not supported");
 
-        using var megFileInfo = new MegFileInformation(fullPath, megVersion);
+        using var megFileInfo = new MegFileInformation(FileSystem.Path.GetFullPath(stream.Name), megVersion);
 
-        fs.Seek(0, SeekOrigin.Begin);
-        var megMetadata = LoadAndValidateMetadata(fs, megFileInfo);
+        stream.Seek(startPosition, SeekOrigin.Begin);
+
+        var megMetadata = LoadAndValidateMetadata(stream, megFileInfo);
 
         var converter = BinaryServiceFactory.GetConverter(megVersion);
         var megArchive = converter.BinaryToModel(megMetadata);
@@ -135,7 +142,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         // The Archive itself is larger (Metadata + 4GB),
         // however the Metadata is still valid since no each part is within the uint32 range. 
         if (actualMegSize > uint.MaxValue)
-            ThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
+            MegThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
 
         var validator = Services.GetRequiredService<IMegBinaryValidator>();
 
@@ -146,15 +153,15 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
             BytesRead = bytesRead
         });
 
-        if (!validationResult.IsValid)
-            throw new BinaryCorruptedException($"Unable to read .MEG archive: {validationResult.Errors.First().ErrorMessage}");
+        if (!validationResult)
+            throw new BinaryCorruptedException($"Unable to read .MEG archive");
 
         return megMetadata;
     }
 
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(file);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(file);
 
         using var fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         return GetMegFileVersion(fs, out encrypted);

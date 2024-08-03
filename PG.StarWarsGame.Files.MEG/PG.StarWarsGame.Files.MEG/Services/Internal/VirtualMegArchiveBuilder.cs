@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -17,6 +18,19 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 internal sealed class VirtualMegArchiveBuilder : IVirtualMegArchiveBuilder
 {
     /// <inheritdoc/>
+    public IVirtualMegArchive BuildFrom(IMegFile megFile)
+    {
+        if (megFile == null)
+            throw new ArgumentNullException(nameof(megFile));
+
+        var entryReferences = megFile.Archive
+            .Distinct(CrcBasedEqualityComparer<MegDataEntry>.Instance)
+            .Select(entry => new MegDataEntryReference(new MegDataEntryLocationReference(megFile, entry)));
+
+        return new VirtualMegArchive(Crc32Utilities.SortByCrc32(entryReferences));
+    }
+
+    /// <inheritdoc/>
     public IVirtualMegArchive BuildFrom(IEnumerable<MegDataEntryReference> fileEntries, bool replaceExisting)
     {
         if (fileEntries == null) 
@@ -26,48 +40,36 @@ internal sealed class VirtualMegArchiveBuilder : IVirtualMegArchiveBuilder
     }
 
     /// <inheritdoc/>
-    public IVirtualMegArchive BuildFrom(IMegFile megFile, bool replaceExisting)
-    {
-        if (megFile == null) 
-            throw new ArgumentNullException(nameof(megFile));
-
-        var entryReferences = megFile.Archive
-            .Select(entry => new MegDataEntryReference(new MegDataEntryLocationReference(megFile, entry)));
-        return BuildFrom(entryReferences, replaceExisting, false);
-    }
-
-    /// <inheritdoc/>
     public IVirtualMegArchive BuildFrom(IList<IMegFile> megFiles, bool replaceExisting)
     {
         if (megFiles == null) 
             throw new ArgumentNullException(nameof(megFiles));
 
-        var entryReferences = from megFile in megFiles from entry in megFile.Archive select new MegDataEntryReference(new MegDataEntryLocationReference(megFile, entry));
-        return BuildFrom(entryReferences, replaceExisting, false);
+        var entries = megFiles.SelectMany(f => f.Archive.Distinct(CrcBasedEqualityComparer<MegDataEntry>.Instance)
+            .Select(entry => new MegDataEntryReference(new MegDataEntryLocationReference(f, entry))));
+
+        return BuildFrom(entries, replaceExisting, false);
     }
 
     private static IVirtualMegArchive BuildFrom(IEnumerable<MegDataEntryReference> fileEntries, bool replaceExisting, bool checkExists)
     {
-        IList<MegDataEntryReference> sortedEntries;
-        if (replaceExisting)
+        var sortedEntries = new SortedList<Crc32, MegDataEntryReference>();
+
+        foreach (var entry in fileEntries)
         {
-            var s = new SortedList<Crc32, MegDataEntryReference>();
-            foreach (var entry in fileEntries)
-                s[entry.Crc32] = entry;
-            sortedEntries = s.Values;
-        }
-        else
-        {
-            sortedEntries = Crc32Utilities.SortByCrc32(fileEntries);
+            if (checkExists && !entry.Location.Exists)
+                throw new FileNotInMegException(entry.Location);
+
+            if (replaceExisting)
+                sortedEntries[entry.Crc32] = entry;
+            else
+            {
+                if (sortedEntries.ContainsKey(entry.Crc32))
+                    continue;
+                sortedEntries.Add(entry.Crc32, entry);
+            }
         }
 
-        if (checkExists)
-        {
-            foreach (var entry in sortedEntries)
-                if (!entry.Location.Exists)
-                    throw new FileNotInMegException(entry.Location);
-        }
-        
-        return new VirtualMegArchive(sortedEntries);
+        return new VirtualMegArchive(sortedEntries.Values);
     }
 }

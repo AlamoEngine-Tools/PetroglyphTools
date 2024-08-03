@@ -1,18 +1,19 @@
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
-[TestClass]
+
 public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.TestLocation>
 {
-    [TestMethod]
+    [Fact]
     public void Test_CtorNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => CreateEntry("path", new Crc32(0), null!));
+        Assert.Throws<ArgumentNullException>(() => CreateEntry("path", new Crc32(0), null!));
     }
 
     protected override MegDataEntryBase<TestLocation> CreateEntry(string path, Crc32 crc, TestLocation location)
@@ -25,22 +26,14 @@ public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.Te
         return new TestLocation();
     }
 
-    private class TestDataEntry : MegDataEntryBase<TestLocation>
+    private class TestDataEntry(string path, Crc32 crc32, TestLocation location)
+        : MegDataEntryBase<TestLocation>(location)
     {
-        public override string FilePath { get; }
-        public override Crc32 Crc32 { get; }
-
-        public TestDataEntry(string path, Crc32 crc32, TestLocation location) : base(location)
-        {
-            FilePath = path;
-            Crc32 = crc32;
-        }
+        public override string FilePath { get; } = path;
+        public override Crc32 Crc32 { get; } = crc32;
     }
 
-    public class TestLocation : IDataEntryLocation
-    {
-        
-    }
+    public class TestLocation : IDataEntryLocation;
 
 }
 
@@ -49,7 +42,7 @@ public abstract class MegDataEntryBaseTest<T> where T : IDataEntryLocation
     protected static readonly Crc32 DefaultCrc = new(123);
     protected static readonly Crc32 SecondaryCrc = new(456);
 
-    [TestMethod]
+    [Fact]
     public void Test_CompareTo()
     {
         var seed = 251;
@@ -58,21 +51,21 @@ public abstract class MegDataEntryBaseTest<T> where T : IDataEntryLocation
         var entry2 = CreateEntry("xyz", DefaultCrc, CreateLocation(seed++));
 
 
-        Assert.AreEqual(0, entry1.CompareTo(entry1));
-        Assert.AreEqual(0, entry1.CompareTo(entry2));
+        Assert.Equal(0, entry1.CompareTo(entry1));
+        Assert.Equal(0, entry1.CompareTo(entry2));
 
-        Assert.AreEqual(1, entry1.CompareTo(null!));
+        Assert.Equal(1, entry1.CompareTo(null!));
 
         var entry3 = CreateEntry("path", new Crc32(0), CreateLocation(seed++));
         var entry4 = CreateEntry("path", new Crc32(789), CreateLocation(seed++));
         var entry5 = CreateEntry("path", new Crc32(-1), CreateLocation(seed));
 
-        Assert.AreEqual(-1, entry1.CompareTo(entry4));
-        Assert.AreEqual(1, entry1.CompareTo(entry3));
-        Assert.AreEqual(1, entry5.CompareTo(entry4));
+        Assert.Equal(-1, entry1.CompareTo(entry4));
+        Assert.Equal(1, entry1.CompareTo(entry3));
+        Assert.Equal(1, entry5.CompareTo(entry4));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Equals_HashCode_Base()
     {
         var seed = 251;
@@ -90,26 +83,26 @@ public abstract class MegDataEntryBaseTest<T> where T : IDataEntryLocation
         var entry6 = CreateEntry("path", DefaultCrc, t3);
         var entry7 = CreateEntry("PATH", DefaultCrc, t1);
 
-        Assert.IsTrue(entry1.Equals(entry2));
-        Assert.IsTrue(entry1.Equals((object)entry2));
-        Assert.IsTrue(entry1.Equals(entry1));
-        Assert.IsTrue(entry1.Equals((object)entry1));
-        Assert.AreEqual(entry1.GetHashCode(), entry2.GetHashCode());
+        Assert.True(entry1.Equals(entry2));
+        Assert.True(entry1.Equals((object)entry2));
+        Assert.True(entry1.Equals(entry1));
+        Assert.True(entry1.Equals((object)entry1));
+        Assert.Equal(entry1.GetHashCode(), entry2.GetHashCode());
 
-        Assert.IsFalse(entry1.Equals((object?)null));
-        Assert.IsFalse(entry1.Equals(null));
-        Assert.IsFalse(entry1.Equals(new object()));
-        Assert.IsFalse(entry1.Equals(entry3));
-        Assert.IsFalse(entry1.Equals(entry4));
-        Assert.IsFalse(entry1.Equals(entry5));
-        Assert.IsFalse(entry1.Equals(entry6));
-        Assert.IsFalse(entry1.Equals(entry7));
+        Assert.False(entry1.Equals((object?)null));
+        Assert.False(entry1.Equals(null));
+        Assert.False(entry1.Equals(new object()));
+        Assert.False(entry1.Equals(entry3));
+        Assert.False(entry1.Equals(entry4));
+        Assert.False(entry1.Equals(entry5));
+        Assert.False(entry1.Equals(entry6));
+        Assert.False(entry1.Equals(entry7));
 
-        Assert.AreNotEqual(entry1.GetHashCode(), entry3.GetHashCode());
-        Assert.AreNotEqual(entry1.GetHashCode(), entry4.GetHashCode());
-        Assert.AreNotEqual(entry1.GetHashCode(), entry5.GetHashCode());
-        Assert.AreNotEqual(entry1.GetHashCode(), entry6.GetHashCode());
-        Assert.AreNotEqual(entry1.GetHashCode(), entry7.GetHashCode());
+        Assert.NotEqual(entry1.GetHashCode(), entry3.GetHashCode());
+        Assert.NotEqual(entry1.GetHashCode(), entry4.GetHashCode());
+        Assert.NotEqual(entry1.GetHashCode(), entry5.GetHashCode());
+        Assert.NotEqual(entry1.GetHashCode(), entry6.GetHashCode());
+        Assert.NotEqual(entry1.GetHashCode(), entry7.GetHashCode());
     }
 
     protected abstract MegDataEntryBase<T> CreateEntry(string path, Crc32 crc, T location);

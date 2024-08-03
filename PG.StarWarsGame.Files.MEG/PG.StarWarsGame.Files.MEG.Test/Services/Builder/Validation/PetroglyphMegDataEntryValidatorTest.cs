@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,35 +7,37 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using Testably.Abstractions.Testing;
 using System.Reflection;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-[TestClass]
 public class PetroglyphMegDataEntryValidatorTest
 {
-    private TestPetroglyphMegDataEntryValidator _validator;
+    private readonly TestPetroglyphMegDataEntryValidator _validator;
 
-    [TestInitialize]
-    public void Setup()
+    public PetroglyphMegDataEntryValidatorTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
         _validator = new TestPetroglyphMegDataEntryValidator(sc.BuildServiceProvider());
     }
 
-    [TestMethod]
-    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(ValidTestData))]
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
+        Assert.True(_validator.Validate(builderInfo));
+        Assert.True(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(InvalidTestData), typeof(NotNullDataEntryValidatorTest), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
-    [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(InvalidTestData), MemberType = typeof(NotNullDataEntryValidatorTest))]
+    [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
+        Assert.False(_validator.Validate(builderInfo));
+        if (builderInfo is not null)
+            Assert.False(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
     public static IEnumerable<object[]> ValidTestData()
@@ -52,13 +53,18 @@ public class PetroglyphMegDataEntryValidatorTest
     {
         // We do not allow directory names
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("dir/"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("dir\\"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("/"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("\\"))];
 
         // We do not allow directory operators
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("./test.txt"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("a/./test.txt"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("../test.txt"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("a/../test.txt"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("a/.."))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".."))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("."))];
 
         // We do not allow absolute, rooted or URI paths
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("C:/test.txt"))];
@@ -70,8 +76,12 @@ public class PetroglyphMegDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(@"\\Server2\Share\Test\Foo.txt\t"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("//Server2/Share/Test/Foo.txt/t"))];
 
-        // We do not allow paths with are longer than 256 characters, as that's the default Windows limit.
+        // We do not allow paths with are longer than PG max allowed characters, which is 260.
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new string('a', 261)))];
+
+        // Because XML parsing is sometimes done on space as delimiter, we cannot use them
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("thisIsAPathWithA Space"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("my/path with/space"))];
     }
 
     public static string GetValidationDataDisplayName(MethodInfo methodInfo, object[] data)

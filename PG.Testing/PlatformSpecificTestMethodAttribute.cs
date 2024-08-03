@@ -2,27 +2,32 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace PG.Testing;
 
-public class PlatformSpecificTestMethodAttribute : TestMethodAttribute
+public class PlatformSpecificFactAttribute : FactAttribute
 {
-    private readonly IEnumerable<OSPlatform> _platforms;
-
-    public PlatformSpecificTestMethodAttribute(params TestPlatformIdentifier[] platforms)
+    public PlatformSpecificFactAttribute(params TestPlatformIdentifier[] platformIds)
     {
-        _platforms = platforms.Select(targetPlatform => OSPlatform.Create(Enum.GetName(typeof(TestPlatformIdentifier), targetPlatform)!.ToUpper()));
+        var platforms = platformIds.Select(targetPlatform => OSPlatform.Create(Enum.GetName(typeof(TestPlatformIdentifier), targetPlatform)!.ToUpper()));
+        var platformMatches = platforms.Any(RuntimeInformation.IsOSPlatform);
+
+        if (!platformMatches)
+            Skip = "Test execution is not supported on the current platform";
     }
+}
 
-    public override TestResult[] Execute(ITestMethod testMethod)
+public class PlatformSpecificTheoryAttribute : TheoryAttribute
+{
+    public PlatformSpecificTheoryAttribute(params TestPlatformIdentifier[] platformIds)
     {
-        var platformMatches = _platforms.Any(RuntimeInformation.IsOSPlatform);
-        return !platformMatches
-            ? new[] { new TestResult { Outcome = UnitTestOutcome.Inconclusive } }
-            : base.Execute(testMethod);
+        var platforms = platformIds.Select(targetPlatform => OSPlatform.Create(Enum.GetName(typeof(TestPlatformIdentifier), targetPlatform)!.ToUpper()));
+        var platformMatches = platforms.Any(RuntimeInformation.IsOSPlatform);
+
+        if (!platformMatches)
+            Skip = "Test execution is not supported on the current platform";
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -11,37 +10,38 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
 public partial class MegFileServiceTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_CreateMegArchive_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegFileDataEntryBuilderInfo>()));
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.Throws<ArgumentNullException>(() =>
         {
             using var fs = _fileSystem.File.OpenWrite("path");
             _megFileService.CreateMegArchive(fs, MegFileVersion.V3, null, null!);
         }); 
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateMegArchive_DoesNotCreateDirectories_Throws()
     {
         const string megFileName = "/test/a.meg";
         var metadataBytes = new byte[] { 0, 1, 2 };
 
-        Assert.IsFalse(_fileSystem.Directory.Exists("/test"));
+        Assert.False(_fileSystem.Directory.Exists("/test"));
 
-        Assert.ThrowsException<DirectoryNotFoundException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>()));
+        Assert.Throws<DirectoryNotFoundException>(() => CreateMegArchive(megFileName, metadataBytes, new List<VirtualMegDataEntryReference>()));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateMegArchive_WithData()
     {
-        const string megFileName = "/a.meg";
+        const string megFileName = "a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 
@@ -59,18 +59,18 @@ public partial class MegFileServiceTest
 
         CreateMegArchive(megFileName, metadataBytes, items);
 
-        Assert.IsTrue(_fileSystem.File.Exists(megFileName));
+        Assert.True(_fileSystem.File.Exists(megFileName));
         var data = _fileSystem.File.ReadAllBytes(megFileName);
 
-        CollectionAssert.AreEqual(metadataBytes.Concat(entryBytes).ToList(), data);
+        Assert.Equal(metadataBytes.Concat(entryBytes).ToList(), data);
     }
 
-    [TestMethod]
-    [DataRow(3u, 0u)]
-    [DataRow(2u, 3u)]
+    [Theory]
+    [InlineData(3u, 0u)]
+    [InlineData(2u, 3u)]
     public void Test_CreateMegArchive_InvalidEntrySizeAndOffsets_Throws(uint size, uint offset)
     {
-        const string megFileName = "/a.meg";
+        const string megFileName = "a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 
@@ -86,13 +86,13 @@ public partial class MegFileServiceTest
         _streamFactory.Setup(sf => sf.GetDataStream(originInfo))
             .Returns(new MemoryStream(entryBytes));
 
-        Assert.ThrowsException<InvalidOperationException>(() => CreateMegArchive(megFileName, metadataBytes, items));
+        Assert.Throws<InvalidOperationException>(() => CreateMegArchive(megFileName, metadataBytes, items));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_CreateMegArchive_MegFileExceeds4GB_Throws()
     {
-        const string megFileName = "/a.meg";
+        const string megFileName = "a.meg";
 
         var metadataBytes = new byte[] { 0, 1, 2 };
 
@@ -111,7 +111,7 @@ public partial class MegFileServiceTest
         _streamFactory.Setup(sf => sf.GetDataStream(originInfo))
             .Returns(fakeStream.Object);
 
-        Assert.ThrowsException<NotSupportedException>(() => CreateMegArchive(megFileName, metadataBytes, items));
+        Assert.Throws<NotSupportedException>(() => CreateMegArchive(megFileName, metadataBytes, items));
     }
 
     private void CreateMegArchive(string megFileName, byte[] metadataBytes, IList<VirtualMegDataEntryReference> items)

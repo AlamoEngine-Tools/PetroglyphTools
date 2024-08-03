@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+using AnakinRaW.CommonUtilities;
+using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -22,7 +24,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
     {
         if (dataEntry is null) 
             throw new ArgumentNullException(nameof(dataEntry));
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(rootPath);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(rootPath);
 
         var entryPath = dataEntry.FilePath;
         var absoluteRootPath = FileSystem.Path.GetFullPath(rootPath);
@@ -46,7 +48,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
     }
 
     /// <inheritdoc/>
-    public Stream GetFileData(MegDataEntryLocationReference dataEntryLocation)
+    public MegFileDataStream GetFileData(MegDataEntryLocationReference dataEntryLocation)
     {
         if (dataEntryLocation is null) 
             throw new ArgumentNullException(nameof(dataEntryLocation));
@@ -59,7 +61,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
     {
         if (dataEntryLocation is null)
             throw new ArgumentNullException(nameof(dataEntryLocation));
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
 
         var fullFilePath = FileSystem.Path.GetFullPath(filePath);
 

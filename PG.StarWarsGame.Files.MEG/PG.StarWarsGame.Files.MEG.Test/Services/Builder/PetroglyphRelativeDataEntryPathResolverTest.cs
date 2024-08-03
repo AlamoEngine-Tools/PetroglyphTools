@@ -1,19 +1,18 @@
 ﻿using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 using PG.Testing;
+using Xunit;
+
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-[TestClass]
 public class PetroglyphRelativeDataEntryPathResolverTest
 {
-    private PetroglyphRelativeDataEntryPathResolver _pathResolver;
-    private readonly IFileSystem _fileSystem = new System.IO.Abstractions.FileSystem();
+    private readonly PetroglyphRelativeDataEntryPathResolver _pathResolver;
+    private readonly IFileSystem _fileSystem = new FileSystem();
 
-    [TestInitialize]
-    public void Setup()
+    public PetroglyphRelativeDataEntryPathResolverTest()
     {
         var sc = new ServiceCollection();
         // Use the real file system here
@@ -21,67 +20,67 @@ public class PetroglyphRelativeDataEntryPathResolverTest
         _pathResolver = new PetroglyphRelativeDataEntryPathResolver(sc.BuildServiceProvider());
     }
 
-    [TestMethod]
-    [DataRow(null, null)]
-    [DataRow("", null)]
-    [DataRow("test", "test")]
-    [DataRow("test/", null)]
-    [DataRow("test.xml", "test.xml")]
-    [DataRow("a/test", "a\\test")]
-    [DataRow("a/.test", "a\\.test")]
-    [DataRow("./a/test.xml", "a\\test.xml")]
-    [DataRow("../test.xml", null)]
-    [DataRow("./../test.xml", null)]
-    [DataRow("./../corruption/test.xml", "test.xml")]
-    [DataRow("./../corruption/../test.xml", null)]
-    [DataRow("../corruption1/test.xml", null)]
-    [DataRow("/Games/Petroglyph/corruption/test", "test")]
-    [DataRow("/Games/Petroglyph/corruption/test/", null)]
-    [DataRow("/Games/Petroglyph/corruption1/test", null)]
-    public void Test_ResolveEntryPath_Relative(string path, string? expectedEntryPath)
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("", null)]
+    [InlineData("test", "test")]
+    [InlineData("test/", null)]
+    [InlineData("test.xml", "test.xml")]
+    [InlineData("a/test", "a\\test")]
+    [InlineData("a/.test", "a\\.test")]
+    [InlineData("./a/test.xml", "a\\test.xml")]
+    [InlineData("../test.xml", null)]
+    [InlineData("./../test.xml", null)]
+    [InlineData("./../corruption/test.xml", "test.xml")]
+    [InlineData("./../corruption/../test.xml", null)]
+    [InlineData("../corruption1/test.xml", null)]
+    [InlineData("/Games/Petroglyph/corruption/test", "test")]
+    [InlineData("/Games/Petroglyph/corruption/test/", null)]
+    [InlineData("/Games/Petroglyph/corruption1/test", null)]
+    public void Test_ResolveEntryPath_Relative(string? path, string? expectedEntryPath)
     {
         const string basePath = "/Games/Petroglyph/corruption/";
 
 
         var normalizedExpected = expectedEntryPath is not null
-            ? _fileSystem.Path.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifySlashes = true })
+            ? PathNormalizer.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifyDirectorySeparators = true })
             : expectedEntryPath;
 
 
         var actualEntryPath = _pathResolver.ResolvePath(path, basePath);
-        Assert.AreEqual(normalizedExpected, actualEntryPath);
+        Assert.Equal(normalizedExpected, actualEntryPath);
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Windows)]
-    [DataRow("   ", null)]
-    [DataRow("c:/game/corruption/test", "test")]
-    [DataRow("c:\\game\\corruption\\test", "test")]
-    [DataRow("c:/game/corruption/test/", null)]
-    [DataRow("c:/game/corruption/xml/test", "xml\\test")]
-    [DataRow("C:/GAME/CORRUPTION/test", "test")] // Test case insensitivity on Windows
-    [DataRow("D:/game/corruption", null)]
-    [DataRow("D:/game/test", null)]
-    [DataRow("c:test", "test")]
-    [DataRow("C:xml/test", "xml\\test")]
-    [DataRow("c:", null)]
-    [DataRow("d:test", null)]
-    public void TestResolveEntryPath_AbsoluteOrRooted_Windows(string path, string expectedEntryPath)
+    [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
+    [InlineData("   ", null)]
+    [InlineData("c:/game/corruption/test", "test")]
+    [InlineData("c:\\game\\corruption\\test", "test")]
+    [InlineData("c:/game/corruption/test/", null)]
+    [InlineData("c:/game/corruption/xml/test", "xml\\test")]
+    [InlineData("C:/GAME/CORRUPTION/test", "test")] // Test case insensitivity on Windows
+    [InlineData("D:/game/corruption", null)]
+    [InlineData("D:/game/test", null)]
+    [InlineData("c:test", "test")]
+    [InlineData("C:xml/test", "xml\\test")]
+    [InlineData("c:", null)]
+    [InlineData("d:test", null)]
+    public void TestResolveEntryPath_AbsoluteOrRooted_Windows(string path, string? expectedEntryPath)
     {
         const string basePath = "c:/game/corruption";
         var actualEntryPath = _pathResolver.ResolvePath(path, basePath);
-        Assert.AreEqual(expectedEntryPath, actualEntryPath);
+        Assert.Equal(expectedEntryPath, actualEntryPath);
     }
 
-    [PlatformSpecificTestMethod(TestPlatformIdentifier.Linux)]
-    [DataRow("   ", "   ")]
-    [DataRow("/game/corruption/test", "test")]
-    [DataRow("/other/corruption/test/", null)]
-    [DataRow("/game/corruption/xml/test", "xml/test")]
-    [DataRow("/GAME/CORRUPTION/test", null)] // Test case sensitivity on Linux
-    public void TestResolveEntryPath_AbsoluteOrRooted_Linux(string path, string expectedEntryPath)
+    [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
+    [InlineData("   ", "   ")]
+    [InlineData("/game/corruption/test", "test")]
+    [InlineData("/other/corruption/test/", null)]
+    [InlineData("/game/corruption/xml/test", "xml/test")]
+    [InlineData("/GAME/CORRUPTION/test", null)] // Test case sensitivity on Linux
+    public void TestResolveEntryPath_AbsoluteOrRooted_Linux(string path, string? expectedEntryPath)
     {
         const string basePath = "/game/corruption/";
         var actualEntryPath = _pathResolver.ResolvePath(path, basePath);
-        Assert.AreEqual(expectedEntryPath, actualEntryPath);
+        Assert.Equal(expectedEntryPath, actualEntryPath);
     }
 }

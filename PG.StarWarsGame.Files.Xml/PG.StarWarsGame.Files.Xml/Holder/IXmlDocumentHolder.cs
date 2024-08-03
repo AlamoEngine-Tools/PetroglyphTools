@@ -1,4 +1,3 @@
-using PG.Commons.Data.Holder;
 using PG.StarWarsGame.Files.Xml.Files;
 
 namespace PG.StarWarsGame.Files.Xml.Holder;

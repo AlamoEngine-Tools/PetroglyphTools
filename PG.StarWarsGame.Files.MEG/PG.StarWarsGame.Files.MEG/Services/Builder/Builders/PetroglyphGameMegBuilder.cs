@@ -1,8 +1,12 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -77,9 +81,9 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
         DataEntryPathNormalizer = services.GetRequiredService<PetroglyphDataEntryPathNormalizer>();
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
+        ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
 
-        baseDirectory = FileSystem.Path.EnsureTrailingSeparator(baseDirectory);
+        baseDirectory = PathNormalizer.Normalize(baseDirectory, PathNormalizeOptions.EnsureTrailingSeparator);
 
         var di = FileSystem.DirectoryInfo.New(baseDirectory);
         BaseDirectory = di.FullName;

@@ -1,23 +1,22 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
 
-[TestClass]
 public class MegFileTableValidatorTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Empty_IsValid()
     {
         var fileTable = new Mock<IMegFileTable>();
         var validator = new MegFileTableValidator();
-        Assert.IsTrue(validator.Validate(fileTable.Object).IsValid);
+        Assert.True(validator.Validate(fileTable.Object));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Validate_IsValid()
     {
         var entry1 = new Mock<IMegFileDescriptor>();
@@ -37,10 +36,10 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[2]).Returns(entry3.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.IsTrue(validator.Validate(fileTable.Object).IsValid);
+        Assert.True(validator.Validate(fileTable.Object));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Invalid_CrcOrder()
     {
         var entry1 = new Mock<IMegFileDescriptor>();
@@ -56,10 +55,10 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[1]).Returns(entry2.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.IsFalse(validator.Validate(fileTable.Object).IsValid);
+        Assert.False(validator.Validate(fileTable.Object));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Invalid_WrongIndex()
     {
         var entry1 = new Mock<IMegFileDescriptor>();
@@ -75,10 +74,10 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[1]).Returns(entry2.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.IsFalse(validator.Validate(fileTable.Object).IsValid);
+        Assert.False(validator.Validate(fileTable.Object));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Validate_Invalid_NotSorted()
     {
         var entry1 = new Mock<IMegFileDescriptor>();
@@ -94,6 +93,6 @@ public class MegFileTableValidatorTest
         fileTable.SetupGet(t => t[1]).Returns(entry2.Object);
 
         var validator = new MegFileTableValidator();
-        Assert.IsFalse(validator.Validate(fileTable.Object).IsValid);
+        Assert.False(validator.Validate(fileTable.Object));
     }
 }

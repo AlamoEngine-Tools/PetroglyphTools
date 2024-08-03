@@ -5,6 +5,7 @@ using System;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
@@ -45,7 +46,7 @@ public sealed class MegFileDataEntryBuilderInfo
     public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo, string? overrideFilePath = null, uint? fileSize = null, bool? overrideEncrypted = null)
     {
         if (overrideFilePath is not null)
-            Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(overrideFilePath);
+            ThrowHelper.ThrowIfNullOrWhiteSpace(overrideFilePath);
 
         OriginInfo = originInfo ?? throw new ArgumentNullException(nameof(originInfo));
 

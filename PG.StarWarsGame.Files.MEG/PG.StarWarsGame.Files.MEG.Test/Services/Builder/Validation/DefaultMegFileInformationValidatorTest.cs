@@ -1,31 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Files;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-[TestClass]
+
 public class DefaultMegFileInformationValidatorTest
 {
-    [TestMethod]
-    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(ValidTestData))]
     public void TestValid(MegBuilderFileInformationValidationData builderInfo)
     {
         var validator = DefaultMegFileInformationValidator.Instance;
-        Assert.IsTrue(validator.Validate(builderInfo).IsValid);
+        Assert.True(validator.Validate(builderInfo).IsValid);
     }
 
-    [TestMethod]
-    [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetValidationDataDisplayName))]
+    [Theory]
+    [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(MegBuilderFileInformationValidationData builderInfo)
     {
         var validator = DefaultMegFileInformationValidator.Instance;
-        Assert.IsFalse(validator.Validate(builderInfo).IsValid);
+        Assert.False(validator.Validate(builderInfo).IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()

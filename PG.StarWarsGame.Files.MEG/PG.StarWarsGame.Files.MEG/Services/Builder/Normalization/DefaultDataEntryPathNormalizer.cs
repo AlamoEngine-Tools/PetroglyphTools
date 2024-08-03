@@ -1,5 +1,8 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -8,6 +11,11 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 /// </summary>
 public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerBase
 {
+    private static readonly PathNormalizeOptions DefaultNormalizeOptions = new()
+    {
+        UnifyDirectorySeparators = true,
+        UnifyCase = UnifyCasingKind.UpperCaseForce
+    };
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultDataEntryPathNormalizer"/> class.
@@ -18,9 +26,8 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     }
 
     /// <inheritdoc />
-    public override string NormalizePath(string filePath)
+    public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
     {
-        return FileSystem.Path.Normalize(filePath,
-            new PathNormalizeOptions { UnifySlashes = true, UnifyCase = UnifyCasingKind.UpperCaseForce });
+        return PathNormalizer.Normalize(filePath, destination, DefaultNormalizeOptions);
     }
 }

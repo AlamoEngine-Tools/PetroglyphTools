@@ -109,7 +109,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         if (encrypted)
             throw new NotImplementedException("Encrypted archives are currently not supported");
 
-        using var megFileInfo = new MegFileInformation(FileSystem.Path.GetFullPath(stream.Name), megVersion);
+        var megFileInfo = new MegFileInformation(FileSystem.Path.GetFullPath(stream.Name), megVersion);
 
         stream.Seek(startPosition, SeekOrigin.Begin);
 

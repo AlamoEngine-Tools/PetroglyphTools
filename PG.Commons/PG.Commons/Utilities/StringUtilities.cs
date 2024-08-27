@@ -27,7 +27,7 @@ public static class StringUtilities
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ushort ValidateStringByteSizeUInt16(ReadOnlySpan<char> value, Encoding encoding)
     {
-        if (value == null)
+        if (value == ReadOnlySpan<char>.Empty)
             throw new ArgumentNullException(nameof(value));
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
@@ -50,7 +50,7 @@ public static class StringUtilities
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ushort ValidateStringCharLengthUInt16(ReadOnlySpan<char> value)
     {
-        if (value == null)
+        if (value == ReadOnlySpan<char>.Empty)
             throw new ArgumentNullException(nameof(value));
 
         var length = value.Length;
@@ -67,7 +67,7 @@ public static class StringUtilities
     /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
     public static void ValidateIsAsciiOnly(ReadOnlySpan<char> value)
     {
-        if (value == null)
+        if (value == ReadOnlySpan<char>.Empty)
             throw new ArgumentNullException(nameof(value));
         if (!IsAsciiOnly(value))
             throw new ArgumentException("Value contains non-ASCII characters.", nameof(value));
@@ -81,7 +81,7 @@ public static class StringUtilities
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsAsciiOnly(ReadOnlySpan<char> value)
     {
-        if (value == null)
+        if (value == ReadOnlySpan<char>.Empty)
             throw new ArgumentNullException(nameof(value));
 
         foreach (var ch in value)

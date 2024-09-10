@@ -3,4 +3,4 @@
 namespace PG.StarWarsGame.Files.MTD.Files;
 
 /// <inheritdoc cref="PetroglyphFileInformation" />
-public sealed record MtdFileInformation : PetroglyphFileInformation;
+public sealed record MtdFileInformation : PetroglyphMegPackableFileInformation;

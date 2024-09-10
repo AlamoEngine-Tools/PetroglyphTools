@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using AnakinRaW.CommonUtilities;
 using PG.Commons.DataTypes;
@@ -9,7 +8,7 @@ using PG.StarWarsGame.Files.MTD.Binary;
 
 namespace PG.StarWarsGame.Files.MTD.Data;
 
-public sealed class MegaTextureFileIndex : IEqualityComparer<MegaTextureFileIndex>, IHasCrc32
+public sealed class MegaTextureFileIndex : IEquatable<MegaTextureFileIndex>, IHasCrc32
 {
     public string FileName { get; }
 
@@ -33,22 +32,28 @@ public sealed class MegaTextureFileIndex : IEqualityComparer<MegaTextureFileInde
     }
 
     /// <inheritdoc />
-    public bool Equals(MegaTextureFileIndex x, MegaTextureFileIndex y)
+    public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(x, y)) 
+        if (ReferenceEquals(this, obj))
             return true;
-        if (ReferenceEquals(x, null)) 
+        if (obj is not MegaTextureFileIndex other)
             return false;
-        if (ReferenceEquals(y, null))
-            return false;
-        if (x.GetType() != y.GetType()) 
-            return false;
-        return x.FileName == y.FileName && x.Area.Equals(y.Area) && x.HasAlpha == y.HasAlpha && x.Crc32.Equals(y.Crc32);
+        return Equals(other);
     }
 
     /// <inheritdoc />
-    public int GetHashCode(MegaTextureFileIndex obj)
+    public bool Equals(MegaTextureFileIndex? other)
     {
-        return HashCode.Combine(obj.FileName, obj.Area, obj.HasAlpha, obj.Crc32);
+        if (ReferenceEquals(this, other)) 
+            return true;
+        if (other is null)
+            return false;
+        return FileName == other.FileName && Area.Equals(other.Area) && HasAlpha == other.HasAlpha && Crc32.Equals(other.Crc32);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(FileName, Area, HasAlpha, Crc32);
     }
 }

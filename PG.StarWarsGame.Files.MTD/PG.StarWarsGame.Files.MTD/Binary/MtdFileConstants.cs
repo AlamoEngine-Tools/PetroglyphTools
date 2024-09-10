@@ -22,5 +22,5 @@ public static class MtdFileConstants
 
 
     // Max size is 63, because we need to reserve on byte for the zero terminator '\0' when converting to a binary file.  
-    internal const int MaxFileNameSize = 63;
+    public const int MaxFileNameSize = 63;
 }

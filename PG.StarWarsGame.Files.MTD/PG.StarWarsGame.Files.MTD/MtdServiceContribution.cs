@@ -13,5 +13,6 @@ public static class MtdServiceContribution
     {
         serviceCollection.AddSingleton<IMtdFileService>(sp => new MtdFileService(sp));
         serviceCollection.AddSingleton<IMtdBinaryConverter>(sp => new MtdBinaryConverter(sp));
+        serviceCollection.AddSingleton<IMtdFileReader>(sp => new MdtFileReader(sp));
     }
 }

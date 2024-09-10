@@ -30,13 +30,13 @@ internal class MtdFileService(IServiceProvider serviceProvider) : ServiceBase(se
         var binaryModel = _fileReader.ReadBinary(stream);
         var model = _binaryConverter.BinaryToModel(binaryModel);
 
-        var filePath = stream.GetFilePath();
+        var filePath = stream.GetFilePath(out var isInMeg);
 
         // If the .MTD file is not embedded in a MEG, we want the absolute path.
-        if (stream is not IMegFileDataStream)
+        if (!isInMeg)
             filePath = FileSystem.Path.GetFullPath(filePath);
 
-        var megFileInfo = new MtdFileInformation { FilePath = filePath };
+        var megFileInfo = new MtdFileInformation { FilePath = filePath, IsInsideMeg = isInMeg};
 
         return new MtdFile(model, megFileInfo, Services);
     }

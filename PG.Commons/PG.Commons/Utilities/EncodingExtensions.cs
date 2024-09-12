@@ -61,7 +61,7 @@ public static class EncodingExtensions
             return numberOfChars << 1;
         }
 
-        throw new NotSupportedException($"Encoding {encoding} is currently not supported.");
+        throw new NotSupportedException($"Encoding {encoding} is not supported.");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

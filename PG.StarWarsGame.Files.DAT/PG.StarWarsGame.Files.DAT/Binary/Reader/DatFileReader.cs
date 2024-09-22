@@ -71,7 +71,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
         }
         catch (EndOfStreamException)
         {
-            throw new BinaryCorruptedException("Unable to read .DAT binary");
+            throw new BinaryCorruptedException("Unable to read .DAT binary.");
         }
     }
 

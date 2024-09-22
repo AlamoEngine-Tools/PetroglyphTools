@@ -4,15 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
 
-[TestClass]
 public class MegFileTableTest : MegFileTableBaseTest
 {
     private static MegFileTable CreateFileTableV1(IList<MegFileTableRecord> files)
@@ -35,13 +34,13 @@ public class MegFileTableTest : MegFileTableBaseTest
         return new MegFileTableRecord(new Crc32(seed), index, seed, seed, index);
     }
 
-    [TestMethod]
+    [Fact]
     public void Ctor_Test__ThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new MegFileTable(null!));
+        Assert.Throws<ArgumentNullException>(() => new MegFileTable(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Index()
     {
         var entry1 = CreateFileRecordV1(CreateFile(0, 1));
@@ -52,9 +51,9 @@ public class MegFileTableTest : MegFileTableBaseTest
             entry2
         });
 
-        Assert.AreEqual(2, table.Count);
-        Assert.AreEqual(entry1, table[0]);
-        Assert.AreEqual(entry2, table[1]);
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => table[2]);
+        Assert.Equal(2, table.Count);
+        Assert.Equal(entry1, table[0]);
+        Assert.Equal(entry2, table[1]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => table[2]);
     }
 }

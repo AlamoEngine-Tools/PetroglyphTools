@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
@@ -22,6 +24,8 @@ public abstract class MegBuilderTestSuite
     protected virtual void SetupServiceCollection(IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IFileSystem>(FileSystem);
+        serviceCollection.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        serviceCollection.CollectPgServiceContributions();
     }
 
     protected IServiceProvider CreateServiceProvider()
@@ -31,21 +35,21 @@ public abstract class MegBuilderTestSuite
         return sc.BuildServiceProvider();
     }
 
-    [TestMethod]
+    [Fact]
     public void MegBuilderTestSuite_Test_Ctor_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => CreateBuilder(null!));
+        Assert.Throws<ArgumentNullException>(() => CreateBuilder(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void MegBuilderTestSuite_Test_Ctor()
     {
         var builder = CreateBuilder(CreateServiceProvider());
 
-        Assert.AreEqual(ExpectedFileInfoValidatorType, builder.MegFileInformationValidator.GetType());
-        Assert.AreEqual(ExpectedDataEntryValidatorType, builder.DataEntryValidator.GetType());
-        Assert.AreEqual(ExpectedDataEntryPathNormalizerType, builder.DataEntryPathNormalizer?.GetType());
-        Assert.AreEqual(ExpectedOverwritesDuplicates, builder.OverwritesDuplicateEntries);
-        Assert.AreEqual(ExpectedAutomaticallyAddFileSizes, builder.AutomaticallyAddFileSizes);
+        Assert.Equal(ExpectedFileInfoValidatorType, builder.MegFileInformationValidator.GetType());
+        Assert.Equal(ExpectedDataEntryValidatorType, builder.DataEntryValidator.GetType());
+        Assert.Equal(ExpectedDataEntryPathNormalizerType, builder.DataEntryPathNormalizer?.GetType());
+        Assert.Equal(ExpectedOverwritesDuplicates, builder.OverwritesDuplicateEntries);
+        Assert.Equal(ExpectedAutomaticallyAddFileSizes, builder.AutomaticallyAddFileSizes);
     }
 }

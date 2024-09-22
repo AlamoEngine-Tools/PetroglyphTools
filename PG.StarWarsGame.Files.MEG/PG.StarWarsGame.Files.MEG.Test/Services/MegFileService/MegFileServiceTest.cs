@@ -1,6 +1,5 @@
 using System;
 using System.IO.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
@@ -9,10 +8,9 @@ using Testably.Abstractions.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
-[TestClass]
 public partial class MegFileServiceTest
 {
-    private MegFileService _megFileService = null!;
+    private readonly MegFileService _megFileService = null!;
     private readonly Mock<IServiceProvider> _serviceProvider = new();
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IMegBinaryServiceFactory> _binaryServiceFactory = new();
@@ -23,8 +21,7 @@ public partial class MegFileServiceTest
     private readonly Mock<IConstructingMegArchiveBuilder> _constructingArchiveBuilder = new();
     private readonly Mock<IMegDataStreamFactory> _streamFactory = new();
 
-    [TestInitialize]
-    public void SetupTest()
+    public MegFileServiceTest()
     {
         _serviceProvider.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(_fileSystem);
         _serviceProvider.Setup(sp => sp.GetService(typeof(IMegBinaryServiceFactory))).Returns(_binaryServiceFactory.Object);

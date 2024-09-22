@@ -1,4 +1,7 @@
-using PG.Commons.Utilities.Validation;
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using System;
 using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
@@ -6,13 +9,28 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// A validator that checks the passed <see cref="MegFileDataEntryBuilderInfo"/> is not <see langword="null"/>.
 /// </summary>
-public sealed class NotNullDataEntryValidator : NullableAbstractValidator<MegFileDataEntryBuilderInfo>, IBuilderInfoValidator
+public sealed class NotNullDataEntryValidator : IBuilderInfoValidator
 {
     /// <summary>
     /// Gets a singleton instance of the <see cref="NotNullDataEntryValidator"/> class.
     /// </summary>
     public static readonly NotNullDataEntryValidator Instance = new();
 
+    private NotNullDataEntryValidator()
+    {
+    }
+
     /// <inheritdoc />
-    protected override bool IsValueNullable => false;
+    public bool Validate(MegFileDataEntryBuilderInfo? builderInfo)
+    {
+        if (builderInfo is null)
+            return false;
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
+    {
+        return true;
+    }
 }

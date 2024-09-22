@@ -3,39 +3,70 @@
 
 using System;
 using System.IO;
+using AnakinRaW.CommonUtilities;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Utilities;
 
-internal class MegFileDataStream : Stream
+/// <summary>
+/// Represent a read-only, non-seekable file stream that points to a single data entry inside a MEG file.
+/// </summary>
+public sealed class MegFileDataStream : Stream, IMegFileDataStream
 {
+    /// <inheritdoc />
+    public string EntryPath { get; }
+
+    /// <inheritdoc />
     public override bool CanRead => true;
-    public override bool CanSeek => false;
+
+    /// <inheritdoc />
+    public override bool CanSeek => true;
+
+    /// <inheritdoc />
     public override bool CanWrite => false;
+
+    /// <inheritdoc />
     public override long Length => _dataSize;
 
+    /// <inheritdoc />
     public override long Position
     {
         get => _currentPos;
-        set => throw new NotSupportedException();
+        set
+        {
+            if (_baseStream is null)
+                throw new ObjectDisposedException(null);
+
+            if (value < 0)
+                throw new ArgumentOutOfRangeException(nameof(value), "value cannot be negative");
+
+            _currentPos = value;
+            _baseStream.Seek(_fileOffset + value, SeekOrigin.Begin);
+        }
     }
 
     private Stream? _baseStream;
 
+    private readonly uint _fileOffset;
     private readonly uint _dataSize;
 
     private long _currentPos;
 
-    public MegFileDataStream(Stream baseStream, uint fileOffset, uint dataSize)
+    internal MegFileDataStream(string entryPath, Stream baseStream, uint fileOffset, uint dataSize)
     {
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+        
+        EntryPath = entryPath;
         _baseStream = baseStream ?? throw new ArgumentNullException(nameof(baseStream));
+        _fileOffset = fileOffset;
 
-        if (!_baseStream.CanRead || !_baseStream.CanSeek)
+        if (!baseStream.CanRead || !baseStream.CanSeek)
             throw new ArgumentException("Base stream is not readable or seekable", nameof(baseStream));
 
-        if (fileOffset > _baseStream.Length)
+        if (fileOffset > baseStream.Length)
             throw new ArgumentException("MEG data offset exceeds total MEG archive size", nameof(fileOffset));
 
-        if (fileOffset + dataSize > _baseStream.Length)
+        if (fileOffset + dataSize > baseStream.Length)
             throw new ArgumentException("MEG data size exceeds total MEG archive size");
 
         _dataSize = dataSize;
@@ -44,10 +75,17 @@ internal class MegFileDataStream : Stream
         baseStream.Position = fileOffset;
     }
 
+    internal static MegFileDataStream CreateEmptyStream(string entryPath)
+    {
+        return new MegFileDataStream(entryPath, Null, 0, 0);
+    }
+
+    /// <inheritdoc />
     public override void Flush()
     {
     }
 
+    /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
         if (buffer is null)
@@ -60,11 +98,11 @@ internal class MegFileDataStream : Stream
         if (_baseStream is null)
             throw new ObjectDisposedException(null);
 
-        if (!_baseStream.CanRead)
-            throw new NotSupportedException("Underlying stream is not readable");
-
         if (buffer.Length - offset < count)
             throw new ArgumentOutOfRangeException();
+
+        if (!_baseStream.CanRead)
+            throw new NotSupportedException("Stream is not readable");
 
         var bytesRemaining = _dataSize - _currentPos;
 
@@ -83,21 +121,41 @@ internal class MegFileDataStream : Stream
         return bytesRead;
     }
 
+    /// <inheritdoc />
     public override long Seek(long offset, SeekOrigin origin)
     {
-        throw new NotSupportedException("Seeking this stream is not supported");
+        if (_baseStream is null)
+            throw new ObjectDisposedException(null);
+
+        return SeekCore(offset, origin switch
+        {
+            SeekOrigin.Begin => 0,
+            SeekOrigin.Current => _currentPos,
+            SeekOrigin.End => Length,
+            _ => throw new ArgumentOutOfRangeException(nameof(origin), origin, null)
+        });
     }
 
+    private long SeekCore(long offset, long loc)
+    {
+        var newPosition = unchecked(loc + (int)offset);
+        return Position = newPosition;
+    }
+
+
+    /// <inheritdoc />
     public override void SetLength(long value)
     {
         throw new NotSupportedException("Setting the length of this stream is not supported");
     }
 
+    /// <inheritdoc />
     public override void Write(byte[] buffer, int offset, int count)
     {
         throw new NotSupportedException("Writing to this stream is not supported");
     }
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         try

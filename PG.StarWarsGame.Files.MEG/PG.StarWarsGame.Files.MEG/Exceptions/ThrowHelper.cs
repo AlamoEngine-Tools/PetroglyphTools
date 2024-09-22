@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace PG.StarWarsGame.Files.MEG;
 
-internal static class ThrowHelper
+internal static class MegThrowHelper
 {
     [DoesNotReturn]
     public static void ThrowDataEntryExceeds4GigabyteException(string? filePath)

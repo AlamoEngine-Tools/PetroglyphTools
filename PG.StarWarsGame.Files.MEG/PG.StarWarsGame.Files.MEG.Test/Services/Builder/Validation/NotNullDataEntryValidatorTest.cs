@@ -1,28 +1,32 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-[TestClass]
+
 public class NotNullDataEntryValidatorTest
 {
-    private readonly NotNullDataEntryValidator _validator = new();
+    private readonly NotNullDataEntryValidator _validator = NotNullDataEntryValidator.Instance;
 
-    [TestMethod]
-    [DynamicData(nameof(ValidTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(ValidTestData))]
     public void TestValid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsTrue(_validator.Validate(builderInfo).IsValid);
+        Assert.True(_validator.Validate(builderInfo));
+        Assert.True(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
-    [TestMethod]
-    [DynamicData(nameof(InvalidTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
     {
-        Assert.IsFalse(_validator.Validate(builderInfo).IsValid);
+        Assert.False(_validator.Validate(builderInfo));
+        if (builderInfo is not null) 
+            Assert.False(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
     public static IEnumerable<object[]> ValidTestData()
@@ -30,7 +34,7 @@ public class NotNullDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))];
     }
 
-    public static IEnumerable<object[]> InvalidTestData()
+    public static IEnumerable<object?[]> InvalidTestData()
     {
         yield return [null];
     }

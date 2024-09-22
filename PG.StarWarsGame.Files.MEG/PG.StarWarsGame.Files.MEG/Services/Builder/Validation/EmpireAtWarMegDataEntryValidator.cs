@@ -1,7 +1,10 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
-using FluentValidation;
+using AnakinRaW.CommonUtilities.FileSystem;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using PG.Commons.Utilities;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -10,33 +13,49 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </summary>
 public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryValidator
 {
+    private static readonly PathNormalizeOptions EaWPathNormalizeOptions = new()
+    {
+        UnifyDirectorySeparators = true,
+        TrailingDirectorySeparatorBehavior = TrailingDirectorySeparatorBehavior.Trim
+    };
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarMegDataEntryValidator"/> class.
     /// </summary>
     /// <param name="serviceProvider">The service provider.</param>
     public EmpireAtWarMegDataEntryValidator(IServiceProvider serviceProvider) : base(serviceProvider)
     {
-        RuleFor(info => info.Encrypted).Must(e => !e);
+    }
 
-        RuleFor(info => info.FilePath).Must(path =>
-        {
-            var normalized = FileSystem.Path.Normalize(path,
-                new PathNormalizeOptions { UnifySlashes = true, SeparatorKind = DirectorySeparatorKind.Windows });
-            if (!normalized.Equals(path))
-                return false;
 
-            try
-            {
-                var systemNormalized = FileSystem.Path.Normalize(path,
-                    new PathNormalizeOptions { UnifySlashes = true });
+    /// <inheritdoc />
+    public override bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
+    {
+        if (!base.Validate(entryPath, encrypted, size))
+            return false;
 
-                var fileName = FileSystem.Path.GetFileName(systemNormalized);
-                return FileNameUtilities.IsValidFileName(fileName, out _);
-            }
-            catch (Exception )
-            {
-                return false;
-            }
-        });
+        if (encrypted)
+            return false;
+
+        if (entryPath.IndexOf('/') != -1)
+            return false;
+
+        Span<char> pathBuffer = stackalloc char[PetroglyphMaxFilePathLength];
+        var length = entryPath.ToUpperInvariant(pathBuffer);
+        var upper = pathBuffer.Slice(0, length);
+
+        if (upper.Length != entryPath.Length || !entryPath.Equals(upper, StringComparison.Ordinal))
+            return false;
+
+        // On EaW we enforce '\\' as directory separator. Thus, on linux checking the file name would cause false-positives,
+        // as '\\' is a valid file name character there and Path.GetFileName would yield us a false result.
+        var systemLength = PathNormalizer.Normalize(entryPath, pathBuffer, EaWPathNormalizeOptions);
+        if (systemLength != length)
+            throw new InvalidOperationException();
+
+        var normalized = pathBuffer.Slice(0, length);
+
+        var fileName = FileSystem.Path.GetFileName(normalized);
+        return FileNameUtilities.IsValidFileName(fileName, out _);
     }
 }

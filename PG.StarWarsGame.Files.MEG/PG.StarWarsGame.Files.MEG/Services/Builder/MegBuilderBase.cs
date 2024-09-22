@@ -1,10 +1,12 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -12,16 +14,24 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
-using PG.StarWarsGame.Files.MEG.Services.FileSystem;
+using AnakinRaW.CommonUtilities;
+using PG.Commons.Hashing;
+using PG.Commons.Services.Builder;
+using System.Buffers;
+using AnakinRaW.CommonUtilities.Extensions;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// Base class for a <see cref="IMegBuilder"/> service providing the fundamental implementations.
 /// </summary>
-public abstract class MegBuilderBase : ServiceBase, IMegBuilder
+public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>, IMegBuilder
 {
-    private readonly Dictionary<string, MegFileDataEntryBuilderInfo> _dataEntries = new();
+    private readonly Dictionary<Crc32, MegFileDataEntryBuilderInfo> _dataEntries = new();
+    private readonly ICrc32HashingService _hashingService;
+
+    /// <inheritdoc />
+    public sealed override IReadOnlyCollection<MegFileDataEntryBuilderInfo> BuilderData => DataEntries;
 
     /// <inheritdoc/>
     [MemberNotNullWhen(true, nameof(DataEntryPathNormalizer))]
@@ -69,15 +79,16 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
     /// <param name="services">The service provider.</param>
     protected MegBuilderBase(IServiceProvider services) : base(services)
     {
+        _hashingService = services.GetRequiredService<ICrc32HashingService>();
     }
 
     /// <inheritdoc/>
-    public AddDataEntryToBuilderResult AddFile(string filePath, string filePathInMeg, bool encrypt = false)
+    public unsafe AddDataEntryToBuilderResult AddFile(string filePath, string entryPath, bool encrypt = false)
     {
         ThrowIfDisposed();
 
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePathInMeg);
+        ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
 
         var fileInfo = FileSystem.FileInfo.New(filePath);
         if (!fileInfo.Exists)
@@ -90,13 +101,16 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
                 $"Source file '{fileInfo.FullName}' is larger than 4GB.");
         }
 
-        return AddBuilderInfo(filePathInMeg,
-            actualFilePath =>
-                MegFileDataEntryBuilderInfo.FromFile(fileInfo.FullName, actualFilePath, (uint?)fileSize, encrypt));
+        return AddBuilderInfo(
+            entryPath.AsSpan(),
+            (uint?)fileSize,
+            encrypt,
+            &OriginInfoFromFile, 
+            fileInfo.FullName);
     }
 
     /// <inheritdoc/>
-    public AddDataEntryToBuilderResult AddEntry(
+    public unsafe AddDataEntryToBuilderResult AddEntry(
         MegDataEntryLocationReference entryReference,
         string? overridePathInMeg = null,
         bool? overrideEncrypt = null)
@@ -106,22 +120,37 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         if (entryReference == null)
             throw new ArgumentNullException(nameof(entryReference));
 
-        var filePath = overridePathInMeg ?? entryReference.DataEntry.FilePath;
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        var entryPath = overridePathInMeg ?? entryReference.DataEntry.FilePath;
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
 
         var encrypt = overrideEncrypt ?? entryReference.DataEntry.Encrypted;
 
         if (!entryReference.Exists)
             return AddDataEntryToBuilderResult.FromEntryNotFound(entryReference);
 
-        return AddBuilderInfo(filePath,
-            actualFilePath => MegFileDataEntryBuilderInfo.FromEntryReference(entryReference, actualFilePath, encrypt));
+        return AddBuilderInfo(
+            entryPath.AsSpan(), 
+            entryReference.DataEntry.Location.Size,
+            encrypt,
+            &OriginInfoFromLocation, 
+            entryReference);
+    }
+
+    private static MegDataEntryOriginInfo OriginInfoFromFile(string filePath)
+    {
+        return new MegDataEntryOriginInfo(filePath);
+    }
+
+    private static MegDataEntryOriginInfo OriginInfoFromLocation(MegDataEntryLocationReference location)
+    {
+        return new MegDataEntryOriginInfo(location);
     }
 
     /// <inheritdoc/>
     public bool Remove(MegFileDataEntryBuilderInfo info)
     {
-        return _dataEntries.Remove(info.FilePath);
+        var crc = _hashingService.GetCrc32(info.FilePath, MegFileConstants.MegDataEntryPathEncoding);
+        return _dataEntries.Remove(crc);
     }
 
     /// <inheritdoc/>
@@ -130,69 +159,23 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         _dataEntries.Clear();
     }
 
-    /// <inheritdoc/>
-    /// <remarks>
-    /// <paramref name="fileInformation"/> may specify relative or absolute path information.
-    /// Relative path information is interpreted as relative to the current working directory.
-    /// <br/>
-    /// <br/>
-    /// Any and all directories specified in <paramref name="fileInformation"/> are created, unless they already exist or unless some part of path is invalid.
-    /// </remarks>
-    public void Build(MegFileInformation fileInformation, bool overwrite)
+    /// <inheritdoc />
+    protected sealed override void BuildFileCore(FileSystemStream fileStream, MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> data)
     {
-        ThrowIfDisposed();
-
-        if (fileInformation is null)
-            throw new ArgumentNullException(nameof(fileInformation));
-
-        // Prevent races by creating getting a copy of the current state
-        var dataEntries = DataEntries;
-
-        if (dataEntries.Any(e => e.Encrypted))
-        {
-            throw new NotImplementedException("Encryption is currently not supported.");
-        }
-
-        var validationResult = MegFileInformationValidator.Validate(new(fileInformation, dataEntries));
-        if (!validationResult.IsValid)
-            throw new NotSupportedException($"Provided file parameters are not valid for this builder: {validationResult}");
-
-        var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
-
-        // file path points to a directory
-        // NB: This is not a full inclusive check. We leave it up to the file system to throw exceptions if something is still invalid.
-        if (string.IsNullOrEmpty(fileInfo.Name) || fileInfo.Directory is null)
-            throw new ArgumentException("Specified file information contains an invalid file path.", nameof(fileInformation));
-
-        var fullPath = fileInfo.FullName;
-
-        if (!overwrite && fileInfo.Exists)
-            throw new IOException($"The file '{fullPath}' already exists.");
-
-        fileInfo.Directory.Create();
-
         var megService = Services.GetRequiredService<IMegFileService>();
-        using var tmpFileStream = FileSystem.File.CreateRandomHiddenTemporaryFile(fileInfo.DirectoryName);
-        megService.CreateMegArchive(tmpFileStream, fileInformation.FileVersion, fileInformation.EncryptionData, dataEntries);
-        using var destinationStream = FileSystem.FileStream.New(fullPath, FileMode.Create, FileAccess.Write);
-        tmpFileStream.Seek(0, SeekOrigin.Begin);
-        tmpFileStream.CopyTo(destinationStream);
+        megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, data);
     }
 
-    /// <summary>
-    /// Checks whether the passed file information are valid for this <see cref="IMegBuilder"/>.
-    /// </summary>
-    /// <remarks>
-    /// The default implementation does not validate and always returns <see langword="true"/>.
-    /// </remarks>
-    /// <param name="fileInformation">The file information to validate</param>
-    /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fileInformation"/> is <see langword="null"/>.</exception>
-    public bool ValidateFileInformation(MegFileInformation fileInformation)
+    /// <inheritdoc />
+    protected sealed override bool ValidateFileInformationCore(MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> builderData,
+        out string? failedReason)
     {
-        if (fileInformation == null)
-            throw new ArgumentNullException(nameof(fileInformation));
-        return MegFileInformationValidator.Validate(new(fileInformation, DataEntries)).IsValid;
+        if (builderData.Any(e => e.Encrypted))
+            throw new NotImplementedException("Encryption is currently not supported.");
+
+        var validation = MegFileInformationValidator.Validate(new(fileInformation, DataEntries));
+        failedReason = validation.ToString();
+        return validation.IsValid;
     }
 
     /// <inheritdoc/>
@@ -201,40 +184,79 @@ public abstract class MegBuilderBase : ServiceBase, IMegBuilder
         base.DisposeManagedResources();
         _dataEntries.Clear();
     }
-
-    private AddDataEntryToBuilderResult AddBuilderInfo(string filePath, Func<string, MegFileDataEntryBuilderInfo> createBuilderInfo)
+    
+    private unsafe AddDataEntryToBuilderResult AddBuilderInfo<T>(
+        ReadOnlySpan<char> entryPath, 
+        uint? size,
+        bool encrypt,
+        delegate*<T, MegDataEntryOriginInfo> originInfoFactory,
+        T state)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(filePath);
+        if (entryPath.Length == 0)
+            throw new ArgumentException("entryPath cannot be empty", nameof(entryPath));
 
-        var actualFilePath = filePath;
 
-        if (NormalizesEntryPaths && !DataEntryPathNormalizer.TryNormalizePath(ref actualFilePath, out var message))
-            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
+        scoped var actualEntryPath = entryPath;
 
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(actualFilePath);
+        char[]? pooledCharArray = null;
 
-        actualFilePath = EncodePath(actualFilePath);
+        // This works, because normalization must not add chars
+        // and #chars == #bytes required for encoding entry paths.
+        var entryPathBuffer = entryPath.Length > 260
+            ? pooledCharArray = ArrayPool<char>.Shared.Rent(entryPath.Length)
+            : stackalloc char[260];
 
-        if (_dataEntries.TryGetValue(actualFilePath, out var currentInfo))
+        try
         {
-            if (!OverwritesDuplicateEntries)
-                return AddDataEntryToBuilderResult.FromDuplicate(actualFilePath);
+            if (NormalizesEntryPaths)
+            {
+                if (!DataEntryPathNormalizer.TryNormalize(actualEntryPath, entryPathBuffer, out var length, out var message))
+                    return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, message);
+
+                if (length > entryPath.Length)
+                    throw new InvalidOperationException("Normalized entry path must not be larger than original path.");
+
+                actualEntryPath = entryPathBuffer.Slice(0, length);
+            }
+
+            if (actualEntryPath.Length == 0)
+                throw new InvalidOperationException("entryPath cannot be null");
+
+
+            actualEntryPath = EncodeEntryPath(actualEntryPath, entryPathBuffer, out var crc);
+
+            var validationResult = DataEntryValidator.Validate(actualEntryPath, encrypt, size);
+            if (!validationResult)
+                return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
+                    $"The entry with entry path '{actualEntryPath.ToString()}' is not valid.");
+
+            
+            if (_dataEntries.TryGetValue(crc, out var currentInfo))
+            {
+                if (!OverwritesDuplicateEntries)
+                    return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
+            }
+
+            var infoToAdd = new MegFileDataEntryBuilderInfo(originInfoFactory(state), actualEntryPath.ToString(), size, encrypt);
+
+            _dataEntries[crc] = infoToAdd;
+
+            return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
         }
-
-        var infoToAdd = createBuilderInfo(actualFilePath);
-
-        var entryValidation = DataEntryValidator.Validate(infoToAdd);
-        if (!entryValidation.IsValid)
-            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry, entryValidation.ToString());
-
-        _dataEntries[actualFilePath] = infoToAdd;
-
-        return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
+        finally
+        {
+            if (pooledCharArray is not null)
+                ArrayPool<char>.Shared.Return(pooledCharArray);
+        }
     }
 
-    private static string EncodePath(string actualFilePath)
+    private ReadOnlySpan<char> EncodeEntryPath(ReadOnlySpan<char> entryPath, Span<char> buffer, out Crc32 crc)
     {
         var encoding = MegFileConstants.MegDataEntryPathEncoding;
-        return encoding.EncodeString(actualFilePath, encoding.GetByteCountPG(actualFilePath.Length));
+        var requiredBytes = encoding.GetByteCountPG(entryPath.Length);
+        var length = encoding.EncodeString(entryPath, buffer, requiredBytes);
+        var result = buffer.Slice(0, length);
+        crc = _hashingService.GetCrc32(result, encoding);
+        return result;
     }
 }

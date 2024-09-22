@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
-[TestClass]
+
 public class VirtualMegArchiveTest
 {
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
+    [Fact]
     public void Test_Ctor_Throw_NullArgument()
     {
-        _ = new VirtualMegArchive(null!);
+        Assert.Throws<ArgumentNullException>(() => new VirtualMegArchive(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor()
     {
         var entries = new List<MegDataEntryReference>();

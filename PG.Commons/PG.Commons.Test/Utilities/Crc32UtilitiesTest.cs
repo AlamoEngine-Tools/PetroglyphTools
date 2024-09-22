@@ -1,58 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.Testing;
+using Xunit;
 
 namespace PG.Commons.Test.Utilities;
 
-[TestClass]
 public class Crc32UtilitiesTest
 {
-    [TestMethod]
-    [DataRow(1, 2, 3, 4)]
-    [DataRow(1, 1, 1, 1, 1)]
-    [DataRow(1, 2, 2, 2, 3, 5, 100, -1)]
+    [Theory]
+    [InlineData(1, 2, 3, 4)]
+    [InlineData(1, 1, 1, 1, 1)]
+    [InlineData(1, 2, 2, 2, 3, 5, 100, -1)]
     public void Test_EnsureSortedByCrc32(params int[] checksums)
     {
         var list = checksums.Select(checksum => new CrcHolder(checksum)).Cast<IHasCrc32>().ToList();
         ExceptionUtilities.AssertDoesNotThrowException(() => Crc32Utilities.EnsureSortedByCrc32(list));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_EnsureSortedByCrc32_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => Crc32Utilities.EnsureSortedByCrc32<IHasCrc32>(null!));
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.EnsureSortedByCrc32<IHasCrc32>(null!));
     }
 
-    [TestMethod]
-    [DataRow(4, 3, 2, 1)]
-    [DataRow(1, 1, 2, 4, 3, 5)]
-    [DataRow(-1, 0, 1, 2, 3)]
+    [Theory]
+    [InlineData(4, 3, 2, 1)]
+    [InlineData(1, 1, 2, 4, 3, 5)]
+    [InlineData(-1, 0, 1, 2, 3)]
     public void Test_EnsureSortedByCrc32_ThrowsUnsorted(params int[] checksums)
     {
         var list = checksums.Select(checksum => new CrcHolder(checksum)).ToList();
-        Assert.ThrowsException<ArgumentException>(() => Crc32Utilities.EnsureSortedByCrc32(list));
+        Assert.Throws<ArgumentException>(() => Crc32Utilities.EnsureSortedByCrc32(list));
     }
 
 
-    private static IEnumerable<object[]> SortingTestData()
+    public static IEnumerable<object[]> SortingTestData()
     {
         return new[]
         {
-            new object[]
-            {
+            [
                 new[] { ("a", 1), ("b", 1), ("c", 2), ("d", 3) }, // Already sorted
                 new[] { ("a", 1), ("b", 1), ("c", 2), ("d", 3) }
-            },
-            new object[]
-            {
+            ],
+            [
                 new[] { ("a", -1), ("b", 1), ("c", 2), ("d", 3) }, 
                 new[] { ("b", 1), ("c", 2), ("d", 3), ("a", -1) }
-            },
+            ],
             new object[]
             {
                 new[] { ("a", 2), ("b", 1), ("c", 3), ("d", 1) },
@@ -62,8 +59,8 @@ public class Crc32UtilitiesTest
     }
 
 
-    [DataTestMethod]
-    [DynamicData(nameof(SortingTestData), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(SortingTestData))]
     public void Test_SortByCrc32((string Id, int Crc)[] data, (string Id, int Crc)[] expectedList)
     {
         var list = data.Select(d=> new CrcHolderWithIdentity(d.Id, d.Crc)).ToList();
@@ -71,21 +68,21 @@ public class Crc32UtilitiesTest
 
         var result = Crc32Utilities.SortByCrc32(list).ToList();
 
-        CollectionAssert.AreEqual(expectedTransformed, result);
+        Assert.Equal(expectedTransformed, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_SortByCrc32_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => Crc32Utilities.SortByCrc32<IHasCrc32>(null!));
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.SortByCrc32<IHasCrc32>(null!));
     }
 
 
-    [TestMethod]
+    [Fact]
     public void Test_ListToCrcIndexRangeTable_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => Crc32Utilities.ListToCrcIndexRangeTable<IHasCrc32>(null!));
-        Assert.ThrowsException<ArgumentException>(() => Crc32Utilities.ListToCrcIndexRangeTable(new List<CrcHolder>
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ListToCrcIndexRangeTable<IHasCrc32>(null!));
+        Assert.Throws<ArgumentException>(() => Crc32Utilities.ListToCrcIndexRangeTable(new List<CrcHolder>
         {
             new(1), 
             new(0)
@@ -93,35 +90,33 @@ public class Crc32UtilitiesTest
     }
 
 
-    private static IEnumerable<object[]> SortedTestDataForIndexTable()
+    public static IEnumerable<object[]> SortedTestDataForIndexTable()
     {
         return new[]
         {
-            new object[]
-            {
+            [
                 new[] { 1, 1, 2, 3, 3, 4 },
                 new Dictionary<int, (int, int)> { { 1, (0, 2) }, { 2, (2, 1) }, { 3, (3, 2) }, { 4, (5, 1) } }
-            },
-            new object[]
-            {
+            ],
+            [
                 new int[] { },
                 new Dictionary<int, (int, int)>()
-            },
-            new object[]
-            {
+            ],
+            [
                 new[] { 1, 2, 3, 3 },
                 new Dictionary<int, (int, int)> { { 1, (0, 1) }, { 2, (1, 1) }, { 3, (2, 2) } }
-            },
+            ],
             new object[]
             {
+                // (uint)-1 is larger than 1
                 new[] { 1, -1 },
                 new Dictionary<int, (int, int)> { { 1, (0, 1) }, { -1, (1, 1) } }
             },
         };
     }
 
-    [DataTestMethod]
-    [DynamicData(nameof(SortedTestDataForIndexTable), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(SortedTestDataForIndexTable))]
     public void Test_ListToCrcIndexRangeTable(int[] inputData, Dictionary<int, (int, int)> expectedData)
     {
         var list = inputData.Select(d => new CrcHolder(d)).ToList();
@@ -132,31 +127,146 @@ public class Crc32UtilitiesTest
 
         var result = Crc32Utilities.ListToCrcIndexRangeTable(list);
 
-        CollectionAssert.AreEqual(expectedTransformed.ToList(), result.ToList());
+        Assert.Equal(expectedTransformed, result);
     }
 
-
-    private class CrcHolder : IHasCrc32
+    [Fact]
+    public void Test_ItemsWithCrc_Throws()
     {
-        public Crc32 Crc32 { get; }
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, new Dictionary<Crc32, IndexRange>(), (IList<CrcHolder>)null!));
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, null!, new List<CrcHolder>()));
+    }
 
-        public CrcHolder(int number)
+    [Theory]
+    [MemberData(nameof(SortedTestDataForItemsWithCrc))]
+    public void Test_ItemsWithCrc((string Id, int Crc)[] data, ICollection<ItemsWithCrcQueryData> queries)
+    {
+        var list = data.Select(d => new CrcHolderWithIdentity(d.Id, d.Crc)).ToList();
+
+        var map = Crc32Utilities.ListToCrcIndexRangeTable(list);
+
+        foreach (var queryData in queries)
         {
-            Crc32 = new Crc32(number);
+            var items = Crc32Utilities.ItemsWithCrc(queryData.Crc, map, list);
+            Assert.Equal(queryData.ExpectedItems, items);
         }
     }
 
-    private class CrcHolderWithIdentity : IHasCrc32, IEquatable<CrcHolderWithIdentity>
+    public static IEnumerable<object[]> SortedTestDataForItemsWithCrc()
     {
-        public string Id { get; }
+        yield return
+        [
+            Array.Empty<(string, int)>(),
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                }
+            }
+        ];
+        yield return
+        [
+            new[] { ("a", 1) },
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                },
+                new()
+                {
+                    Crc = new Crc32(1),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("a", 1)
+                    ]
+                },
+            }
+        ];
+        yield return
+        [
+            new[] { ("a", 1), ("b", 1) },
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                },
+                new()
+                {
+                    Crc = new Crc32(1),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("a", 1),
+                        new CrcHolderWithIdentity("b", 1),
+                    ]
+                },
+            }
+        ];
+        yield return
+        [
+            new[] { ("a", 1), ("b", 1), ("c", 2), ("d", 3), ("e", 3), ("f", 4) },
+            new List<ItemsWithCrcQueryData>
+            {
+                new()
+                {
+                    Crc = new Crc32(0),
+                    ExpectedItems = []
+                },
+                new()
+                {
+                    Crc = new Crc32(1),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("a", 1), 
+                        new CrcHolderWithIdentity("b", 1)
+                    ]
+                },
+                new()
+                {
+                    Crc = new Crc32(2),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("c", 2),
+                    ]
+                },
+                new()
+                {
+                    Crc = new Crc32(3),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("d", 3),
+                        new CrcHolderWithIdentity("e", 3)
+                    ]
+                },
+                new()
+                {
+                    Crc = new Crc32(4),
+                    ExpectedItems = [
+                        new CrcHolderWithIdentity("f", 4),
+                    ]
+                },
+            }
+        ];
+    }
 
-        public Crc32 Crc32 { get; }
+    public struct ItemsWithCrcQueryData
+    {
+        public Crc32 Crc { get; init; }
 
-        public CrcHolderWithIdentity(string id, int number)
-        {
-            Id = id;
-            Crc32 = new Crc32(number);
-        }
+        public IList<CrcHolderWithIdentity> ExpectedItems { get; init; }
+    }
+
+
+    public class CrcHolder(int number) : IHasCrc32
+    {
+        public Crc32 Crc32 { get; } = new(number);
+    }
+
+    public class CrcHolderWithIdentity(string id, int number) : IHasCrc32, IEquatable<CrcHolderWithIdentity>
+    {
+        public string Id { get; } = id;
+
+        public Crc32 Crc32 { get; } = new(number);
 
         public bool Equals(CrcHolderWithIdentity? other)
         {
@@ -176,6 +286,11 @@ public class Crc32UtilitiesTest
         public override int GetHashCode()
         {
             return HashCode.Combine(Id, Crc32);
+        }
+
+        public override string ToString()
+        {
+            return $"{Id}:{Crc32}";
         }
     }
 }

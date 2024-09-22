@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
@@ -41,7 +42,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     /// <exception cref="ArgumentException">If <paramref name="filePath"/> is empty or only whitespace.</exception>
     public MegDataEntryOriginInfo(string filePath)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
         FilePath = filePath;
     }
 

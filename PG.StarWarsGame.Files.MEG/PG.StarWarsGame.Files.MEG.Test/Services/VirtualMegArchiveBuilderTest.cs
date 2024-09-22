@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -8,27 +8,27 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services;
 
-[TestClass]
+
 public class VirtualMegArchiveBuilderTest
 {
-    [TestMethod]
+    [Fact]
     public void Test_BuildFrom_NullArgs_Throws()
     {
         var service = new VirtualMegArchiveBuilder();
 
-        Assert.ThrowsException<ArgumentNullException>(() => service.BuildFrom((IMegFile) null!, false));
-        Assert.ThrowsException<ArgumentNullException>(() => service.BuildFrom((List<IMegFile>) null!, false));
-        Assert.ThrowsException<ArgumentNullException>(() => service.BuildFrom((IEnumerable<MegDataEntryReference>) null!, false));
+        Assert.Throws<ArgumentNullException>(() => service.BuildFrom( null!));
+        Assert.Throws<ArgumentNullException>(() => service.BuildFrom((List<IMegFile>) null!, false));
+        Assert.Throws<ArgumentNullException>(() => service.BuildFrom((IEnumerable<MegDataEntryReference>) null!, false));
 
-        Assert.ThrowsException<ArgumentNullException>(() => service.BuildFrom((IMegFile)null!, true));
-        Assert.ThrowsException<ArgumentNullException>(() => service.BuildFrom((List<IMegFile>)null!, true));
-        Assert.ThrowsException<ArgumentNullException>(() => service.BuildFrom((IEnumerable<MegDataEntryReference>)null!, true));
+        Assert.Throws<ArgumentNullException>(() => service.BuildFrom((List<IMegFile>)null!, true));
+        Assert.Throws<ArgumentNullException>(() => service.BuildFrom((IEnumerable<MegDataEntryReference>)null!, true));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildFrom_ListOfReferences_DoesNotExists_Throws()
     {
         var service = new VirtualMegArchiveBuilder();
@@ -43,11 +43,11 @@ public class VirtualMegArchiveBuilderTest
             new(new(meg1.Object, entry1)),
         };
 
-        Assert.ThrowsException<FileNotInMegException>(() => service.BuildFrom(entries, false));
-        Assert.ThrowsException<FileNotInMegException>(() => service.BuildFrom(entries, true));
+        Assert.Throws<FileNotInMegException>(() => service.BuildFrom(entries, false));
+        Assert.Throws<FileNotInMegException>(() => service.BuildFrom(entries, true));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildFrom_ListOfReferences_DoNotReplace()
     {
         var service = new VirtualMegArchiveBuilder();
@@ -71,20 +71,17 @@ public class VirtualMegArchiveBuilderTest
 
         var archive = service.BuildFrom(entries, false);
 
-        Assert.IsNotNull(archive);
-        Assert.AreEqual(3, archive.Count);
+        Assert.NotNull(archive);
+        Assert.Equal(2, archive.Count);
 
-        Assert.AreEqual(entry2, archive[0].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[0].Location.MegFile);
+        Assert.Equal(entry2, archive[0].Location.DataEntry);
+        Assert.Equal(meg2.Object, archive[0].Location.MegFile);
 
-        Assert.AreEqual(entry1, archive[1].Location.DataEntry);
-        Assert.AreEqual(meg1.Object, archive[1].Location.MegFile);
-
-        Assert.AreEqual(entry3, archive[2].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[2].Location.MegFile);
+        Assert.Equal(entry1, archive[1].Location.DataEntry);
+        Assert.Equal(meg1.Object, archive[1].Location.MegFile);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildFrom_ListOfReferences_Replace()
     {
         var service = new VirtualMegArchiveBuilder();
@@ -108,18 +105,18 @@ public class VirtualMegArchiveBuilderTest
 
         var archive = service.BuildFrom(entries, true);
 
-        Assert.IsNotNull(archive);
-        Assert.AreEqual(2, archive.Count);
+        Assert.NotNull(archive);
+        Assert.Equal(2, archive.Count);
 
-        Assert.AreEqual(entry2, archive[0].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[0].Location.MegFile);
+        Assert.Equal(entry2, archive[0].Location.DataEntry);
+        Assert.Equal(meg2.Object, archive[0].Location.MegFile);
 
-        Assert.AreEqual(entry3, archive[1].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[1].Location.MegFile);
+        Assert.Equal(entry3, archive[1].Location.DataEntry);
+        Assert.Equal(meg2.Object, archive[1].Location.MegFile);
     }
 
-    [TestMethod]
-    public void Test_BuildFrom_Meg_DoNotReplace()
+    [Fact]
+    public void Test_BuildFrom_SingleMeg()
     {
         var service = new VirtualMegArchiveBuilder();
 
@@ -130,99 +127,75 @@ public class VirtualMegArchiveBuilderTest
         var meg = new Mock<IMegFile>();
         meg.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry1, entry2, entry3 }));
 
-        var archive = service.BuildFrom(meg.Object, false);
+        var archive = service.BuildFrom(meg.Object);
 
-        Assert.IsNotNull(archive);
-        Assert.AreEqual(3, archive.Count);
+        Assert.NotNull(archive);
+        Assert.Equal(2, archive.Count);
 
-        Assert.AreEqual(entry1, archive[0].Location.DataEntry);
-        Assert.AreEqual(meg.Object, archive[0].Location.MegFile);
+        Assert.Equal(entry1, archive[0].Location.DataEntry);
+        Assert.Equal(meg.Object, archive[0].Location.MegFile);
 
-        Assert.AreEqual(entry2, archive[1].Location.DataEntry);
-        Assert.AreEqual(meg.Object, archive[1].Location.MegFile);
-
-        Assert.AreEqual(entry3, archive[2].Location.DataEntry);
-        Assert.AreEqual(meg.Object, archive[2].Location.MegFile);
+        Assert.Equal(entry3, archive[1].Location.DataEntry);
+        Assert.Equal(meg.Object, archive[1].Location.MegFile);
     }
 
-    [TestMethod]
-    public void Test_BuildFrom_Meg_Replace()
-    {
-        var service = new VirtualMegArchiveBuilder();
-
-        var entry1 = MegDataEntryTest.CreateEntry("A", new Crc32(0));
-        var entry2 = MegDataEntryTest.CreateEntry("B", new Crc32(0));
-        var entry3 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
-
-        var meg = new Mock<IMegFile>();
-        meg.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry1, entry2, entry3 }));
-
-        var archive = service.BuildFrom(meg.Object, true);
-
-        Assert.IsNotNull(archive);
-        Assert.AreEqual(2, archive.Count);
-
-        Assert.AreEqual(entry2, archive[0].Location.DataEntry);
-        Assert.AreEqual(meg.Object, archive[0].Location.MegFile);
-
-        Assert.AreEqual(entry3, archive[1].Location.DataEntry);
-        Assert.AreEqual(meg.Object, archive[1].Location.MegFile);
-    }
-
-    [TestMethod]
+    [Fact]
     public void Test_BuildFrom_ListOfMegs_DoNotReplace()
     {
         var service = new VirtualMegArchiveBuilder();
 
-        var entry1 = MegDataEntryTest.CreateEntry("A", new Crc32(1));
-        var entry2 = MegDataEntryTest.CreateEntry("B", new Crc32(0));
-        var entry3 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
+        var entry1_1 = MegDataEntryTest.CreateEntry("A", new Crc32(1));
+        var entry1_2 = MegDataEntryTest.CreateEntry("B", new Crc32(1));
+
+        var entry2_1 = MegDataEntryTest.CreateEntry("0", new Crc32(0));
+        var entry2_2 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
+        var entry2_3 = MegDataEntryTest.CreateEntry("D", new Crc32(1));
 
         var meg1 = new Mock<IMegFile>();
-        meg1.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry1 }));
+        meg1.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry1_1, entry1_2 }));
 
         var meg2 = new Mock<IMegFile>();
-        meg2.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry2, entry3 }));
+        meg2.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry2_1, entry2_2, entry2_3 }));
 
         var archive = service.BuildFrom(new List<IMegFile>{meg1.Object, meg2.Object}, false);
 
-        Assert.IsNotNull(archive);
-        Assert.AreEqual(3, archive.Count);
+        Assert.NotNull(archive);
+        Assert.Equal(2, archive.Count);
 
-        Assert.AreEqual(entry2, archive[0].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[0].Location.MegFile);
+        Assert.Equal(entry2_1, archive[0].Location.DataEntry);
+        Assert.Equal(meg2.Object, archive[0].Location.MegFile);
 
-        Assert.AreEqual(entry1, archive[1].Location.DataEntry);
-        Assert.AreEqual(meg1.Object, archive[1].Location.MegFile);
-
-        Assert.AreEqual(entry3, archive[2].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[2].Location.MegFile);
+        Assert.Equal(entry1_1, archive[1].Location.DataEntry);
+        Assert.Equal(meg1.Object, archive[1].Location.MegFile);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildFrom_ListOfMegs_Replace()
     {
         var service = new VirtualMegArchiveBuilder();
 
-        var entry1 = MegDataEntryTest.CreateEntry("A", new Crc32(1));
-        var entry2 = MegDataEntryTest.CreateEntry("B", new Crc32(0));
-        var entry3 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
+        var entry1_1 = MegDataEntryTest.CreateEntry("A", new Crc32(1));
+        var entry1_2 = MegDataEntryTest.CreateEntry("B", new Crc32(1));
+
+        var entry2_1 = MegDataEntryTest.CreateEntry("0", new Crc32(0));
+        var entry2_2 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
+        var entry2_3 = MegDataEntryTest.CreateEntry("D", new Crc32(1));
 
         var meg1 = new Mock<IMegFile>();
-        meg1.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry1 }));
+        meg1.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry1_1, entry1_2 }));
 
         var meg2 = new Mock<IMegFile>();
-        meg2.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry2, entry3 }));
+        meg2.SetupGet(m => m.Archive).Returns(new MegArchive(new List<MegDataEntry> { entry2_1, entry2_2, entry2_3 }));
 
         var archive = service.BuildFrom(new List<IMegFile> { meg1.Object, meg2.Object }, true);
 
-        Assert.IsNotNull(archive);
-        Assert.AreEqual(2, archive.Count);
+        Assert.NotNull(archive);
+        Assert.Equal(2, archive.Count);
 
-        Assert.AreEqual(entry2, archive[0].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[0].Location.MegFile);
+        Assert.Equal(entry2_1, archive[0].Location.DataEntry);
+        Assert.Equal(meg2.Object, archive[0].Location.MegFile);
         
-        Assert.AreEqual(entry3, archive[1].Location.DataEntry);
-        Assert.AreEqual(meg2.Object, archive[1].Location.MegFile);
+        Assert.Equal(entry2_2, archive[1].Location.DataEntry);
+        Assert.Equal(meg2.Object, archive[1].Location.MegFile);
     }
 }

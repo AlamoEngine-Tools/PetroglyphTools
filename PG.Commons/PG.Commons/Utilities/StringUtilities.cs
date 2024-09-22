@@ -4,6 +4,10 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+#if NETSTANDARD2_0
+using AnakinRaW.CommonUtilities.Extensions;
+#endif
+
 
 namespace PG.Commons.Utilities;
 
@@ -23,7 +27,7 @@ public static class StringUtilities
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ushort ValidateStringByteSizeUInt16(ReadOnlySpan<char> value, Encoding encoding)
     {
-        if (value == null)
+        if (value == ReadOnlySpan<char>.Empty)
             throw new ArgumentNullException(nameof(value));
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
@@ -46,7 +50,7 @@ public static class StringUtilities
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ushort ValidateStringCharLengthUInt16(ReadOnlySpan<char> value)
     {
-        if (value == null)
+        if (value == ReadOnlySpan<char>.Empty)
             throw new ArgumentNullException(nameof(value));
 
         var length = value.Length;
@@ -63,13 +67,28 @@ public static class StringUtilities
     /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
     public static void ValidateIsAsciiOnly(ReadOnlySpan<char> value)
     {
-        if (value == null)
+        if (value == ReadOnlySpan<char>.Empty)
+            throw new ArgumentNullException(nameof(value));
+        if (!IsAsciiOnly(value))
+            throw new ArgumentException("Value contains non-ASCII characters.", nameof(value));
+    }
+
+    /// <summary>
+    /// Throws an <see cref="ArgumentException"/> if the given character sequence contains non-ASCII characters.
+    /// </summary>
+    /// <param name="value">The character sequence to validate.</param>
+    /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsAsciiOnly(ReadOnlySpan<char> value)
+    {
+        if (value == ReadOnlySpan<char>.Empty)
             throw new ArgumentNullException(nameof(value));
 
         foreach (var ch in value)
         {
             if ((uint)ch > '\x007f')
-                throw new ArgumentException("Value contains non-ASCII characters.", nameof(value));
+                return false;
         }
+        return true;
     }
 }

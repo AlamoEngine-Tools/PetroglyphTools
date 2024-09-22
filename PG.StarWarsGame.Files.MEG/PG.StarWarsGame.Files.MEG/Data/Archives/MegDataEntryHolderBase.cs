@@ -1,10 +1,13 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using AnakinRaW.CommonUtilities.Collections;
 using DotNet.Globbing;
-using PG.Commons.Collections;
 using PG.Commons.DataTypes;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
@@ -73,29 +76,17 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     /// <inheritdoc />
     public ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc)
     {
-        if (!_crcToIndexMap.TryGetValue(crc, out var indexRange))
-            return ReadOnlyFrugalList<T>.Empty;
-
-        var length = indexRange.Length;
-        
-        if (length == 1)
-            return new ReadOnlyFrugalList<T>(Entries[indexRange.Start]);
-
-        var array = new T[length];
-        for (var i = indexRange.Start; i < length; i++)
-            array[i] = Entries[i];
-        
-        return new ReadOnlyFrugalList<T>(array);
+        return Crc32Utilities.ItemsWithCrc(crc, _crcToIndexMap, Entries);
     }
 
     /// <inheritdoc />
-    public T? LastEntryWithCrc(Crc32 crc)
+    public T? FirstEntryWithCrc(Crc32 crc)
     {
-        return EntriesWithCrc(crc).LastOrDefault();
+        return EntriesWithCrc(crc).FirstOrDefault();
     }
 
     /// <inheritdoc />
-    public ReadOnlyFrugalList<T> FindAllEntries(string searchPattern)
+    public ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive)
     {
         Debug.Assert(_fileNames.Count == Entries.Count);
 
@@ -103,7 +94,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
             return ReadOnlyFrugalList<T>.Empty;
 
         var glob = Glob.Parse(searchPattern,
-            new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = true } });
+            new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = caseInsensitive } });
 
         var foundMatches = new FrugalList<T>();
 

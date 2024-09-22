@@ -1,8 +1,12 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+using AnakinRaW.CommonUtilities;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
@@ -40,8 +44,8 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// <exception cref="ArgumentException"></exception>
     internal MegDataEntry(string filePath, Crc32 crc32, MegDataEntryLocation location, bool encrypted, string originalFilePath) : base(location)
     {
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
-        Commons.Utilities.ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
 
         StringUtilities.ValidateIsAsciiOnly(filePath.AsSpan());
         

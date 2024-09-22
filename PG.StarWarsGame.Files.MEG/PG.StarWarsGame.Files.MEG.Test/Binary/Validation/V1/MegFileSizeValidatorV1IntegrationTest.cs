@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.IO;
 using System;
@@ -6,18 +5,16 @@ using System.IO.Abstractions;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation.V1;
 
-[TestClass]
 public class MegFileSizeValidatorV1IntegrationTest
 {
     private readonly MegFileSizeValidator _validator = new();
-    private MegFileBinaryReaderV1 _binaryReader = null!;
+    private readonly MegFileBinaryReaderV1 _binaryReader;
 
-
-    [TestInitialize]
-    public void SetUp()
+    public MegFileSizeValidatorV1IntegrationTest()
     {
         var fs = new MockFileSystem();
         var sp = new Mock<IServiceProvider>();
@@ -26,7 +23,7 @@ public class MegFileSizeValidatorV1IntegrationTest
         _binaryReader = new MegFileBinaryReaderV1(sp.Object);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test__ValidateCore_CorrectSize()
     {
         var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
@@ -39,15 +36,15 @@ public class MegFileSizeValidatorV1IntegrationTest
             Metadata = metadata
         };
 
-        Assert.IsTrue(_validator.Validate(sizeInfo).IsValid);
+        Assert.True(_validator.Validate(sizeInfo));
     }
 
-    [TestMethod]
-    [DataRow(0, 1)]
-    [DataRow(0, 2)]
-    [DataRow(0, -1)]
-    [DataRow(-1, 0)]
-    [DataRow(1, 0)]
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(0, 2)]
+    [InlineData(0, -1)]
+    [InlineData(-1, 0)]
+    [InlineData(1, 0)]
     public void Test__ValidateCore_IncorrectSize(int offsetBytesRead, int offsetArchiveSize)
     {
         var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
@@ -60,11 +57,11 @@ public class MegFileSizeValidatorV1IntegrationTest
             Metadata = metadata
         };
 
-        Assert.IsFalse(_validator.Validate(sizeInfo).IsValid);
-        Assert.IsFalse(_validator.Validate(sizeInfo).IsValid);
-        Assert.IsFalse(_validator.Validate(sizeInfo).IsValid);
+        Assert.False(_validator.Validate(sizeInfo));
+        Assert.False(_validator.Validate(sizeInfo));
+        Assert.False(_validator.Validate(sizeInfo));
 
-        Assert.IsFalse(_validator.Validate(sizeInfo).IsValid);
-        Assert.IsFalse(_validator.Validate(sizeInfo).IsValid);
+        Assert.False(_validator.Validate(sizeInfo));
+        Assert.False(_validator.Validate(sizeInfo));
     }
 }

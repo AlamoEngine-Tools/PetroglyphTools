@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-[TestClass]
+
 public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 {
     protected override Type ExpectedDataEntryValidatorType => typeof(EmpireAtWarMegDataEntryValidator);

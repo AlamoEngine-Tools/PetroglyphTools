@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
@@ -16,13 +15,14 @@ using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using PG.Testing;
 using PG.Testing.Hashing;
 using Testably.Abstractions.Testing;
+using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Construction;
 
 public abstract class ConstructingMegArchiveBuilderBaseTest
 {
-    private Mock<IServiceProvider> _serviceProviderMock = null!;
-    private MockFileSystem _fileSystem = null!;
+    private readonly Mock<IServiceProvider> _serviceProviderMock = null!;
+    protected MockFileSystem FileSystem = new();
 
     private protected abstract ConstructingMegArchiveBuilderBase CreateService(IServiceProvider serviceProvider);
 
@@ -30,30 +30,28 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
 
     protected abstract MegFileVersion GetExpectedFileVersion();
 
-    [TestInitialize]
-    public void SetUp()
+    protected ConstructingMegArchiveBuilderBaseTest()
     {
-        _fileSystem = new MockFileSystem();
         var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(_fileSystem);
-        sp.Setup(s => s.GetService(typeof(IChecksumService))).Returns(new ParseIntChecksumService());
+        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(FileSystem);
+        sp.Setup(s => s.GetService(typeof(ICrc32HashingService))).Returns(new ParseIntCrc32HashingService());
         _serviceProviderMock = sp;
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_Ctor_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => CreateService(null!));
+        Assert.Throws<ArgumentNullException>(() => CreateService(null!));
     }
     
-    [TestMethod]
+    [Fact]
     public void Test_BuildConstructingMegArchive_ThrowsArgs()
     {
         var service = CreateService(_serviceProviderMock.Object);
-        Assert.ThrowsException<ArgumentNullException>(() => service.BuildConstructingMegArchive(null!));
+        Assert.Throws<ArgumentNullException>(() => service.BuildConstructingMegArchive(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildConstructingMegArchive_FileNotFound_Throws()
     {
         var service = CreateService(_serviceProviderMock.Object);
@@ -61,10 +59,10 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
         };
-        Assert.ThrowsException<FileNotFoundException>(() => service.BuildConstructingMegArchive(builderEntries));
+        Assert.Throws<FileNotFoundException>(() => service.BuildConstructingMegArchive(builderEntries));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildConstructingMegArchive_FileLargerThan4GB_Throws()
     {
         var mockPath = new Mock<IPath>();
@@ -87,10 +85,10 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
         };
-        Assert.ThrowsException<NotSupportedException>(() => service.BuildConstructingMegArchive(builderEntries));
+        Assert.Throws<NotSupportedException>(() => service.BuildConstructingMegArchive(builderEntries));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildConstructingMegArchive_BinarySizeOverflows_Throws()
     {
         var service = new BinarySizeOverflowingConstructingService(_serviceProviderMock.Object);
@@ -107,10 +105,10 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
                 "0")
         };
 
-        Assert.ThrowsException<InvalidOperationException>(() => service.BuildConstructingMegArchive(builderEntries));
+        Assert.Throws<InvalidOperationException>(() => service.BuildConstructingMegArchive(builderEntries));
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildConstructingMegArchive_NonASCIITreatment()
     {
         var expectedCrc = new Crc32(63+63+63); // 63 == '?'
@@ -132,21 +130,21 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         var archive = service.BuildConstructingMegArchive(builderEntries);
 
         // Check that filename gets encoded
-        Assert.AreEqual("???",archive[0].FilePath);
-        Assert.AreEqual("ÄÖÜ",archive[0].DataEntry.OriginalFilePath);
-        Assert.AreEqual("???", archive.Archive[0].FilePath);
-        Assert.AreEqual("ÄÖÜ", archive.Archive[0].OriginalFilePath);
+        Assert.Equal("???",archive[0].FilePath);
+        Assert.Equal("ÄÖÜ",archive[0].DataEntry.OriginalFilePath);
+        Assert.Equal("???", archive.Archive[0].FilePath);
+        Assert.Equal("ÄÖÜ", archive.Archive[0].OriginalFilePath);
         
         // Ensures that ASCII encoding was used for creating the CRC
-        Assert.AreEqual(expectedCrc, archive.Archive[0].Crc32);
-        Assert.AreEqual(expectedCrc, archive[0].Crc32);
+        Assert.Equal(expectedCrc, archive.Archive[0].Crc32);
+        Assert.Equal(expectedCrc, archive[0].Crc32);
     }
 
-    [TestMethod]
+    [Fact]
     public void Test_BuildConstructingMegArchive_GetSizeAtRuntime()
     {
         var testData = "test data";
-        _fileSystem.Initialize().WithFile("A").Which(m => m.HasStringContent(testData));
+        FileSystem.Initialize().WithFile("A").Which(m => m.HasStringContent(testData));
         var service = CreateService(_serviceProviderMock.Object);
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
         {
@@ -154,19 +152,14 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         };
 
         var archive = service.BuildConstructingMegArchive(builderEntries);
-        Assert.AreEqual(testData.Length, (int)archive.Archive[0].Location.Size);
+        Assert.Equal(testData.Length, (int)archive.Archive[0].Location.Size);
     }
 
-    [DataTestMethod]
-    [DynamicData(
-        nameof(MegConstructionTestData_NotEncrypted),
-        typeof(ConstructingMegArchiveBuilderBaseTest),
-        DynamicDataSourceType.Method,
-        DynamicDataDisplayName = nameof(GetTestDisplayNames),
-        DynamicDataDisplayNameDeclaringType = typeof(ConstructingMegArchiveBuilderBaseTest))]
+    [Theory]
+    [MemberData(nameof(MegConstructionTestData_NotEncrypted), MemberType = typeof(ConstructingMegArchiveBuilderBaseTest))]
     public void Test_BuildConstructingMegArchive_Normal(ConstructingMegTestData testDataInput)
     {
-        Assert.AreEqual(testDataInput.BuilderEntries.Count(), testDataInput.ExpectedData.Count);
+        Assert.Equal(testDataInput.BuilderEntries.Count(), testDataInput.ExpectedData.Count);
         
         // Prepare FileSystem
         foreach (var entry in testDataInput.BuilderEntries)
@@ -178,7 +171,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
 
             if (entry.OriginInfo.IsLocalFile)
             {
-                _fileSystem.Initialize().WithFile(entry.OriginInfo.FilePath)
+                FileSystem.Initialize().WithFile(entry.OriginInfo.FilePath)
                     .Which(m => m.HasStringContent(TestUtility.GetRandomStringOfLength((int)entry.Size)));
             }
         }
@@ -187,9 +180,9 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
 
         var archive = service.BuildConstructingMegArchive(testDataInput.BuilderEntries);
         
-        Assert.AreEqual(GetExpectedFileVersion(), archive.MegVersion);
-        Assert.AreEqual(testDataInput.ExpectedData.Count, archive.Count);
-        Assert.IsFalse(archive.Encrypted);
+        Assert.Equal(GetExpectedFileVersion(), archive.MegVersion);
+        Assert.Equal(testDataInput.ExpectedData.Count, archive.Count);
+        Assert.False(archive.Encrypted);
 
         Crc32Utilities.EnsureSortedByCrc32(archive.Archive);
 
@@ -201,30 +194,30 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             var binaryEntry = archive.Archive[i];
             var expectedData = testDataInput.ExpectedData[i];
 
-            Assert.AreEqual(expectedData.Size, binaryEntry.Location.Size);
+            Assert.Equal(expectedData.Size, binaryEntry.Location.Size);
 
             var expectedAbsoluteOffset = expectedHeaderSize + expectedData.RelativeOffset;
-            Assert.AreEqual(expectedAbsoluteOffset, binaryEntry.Location.Offset);
+            Assert.Equal(expectedAbsoluteOffset, binaryEntry.Location.Offset);
             
-            Assert.AreEqual(expectedData.FilePath, binaryEntry.FilePath);
-            Assert.AreEqual(expectedData.FilePath, virtualEntry.FilePath);
+            Assert.Equal(expectedData.FilePath, binaryEntry.FilePath);
+            Assert.Equal(expectedData.FilePath, virtualEntry.FilePath);
             
-            Assert.AreEqual(expectedData.Crc, binaryEntry.Crc32);
-            Assert.AreEqual(expectedData.Crc, virtualEntry.Crc32);
+            Assert.Equal(expectedData.Crc, binaryEntry.Crc32);
+            Assert.Equal(expectedData.Crc, virtualEntry.Crc32);
             
-            Assert.IsFalse(binaryEntry.Encrypted);
+            Assert.False(binaryEntry.Encrypted);
         }
     }
 
     public static IEnumerable<object[]> MegConstructionTestData_NotEncrypted()
     {
-        yield return new object[] { EmptyMeg() };
-        yield return new object[] { SingleFileMeg() };
-        yield return new object[] { UnsortedWithDuplicateCrcDueToNonASCIIFilePath() };
-        yield return new object[] { OnlyTwoEmptyFiles() };
-        yield return new object[] { TwoEmptyFilesFirstThenData() };
-        yield return new object[] { DataThenTwoEmptyFiles() };
-        yield return new object[] { DataThenEmptyThenData() };
+        yield return [EmptyMeg()];
+        yield return [SingleFileMeg()];
+        yield return [UnsortedWithDuplicateCrcDueToNonASCIIFilePath()];
+        yield return [OnlyTwoEmptyFiles()];
+        yield return [TwoEmptyFilesFirstThenData()];
+        yield return [DataThenTwoEmptyFiles()];
+        yield return [DataThenEmptyThenData()];
     }
 
     public static string GetTestDisplayNames(MethodInfo _, object[] values)

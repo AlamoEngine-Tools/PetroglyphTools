@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -75,7 +76,7 @@ public interface IMegFileExtractor
     /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>
     /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    Stream GetFileData(MegDataEntryLocationReference dataEntryLocation);
+    MegFileDataStream GetFileData(MegDataEntryLocationReference dataEntryLocation);
 
 
     /// <summary>

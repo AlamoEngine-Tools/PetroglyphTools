@@ -28,6 +28,6 @@ public sealed class NotNullKeyValidator : IDatKeyValidator
     /// <inheritdoc />
     public bool Validate(ReadOnlySpan<char> key)
     {
-        return key != null;
+        return key != ReadOnlySpan<char>.Empty;
     }
 }

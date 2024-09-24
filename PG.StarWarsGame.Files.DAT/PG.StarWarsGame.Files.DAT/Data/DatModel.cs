@@ -83,15 +83,10 @@ internal abstract class DatModel : IDatModel
     public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
     {
         value = null;
-        try
-        {
-            value = GetValue(key);
-            return true;
-        }
-        catch (KeyNotFoundException)
-        {
+        if (!_firstKeyValueDictionary.TryGetValue(key, out var entry))
             return false;
-        }
+        value = entry.Value;
+        return true;
     }
 
     public bool ContainsKey(Crc32 key)
@@ -118,15 +113,10 @@ internal abstract class DatModel : IDatModel
     public bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value)
     {
         value = null;
-        try
-        {
-            value = GetValue(key);
-            return true;
-        }
-        catch (KeyNotFoundException)
-        {
+        if (!_firstCrcKeyValueDictionary.TryGetValue(key, out var entry))
             return false;
-        }
+        value = entry.Value;
+        return true;
     }
 
     public DatStringEntry FirstEntryWithKey(string key)

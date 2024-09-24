@@ -82,7 +82,9 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     /// <inheritdoc />
     public T? FirstEntryWithCrc(Crc32 crc)
     {
-        return EntriesWithCrc(crc).FirstOrDefault();
+        if (!_crcToIndexMap.TryGetValue(crc, out var indexRange))
+            return default;
+        return Entries[indexRange.Start];
     }
 
     /// <inheritdoc />

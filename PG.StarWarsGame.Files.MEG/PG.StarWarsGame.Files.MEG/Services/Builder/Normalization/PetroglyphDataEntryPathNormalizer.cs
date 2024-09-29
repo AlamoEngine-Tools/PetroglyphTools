@@ -7,7 +7,7 @@ using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 /// <summary>
-/// Normalizes a path in a way that path separators are unified to the backslash separator and upper-cases the path.
+/// Normalizes a path in the same way the Empire at War Alamo engine normalizes meg entry paths (e.g, for file lookups).
 /// </summary>
 public sealed class PetroglyphDataEntryPathNormalizer : MegDataEntryPathNormalizerBase
 {
@@ -29,6 +29,40 @@ public sealed class PetroglyphDataEntryPathNormalizer : MegDataEntryPathNormaliz
     /// <inheritdoc />
     public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
     {
-        return PathNormalizer.Normalize(filePath, destination, PetroglyphNormalizeOptions);
+        // The general idea of this algorithm is first normalizing slashes to back-slashes and uppercasing the whole input.
+        // Second removing unnecessary leading path section, [ ('.' '\\') || '\\' ]
+        // However, the second part of the algorithm seems a little broken for absolute paths as
+        // for example 'c:\\test.meg' results in ':\\test.meg'.
+        var ln = PathNormalizer.Normalize(filePath, destination, PetroglyphNormalizeOptions);
+
+        var normalized = destination.Slice(0, ln);
+
+        var fileStartIndex = normalized.LastIndexOf('\\');
+        if (fileStartIndex == -1)
+            return ln;
+
+        var pathStart = 0;
+        var colon = normalized.IndexOf(':');
+        if (colon != -1)
+            pathStart = colon;
+
+        if (normalized[pathStart] == '.')
+            ++pathStart;
+        if (normalized[pathStart] == '\\')
+            ++pathStart;
+
+        var pathSection = normalized.Slice(pathStart, fileStartIndex - pathStart);
+
+        if (pathSection.Length == 0)
+        {
+            // +1 because we don't want a leading separator
+            var fileSection = normalized.Slice(fileStartIndex + 1);
+            fileSection.CopyTo(destination);
+            return fileSection.Length;
+        }
+
+        var fullSection = normalized.Slice(pathStart);
+        fullSection.CopyTo(destination);
+        return fullSection.Length;
     }
 }

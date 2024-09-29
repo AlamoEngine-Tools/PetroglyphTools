@@ -40,7 +40,7 @@ public sealed class EmpireAtWarMegDataEntryValidator : PetroglyphMegDataEntryVal
         if (entryPath.IndexOf('/') != -1)
             return false;
 
-        Span<char> pathBuffer = stackalloc char[PetroglyphMaxFilePathLength];
+        Span<char> pathBuffer = stackalloc char[PetroglyphMaxMegFilePathLength];
         var length = entryPath.ToUpperInvariant(pathBuffer);
         var upper = pathBuffer.Slice(0, length);
 

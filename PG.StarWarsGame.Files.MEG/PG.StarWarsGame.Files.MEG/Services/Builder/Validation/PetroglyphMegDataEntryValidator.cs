@@ -18,12 +18,12 @@ public abstract class PetroglyphMegDataEntryValidator : IBuilderInfoValidator
     /// <summary>
     /// The max number of characters allowed in a PG game for entry paths.
     /// </summary>
-    protected const int PetroglyphMaxFilePathLength = 260;
+    protected const int PetroglyphMaxMegFilePathLength = 259;
 
-    // Normalization must not trim trailing directory separators, as otherwise we can't check for that constraint.
     private static readonly PathNormalizeOptions PetroglyphPathNormalizeOptions = new()
     {
-        UnifyDirectorySeparators = true
+        UnifyDirectorySeparators = true,
+        TrailingDirectorySeparatorBehavior = TrailingDirectorySeparatorBehavior.Trim
     };
 
     /// <summary>
@@ -53,26 +53,23 @@ public abstract class PetroglyphMegDataEntryValidator : IBuilderInfoValidator
     /// <inheritdoc />
     public virtual bool Validate(ReadOnlySpan<char> entryPath, bool encrypted, uint? size)
     { 
-        if (entryPath.Length is 0 or > PetroglyphMaxFilePathLength)
-            return false;
-        
-        // We do not allow spaces, as for XML parsing, as they are also used as delimiters in lists (e.g, SFX Samples)
-        // Also, we exclude path separator which is ':' on Linux which conveniently also forbids things like "C:/" on linux systems too.
-        // On Windows this is ';'
-        if (entryPath.IndexOfAny(' ', FileSystem.Path.PathSeparator) != -1)
+        if (entryPath.Length is 0 or > PetroglyphMaxMegFilePathLength)
             return false;
 
         try
         {
-            Span<char> buffer = stackalloc char[PetroglyphMaxFilePathLength];
+            Span<char> buffer = stackalloc char[PetroglyphMaxMegFilePathLength];
             var length = PathNormalizer.Normalize(entryPath, buffer, PetroglyphPathNormalizeOptions);
-            
-            var normalized = buffer.Slice(0, length).ToString();
 
-            // We need to perform the following checks after system-dependent normalization
-            if (FileSystem.Path.IsPathRooted(normalized))
+            // We trimmed a trailing separator.
+            if (length < entryPath.Length)
                 return false;
-            if (FileSystem.Path.HasTrailingDirectorySeparator(normalized))
+
+            var normalized = buffer.Slice(0, length);
+            
+            if (normalized.IndexOf(' ') != -1)
+                return false;
+            if (IsRootedOrStartsWithCurrent(normalized))
                 return false;
 
             var fullNormalized = FileSystem.Path.GetFullPath(normalized);
@@ -86,5 +83,18 @@ public abstract class PetroglyphMegDataEntryValidator : IBuilderInfoValidator
         {
             return false;
         }
+    }
+
+    private bool IsRootedOrStartsWithCurrent(ReadOnlySpan<char> path)
+    {
+        if (FileSystem.Path.IsPathRooted(path))
+            return true;
+
+        if (path.Length > 2) 
+            return false;
+        if (path[0] == '.' && path[1] is '/' or '\\')
+            return true;
+
+        return false;
     }
 }

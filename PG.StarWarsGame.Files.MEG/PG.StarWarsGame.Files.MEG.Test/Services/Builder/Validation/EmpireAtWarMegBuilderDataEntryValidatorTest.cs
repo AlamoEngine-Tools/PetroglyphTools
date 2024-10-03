@@ -67,6 +67,8 @@ public class EmpireAtWarMegBuilderDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(":\\:\\TEST.TXT"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(":\\"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST:TEST"))];
+        // This is a drive rooted path, but it's allowed
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("C:TEST.TEXT"))];
 
         // Also odd, but allowed
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("."))];
@@ -117,7 +119,6 @@ public class EmpireAtWarMegBuilderDataEntryValidatorTest
 
         // We do not allow absolute, rooted or URI paths
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("C:\\TEST.TXT"))];
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("C:TEST.TEXT"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("\\TEST.TEST"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(@"\\SERVER2\SHARE\TEST\FOO.TXT"))];
 

@@ -55,7 +55,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         Assert.Equal("entry1.txt", entry1);
         Assert.Equal(PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry2);
         Assert.Null(entry3);
-        Assert.Equal("xml\\entry4ÖÄÜ.txt", entry4);
+        Assert.Equal(PathNormalizer.Normalize("xml\\entry4ÖÄÜ.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry4);
 
         var result1 = _eawMegBuilder.AddFile("entry.txt", entry1!);
         var result1a = _eawMegBuilder.AddFile("entry.txt", entry1!, true);

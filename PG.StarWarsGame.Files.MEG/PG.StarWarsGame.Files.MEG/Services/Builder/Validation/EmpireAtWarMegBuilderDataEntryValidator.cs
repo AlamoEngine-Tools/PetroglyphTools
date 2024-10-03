@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.IO;
 using AnakinRaW.CommonUtilities.Extensions;
 using AnakinRaW.CommonUtilities.FileSystem;
 using PG.Commons.Utilities;
@@ -12,6 +13,10 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// Validates a MEG data entry whether it is compliant to the Petroglyph game Empire at War. 
 /// </summary>
+/// <remarks>
+/// This validator is a real subset of Empire at War rules. This means that it is more restrictive,
+/// disallowing certain edge-cases which would legal in the game, but are not permitted by this library.
+/// </remarks>
 public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuilderDataEntryValidator
 {
     // Slashes are not allowed, cause the engine normalized them into back-slashes.
@@ -72,11 +77,16 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
 
     private bool IsRootedOrStartsWithCurrent(ReadOnlySpan<char> path)
     {
-        if (FileSystem.Path.IsPathRooted(path))
+        // This check is over-sensitive as @"\\" may be a valid path which can be produced by normalization, 
+        // however, such a path does not make much sense. 
+        if (path[0] == '\\')
             return true;
+        
+        // Drive rooted paths are handled elsewhere. So this is not included.
 
         if (path.Length < 2)
             return false;
+
         if (path[0] is '.' && path[1] is '\\')
             return true;
 

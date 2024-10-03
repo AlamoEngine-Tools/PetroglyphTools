@@ -10,7 +10,7 @@ namespace PG.Commons.Utilities;
 /// <summary>
 /// Provides helper methods to handle and validate file names for a Petroglyph Star Wars game.
 /// </summary>
-public static class FileNameUtilities
+public static class PGFileNameUtilities
 { 
     /// <summary>
     /// Checks whether a given filename is can be used for a Petroglyph Star Wars game.

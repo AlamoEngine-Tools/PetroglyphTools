@@ -160,5 +160,14 @@ public class MegDataEntryHolderBaseTest
         Assert.Equal(expectedMatches, entries);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Test_FindAllEntries_Throws(string pattern)
+    {
+        var meg = new TestArchive([]);
+        Assert.ThrowsAny<ArgumentException>(() => meg.FindAllEntries(pattern, true));
+    }
+
     private class TestArchive(IList<IMegDataEntry> entries) : MegDataEntryHolderBase<IMegDataEntry>(entries);
 }

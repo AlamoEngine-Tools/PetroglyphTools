@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -11,17 +12,14 @@ public abstract class DataEntryPathNormalizerTestBase
 {
     protected abstract IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider);
 
-    protected void TestNormalizePathFails(string source)
+    [Fact]
+    public void TestTryNormalizePathFails()
     {
         var normalizer = CreateNormalizer(CreateServiceProvider());
 
-        var buffer = new char[source?.Length ?? 0];
-        Assert.ThrowsAny<Exception>(() => normalizer.Normalize(source));
-        Assert.ThrowsAny<Exception>(() => normalizer.Normalize(source.AsSpan(), buffer));
+        Span<char> tooShortBuffer = new char[5];
 
-        var copy = source;
-        Assert.False(normalizer.TryNormalize(ref copy, out _));
-        Assert.False(normalizer.TryNormalize(source.AsSpan(), buffer, out _, out _));
+        Assert.False(normalizer.TryNormalize("TooLongPath".AsSpan(), tooShortBuffer, out _));
     }
 
     protected void TestNormalizePathPasses(string source, string expected)
@@ -34,24 +32,22 @@ public abstract class DataEntryPathNormalizerTestBase
 
     private void Test_Normalize_Pass_Span(IMegDataEntryPathNormalizer normalizer, string source, string expected)
     {
-        var buffer = new char[source.Length];
-        var length = normalizer.Normalize(source.AsSpan(), buffer);
-        Assert.Equal(expected, buffer.AsSpan().Slice(0, length).ToString());
+        Span<char> buffer = new char[source.AsSpan().Length * 2 + 1];
 
-        var success = normalizer.TryNormalize(source.AsSpan(), buffer, out length, out _);
+        var sb = new ValueStringBuilder();
+        
+        normalizer.Normalize(source.AsSpan(), ref sb);
+        Assert.Equal(expected, sb.ToString());
+
+        var success = normalizer.TryNormalize(source.AsSpan(), buffer, out var length);
         Assert.True(success);
-        Assert.Equal(expected, buffer.AsSpan().Slice(0, length).ToString());
+        Assert.Equal(expected, buffer.Slice(0, length).ToString());
     }
 
     private void Test_Normalize_Pass(IMegDataEntryPathNormalizer normalizer, string source, string expected)
     {
         var actual = normalizer.Normalize(source);
         Assert.Equal(expected, actual);
-
-        var copy = source;
-        var success = normalizer.TryNormalize(ref copy, out _);
-        Assert.True(success);
-        Assert.Equal(copy, expected);
     }
 
     private IServiceProvider CreateServiceProvider()

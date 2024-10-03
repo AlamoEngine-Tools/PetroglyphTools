@@ -22,26 +22,18 @@ public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBas
         TestNormalizePathPasses(source, expected);
     }
 
-    [Theory]
-    [MemberData(nameof(InvalidPathsToNormalize))]
-    public void Test_Normalize_Fails(string source)
-    {
-        TestNormalizePathFails(source);
-    }
-
-
+    
     public static IEnumerable<object[]> ValidPathsToNormalize()
     {
+        yield return [null, ""];
+        yield return ["", ""];
+
         yield return ["file.öäü", "FILE.ÖÄÜ"];
+        yield return [new string('a', 270), new string('A', 270)];
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             yield return [".\\../fiLE.tXt", ".\\..\\FILE.TXT"];
         else
             yield return [".\\../fiLE.tXt", "./../FILE.TXT"];
-    }
-
-    public static IEnumerable<object[]> InvalidPathsToNormalize()
-    {
-        yield return [null!];
-        yield return [""];
     }
 }

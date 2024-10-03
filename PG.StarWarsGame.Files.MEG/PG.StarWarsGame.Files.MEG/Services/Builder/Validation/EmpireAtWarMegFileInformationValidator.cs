@@ -36,7 +36,7 @@ public sealed class EmpireAtWarMegFileInformationValidator : PetroglyphMegFileIn
             // As we cannot know the actual path on the target system where the game will be installed,
             // it does not make sense to check the full path. Instead, we just check for the file name whether that's valid.
             var fileName = FileSystem.Path.GetFileName(infoValidationData.FileInformation.FilePath.AsSpan());
-            if (!FileNameUtilities.IsValidFileName(fileName, out var result))
+            if (!PGFileNameUtilities.IsValidFileName(fileName, out var result))
                 return MegFileInfoValidationResult.FromFailed($"File name is not valid: '{result}'");
             return MegFileInfoValidationResult.Valid;
         }

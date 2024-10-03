@@ -20,8 +20,8 @@ public interface IMegDataEntry : IHasCrc32, IComparable<IMegDataEntry>
     /// Usually this file path is relative to the game or mod's DATA directory, e.g. Data/My/file.xml
     /// </summary>
     /// <remarks>
-    /// Path operators such as ./ or ../ are permitted. It's the application's responsibility to resolve paths and
-    /// deal with potential dangerous file paths.
+    /// Path operators such as '.' or '..' as well as other invalid path or file name characters (such as '?') are permitted.
+    /// It's the application's responsibility to resolve paths and deal with potential dangerous file paths.
     /// </remarks>
     public string FilePath { get; }
 }

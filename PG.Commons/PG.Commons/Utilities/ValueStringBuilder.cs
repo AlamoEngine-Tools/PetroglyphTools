@@ -6,6 +6,11 @@ using System.Runtime.InteropServices;
 
 namespace PG.Commons.Utilities;
 
+// Adapted from:
+// https://github.com/dotnet/runtime/ Copyright (c) Copyright (c) .NET Foundation and Contributors
+// &
+// https://github.com/linkdotnet/StringBuilder 2022 Steven Giesel
+
 /// <summary>
 /// Represents a string builder which attempts to reduce as many allocations as possible.
 /// </summary>

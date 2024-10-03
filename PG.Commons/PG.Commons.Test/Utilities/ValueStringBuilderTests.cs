@@ -5,6 +5,11 @@ using Xunit;
 
 namespace PG.Commons.Test.Utilities;
 
+// Adapted from
+// https://github.com/dotnet/runtime/
+// &
+// https://github.com/linkdotnet/StringBuilder
+
 public class ValueStringBuilderTests
 {
     [Fact]

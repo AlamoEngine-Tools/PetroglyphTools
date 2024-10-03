@@ -10,7 +10,7 @@ namespace PG.Commons.Utilities;
 /// Represents a string builder which attempts to reduce as many allocations as possible.
 /// </summary>
 /// <remarks>
-/// Mind this a <b>ref struct</b>. Pass it by-ref to method.
+/// Mind this a <b>ref struct</b>. Pass it by-ref to methods.
 /// </remarks>
 public ref struct ValueStringBuilder
 {

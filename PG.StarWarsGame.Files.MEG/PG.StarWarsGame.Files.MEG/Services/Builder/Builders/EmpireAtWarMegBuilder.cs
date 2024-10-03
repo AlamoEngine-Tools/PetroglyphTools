@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
@@ -13,11 +14,14 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// </summary>
 public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
 {
+    /// <inheritdoc />
+    protected override PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer { get; }
+
     /// <summary>
     /// Validates data entries to be compliant to Empire at War
     /// Also, data entries with rooted paths or path operates (".", "..") are not allowed.
     /// </summary>
-    protected override PetroglyphMegDataEntryValidator PetroDataEntryValidator { get; }
+    protected override PetroglyphMegBuilderDataEntryValidator PetroDataEntryValidator { get; }
 
     /// <summary>
     /// Validates file information to be compliant to Empire at War
@@ -36,7 +40,8 @@ public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
     /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
     public EmpireAtWarMegBuilder(string baseDirectory, IServiceProvider services) : base(baseDirectory, services)
     {
-        PetroDataEntryValidator = services.GetRequiredService<EmpireAtWarMegDataEntryValidator>();
+        PetroDataEntryValidator = services.GetRequiredService<EmpireAtWarMegBuilderDataEntryValidator>();
         PetroMegFileInformationValidator = services.GetRequiredService<EmpireAtWarMegFileInformationValidator>();
+        PetroglyphPathNormalizer = services.GetRequiredService<EmpireAtWarMegDataEntryPathNormalizer>();
     }
 }

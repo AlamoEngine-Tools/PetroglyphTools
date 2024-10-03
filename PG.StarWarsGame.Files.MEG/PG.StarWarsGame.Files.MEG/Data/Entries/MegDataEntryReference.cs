@@ -32,7 +32,7 @@ public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryLocatio
     }
 
     /// <inheritdoc />
-    public bool Equals(MegDataEntryReference other)
+    public bool Equals(MegDataEntryReference? other)
     {
         return base.Equals(other);
     }

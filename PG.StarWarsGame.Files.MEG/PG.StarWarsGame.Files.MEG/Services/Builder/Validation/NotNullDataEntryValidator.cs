@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// A validator that checks the passed <see cref="MegFileDataEntryBuilderInfo"/> is not <see langword="null"/>.
 /// </summary>
-public sealed class NotNullDataEntryValidator : IBuilderInfoValidator
+public sealed class NotNullDataEntryValidator : IMegBuilderInfoValidator
 {
     /// <summary>
     /// Gets a singleton instance of the <see cref="NotNullDataEntryValidator"/> class.

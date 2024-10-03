@@ -8,9 +8,9 @@
 		<NeutralLanguage>en</NeutralLanguage>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<InheritDocEnabled>true</InheritDocEnabled>
+		<InheritDocEnabled>true</InheritDocEnabled>-->
 	</PropertyGroup>
 	<PropertyGroup>
 		<IncludeSymbols>true</IncludeSymbols>

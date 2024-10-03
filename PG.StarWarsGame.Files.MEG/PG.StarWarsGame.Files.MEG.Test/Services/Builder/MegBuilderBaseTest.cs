@@ -7,6 +7,7 @@ using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using PG.Commons.Extensibility;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -646,8 +647,9 @@ public class MegBuilderBaseTest
             return input + "a";
         });
 
-        Assert.Throws<InvalidOperationException>(() =>
-            builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry)));
+
+        var added = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry));
+        Assert.True(added.Added);
     }
 
     [Fact]
@@ -872,11 +874,10 @@ public class MegBuilderBaseTest
 
     private class TestEntryNormalizer(Func<string, string> normalizeAction, IServiceProvider serviceProvider) : MegDataEntryPathNormalizerBase(serviceProvider)
     { 
-        public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+        public override void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder)
         {
             var result = normalizeAction(filePath.ToString()).AsSpan();
-            result.CopyTo(destination);
-            return result.Length;
+            stringBuilder.Append(result);
         }
     }
 }

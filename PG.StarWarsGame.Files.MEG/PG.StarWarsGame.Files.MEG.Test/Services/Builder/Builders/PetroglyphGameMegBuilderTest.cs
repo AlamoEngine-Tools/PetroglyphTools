@@ -26,7 +26,6 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestSuite
     {
         base.SetupServiceCollection(serviceCollection);
         serviceCollection.AddSingleton(EntryPathResolver.Object);
-        serviceCollection.AddSingleton(sp => new PetroglyphDataEntryPathNormalizer(sp));
     }
 
     protected override MegBuilderBase CreateBuilder(IServiceProvider serviceProvider)

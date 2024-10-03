@@ -3,6 +3,7 @@
 
 using System;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
+using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -26,8 +27,10 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     }
 
     /// <inheritdoc />
-    public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+    public override void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder)
     {
-        return PathNormalizer.Normalize(filePath, destination, DefaultNormalizeOptions);
+        stringBuilder.EnsureCapacity(filePath.Length);
+        var length = PathNormalizer.Normalize(filePath, stringBuilder.RawChars, DefaultNormalizeOptions);
+        stringBuilder.Length = length;
     }
 }

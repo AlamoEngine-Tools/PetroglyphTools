@@ -28,9 +28,9 @@ public class MegServiceContribution : IServiceContribution
         serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(_ => new VirtualMegArchiveBuilder());
 
         serviceCollection.AddSingleton(sp => new EmpireAtWarMegFileInformationValidator(sp));
-        serviceCollection.AddSingleton(sp => new EmpireAtWarMegDataEntryValidator(sp));
+        serviceCollection.AddSingleton(sp => new EmpireAtWarMegBuilderDataEntryValidator(sp));
+        serviceCollection.AddSingleton(sp => new EmpireAtWarMegDataEntryPathNormalizer(sp));
 
-        serviceCollection.AddSingleton(sp => new PetroglyphDataEntryPathNormalizer(sp));
         serviceCollection.AddSingleton(sp => new DefaultDataEntryPathNormalizer(sp));
 
         serviceCollection.AddSingleton<IDataEntryPathResolver>(sp => new PetroglyphRelativeDataEntryPathResolver(sp));

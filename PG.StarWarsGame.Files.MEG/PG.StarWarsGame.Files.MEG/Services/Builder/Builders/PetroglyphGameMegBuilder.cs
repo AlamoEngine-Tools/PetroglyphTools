@@ -55,7 +55,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     protected abstract PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer { get; }
 
     /// <inheritdoc cref="PetroDataEntryValidator"/>
-    public sealed override IBuilderInfoValidator DataEntryValidator => PetroDataEntryValidator;
+    public sealed override IMegBuilderInfoValidator DataEntryValidator => PetroDataEntryValidator;
 
 
     /// <inheritdoc cref="PetroMegFileInformationValidator"/>

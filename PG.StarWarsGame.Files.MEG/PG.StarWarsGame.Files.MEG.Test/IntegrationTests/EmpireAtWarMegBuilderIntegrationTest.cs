@@ -55,25 +55,26 @@ public class EmpireAtWarMegBuilderIntegrationTest
         Assert.Equal("entry1.txt", entry1);
         Assert.Equal(PathNormalizer.Normalize("xml\\entry2.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry2);
         Assert.Null(entry3);
+        Assert.Equal("xml\\entry4ÖÄÜ.txt", entry4);
 
         var result1 = _eawMegBuilder.AddFile("entry.txt", entry1!);
         var result1a = _eawMegBuilder.AddFile("entry.txt", entry1!, true);
         var result2 = _eawMegBuilder.AddFile("entry.txt", entry2!);
-        var result2a = _eawMegBuilder.AddFile("entry.txt", "/game/corruption/data/xml/entry2.txt");
         var result3 = _eawMegBuilder.AddFile("entry.txt", "/other/corruption/data/xml/entry3.txt");
         var result4 = _eawMegBuilder.AddFile("entry.txt", entry4!);
 
         Assert.True(result1.Added);
         Assert.False(result1a.Added);
         Assert.True(result2.Added);
-        Assert.False(result2a.Added);
-        Assert.False(result3.Added);
-        Assert.False(result4.Added);
+        Assert.True(result3.Added);
+        Assert.True(result4.Added);
 
         Assert.Equal("ENTRY1.TXT", result1.AddedBuilderInfo!.FilePath);
         Assert.Equal("XML\\ENTRY2.TXT", result2.AddedBuilderInfo!.FilePath);
+        Assert.Equal("OTHER\\CORRUPTION\\DATA\\XML\\ENTRY3.TXT", result3.AddedBuilderInfo!.FilePath);
+        Assert.Equal("XML\\ENTRY4???.TXT", result4.AddedBuilderInfo!.FilePath);
 
-        Assert.Equal(2, _eawMegBuilder.DataEntries.Count);
+        Assert.Equal(4, _eawMegBuilder.DataEntries.Count);
 
         Assert.False(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V2)));
         Assert.False(_eawMegBuilder.ValidateFileInformation(new MegFileInformation("?new.meg", MegFileVersion.V1)));
@@ -86,25 +87,33 @@ public class EmpireAtWarMegBuilderIntegrationTest
         var megFileService = _serviceProvider.GetRequiredService<IMegFileService>();
         var meg = megFileService.Load("new.meg");
 
-        Assert.Equal(2, meg.Archive.Count);
+        Assert.Equal(4, meg.Archive.Count);
 
         var packedEntry1 = meg.Archive.First(x => x.FilePath.Equals("ENTRY1.TXT"));
         var packedEntry2 = meg.Archive.First(x => x.FilePath.Equals("XML\\ENTRY2.TXT"));
+        var packedEntry3 = meg.Archive.First(x => x.FilePath.Equals("OTHER\\CORRUPTION\\DATA\\XML\\ENTRY3.TXT"));
+        var packedEntry4 = meg.Archive.First(x => x.FilePath.Equals("XML\\ENTRY4???.TXT"));
 
         Assert.NotNull(packedEntry1);
         Assert.NotNull(packedEntry2);
+        Assert.NotNull(packedEntry3);
+        Assert.NotNull(packedEntry4);
 
         var extractor = _serviceProvider.GetRequiredService<IMegFileExtractor>();
         var entry1Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry1));
-        var entry2Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry1));
+        var entry2Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry2));
+        var entry3Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry3));
+        var entry4Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry4));
 
         using var ms = new MemoryStream();
         entry1Data.CopyTo(ms);
         entry2Data.CopyTo(ms);
+        entry3Data.CopyTo(ms);
+        entry4Data.CopyTo(ms);
 
         ms.Position = 0;
 
         var dataString = new StreamReader(ms).ReadToEnd();
-        Assert.Equal("testtest", dataString);
+        Assert.Equal("test" + "test" + "test" + "test", dataString);
     }
 }

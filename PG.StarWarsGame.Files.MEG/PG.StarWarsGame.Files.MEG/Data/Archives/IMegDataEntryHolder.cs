@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.Collections.Generic;
 using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
@@ -58,5 +59,7 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// <param name="searchPattern">The globbing pattern.</param>
     /// <param name="caseInsensitive">When <see langword="true"/> the pattern ignores the character casing.</param>
     /// <returns>A list with all entries matching the specified pattern.</returns>
+    /// <exception cref="ArgumentException"><paramref name="searchPattern"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="searchPattern"/> is <see langword="null"/>.</exception>
     ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive);
 }

@@ -25,6 +25,9 @@ public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBas
     
     public static IEnumerable<object[]> ValidPathsToNormalize()
     {
+        yield return [null, ""];
+        yield return ["", ""];
+
         yield return ["file.öäü", "FILE.ÖÄÜ"];
         yield return [new string('a', 270), new string('A', 270)];
 

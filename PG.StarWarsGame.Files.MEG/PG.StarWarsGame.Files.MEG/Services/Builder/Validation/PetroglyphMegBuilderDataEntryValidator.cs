@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// Validates a <see cref="MegFileDataEntryBuilderInfo"/> whether it is compliant to a Petroglyph game.
 /// </summary>
-public abstract class PetroglyphMegBuilderDataEntryValidator : IBuilderInfoValidator
+public abstract class PetroglyphMegBuilderDataEntryValidator : IMegBuilderInfoValidator
 {
     /// <summary>
     /// Gets the file system.

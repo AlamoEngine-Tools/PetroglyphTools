@@ -34,6 +34,12 @@ public abstract class MegDataEntryPathNormalizerBase : BuilderEntryNormalizerBas
     /// <inheritdoc />
     public bool TryNormalize(ReadOnlySpan<char> filePath, Span<char> destination, out int charsWritten)
     {
+        if (filePath.Length == 0)
+        {
+            charsWritten = 0;
+            return true;
+        }
+
         var sb = new ValueStringBuilder(stackalloc char[260]);
         Normalize(filePath, ref sb);
         var result = sb.TryCopyTo(destination, out charsWritten);

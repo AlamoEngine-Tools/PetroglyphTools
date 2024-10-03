@@ -32,7 +32,7 @@ public abstract class DataEntryPathNormalizerTestBase
 
     private void Test_Normalize_Pass_Span(IMegDataEntryPathNormalizer normalizer, string source, string expected)
     {
-        Span<char> buffer = new char[source.Length * 2 + 1];
+        Span<char> buffer = new char[source.AsSpan().Length * 2 + 1];
 
         var sb = new ValueStringBuilder();
         

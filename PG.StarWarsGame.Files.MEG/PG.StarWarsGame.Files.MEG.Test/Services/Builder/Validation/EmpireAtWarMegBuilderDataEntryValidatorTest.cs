@@ -31,9 +31,18 @@ public class EmpireAtWarMegBuilderDataEntryValidatorTest
     }
 
     [Theory]
+    [InlineData("")]
+    [InlineData("      ")]
+    [InlineData(null)]
+    public void Validate_InvalidPaths(string? path)
+    {
+        Assert.False(_validator.Validate(path.AsSpan(), false, null));
+    }
+
+    [Theory]
     [MemberData(nameof(NotNullDataEntryValidatorTest.InvalidTestData), MemberType = typeof(NotNullDataEntryValidatorTest))]
     [MemberData(nameof(InvalidTestDataEaw))]
-    public void TestInvalid(MegFileDataEntryBuilderInfo builderInfo)
+    public void Validate_InvalidInfos(MegFileDataEntryBuilderInfo builderInfo)
     {
         Assert.False(_validator.Validate(builderInfo));
         if (builderInfo is not null)
@@ -63,10 +72,14 @@ public class EmpireAtWarMegBuilderDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("."))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(".."))];
 
+        // Invalid file names are also allowed (though it will fail when trying to write to file)
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST?.TXT"))];
     }
 
     public static IEnumerable<object[]> InvalidTestDataEaw()
     {
+        yield return [null!];
+
         // We do not allow lower case
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("test\\TEST"))];
@@ -86,8 +99,11 @@ public class EmpireAtWarMegBuilderDataEntryValidatorTest
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("NONASCIIÖ/TEST.TXT"))];
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TESTNONASCII😅.TXT"))];
 
-        // Special treatment for null character. This library shall not accept them.
+        // Special treatment for some characters. This library shall not accept them.
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.TXT\0"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.TXT\n"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.TXT\r"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.TXT\t"))];
 
         // This would produce an empty file name (CRC: 0). We do not allow this too.
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("\\"))];
@@ -108,7 +124,7 @@ public class EmpireAtWarMegBuilderDataEntryValidatorTest
         // We do not allow encrypted entries
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("PATH"), overrideEncrypted: true)];
 
-        // We do not allow paths with are longer than PG max allowed characters, which is 260.
+        // We do not allow paths with are longer than PG max allowed characters, which is 259.
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new string('A', 260)))];
 
         // Because XML parsing is sometimes done on space as delimiter, we cannot use them

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using AnakinRaW.CommonUtilities;
 using AnakinRaW.CommonUtilities.Collections;
 using DotNet.Globbing;
 using PG.Commons.DataTypes;
@@ -88,6 +89,8 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     /// <inheritdoc />
     public ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive)
     {
+        ThrowHelper.ThrowIfNullOrEmpty(searchPattern);
+
         Debug.Assert(_fileNames.Count == Entries.Count);
 
         if (Entries.Count == 0)

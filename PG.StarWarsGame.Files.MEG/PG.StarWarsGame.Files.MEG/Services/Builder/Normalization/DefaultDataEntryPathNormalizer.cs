@@ -29,6 +29,8 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     /// <inheritdoc />
     public override void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder)
     {
+        if (filePath.Length == 0)
+            return;
         stringBuilder.EnsureCapacity(filePath.Length);
         var length = PathNormalizer.Normalize(filePath, stringBuilder.RawChars, DefaultNormalizeOptions);
         stringBuilder.Length = length;

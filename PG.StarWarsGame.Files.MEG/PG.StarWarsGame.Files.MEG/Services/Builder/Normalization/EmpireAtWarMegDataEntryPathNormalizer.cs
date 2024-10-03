@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using PG.Commons.Utilities;
 
@@ -21,6 +20,9 @@ public sealed class EmpireAtWarMegDataEntryPathNormalizer(IServiceProvider servi
     /// <inheritdoc />
     public override void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder)
     {
+        if (filePath.Length == 0)
+            return;
+
         var normalizing = new ValueStringBuilder(stackalloc char[260]);
         normalizing.EnsureCapacity(filePath.Length);
 

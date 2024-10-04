@@ -29,6 +29,10 @@ public class EmpireAtWarMegDataEntryPathNormalizerTest : PetroglyphDataEntryPath
         // Do nothing
         yield return ["TEST", "TEST"];
 
+        // Separator at end
+        yield return ["TEST\\", "TEST\\"];
+        yield return ["MY\\TEST\\", "MY\\TEST\\"];
+
         // The normalizer of the engine does not check or ensure the max length and works with any size
         yield return [new string('a', 270), new string('A', 270)];
 

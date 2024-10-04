@@ -76,6 +76,8 @@ public class EmpireAtWarMegBuilderDataEntryValidatorTest
 
         // Invalid file names are also allowed (though it will fail when trying to write to file)
         yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST?.TXT"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("TEST.TXT\\"))];
+        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("MY\\TEST.TXT\\"))];
     }
 
     public static IEnumerable<object[]> InvalidTestDataEaw()

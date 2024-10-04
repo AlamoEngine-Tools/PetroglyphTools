@@ -33,6 +33,10 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <inheritdoc/>
     public override bool AutomaticallyAddFileSizes => true;
 
+
+    /// <inheritdoc />
+    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => PetroglyphPathNormalizer;
+
     /// <summary>
     /// Gets the data entry path normalizer.
     /// </summary>
@@ -48,10 +52,10 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// Note: As the normalized path will always have the backslash as path operator ('\'),
     /// on Linux systems the path cannot be treated correctly anymore.
     /// </remarks>
-    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer { get; }
+    protected abstract PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer { get; }
 
     /// <inheritdoc cref="PetroDataEntryValidator"/>
-    public sealed override IBuilderInfoValidator DataEntryValidator => PetroDataEntryValidator;
+    public sealed override IMegBuilderInfoValidator DataEntryValidator => PetroDataEntryValidator;
 
 
     /// <inheritdoc cref="PetroMegFileInformationValidator"/>
@@ -61,7 +65,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// Validates data entries to be compliant to a Petroglyph game.
     /// Also, data entries with rooted paths or path operates (".", "..") are not allowed.
     /// </summary>
-    protected abstract PetroglyphMegDataEntryValidator PetroDataEntryValidator { get; }
+    protected abstract PetroglyphMegBuilderDataEntryValidator PetroDataEntryValidator { get; }
 
     /// <summary>
     /// Validates file information to be compliant to a Petroglyph game
@@ -80,7 +84,6 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
-        DataEntryPathNormalizer = services.GetRequiredService<PetroglyphDataEntryPathNormalizer>();
         ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
 
         baseDirectory = PathNormalizer.Normalize(baseDirectory, PathNormalizeOptions.EnsureTrailingSeparator);

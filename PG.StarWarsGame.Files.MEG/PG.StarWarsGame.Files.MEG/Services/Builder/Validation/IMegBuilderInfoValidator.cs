@@ -9,7 +9,12 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// A validator that checks an instance of a <see cref="MegFileDataEntryBuilderInfo"/>
 /// </summary>
-public interface IBuilderInfoValidator
+/// <remarks>
+/// Note: The games may consume MEG files, created by other tools than this library.
+/// An instance of this <see cref="IMegBuilderInfoValidator"/> may be more restrictive than the game engine.
+/// Therefore, this validator shall <em>only</em> be used when <b>creating</b> new MEG files.
+/// </remarks>
+public interface IMegBuilderInfoValidator
 {
     /// <summary>
     /// Validates the specified MEG data entry information whether it is compliant to the rules of this instance.

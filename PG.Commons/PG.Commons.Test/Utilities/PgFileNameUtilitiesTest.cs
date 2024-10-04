@@ -5,7 +5,7 @@ using Xunit;
 
 namespace PG.Commons.Test.Utilities;
 
-public class FileNameUtilitiesTest
+public class PgFileNameUtilitiesTest
 {
     [Theory]
     [InlineData("123")]
@@ -20,7 +20,7 @@ public class FileNameUtilitiesTest
     [InlineData("NUL.txt")] // Though it's not recommend by MS, it's actually allowed to use this name in explorer
     public void Test_IsValidFileName_CorrectFileNames(string fileName)
     {
-        Assert.True(FileNameUtilities.IsValidFileName(fileName.AsSpan(), out var result));
+        Assert.True(PGFileNameUtilities.IsValidFileName(fileName.AsSpan(), out var result));
         Assert.Equal(FileNameValidationResult.Valid,result);
     }
 
@@ -80,7 +80,7 @@ public class FileNameUtilitiesTest
     [InlineData("LPT9", FileNameValidationResult.SystemReserved)]
     public void Test_IsValidFileName_InvalidFileNames(string? fileName, FileNameValidationResult expectedResult)
     {
-        Assert.False(FileNameUtilities.IsValidFileName(fileName.AsSpan(), out var result));
+        Assert.False(PGFileNameUtilities.IsValidFileName(fileName.AsSpan(), out var result));
         Assert.Equal(expectedResult, result);
     }
 }

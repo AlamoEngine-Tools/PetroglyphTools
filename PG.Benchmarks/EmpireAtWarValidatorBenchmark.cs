@@ -19,7 +19,7 @@ public class EmpireAtWarValidatorBenchmark
 {
     private static readonly Random Random = new(1138);
 
-    private EmpireAtWarMegDataEntryValidator _validator;
+    private EmpireAtWarMegBuilderDataEntryValidator _validator;
 
     private MegFileDataEntryBuilderInfo[] _toValidate;
 
@@ -41,7 +41,7 @@ public class EmpireAtWarValidatorBenchmark
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new FileSystem());
 
-        _validator = new EmpireAtWarMegDataEntryValidator(sc.BuildServiceProvider());
+        _validator = new EmpireAtWarMegBuilderDataEntryValidator(sc.BuildServiceProvider());
     }
 
     [Benchmark(Baseline = true)]

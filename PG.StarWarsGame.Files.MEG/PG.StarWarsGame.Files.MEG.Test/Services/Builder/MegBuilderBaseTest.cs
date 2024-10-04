@@ -7,6 +7,7 @@ using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using PG.Commons.Extensibility;
+using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -25,7 +26,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
 public class MegBuilderBaseTest
 {
-    private TestBuilderInfoValidator _entryValidator = null!;
+    private TestMegBuilderInfoValidator _entryValidator = null!;
     private readonly Mock<IMegFileInformationValidator> _infoValidator = new();
     private readonly MockFileSystem _fileSystem = new();
     private readonly Mock<IMegFileService> _megFileService = new();
@@ -468,7 +469,7 @@ public class MegBuilderBaseTest
         sc.AddSingleton(_ => _infoValidator.Object);
 
         // Default Validator always passes
-        _entryValidator = new TestBuilderInfoValidator(true);
+        _entryValidator = new TestMegBuilderInfoValidator(true);
 
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
@@ -646,8 +647,9 @@ public class MegBuilderBaseTest
             return input + "a";
         });
 
-        Assert.Throws<InvalidOperationException>(() =>
-            builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry)));
+
+        var added = builder.AddEntry(new MegDataEntryLocationReference(meg.Object, entry));
+        Assert.True(added.Added);
     }
 
     [Fact]
@@ -811,7 +813,7 @@ public class MegBuilderBaseTest
         sc.CollectPgServiceContributions();
         sc.AddSingleton(_ => _megFileService.Object);
 
-        _entryValidator = new TestBuilderInfoValidator(validationResult);
+        _entryValidator = new TestMegBuilderInfoValidator(validationResult);
 
         if (normalizerAction is not null)
             sc.AddSingleton<TestEntryNormalizer>(sp => new TestEntryNormalizer(normalizerAction, sp));
@@ -831,7 +833,7 @@ public class MegBuilderBaseTest
     private class TestingMegBuilder(
         bool overwrite,
         bool addFileSize,
-        TestBuilderInfoValidator entryValidator,
+        TestMegBuilderInfoValidator entryValidator,
         IMegFileInformationValidator megFileInformationValidator,
         IServiceProvider services)
         : MegBuilderBase(services)
@@ -845,12 +847,12 @@ public class MegBuilderBaseTest
         public TestEntryNormalizer? TestNormalizer { get; } = services.GetService<TestEntryNormalizer>();
 
 
-        public override IBuilderInfoValidator DataEntryValidator { get; } = entryValidator;
+        public override IMegBuilderInfoValidator DataEntryValidator { get; } = entryValidator;
 
         public override IMegFileInformationValidator MegFileInformationValidator { get; } = megFileInformationValidator;
     }
 
-    private class TestBuilderInfoValidator(bool validationResult) : IBuilderInfoValidator
+    private class TestMegBuilderInfoValidator(bool validationResult) : IMegBuilderInfoValidator
     {
         public string Path { get; private set; }
         public bool Encrypted { get; private set; }
@@ -872,11 +874,10 @@ public class MegBuilderBaseTest
 
     private class TestEntryNormalizer(Func<string, string> normalizeAction, IServiceProvider serviceProvider) : MegDataEntryPathNormalizerBase(serviceProvider)
     { 
-        public override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+        public override void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder)
         {
             var result = normalizeAction(filePath.ToString()).AsSpan();
-            result.CopyTo(destination);
-            return result.Length;
+            stringBuilder.Append(result);
         }
     }
 }

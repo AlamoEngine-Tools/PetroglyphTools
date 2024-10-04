@@ -2,12 +2,15 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PG.StarWarsGame.Components.Localisation.Attributes;
 
 /// <summary>
 ///     Marks the default (fallback) language.
 /// </summary>
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+[ExcludeFromCodeCoverage]
 public class DefaultLanguageAttribute : Attribute
 {
     /// <summary>

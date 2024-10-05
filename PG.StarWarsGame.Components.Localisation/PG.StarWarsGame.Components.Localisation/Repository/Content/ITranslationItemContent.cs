@@ -13,5 +13,5 @@ public interface ITranslationItemContent
     /// <summary>
     ///     The string value, usually mapped to <see cref="PG.StarWarsGame.Files.DAT.Data.DatStringEntry.Value" />
     /// </summary>
-    string Value { get; set; }
+    string? Value { get; set; }
 }

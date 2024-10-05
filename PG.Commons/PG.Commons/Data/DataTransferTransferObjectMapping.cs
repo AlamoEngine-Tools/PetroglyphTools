@@ -2,19 +2,19 @@ using System;
 
 namespace PG.Commons.Data;
 
-internal class DataObjectMapping<TDataObject, TPeer, TValue>(
-    Func<TDataObject, TValue> dataObjectValueGetter,
-    Action<TDataObject, TValue> dataObjectValueSetter,
+internal class DataTransferTransferObjectMapping<TDto, TPeer, TValue>(
+    Func<TDto, TValue> dataObjectValueGetter,
+    Action<TDto, TValue> dataObjectValueSetter,
     Func<TPeer, TValue> peerValueGetter,
     Action<TPeer, TValue> peerValueSetter)
-    : IDataObjectMapping<TDataObject, TPeer>
+    : IDataTransferObjectMapping<TDto, TPeer>
 {
-    private Func<TDataObject, TValue> DataObjectValueGetter { get; } = dataObjectValueGetter;
-    private Action<TDataObject, TValue> DataObjectValueSetter { get; } = dataObjectValueSetter;
+    private Func<TDto, TValue> DataObjectValueGetter { get; } = dataObjectValueGetter;
+    private Action<TDto, TValue> DataObjectValueSetter { get; } = dataObjectValueSetter;
     private Func<TPeer, TValue> PeerValueGetter { get; } = peerValueGetter;
     private Action<TPeer, TValue> PeerValueSetter { get; } = peerValueSetter;
 
-    public void ToDataObject(TPeer source, TDataObject dataObject)
+    public void ToDto(TPeer source, TDto dataObject)
     {
         if (source == null) throw new ArgumentNullException(nameof(source));
         if (dataObject == null) throw new ArgumentNullException(nameof(dataObject));
@@ -23,7 +23,7 @@ internal class DataObjectMapping<TDataObject, TPeer, TValue>(
         DataObjectValueSetter.Invoke(dataObject, value);
     }
 
-    public void FromDataObject(TDataObject dataObject, TPeer target)
+    public void FromDto(TDto dataObject, TPeer target)
     {
         if (target == null) throw new ArgumentNullException(nameof(target));
         if (dataObject == null) throw new ArgumentNullException(nameof(dataObject));

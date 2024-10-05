@@ -3,20 +3,22 @@ using System;
 namespace PG.Commons.Data;
 
 /// <summary>
-///     Container class allowing to map from a data objct to a peer and vice versa
+///     Container class allowing to map from a data objct to a peer and vice versa.
+///     <br />
+///     @lgr: check if fully replaceable with AutoMapper
 /// </summary>
-/// <typeparam name="TDataObject"></typeparam>
+/// <typeparam name="TDto"></typeparam>
 /// <typeparam name="TPeer"></typeparam>
-public abstract class DataObjectMapperBase<TDataObject, TPeer>
+public abstract class DataTransferObjectMapperBase<TDto, TPeer>
 {
-    private readonly DataObjectMappings<TDataObject, TPeer> _mappings;
+    private readonly DataTransferObjectMappings<TDto, TPeer> _mappings;
 
     /// <summary>
     ///     .ctor
     /// </summary>
-    protected DataObjectMapperBase()
+    protected DataTransferObjectMapperBase()
     {
-        var mappings = new DataObjectMappings<TDataObject, TPeer>();
+        var mappings = new DataTransferObjectMappings<TDto, TPeer>();
         // ReSharper disable once VirtualMemberCallInConstructor
         InitMappings(mappings);
         _mappings = mappings;
@@ -26,7 +28,7 @@ public abstract class DataObjectMapperBase<TDataObject, TPeer>
     ///     Method is overridden by subclasses to initialize the mappings.
     /// </summary>
     /// <param name="mappings"></param>
-    protected abstract void InitMappings(DataObjectMappings<TDataObject, TPeer> mappings);
+    protected abstract void InitMappings(DataTransferObjectMappings<TDto, TPeer> mappings);
 
 
     /// <summary>
@@ -36,9 +38,9 @@ public abstract class DataObjectMapperBase<TDataObject, TPeer>
     /// <param name="dataObject"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    protected bool ToDataObject(TPeer source, TDataObject dataObject)
+    protected bool ToDto(TPeer source, TDto dataObject)
     {
-        return _mappings.ToDataObject(source ?? throw new ArgumentNullException(nameof(source)), dataObject);
+        return _mappings.ToDto(source ?? throw new ArgumentNullException(nameof(source)), dataObject);
     }
 
     /// <summary>
@@ -48,9 +50,9 @@ public abstract class DataObjectMapperBase<TDataObject, TPeer>
     /// <param name="target"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    protected bool FromDataObject(TDataObject dataObject, TPeer target)
+    protected bool FromDto(TDto dataObject, TPeer target)
     {
-        return _mappings.FromDataObject(dataObject ?? throw new ArgumentNullException(nameof(dataObject)),
+        return _mappings.FromDto(dataObject ?? throw new ArgumentNullException(nameof(dataObject)),
             target);
     }
 }

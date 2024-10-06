@@ -14,9 +14,9 @@ public class StreamExtensionsTest
     {
         var expectedPath = "testfile.txt";
         using var fileStream = new FileStream(expectedPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024, FileOptions.DeleteOnClose);
-        var actualPath = fileStream.GetFilePath();
-
-        Assert.Equal(Path.GetFullPath(expectedPath), actualPath);
+        Assert.Equal(Path.GetFullPath(expectedPath), fileStream.GetFilePath());
+        Assert.Equal(Path.GetFullPath(expectedPath), fileStream.GetFilePath(out var isMeg));
+        Assert.False(isMeg);
     }
 
     [Fact]
@@ -25,8 +25,9 @@ public class StreamExtensionsTest
         var fs = new MockFileSystem();
         var expectedPath = "filesystemfile.txt";
         var fileSystemStream = fs.FileStream.New(expectedPath, FileMode.Create);
-        var actualPath = fileSystemStream.GetFilePath();
-        Assert.Equal(fs.Path.GetFullPath(expectedPath), actualPath);
+        Assert.Equal(fs.Path.GetFullPath(expectedPath), fileSystemStream.GetFilePath());
+        Assert.Equal(fs.Path.GetFullPath(expectedPath), fileSystemStream.GetFilePath(out var isMeg));
+        Assert.False(isMeg);
     }
 
     [Fact]
@@ -36,9 +37,9 @@ public class StreamExtensionsTest
         var megFileDataStream = new Mock<TestMegDataStream>();
         megFileDataStream.SetupGet(s => s.EntryPath).Returns(expectedPath);
 
-        string actualPath = megFileDataStream.Object.GetFilePath();
-
-        Assert.Equal(expectedPath, actualPath);
+        Assert.Equal(expectedPath, megFileDataStream.Object.GetFilePath());
+        Assert.Equal(expectedPath, megFileDataStream.Object.GetFilePath(out var isMeg));
+        Assert.True(isMeg);
     }
 
     [Fact]

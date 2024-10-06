@@ -29,7 +29,7 @@ public class AlamoLanguageSupportService : ServiceBase, IAlamoLanguageSupportSer
     }
 
     /// <inheritdoc />
-    public IAlamoLanguageDefinition GetFallBackLanguageDefinition()
+    public IAlamoLanguageDefinition GetFallbackLanguageDefinition()
     {
         return _fallbackAlamoLanguageDefinition;
     }

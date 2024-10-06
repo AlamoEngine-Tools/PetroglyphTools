@@ -23,7 +23,7 @@ public interface IAlamoLanguageSupportService
     ///     overridden with <see cref="WithOverrideFallbackLanguage" />
     /// </summary>
     /// <returns></returns>
-    IAlamoLanguageDefinition GetFallBackLanguageDefinition();
+    IAlamoLanguageDefinition GetFallbackLanguageDefinition();
 
     /// <summary>
     ///     Allows for overriding the fallback language.

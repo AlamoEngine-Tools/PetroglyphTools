@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<IsPackable>false</IsPackable> <!--TODO Enable when implemented-->
-
+		<IsPackable>true</IsPackable>
 		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Title>PG.StarWarsGame.Files.MTD</Title>
 		<PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MTD</PackageId>
 		<Product>PG.StarWarsGame.Files.MTD</Product>
 	</PropertyGroup>
 	<PropertyGroup>
-		<!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<InheritDocEnabled>true</InheritDocEnabled>
 	</PropertyGroup>

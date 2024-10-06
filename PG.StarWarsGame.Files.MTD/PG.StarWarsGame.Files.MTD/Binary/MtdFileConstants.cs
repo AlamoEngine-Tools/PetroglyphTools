@@ -21,6 +21,11 @@ public static class MtdFileConstants
     internal static readonly Encoding NameEncoding_Latin1 = Encoding.GetEncoding(28591);
 
 
-    // Max size is 63, because we need to reserve on byte for the zero terminator '\0' when converting to a binary file.  
+    /// <summary>
+    /// The maximum allowed length of a file name for MTD entries.
+    /// </summary>
+    /// <remarks>
+    /// Max size is 63, because we need to reserve on byte for the zero terminator '\0' when converting to a binary file.
+    /// </remarks>
     public const int MaxFileNameSize = 63;
 }

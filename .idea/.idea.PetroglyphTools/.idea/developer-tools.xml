@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DeveloperToolsToolWindowSettingsV1" lastSelectedContentNodeId="xml-text-escape">
+    <developerToolsConfigurations>
+      <developerToolConfiguration developerToolId="xml-text-escape" id="983fab9d-f2bc-4768-8f5e-1f31b5fa4f96" name="Workbench">
+        <properties>
+          <property key="sourceText" type="INPUT" value="kotlin.String|Returns an IList&lt;IKeyValuePair&gt;" />
+          <property key="targetText" type="INPUT" value="kotlin.String|Returns an IList&amp;lt;IKeyValuePair&amp;gt;" />
+        </properties>
+      </developerToolConfiguration>
+    </developerToolsConfigurations>
+  </component>
+</project>

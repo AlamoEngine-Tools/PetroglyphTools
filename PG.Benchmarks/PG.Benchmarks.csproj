@@ -1,34 +1,39 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<IsPackable>false</IsPackable>
-		<TargetFrameworks>net8.0</TargetFrameworks>
-		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
-		<Product>PG.Benchmarks</Product>
-		<Title>PG.Benchmarks</Title>
-		<PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>
-		<PackageTags>alamo,petroglyph,glyphx</PackageTags>
-		<NeutralLanguage>en</NeutralLanguage>
-	</PropertyGroup>
+﻿<!--
+  - // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+  - // Licensed under the MIT license. See LICENSE file in the project root for details.
+  -->
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
+        <Product>PG.Benchmarks</Product>
+        <Title>PG.Benchmarks</Title>
+        <PackageId>AlamoEngineTools.PG.Benchmarks</PackageId>
+        <PackageTags>alamo,petroglyph,glyphx</PackageTags>
+        <NeutralLanguage>en</NeutralLanguage>
+    </PropertyGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-	  <PackageReference Include="System.Buffers" Version="4.5.1" />
-	  <PackageReference Include="System.Runtime" Version="4.3.1" />
-	  <PackageReference Include="Testably.Abstractions.Testing" Version="3.2.3" />
-	</ItemGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
-		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
-		<ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.14.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="System.Buffers" Version="4.5.1"/>
+        <PackageReference Include="System.Runtime" Version="4.3.1"/>
+        <PackageReference Include="Testably.Abstractions.Testing" Version="3.2.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj"/>
+        <ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj"/>
+        <ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj"/>
+    </ItemGroup>
 </Project>

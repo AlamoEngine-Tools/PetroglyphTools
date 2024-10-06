@@ -37,7 +37,7 @@ public static class BinaryReaderUtilities
     /// <param name="isZeroTerminated">When set to <see langword="true"/>, any possible null terminators ('\0') are removed from the end of the result. Default is <see langword="false"/>.</param>
     /// <returns>The string being read.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="reader"/> or <paramref name="encoding"/> is <see langword="null"/>.</exception>
-    /// <exception cref="IndexOutOfRangeException">The number of bytes read, mismatches the expected number of bytes.</exception>
+    /// <exception cref="EndOfStreamException">The number of bytes read, mismatches the expected number of bytes.</exception>
     public static string ReadString(this BinaryReader reader, int length, Encoding encoding, bool isZeroTerminated = false)
     {
         if (reader is null) 
@@ -57,7 +57,7 @@ public static class BinaryReaderUtilities
             Span<byte> buffer = stackalloc byte[length];
             var br = reader.Read(buffer);
             if (br != length)
-                throw new IndexOutOfRangeException("The number of bytes read, mismatched the expected number of bytes.");
+                throw new EndOfStreamException("The number of bytes read, mismatched the expected number of bytes.");
             result = encoding.GetString(buffer);
         }
 #endif
@@ -67,13 +67,18 @@ public static class BinaryReaderUtilities
         {
             var bytes = reader.ReadBytes(length);
             if (bytes.Length != length)
-                throw new IndexOutOfRangeException("The number of bytes read, mismatched the expected number of bytes.");
+                throw new EndOfStreamException("The number of bytes read, mismatched the expected number of bytes.");
             result = encoding.GetString(bytes.AsSpan());
         }
 
-        if (isZeroTerminated)
-            result = result.TrimEnd('\0');
+        if (!isZeroTerminated) 
+            return result;
 
-        return result;
+
+        var firstZero = result.IndexOf('\0');
+        if (firstZero == -1)
+            throw new IOException("The string is not zero terminated.");
+        
+        return result.Substring(0, firstZero);
     }
 }

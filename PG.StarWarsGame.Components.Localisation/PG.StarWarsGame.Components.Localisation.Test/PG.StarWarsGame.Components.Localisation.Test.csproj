@@ -1,4 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!--
+  - // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+  - // Licensed under the MIT license. See LICENSE file in the project root for details.
+  -->
+
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <TargetFrameworks>net8.0</TargetFrameworks>

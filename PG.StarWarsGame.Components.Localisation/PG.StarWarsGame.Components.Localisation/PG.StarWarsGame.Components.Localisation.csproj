@@ -1,4 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!--
+  - // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+  - // Licensed under the MIT license. See LICENSE file in the project root for details.
+  -->
+
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <Title>PG.StarWarsGame.Components.Localisation</Title>
@@ -29,7 +34,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
-        <PackageReference Include="System.IO.Abstractions" Version="21.0.29" />
+        <PackageReference Include="System.IO.Abstractions" Version="21.0.29"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj"/>

@@ -25,8 +25,9 @@ internal class MdtFileReader(IServiceProvider serviceProvider) : ServiceBase(ser
 
             var entries = new List<MtdBinaryFileInfo>();
 
-            for (int i = 0; i < header.Count; i++)
+            for (var i = 0; i < header.Count; i++)
             {
+                // 64 here because ReadString already handles the \0 character.
                 var name = reader.ReadString(64, MtdFileConstants.NameEncoding, true);
 
                 var x = reader.ReadUInt32();
@@ -41,9 +42,9 @@ internal class MdtFileReader(IServiceProvider serviceProvider) : ServiceBase(ser
             return new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(entries));
 
         }
-        catch (EndOfStreamException)
+        catch (Exception e) when (e is EndOfStreamException or IndexOutOfRangeException or IOException or ArgumentOutOfRangeException)
         {
-            throw new BinaryCorruptedException("Unable to read MDT file.");
+            throw new BinaryCorruptedException($"Unable to read MDT file: {e.Message}", e);
         }
     }
 }

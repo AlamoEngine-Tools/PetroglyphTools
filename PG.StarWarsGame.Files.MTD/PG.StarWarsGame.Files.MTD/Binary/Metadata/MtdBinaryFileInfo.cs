@@ -3,6 +3,7 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Diagnostics;
 using AnakinRaW.CommonUtilities;
 using PG.Commons.Binary;
 using PG.Commons.Utilities;
@@ -26,16 +27,23 @@ internal readonly struct MtdBinaryFileInfo : IBinary
 
     public bool Alpha { get; }
 
+    public int Size => 64 + sizeof(uint) * 4 + sizeof(bool);
+
     public byte[] Bytes
     {
         get
         {
-            Span<byte> bytes = stackalloc byte[Size];
-            var stringNameSpan = bytes.Slice(0, 64);
+            // Using an array here,
+            // a) because we need to allocate it anyway
+            // b) arrays are guaranteed to be 0-initialized (other to stackalloc)
+            var bytesArray = new byte[Size];
+            var bytes = bytesArray.AsSpan();
+
+            var stringNameSpan = bytes.Slice(0, 63);
             
-            // No need to fill the whole span, just the string area.
-            stringNameSpan.Fill(0);
             MtdFileConstants.NameEncoding.GetBytes(Name.AsSpan(), stringNameSpan);
+
+            Debug.Assert(bytesArray[64] == 0);
 
             var xSpan = bytes.Slice(64);
             BinaryPrimitives.WriteUInt32LittleEndian(xSpan, X);
@@ -52,11 +60,9 @@ internal readonly struct MtdBinaryFileInfo : IBinary
             var aSpan = bytes.Slice(64 + 4 * sizeof(uint));
             aSpan[0] = Convert.ToByte(Alpha);
 
-            return bytes.ToArray();
+            return bytesArray;
         }
     }
-
-    public int Size => 64 + sizeof(uint) * 4 + sizeof(bool);
 
     public MtdBinaryFileInfo(string name, uint x, uint y, uint width, uint height, bool alpha)
     {

@@ -8,10 +8,22 @@ using PG.Commons.Binary.File;
 
 namespace PG.StarWarsGame.Files.MTD.Binary.Metadata;
 
-internal class MtdBinaryFile(MtdHeader header, IBinaryTable<MtdBinaryFileInfo> items) : BinaryBase, IBinaryFile
+internal class MtdBinaryFile : BinaryBase, IBinaryFile
 {
-    public MtdHeader Header { get; } = header;
-    public IBinaryTable<MtdBinaryFileInfo> Items { get; } = items ?? throw new ArgumentNullException(nameof(items));
+    public MtdBinaryFile(MtdHeader header, IBinaryTable<MtdBinaryFileInfo> items)
+    {
+        if (items is null)
+            throw new ArgumentNullException(nameof(items));
+        if (items.Count != header.Count)
+            throw new ArgumentException("Header index count and item count to not match.");
+
+        Header = header;
+        Items = items;
+    }
+
+    public MtdHeader Header { get; }
+
+    public IBinaryTable<MtdBinaryFileInfo> Items { get; }
 
     protected override int GetSizeCore()
     {

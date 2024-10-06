@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using System;
 using System.Drawing;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,9 +38,15 @@ internal class MtdBinaryConverter(IServiceProvider serviceProvider): ServiceBase
 
     public IMegaTextureDirectory BinaryToModel(MtdBinaryFile binary)
     {
-        var entries = binary.Items.Select(Selector);
-
-        return new MegaTextureDirectory(entries);
+        try
+        {
+            var entries = binary.Items.Select(Selector);
+            return new MegaTextureDirectory(entries);
+        }
+        catch (DuplicateFileIndexException e)
+        {
+            throw new BinaryCorruptedException(e.Message, e);
+        }
     }
 
     private MegaTextureFileIndex Selector(MtdBinaryFileInfo x)

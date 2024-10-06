@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.MTD.Binary;
 public static class MtdFileConstants
 {
     /// <summary>
-    ///     The text key encoding. <br /><b>WARNING: The names are zero-padded to fill 64 bytes.</b>
+    ///     The text key encoding. <br /><b>WARNING: When writing MTD files, file names are zero-padded to fill 64 bytes.</b>
     /// </summary>
     public static readonly Encoding NameEncoding = Encoding.ASCII;
 

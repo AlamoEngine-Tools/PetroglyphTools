@@ -7,8 +7,15 @@ using PG.StarWarsGame.Files.MTD.Services;
 
 namespace PG.StarWarsGame.Files.MTD;
 
+/// <summary>
+/// Provides helper methods to initialize this library.
+/// </summary>
 public static class MtdServiceContribution 
 {
+    /// <summary>
+    /// Registers all required services of this library to the specified service collection.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection to register MTD services to.</param>
     public static void AddMtdServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IMtdFileService>(sp => new MtdFileService(sp));

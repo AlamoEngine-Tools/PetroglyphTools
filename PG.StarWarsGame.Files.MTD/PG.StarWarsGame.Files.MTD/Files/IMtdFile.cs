@@ -6,4 +6,7 @@ using PG.StarWarsGame.Files.MTD.Data;
 
 namespace PG.StarWarsGame.Files.MTD.Files;
 
+/// <summary>
+/// Represents a Petroglyph Mega Texture Directory file.
+/// </summary>
 public interface IMtdFile : IPetroglyphFileHolder<IMegaTextureDirectory, MtdFileInformation>;

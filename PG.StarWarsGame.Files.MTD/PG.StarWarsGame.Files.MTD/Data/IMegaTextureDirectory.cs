@@ -1,55 +1,32 @@
-﻿using System;
-using System.Collections;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.MTD.Data;
 
+/// <summary>
+/// Represents a Petroglyph Mega Texture Directory.
+/// </summary>
 public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileIndex>
 {
-    bool Contains(Crc32 hashedName);
+    /// <summary>
+    /// Determines whether an entry of the specified <see cref="Crc32"/> checksum is in the directory.
+    /// </summary>
+    /// <param name="crc32">The checksum of the entry to locate in the directory.</param>
+    /// <returns><see langword="true"/> if item is found in the <see cref="IMegaTextureDirectory"/>; otherwise, <see langword="false"/>.</returns>
+    bool Contains(Crc32 crc32);
 
-    bool TryGetIndex(Crc32 hashedName, [MaybeNullWhen(false)] out MegaTextureFileIndex index);
+    /// <summary>
+    /// Gets the entry associated with the specified checksum.
+    /// </summary>
+    /// <param name="crc32">The checksum of the entry to get.</param>
+    /// <param name="entry">
+    /// When this method returns, the entry associated with the specified key, if the key is found;
+    /// otherwise, the default value for the type of the <paramref name="entry"/> parameter.
+    /// This parameter is passed uninitialized.</param>
+    /// <returns></returns>
+    bool TryGetEntry(Crc32 crc32, [MaybeNullWhen(false)] out MegaTextureFileIndex entry);
 }
-
-internal class MegaTextureDirectory : IMegaTextureDirectory
-{
-    private readonly Dictionary<Crc32, MegaTextureFileIndex> _filesIndices;
-
-    public int Count => _filesIndices.Count;
-
-    public MegaTextureDirectory(IEnumerable<MegaTextureFileIndex> indices)
-    {
-        _filesIndices = new Dictionary<Crc32, MegaTextureFileIndex>();
-
-        foreach (var fileIndex in indices)
-        {
-            if (_filesIndices.ContainsKey(fileIndex.Crc32))
-                throw new DuplicateFileIndexException("MTD files must not have entries with the same name CRC32 value.");
-            _filesIndices[fileIndex.Crc32] = fileIndex;
-        }
-    }
-
-    public bool Contains(Crc32 hashedName)
-    {
-        return _filesIndices.ContainsKey(hashedName);
-    }
-
-    public bool TryGetIndex(Crc32 hashedName, out MegaTextureFileIndex index)
-    {
-        return _filesIndices.TryGetValue(hashedName, out index);
-    }
-
-    public IEnumerator<MegaTextureFileIndex> GetEnumerator()
-    {
-        return _filesIndices.Values.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
-}
-
-public sealed class DuplicateFileIndexException(string message) : Exception(message);

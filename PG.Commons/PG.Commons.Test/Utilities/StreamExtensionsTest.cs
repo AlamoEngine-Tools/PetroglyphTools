@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System;
-using Moq;
 using PG.Commons.Utilities;
+using PG.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -34,11 +34,10 @@ public class StreamExtensionsTest
     public void Test_GetFilePath_IMegFileDataStream()
     {
         var expectedPath = "megfiledatafile.txt";
-        var megFileDataStream = new Mock<TestMegDataStream>();
-        megFileDataStream.SetupGet(s => s.EntryPath).Returns(expectedPath);
+        var megFileDataStream = new TestMegDataStream("megfiledatafile.txt", Stream.Null);
 
-        Assert.Equal(expectedPath, megFileDataStream.Object.GetFilePath());
-        Assert.Equal(expectedPath, megFileDataStream.Object.GetFilePath(out var isMeg));
+        Assert.Equal(expectedPath, megFileDataStream.GetFilePath());
+        Assert.Equal(expectedPath, megFileDataStream.GetFilePath(out var isMeg));
         Assert.True(isMeg);
     }
 
@@ -47,10 +46,5 @@ public class StreamExtensionsTest
     {
         var memoryStream = new MemoryStream();
         Assert.Throws<InvalidOperationException>(memoryStream.GetFilePath);
-    }
-
-    public abstract class TestMegDataStream : Stream, IMegFileDataStream
-    {
-        public abstract string EntryPath { get; }
     }
 }

@@ -38,18 +38,18 @@ internal class MtdBinaryConverter(IServiceProvider serviceProvider): ServiceBase
 
     public IMegaTextureDirectory BinaryToModel(MtdBinaryFile binary)
     {
+        var entries = binary.Items.Select(CreateEntryFromBinary);
         try
         {
-            var entries = binary.Items.Select(Selector);
             return new MegaTextureDirectory(entries);
         }
-        catch (DuplicateFileIndexException e)
+        catch (DuplicateMtdEntryException e)
         {
             throw new BinaryCorruptedException(e.Message, e);
         }
     }
 
-    private MegaTextureFileIndex Selector(MtdBinaryFileInfo x)
+    private MegaTextureFileIndex CreateEntryFromBinary(MtdBinaryFileInfo x)
     {
         var name = x.Name;
         var crc = _hashingService.GetCrc32(name, MtdFileConstants.NameEncoding);

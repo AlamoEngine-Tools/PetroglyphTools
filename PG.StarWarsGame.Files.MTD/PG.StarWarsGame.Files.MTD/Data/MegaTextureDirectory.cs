@@ -20,7 +20,7 @@ internal class MegaTextureDirectory : IMegaTextureDirectory
         foreach (var fileIndex in indices)
         {
             if (_filesIndices.ContainsKey(fileIndex.Crc32))
-                throw new DuplicateFileIndexException("MTD files must not have entries with the same name CRC32 value.");
+                throw new DuplicateMtdEntryException("MTD files must not have entries with the same name CRC32 value.");
             _filesIndices[fileIndex.Crc32] = fileIndex;
         }
     }

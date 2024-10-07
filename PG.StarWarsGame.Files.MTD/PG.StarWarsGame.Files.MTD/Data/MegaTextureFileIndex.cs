@@ -47,7 +47,7 @@ public sealed class MegaTextureFileIndex : IEquatable<MegaTextureFileIndex>, IHa
     /// <exception cref="ArgumentException"><paramref name="fileName"/> is empty.</exception>
     /// <exception cref="ArgumentException"><paramref name="fileName"/> does contain non-ASCII characters.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="fileName"/> is <see langword="null"/>.</exception>
-    public MegaTextureFileIndex(string fileName, Crc32 nameChecksum, Rectangle area, bool hasAlpha)
+    internal MegaTextureFileIndex(string fileName, Crc32 nameChecksum, Rectangle area, bool hasAlpha)
     {
         ThrowHelper.ThrowIfNullOrEmpty(fileName);
         if (fileName.Length > MtdFileConstants.MaxFileNameSize) 

@@ -52,7 +52,7 @@ public class MegFileTest
     }
 
     [Fact]
-    public void Test_Ctor_SetupProperties_DiposeFileInfoParam()
+    public void Test_Ctor_SetupProperties_DisposeFileInfoParam()
     {
         const string name = "test.meg";
 

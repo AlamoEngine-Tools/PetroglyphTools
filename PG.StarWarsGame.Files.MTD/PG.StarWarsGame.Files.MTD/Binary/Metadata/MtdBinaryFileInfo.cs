@@ -35,7 +35,7 @@ internal readonly struct MtdBinaryFileInfo : IBinary
         {
             // Using an array here,
             // a) because we need to allocate it anyway
-            // b) arrays are guaranteed to be 0-initialized (other to stackalloc)
+            // b) arrays are guaranteed to be 0-initialized (where stackalloc might not be)
             var bytesArray = new byte[Size];
             var bytes = bytesArray.AsSpan();
 

@@ -5,11 +5,14 @@ using System.Text;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal class MegFileConstants
+/// <summary>
+/// Defines constants for handling MEG files.
+/// </summary>
+public class MegFileConstants
 {
-    public const uint MegFileMagicNumber = 0x3F7D70A4;
-    public const uint MegFileUnencryptedFlag = 0xFFFFFFFF;
-    public const uint MegFileEncryptedFlag = 0x8FFFFFFF;
+    internal const uint MegFileMagicNumber = 0x3F7D70A4;
+    internal const uint MegFileUnencryptedFlag = 0xFFFFFFFF;
+    internal const uint MegFileEncryptedFlag = 0x8FFFFFFF;
 
     // However, the specification does not state which encoding is required but instead relies on the number of characters of a string.
     // Implicitly, a 1:1 ratio for bytes - # chars is required though, which limits the possible encodings to a single-byte encoding,
@@ -22,9 +25,12 @@ internal class MegFileConstants
     // e.g.:
     //      'ß.txt' --> '?.txt'
     //      'ä.txt' --> '?.txt'
+    /// <summary>
+    /// ASCII encoding is used for MEG entries.
+    /// </summary>
     public static readonly Encoding MegDataEntryPathEncoding = Encoding.ASCII;
 
     // This encoding *only* gets used for reading binary MEG files to maintain compatibility with Mike.NL's tool.
     // This way we can preserve the original file name so that consumers of this library can handle non-ASCII named files.
-    public static readonly Encoding ExtendedMegEntryPathEncoding = Encoding.GetEncoding(28591);
+    internal static readonly Encoding ExtendedMegEntryPathEncoding = Encoding.GetEncoding(28591);
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace PG.Commons.Binary;
 
@@ -46,7 +47,7 @@ public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
         {
             0 => 0,
             1 => Items[0].Size,
-            _ => Items.Sum(item => item.Size)
+            _ => GetSizeSlow()
         };
     }
 
@@ -70,5 +71,14 @@ public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int GetSizeSlow()
+    {
+        var count = 0;
+        foreach (var item in Items)
+            count += item.Size;
+        return count;
     }
 }

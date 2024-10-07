@@ -12,7 +12,7 @@ public class BinaryReaderUtilitiesTest
     public void Test_ReadString_NullArgs()
     {
         var encoding = Encoding.Default;
-        var ms = new MemoryStream(Array.Empty<byte>());
+        var ms = new MemoryStream([]);
         BinaryReader binaryReader = null!;
         Assert.Throws<ArgumentNullException>(() => binaryReader.ReadString(4, encoding));
 
@@ -34,13 +34,15 @@ public class BinaryReaderUtilitiesTest
 
         var binaryReader = new BinaryReader(ms);
 
+        var posBeforeRead = binaryReader.BaseStream.Position;
+
         var resultString = binaryReader.ReadString(stringBytes.Length, ascii);
         Assert.Equal(input, resultString);
+        Assert.Equal(posBeforeRead + stringBytes.Length, binaryReader.BaseStream.Position);
     }
 
     [Theory]
     [InlineData("")]
-    [InlineData("123")]
     [InlineData("123")]
     [InlineData("123  ")]
     [InlineData("123\0\0")]
@@ -55,8 +57,11 @@ public class BinaryReaderUtilitiesTest
 
         var binaryReader = new BinaryReader(ms);
 
+        var posBeforeRead = binaryReader.BaseStream.Position;
+
         var resultString = binaryReader.ReadString(stringBytes.Length, ascii);
         Assert.Equal(input, resultString);
+        Assert.Equal(posBeforeRead + stringBytes.Length, binaryReader.BaseStream.Position);
     }
 
     [Theory]
@@ -75,8 +80,11 @@ public class BinaryReaderUtilitiesTest
 
         var binaryReader = new BinaryReader(ms);
 
+        var posBeforeRead = binaryReader.BaseStream.Position;
+
         var resultString = binaryReader.ReadString(count, unicode);
         Assert.Equal(expected, resultString);
+        Assert.Equal(posBeforeRead + count, binaryReader.BaseStream.Position);
     }
 
     [Theory]
@@ -96,8 +104,11 @@ public class BinaryReaderUtilitiesTest
 
         var binaryReader = new BinaryReader(ms);
 
+        var posBeforeRead = binaryReader.BaseStream.Position;
+
         var resultString = binaryReader.ReadString(count, unicode);
         Assert.Equal(expected, resultString);
+        Assert.Equal(posBeforeRead + count, binaryReader.BaseStream.Position);
     }
 
     [Fact]
@@ -107,7 +118,7 @@ public class BinaryReaderUtilitiesTest
         var stringBytes = ascii.GetBytes("123");
         var ms = new MemoryStream(stringBytes);
         var binaryReader = new BinaryReader(ms);
-        Assert.Throws<IndexOutOfRangeException>(() => binaryReader.ReadString(4, ascii));
+        Assert.Throws<EndOfStreamException>(() => binaryReader.ReadString(4, ascii));
     }
 
     [Fact]
@@ -117,7 +128,7 @@ public class BinaryReaderUtilitiesTest
         var stringBytes = ascii.GetBytes("123");
         var ms = new MemoryStream(stringBytes);
         var binaryReader = new BinaryReader(ms); 
-        Assert.Throws<IndexOutOfRangeException>(() => binaryReader.ReadString(7, ascii));
+        Assert.Throws<EndOfStreamException>(() => binaryReader.ReadString(7, ascii));
     }
 
     [Fact]
@@ -133,8 +144,8 @@ public class BinaryReaderUtilitiesTest
 
     [Theory]
     [InlineData("123\0\0", "123")]
-    [InlineData("123  ", "123  ")]
     [InlineData("123  \0\0", "123  ")]
+    [InlineData("123\0456\0", "123")]
     public void Test_ReadString_ZeroTermination(string input, string expected)
     {
         var encoding = Encoding.ASCII;
@@ -144,7 +155,24 @@ public class BinaryReaderUtilitiesTest
 
         var binaryReader = new BinaryReader(ms);
 
+        var posBeforeRead = binaryReader.BaseStream.Position;
+
         var resultString = binaryReader.ReadString(input.Length, encoding, true);
         Assert.Equal(expected, resultString);
+
+        Assert.Equal(posBeforeRead + input.Length, binaryReader.BaseStream.Position);
+    }
+
+    [Fact]
+    public void Test_ReadString_ZeroTerminationRequired_Throws()
+    {
+        var encoding = Encoding.ASCII;
+        var stringBytes = encoding.GetBytes("123 ");
+
+        var ms = new MemoryStream(stringBytes);
+
+        var binaryReader = new BinaryReader(ms);
+
+        Assert.Throws<IOException>(() => binaryReader.ReadString(4, encoding, true));
     }
 }

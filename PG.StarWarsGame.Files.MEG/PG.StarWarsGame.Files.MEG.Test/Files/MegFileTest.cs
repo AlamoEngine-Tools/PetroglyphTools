@@ -52,6 +52,30 @@ public class MegFileTest
     }
 
     [Fact]
+    public void Test_Ctor_SetupProperties_DisposeFileInfoParam()
+    {
+        const string name = "test.meg";
+
+        var encData = MegEncryptionDataTest.CreateRandomData();
+
+        var copyKey = encData.Key;
+        
+        var param = new MegFileInformation(name, MegFileVersion.V3, encData);
+        var model = new Mock<IMegArchive>().Object;
+
+        _fileSystem.Initialize().WithFile("test.meg");
+
+        var megFile = new MegFile(model, param, _serviceProvider.Object);
+
+        param.Dispose();
+
+        Assert.True(param.EncryptionData!.IsDisposed);
+
+        Assert.NotNull(megFile.FileInformation.EncryptionData);
+        Assert.Equal(megFile.FileInformation.EncryptionData.Key, copyKey);
+    }
+
+    [Fact]
     public void Test_Ctor_SetupProperties_Encrypted()
     {
         var key = new byte[16];

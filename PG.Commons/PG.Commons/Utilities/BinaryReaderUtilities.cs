@@ -34,10 +34,12 @@ public static class BinaryReaderUtilities
     /// <param name="reader">The binary reader instance.</param>
     /// <param name="length">The length in <b>bytes</b>.</param>
     /// <param name="encoding">The encoding used to produce the string.</param>
-    /// <param name="isZeroTerminated">When set to <see langword="true"/>, any possible null terminators ('\0') are removed from the end of the result. Default is <see langword="false"/>.</param>
+    /// <param name="isZeroTerminated">When set to <see langword="true"/>, the resulting string is truncated to the first found null-terminator ('\0'). Default is <see langword="false"/>.</param>
     /// <returns>The string being read.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="reader"/> or <paramref name="encoding"/> is <see langword="null"/>.</exception>
     /// <exception cref="EndOfStreamException">The number of bytes read, mismatches the expected number of bytes.</exception>
+    /// <exception cref="IOException">An I/O error occurred.</exception>
+    /// <exception cref="IOException"><paramref name="isZeroTerminated"/> is <see langowrd="true"/> but the string read did not contain a null-terminator.</exception>
     public static string ReadString(this BinaryReader reader, int length, Encoding encoding, bool isZeroTerminated = false)
     {
         if (reader is null) 

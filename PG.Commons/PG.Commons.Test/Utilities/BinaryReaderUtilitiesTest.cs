@@ -44,7 +44,6 @@ public class BinaryReaderUtilitiesTest
     [Theory]
     [InlineData("")]
     [InlineData("123")]
-    [InlineData("123")]
     [InlineData("123  ")]
     [InlineData("123\0\0")]
     [InlineData("öäü")]

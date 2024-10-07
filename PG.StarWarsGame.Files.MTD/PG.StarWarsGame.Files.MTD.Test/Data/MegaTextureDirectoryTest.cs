@@ -15,7 +15,7 @@ public class MegaTextureDirectoryTest
         Assert.Throws<DuplicateMtdEntryException>(() => new MegaTextureDirectory(new List<MegaTextureFileIndex>
         {
             new("abc", new Crc32(123), Rectangle.Empty, true),
-            new("def", new Crc32(123), new Rectangle(1,2,3,4), false),
+            new("def", new Crc32(123), new Rectangle(1, 2, 3, 4), false),
         }));
     }
 

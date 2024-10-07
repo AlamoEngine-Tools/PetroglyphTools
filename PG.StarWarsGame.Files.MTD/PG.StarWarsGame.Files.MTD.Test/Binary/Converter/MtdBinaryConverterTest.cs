@@ -43,8 +43,8 @@ public class MtdBinaryConverterTest
         var entries = new List<MtdBinaryFileInfo>
         {
             new("name", 1, 2, 3, 4, true),
-            new("name", 4,3,2,1, false)
-        }; 
+            new("name", 4, 3, 2, 1, false)
+        };
         Assert.Throws<BinaryCorruptedException>(() => _binaryConverter.BinaryToModel(new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(entries))));
     }
 
@@ -63,7 +63,7 @@ public class MtdBinaryConverterTest
         var entries = new List<MtdBinaryFileInfo>
         {
             new("this.tga", 1, 2, 3, 4, true),
-            new("other.tga", 4,3,2,1, false)
+            new("other.tga", 4, 3, 2, 1, false)
         };
 
         var thisCrc = _hashingService.GetCrc32("this.tga", Encoding.ASCII);
@@ -75,8 +75,8 @@ public class MtdBinaryConverterTest
         var thisFile = model.First(x => x.FileName == "this.tga");
         var otherFile = model.First(x => x.FileName == "other.tga");
 
-        Assert.Equal(new MegaTextureFileIndex("this.tga", thisCrc, new Rectangle(1,2,3,4), true), thisFile);
-        Assert.Equal(new MegaTextureFileIndex("other.tga", otherCrc, new Rectangle(4,3,2,1), false), otherFile);
+        Assert.Equal(new MegaTextureFileIndex("this.tga", thisCrc, new Rectangle(1, 2, 3, 4), true), thisFile);
+        Assert.Equal(new MegaTextureFileIndex("other.tga", otherCrc, new Rectangle(4, 3, 2, 1), false), otherFile);
     }
 
 

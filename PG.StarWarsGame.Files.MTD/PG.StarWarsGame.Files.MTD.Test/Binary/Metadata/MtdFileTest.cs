@@ -19,12 +19,13 @@ public class MtdFileTest
     public void Ctor_Test__ThrowsArgumentException()
     {
         var header = new MtdHeader(1);
-        
-        Assert.Throws<ArgumentException>(() => new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>
-        {
-            new("a", 1,1,1,1, true),
-            new("b", 1,1,1,1, true),
-        })));
+
+        Assert.Throws<ArgumentException>(() => new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(
+            new List<MtdBinaryFileInfo>
+            {
+                new("a", 1, 1, 1, 1, true),
+                new("b", 1, 1, 1, 1, true)
+            })));
 
         Assert.Throws<ArgumentException>(() => new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>())));
     }
@@ -38,7 +39,7 @@ public class MtdFileTest
         _ = new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>
         {
             new("a", 1, 1, 1, 1, true),
-            new("b", 1, 1, 1, 1, true),
+            new("b", 1, 1, 1, 1, true)
         }));
         Assert.True(true);
     }
@@ -50,7 +51,7 @@ public class MtdFileTest
         var fileTable = new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>
         {
             new("a", 1, 1, 1, 1, true),
-            new("b", 1, 1, 1, 1, true),
+            new("b", 1, 1, 1, 1, true)
         });
 
         var file = new MtdBinaryFile(header, fileTable);

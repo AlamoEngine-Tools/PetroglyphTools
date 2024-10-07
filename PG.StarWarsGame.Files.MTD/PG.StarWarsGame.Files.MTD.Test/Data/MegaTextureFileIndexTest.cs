@@ -51,11 +51,11 @@ public class MegaTextureFileIndexTest
         Assert.False(entry1.Equals((object)entryOtherCrc));
         Assert.False(entry1.Equals(entryOtherCrc));
 
-        var entryOtherArea = new MegaTextureFileIndex("fileName", new Crc32(123), new Rectangle(4,3,2,1), true);
+        var entryOtherArea = new MegaTextureFileIndex("fileName", new Crc32(123), new Rectangle(4, 3, 2, 1), true);
         Assert.False(entry1.Equals((object)entryOtherArea));
         Assert.False(entry1.Equals(entryOtherArea));
 
-        var entryOtherAlpha = new MegaTextureFileIndex("fileName", new Crc32(123), new Rectangle(1,2,3,4), false);
+        var entryOtherAlpha = new MegaTextureFileIndex("fileName", new Crc32(123), new Rectangle(1, 2, 3, 4), false);
         Assert.False(entry1.Equals((object)entryOtherAlpha));
         Assert.False(entry1.Equals(entryOtherAlpha));
     }

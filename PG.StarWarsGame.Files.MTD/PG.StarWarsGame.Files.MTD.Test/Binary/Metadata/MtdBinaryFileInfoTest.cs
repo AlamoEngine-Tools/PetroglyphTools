@@ -39,7 +39,7 @@ public class MtdBinaryFileInfoTest
     [Fact]
     public void Ctor_Test__Bytes_Size_FullNameUsed()
     {
-        var fileInfo = new MtdBinaryFileInfo(new string('a', 63), 1,2,3,4, true);
+        var fileInfo = new MtdBinaryFileInfo(new string('a', 63), 1, 2, 3, 4, true);
 
         Assert.Equal(81, fileInfo.Size);
 

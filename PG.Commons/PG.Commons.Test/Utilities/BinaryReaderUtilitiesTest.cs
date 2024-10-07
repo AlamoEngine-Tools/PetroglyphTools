@@ -12,7 +12,7 @@ public class BinaryReaderUtilitiesTest
     public void Test_ReadString_NullArgs()
     {
         var encoding = Encoding.Default;
-        var ms = new MemoryStream(Array.Empty<byte>());
+        var ms = new MemoryStream([]);
         BinaryReader binaryReader = null!;
         Assert.Throws<ArgumentNullException>(() => binaryReader.ReadString(4, encoding));
 

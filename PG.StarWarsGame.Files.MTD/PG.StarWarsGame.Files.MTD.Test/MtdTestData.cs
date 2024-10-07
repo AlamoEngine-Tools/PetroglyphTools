@@ -177,6 +177,13 @@ public static class MtdTestData
             [
                 new byte[]
                 {
+                    0, 0, 0, 0
+                },
+                new List<MtdEntryInformationContainer>()
+            ],
+            [
+                new byte[]
+                {
                     1, 0, 0, 0,
                     0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61,
                     0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61,

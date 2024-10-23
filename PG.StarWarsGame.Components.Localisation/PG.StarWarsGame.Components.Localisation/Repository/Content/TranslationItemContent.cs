@@ -4,8 +4,8 @@ namespace PG.StarWarsGame.Components.Localisation.Repository.Content;
 public record TranslationItemContent : ITranslationItemContent
 {
     /// <inheritdoc />
-    public required string Key { get; set; }
+    public required string Key { get; init; }
 
     /// <inheritdoc />
-    public string? Value { get; set; }
+    public string? Value { get; init; }
 }

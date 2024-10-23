@@ -18,18 +18,23 @@ public interface ITranslationRepository
     enum MergeStrategy
     {
         /// <summary>
-        ///     If the <see cref="IAlamoLanguageDefinition" /> already exists, the new items will replace the existing items.
+        ///     If the <see cref="IAlamoLanguageDefinition" /> already exists, the new items will replace <b>ALL</b> existing
+        ///     items. This is equivalent to calling <see cref="ITranslationRepository.RemoveLanguage" />,
+        ///     <see cref="ITranslationRepository.AddLanguage" /> and
+        ///     <see cref="ITranslationRepository.AddOrUpdateTranslationItem" /> for the new items.
         /// </summary>
         Replace,
 
         /// <summary>
-        ///     If the <see cref="ITranslationItemId" /> already exists, the <see cref="ITranslationItem" /> will be merged,
+        ///     If the <see cref="ITranslationItemId" /> already exists, the <see cref="ITranslationItem" /> will be updated,
         ///     otherwise added.
         /// </summary>
         MergeByKey,
 
         /// <summary>
-        ///     The <see cref="ITranslationItem" />s will be appended if possible.
+        ///     The <see cref="ITranslationItem" />s will be appended if possible. If there is a key already present in the
+        ///     repository, the associated item will <b>NOT</b> be updated, use <see cref="MergeByKey" /> if you want to update
+        ///     exiting items.
         /// </summary>
         Append
     }
@@ -37,12 +42,12 @@ public interface ITranslationRepository
     /// <summary>
     ///     Readonly dictionary of all contained <see cref="ITranslationItem" />s separated by language.
     /// </summary>
-    IReadOnlyDictionary<IAlamoLanguageDefinition, IReadOnlyCollection<IReadOnlyTranslationItem>> Content { get; }
+    IReadOnlyDictionary<IAlamoLanguageDefinition, ICollection<ITranslationItem>> Content { get; }
 
     /// <summary>
     ///     Readonly collection of all contained <see cref="ITranslationItem" />s.
     /// </summary>
-    IReadOnlyCollection<IReadOnlyTranslationItem> GetTranslationItemsByLanguage(IAlamoLanguageDefinition language);
+    IReadOnlyCollection<ITranslationItem> GetTranslationItemsByLanguage(IAlamoLanguageDefinition language);
 
     /// <summary>
     ///     Adds a new language to the repository.
@@ -100,7 +105,7 @@ public interface ITranslationRepository
     ITranslationDiff CreateTranslationDiff(IAlamoLanguageDefinition diffBase);
 
     /// <summary>
-    ///     Applies a diff to th repository. Missing items in languages will be inserted, items not present in the master
+    ///     Applies a diff to the repository. Missing items in languages will be inserted, items not present in the master
     ///     language will be removed.
     /// </summary>
     /// <param name="diff"></param>

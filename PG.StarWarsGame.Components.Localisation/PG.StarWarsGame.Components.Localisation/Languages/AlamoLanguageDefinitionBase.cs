@@ -63,7 +63,9 @@ public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition, IC
     /// <returns></returns>
     protected virtual bool EqualsInternal(IAlamoLanguageDefinition other)
     {
-        return CompareTo(other) == 0;
+        return string.Compare(Culture.TwoLetterISOLanguageName, other.Culture.TwoLetterISOLanguageName,
+            StringComparison.Ordinal) == 0 && string.Compare(LanguageIdentifier, other.LanguageIdentifier,
+            StringComparison.Ordinal) == 0;
     }
 
     /// <summary>

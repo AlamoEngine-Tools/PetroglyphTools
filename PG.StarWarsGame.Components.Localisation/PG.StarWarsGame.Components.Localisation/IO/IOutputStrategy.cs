@@ -1,6 +1,8 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System.IO;
+
 namespace PG.StarWarsGame.Components.Localisation.IO;
 
 /// <summary>
@@ -39,8 +41,12 @@ public interface IOutputStrategy
     string Extension { get; }
 
     /// <summary>
-    ///     Creates a fresh instance of a given associated <see cref="IExportHandler{T}" />
+    ///     The file name without file extension
     /// </summary>
-    /// <returns></returns>
-    IExportHandler<IOutputStrategy> CreateExportHandler();
+    string FileName { get; }
+
+    /// <summary>
+    ///     The export base path.
+    /// </summary>
+    DirectoryInfo ExportBasePath { get; }
 }

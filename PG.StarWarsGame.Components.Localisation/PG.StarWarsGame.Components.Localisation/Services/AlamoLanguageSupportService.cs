@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using PG.Commons.Services;
@@ -55,5 +56,16 @@ public class AlamoLanguageSupportService : ServiceBase, IAlamoLanguageSupportSer
                 ? "Multiple default languages have been defined."
                 : "No default language has been defined.");
         return (IAlamoLanguageDefinition)Activator.CreateInstance(languageDefinitions[0]);
+    }
+
+    /// <inheritdoc />
+    public IDictionary<string, IAlamoLanguageDefinition> CreateLanguageIdentifierMapping()
+    {
+        return AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assemblyTypes => assemblyTypes.GetTypes())
+            .Where(assemblyType => typeof(IAlamoLanguageDefinition).IsAssignableFrom(assemblyType) &&
+                                   assemblyType is { IsClass: true, IsAbstract: false })
+            .Select<Type, IAlamoLanguageDefinition>(t => (IAlamoLanguageDefinition)Activator.CreateInstance(t))
+            .ToDictionary(d => d.LanguageIdentifier, d => d);
     }
 }

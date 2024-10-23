@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 #if NETSTANDARD2_0
@@ -12,13 +13,14 @@ using AnakinRaW.CommonUtilities.Extensions;
 namespace PG.Commons.Utilities;
 
 /// <summary>
-/// Provides primitive helper methods for strings.
+///     Provides primitive helper methods for strings.
 /// </summary>
 public static class StringUtilities
 {
     /// <summary>
-    /// Checks whether a given string, when converted to bytes, is not longer than the max value of an <see cref="ushort"/>.
-    /// Throws an <see cref="ArgumentException"/> if the string is longer.
+    ///     Checks whether a given string, when converted to bytes, is not longer than the max value of an
+    ///     <see cref="ushort" />.
+    ///     Throws an <see cref="ArgumentException" /> if the string is longer.
     /// </summary>
     /// <param name="value">The string to validate.</param>
     /// <param name="encoding">The encoding that shall be used to get the string length.</param>
@@ -32,17 +34,18 @@ public static class StringUtilities
         if (encoding == null)
             throw new ArgumentNullException(nameof(encoding));
 
-        var size = encoding.GetByteCount(value);   
+        var size = encoding.GetByteCount(value);
 
         if (size is < 0 or > ushort.MaxValue)
-            throw new ArgumentException($"The value is longer than the expected {ushort.MaxValue} characters.", nameof(value));
+            throw new ArgumentException($"The value is longer than the expected {ushort.MaxValue} characters.",
+                nameof(value));
 
         return (ushort)size;
     }
 
     /// <summary>
-    /// Checks whether a given character sequence has no more characters than the max value of an <see cref="ushort"/>.
-    /// Throws an <see cref="ArgumentException"/> if the string is longer.
+    ///     Checks whether a given character sequence has no more characters than the max value of an <see cref="ushort" />.
+    ///     Throws an <see cref="ArgumentException" /> if the string is longer.
     /// </summary>
     /// <param name="value">The string to validate.</param>
     /// <returns>The actual length of the value in characters.</returns>
@@ -55,13 +58,14 @@ public static class StringUtilities
 
         var length = value.Length;
         if (length is < 0 or > ushort.MaxValue)
-            throw new ArgumentException($"The value is longer that the expected {ushort.MaxValue} characters.", nameof(value));
+            throw new ArgumentException($"The value is longer that the expected {ushort.MaxValue} characters.",
+                nameof(value));
 
         return (ushort)length;
     }
 
     /// <summary>
-    /// Throws an <see cref="ArgumentException"/> if the given character sequence contains non-ASCII characters.
+    ///     Throws an <see cref="ArgumentException" /> if the given character sequence contains non-ASCII characters.
     /// </summary>
     /// <param name="value">The character sequence to validate.</param>
     /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
@@ -74,7 +78,7 @@ public static class StringUtilities
     }
 
     /// <summary>
-    /// Throws an <see cref="ArgumentException"/> if the given character sequence contains non-ASCII characters.
+    ///     Throws an <see cref="ArgumentException" /> if the given character sequence contains non-ASCII characters.
     /// </summary>
     /// <param name="value">The character sequence to validate.</param>
     /// <exception cref="ArgumentException">The character sequence contains non-ASCII characters.</exception>
@@ -85,10 +89,27 @@ public static class StringUtilities
             throw new ArgumentNullException(nameof(value));
 
         foreach (var ch in value)
-        {
             if ((uint)ch > '\x007f')
                 return false;
-        }
         return true;
+    }
+
+    /// <summary>
+    ///     Basic validation algorithm.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static string Validate(string? s)
+    {
+        var stringBuilder = new StringBuilder();
+
+        if (string.IsNullOrEmpty(s)) return string.Empty;
+
+        foreach (var t in s.Where(t => t == 0x9 || t == 0xA || t == 0xD ||
+                                       (t >= 0x20 && t <= 0xD7FF) ||
+                                       (t >= 0xE000 && t <= 0xFFFD)))
+            stringBuilder.Append(t);
+
+        return stringBuilder.ToString();
     }
 }

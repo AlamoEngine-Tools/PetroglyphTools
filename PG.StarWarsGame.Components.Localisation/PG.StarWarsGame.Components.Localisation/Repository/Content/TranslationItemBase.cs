@@ -8,15 +8,10 @@ public abstract class TranslationItemBase : ITranslationItem
     /// </summary>
     /// <param name="itemId"></param>
     /// <param name="content"></param>
-    /// <param name="source"></param>
-    /// <param name="overwritten"></param>
-    protected TranslationItemBase(ITranslationItemId itemId, TranslationItemContent content,
-        ITranslationItem.TranslationItemSource source, bool overwritten)
+    protected TranslationItemBase(ITranslationItemId itemId, TranslationItemContent content)
     {
         ItemId = itemId;
         Content = content;
-        Source = source;
-        Overwritten = overwritten;
     }
 
     /// <inheritdoc />
@@ -26,8 +21,8 @@ public abstract class TranslationItemBase : ITranslationItem
     public ITranslationItemId ItemId { get; }
 
     /// <inheritdoc />
-    public ITranslationItem.TranslationItemSource Source { get; }
-
-    /// <inheritdoc />
-    public bool Overwritten { get; }
+    public override string ToString()
+    {
+        return $"{GetType().Name}[{ItemId}: {Content}]";
+    }
 }

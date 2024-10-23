@@ -9,9 +9,9 @@ namespace PG.StarWarsGame.Components.Localisation.Test;
 
 public sealed class LocalisationTestConstants
 {
-    public static readonly IList<Type> REGISTERED_LANGUAGE_DEFINITIONS = new List<Type>
+    public static readonly IList<Type> RegisteredLanguageDefinitions = new List<Type>
     {
-        //[gruenwaldlu, 2021-04-18-12:02:51+2]: All officially supported languages are listed below. 
+        //[gruenwaldlu, 2021-04-18-12:02:51+2]: All officially supported languages are listed below.
         typeof(ChineseAlamoLanguageDefinition), typeof(EnglishAlamoLanguageDefinition),
         typeof(FrenchAlamoLanguageDefinition), typeof(GermanAlamoLanguageDefinition),
         typeof(ItalianAlamoLanguageDefinition), typeof(JapaneseAlamoLanguageDefinition),
@@ -20,5 +20,8 @@ public sealed class LocalisationTestConstants
         typeof(ThaiAlamoLanguageDefinition)
     };
 
-    public static readonly Type DEFAULT_LANGUAGE = typeof(EnglishAlamoLanguageDefinition);
+    public static readonly Type DefaultLanguage = typeof(EnglishAlamoLanguageDefinition);
+
+    public static readonly string XmlV1ResourcePathBase =
+        $"{typeof(LocalisationTestConstants).Assembly.Location}.Resources.IO.Xml.v1.Seralizable.translation_manifest_";
 }

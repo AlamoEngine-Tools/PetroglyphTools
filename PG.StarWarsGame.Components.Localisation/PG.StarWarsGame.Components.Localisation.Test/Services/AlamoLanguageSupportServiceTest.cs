@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
@@ -19,10 +20,7 @@ namespace PG.StarWarsGame.Components.Localisation.Test.Services;
 
 public class AlamoLanguageSupportServiceTest
 {
-    private readonly MockFileSystem _fileSystem = new();
-    private readonly IAlamoLanguageSupportService _service;
-
-    private readonly HashSet<Type> builtin_types = new()
+    private readonly HashSet<Type> _builtinTypes = new()
     {
         typeof(ChineseAlamoLanguageDefinition),
         typeof(EnglishAlamoLanguageDefinition),
@@ -36,6 +34,9 @@ public class AlamoLanguageSupportServiceTest
         typeof(SpanishAlamoLanguageDefinition),
         typeof(ThaiAlamoLanguageDefinition)
     };
+
+    private readonly MockFileSystem _fileSystem = new();
+    private readonly IAlamoLanguageSupportService _service;
 
     public AlamoLanguageSupportServiceTest()
     {
@@ -83,7 +84,49 @@ public class AlamoLanguageSupportServiceTest
     [Fact]
     public void Test_IsBuiltInLanguageDefinition_ReturnsTrue()
     {
-        foreach (var b in builtin_types)
+        foreach (var b in _builtinTypes)
             Assert.True(_service.IsBuiltInLanguageDefinition((IAlamoLanguageDefinition)Activator.CreateInstance(b)!));
+    }
+
+    [Fact]
+    public void Test_IsBuiltInLanguageDefinition_ReturnsFalse()
+    {
+        Assert.False(_service.IsBuiltInLanguageDefinition(new TestAlamoLanguageDefinition()));
+    }
+
+    [Fact]
+    public void Test_AllPresentLanguageIdentifiersAreValid()
+    {
+        var types = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assemblyTypes => assemblyTypes.GetTypes())
+            .Where(assemblyType => typeof(IAlamoLanguageDefinition).IsAssignableFrom(assemblyType) &&
+                                   assemblyType is { IsClass: true, IsAbstract: false })
+            .ToList();
+        foreach (var type in types) Assert.True(typeof(AlamoLanguageDefinitionBase).IsAssignableFrom(type));
+    }
+
+    [Fact]
+    public void Test_CreateLanguageIdentifierMapping_AllPresent()
+    {
+        var defs = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assemblyTypes => assemblyTypes.GetTypes())
+            .Where(assemblyType => typeof(IAlamoLanguageDefinition).IsAssignableFrom(assemblyType) &&
+                                   assemblyType is { IsClass: true, IsAbstract: false })
+            .Select<Type, IAlamoLanguageDefinition>(t => (IAlamoLanguageDefinition)Activator.CreateInstance(t))
+            .ToList();
+        var map = _service.CreateLanguageIdentifierMapping();
+        Assert.Equal(defs.Count, map.Count);
+        foreach (var def in defs)
+        {
+            Assert.True(typeof(AlamoLanguageDefinitionBase).IsAssignableFrom(def.GetType()));
+            Assert.NotNull(map[def.LanguageIdentifier]);
+            Assert.Equal(def, map[def.LanguageIdentifier]);
+        }
+    }
+
+    private class TestAlamoLanguageDefinition : AlamoLanguageDefinitionBase
+    {
+        protected override string ConfiguredLanguageIdentifier => "TEST";
+        protected override CultureInfo ConfiguredCulture => CultureInfo.CurrentCulture;
     }
 }

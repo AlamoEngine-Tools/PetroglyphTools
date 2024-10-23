@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System.Collections.Generic;
 using PG.StarWarsGame.Components.Localisation.Languages;
 
 namespace PG.StarWarsGame.Components.Localisation.Services;
@@ -38,4 +39,11 @@ public interface IAlamoLanguageSupportService
     /// </summary>
     /// <returns></returns>
     IAlamoLanguageDefinition GetDefaultLanguageDefinition();
+
+    /// <summary>
+    ///     Creates a lookup map for <see cref="IAlamoLanguageDefinition" />s by their
+    ///     <see cref="IAlamoLanguageDefinition.LanguageIdentifier" />
+    /// </summary>
+    /// <returns></returns>
+    IDictionary<string, IAlamoLanguageDefinition> CreateLanguageIdentifierMapping();
 }

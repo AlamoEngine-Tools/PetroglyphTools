@@ -14,8 +14,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
         <PackageReference Include="xunit" Version="2.9.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
@@ -33,5 +33,10 @@
         <ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj"/>
         <ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj"/>
         <ProjectReference Include="..\PG.StarWarsGame.Components.Localisation\PG.StarWarsGame.Components.Localisation.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_empty.xml"/>
+        <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_multi_keys.xml"/>
+        <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_single_key.xml"/>
     </ItemGroup>
 </Project>

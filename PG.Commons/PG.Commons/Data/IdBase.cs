@@ -43,6 +43,12 @@ public abstract class IdBase : IId
         return b.ToString();
     }
 
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Unwrap();
+    }
+
     /// <summary>
     ///     Convenience method to access components in a type-safe manner.
     /// </summary>
@@ -65,7 +71,10 @@ public abstract class IdBase : IId
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        return HashCode.Combine(GetConfiguredArity(), HashCode.Combine(Components));
+        var hash = Arity.GetHashCode();
+        hash = Components.OfType<object>()
+            .Aggregate(hash, (current, component) => current * 31 + component.GetHashCode());
+        return hash;
     }
 
     /// <summary>
@@ -74,7 +83,7 @@ public abstract class IdBase : IId
     /// <returns></returns>
     protected virtual bool IsNullId()
     {
-        return Components.Any();
+        return Components.Any(o => o != null);
     }
 
     /// <summary>

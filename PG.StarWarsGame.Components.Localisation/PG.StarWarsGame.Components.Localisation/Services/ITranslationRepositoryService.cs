@@ -12,20 +12,24 @@ namespace PG.StarWarsGame.Components.Localisation.Services;
 public interface ITranslationRepositoryService
 {
     /// <summary>
-    ///     Loads a given file or set of files as a singular <see cref="ITranslationRepository" />
+    ///     Loads a given file or set of files as a singular <see cref="ITranslationRepository" /> based on the
+    ///     <see cref="IInputStrategy" />
     /// </summary>
-    /// <param name="inputStrategy"></param>
-    /// <param name="filePaths"></param>
+    /// <param name="handler"></param>
+    /// <param name="strategy"></param>
+    /// <param name="repository"></param>
+    /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    ITranslationRepository LoadAs(IInputStrategy inputStrategy, params string[] filePaths);
+    void LoadAs<T>(IImportHandler<T> handler, T strategy, ITranslationRepository repository)
+        where T : IInputStrategy; // TODO: Handler-factory based on the strategy.
 
     /// <summary>
-    ///     Stores a <see cref="ITranslationRepository" /> as a set of files defined in the <see cref="IOutputStrategy" /> in a
-    ///     given base directory.
+    ///     Stores a <see cref="ITranslationRepository" /> as defined in the <see cref="IOutputStrategy" />
     /// </summary>
-    /// <param name="baseFilePath"></param>
-    /// <param name="outputStrategy"></param>
+    /// <param name="handler"></param>
+    /// <param name="strategy"></param>
     /// <param name="repository"></param>
-    /// <returns></returns>
-    void StoreAs(string baseFilePath, IOutputStrategy outputStrategy, ITranslationRepository repository);
+    /// <typeparam name="T"></typeparam>
+    void StoreAs<T>(IExportHandler<T> handler, T strategy, ITranslationRepository repository)
+        where T : IOutputStrategy; // TODO: Handler-factory based on the strategy.
 }

@@ -8,10 +8,10 @@ public interface ITranslationItemContent
     /// <summary>
     ///     The string key, usually mapped to <see cref="PG.StarWarsGame.Files.DAT.Data.DatStringEntry.Key" />
     /// </summary>
-    string Key { get; set; }
+    string Key { get; init; }
 
     /// <summary>
     ///     The string value, usually mapped to <see cref="PG.StarWarsGame.Files.DAT.Data.DatStringEntry.Value" />
     /// </summary>
-    string? Value { get; set; }
+    string? Value { get; init; }
 }

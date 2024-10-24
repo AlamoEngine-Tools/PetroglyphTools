@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using Xunit;
 
 namespace PG.Testing;
@@ -11,14 +12,11 @@ namespace PG.Testing;
 public static class TestUtility
 {
     private static readonly Random RandomGenerator = new();
-        
+
     public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
     {
         Assert.Equal(expected.Count, actual.Count);
-        for (var i = 0; i < expected.Count; i++)
-        {
-            Assert.Equal(expected[i], actual[i]);
-        }
+        for (var i = 0; i < expected.Count; i++) Assert.Equal(expected[i], actual[i]);
     }
 
     public static string GetRandomStringOfLength(int length)
@@ -26,10 +24,7 @@ public static class TestUtility
         const string allowedChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
         var chars = new char[length];
 
-        for (var i = 0; i < length; i++)
-        {
-            chars[i] = allowedChars[RandomGenerator.Next(0, allowedChars.Length)];
-        }
+        for (var i = 0; i < length; i++) chars[i] = allowedChars[RandomGenerator.Next(0, allowedChars.Length)];
 
         return new string(chars);
     }
@@ -48,5 +43,11 @@ public static class TestUtility
         using var ms = new MemoryStream();
         stream.CopyTo(ms);
         return ms.ToArray();
+    }
+
+    public static void CopyEmbeddedResourceToMockFilesystem(Type type, string resourcePath, string mockFilePath,
+        IFileSystem fileSystem)
+    {
+        fileSystem.File.WriteAllBytes(mockFilePath, GetEmbeddedResourceAsByteArray(type, resourcePath));
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  ~ // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+  ~ // Licensed under the MIT license. See LICENSE file in the project root for details.
+  -->
+
+<LocalisationData>
+    <Localisation Key="TEST_KEY_00">
+        <TranslationData>
+            <Translation Language="INVALID"><![CDATA[Test text for key TEST_KEY_00]]></Translation>
+        </TranslationData>
+    </Localisation>
+</LocalisationData>

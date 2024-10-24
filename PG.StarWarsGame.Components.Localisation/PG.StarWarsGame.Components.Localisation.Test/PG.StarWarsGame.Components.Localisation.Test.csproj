@@ -36,6 +36,9 @@
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_empty.xml"/>
+        <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_invalid_key.xml"/>
+        <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_invalid_language.xml"/>
+        <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_key_without_translations.xml"/>
         <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_multi_keys.xml"/>
         <EmbeddedResource Include="Resources\IO\Xml\v1\Serializable\translation_manifest_single_key.xml"/>
     </ItemGroup>

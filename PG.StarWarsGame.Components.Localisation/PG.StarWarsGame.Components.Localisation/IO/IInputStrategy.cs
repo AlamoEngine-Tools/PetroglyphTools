@@ -37,9 +37,30 @@ public interface IInputStrategy
     }
 
     /// <summary>
+    ///     The validation level used against the provided source.
+    /// </summary>
+    enum ValidationLevel
+    {
+        /// <summary>
+        ///     Invalid entires are skipped.
+        /// </summary>
+        Lenient,
+
+        /// <summary>
+        ///     Invalid enrties throw an exception.
+        /// </summary>
+        Strict
+    }
+
+    /// <summary>
     ///     The <see cref="FileImportGrouping" />
     /// </summary>
     FileImportGrouping ImportGrouping { get; }
+
+    /// <summary>
+    ///     The validation level used for the source files.
+    /// </summary>
+    ValidationLevel Validation { get; }
 
     /// <summary>
     ///     An optional file filter following the established FileDialog.Filter pattern.

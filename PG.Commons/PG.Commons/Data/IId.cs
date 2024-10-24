@@ -11,10 +11,4 @@ public interface IId : IEquatable<IId>
     ///     The arity of the ID.
     /// </summary>
     int Arity { get; }
-
-    /// <summary>
-    ///     The string representation of the ID
-    /// </summary>
-    /// <returns></returns>
-    string Unwrap();
 }

@@ -26,14 +26,17 @@ public abstract class IdBase : IId
     /// <inheritdoc />
     public bool Equals(IId? other)
     {
-        return other != null && Arity == other.Arity && GetHashCode().Equals(other.GetHashCode());
+        return other != null
+               && GetType() == other.GetType()
+               && Arity == other.Arity
+               && GetHashCode().Equals(other.GetHashCode());
     }
 
     /// <inheritdoc />
     public int Arity => GetConfiguredArity();
 
     /// <inheritdoc />
-    public string Unwrap()
+    public override string ToString()
     {
         var b = new StringBuilder();
         b.Append(GetType().Name).Append('[');
@@ -41,12 +44,6 @@ public abstract class IdBase : IId
         b.Remove(b.Length - 1, 1); // remove the last ";".
         b.Append(']');
         return b.ToString();
-    }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return Unwrap();
     }
 
     /// <summary>

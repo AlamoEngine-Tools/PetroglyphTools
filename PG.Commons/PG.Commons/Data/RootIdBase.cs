@@ -13,7 +13,7 @@ public abstract class RootIdBase<T> : IdBase, IComparable<RootIdBase<T>> where T
     /// <inheritdoc />
     public int CompareTo(RootIdBase<T>? other)
     {
-        return other == null ? 1 : Raw().CompareTo(other.Raw());
+        return other == null ? 1 : Unwrap().CompareTo(other.Unwrap());
     }
 
     /// <inheritdoc />
@@ -33,7 +33,7 @@ public abstract class RootIdBase<T> : IdBase, IComparable<RootIdBase<T>> where T
     /// </summary>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public T Raw()
+    public T Unwrap()
     {
         return Components[0] as T ?? throw new InvalidOperationException();
     }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ using PG.StarWarsGame.Components.Localisation.Languages;
 using PG.StarWarsGame.Components.Localisation.Repository;
 using PG.StarWarsGame.Components.Localisation.Repository.Content;
 using PG.StarWarsGame.Components.Localisation.Services;
+using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Components.Localisation.IO.Xml;
 
@@ -34,7 +36,7 @@ public class XmlImportHandler : ServiceBase, IImportHandler<XmlInputStrategy>
             ?.DeSerializeObjectFromDisc<LocalisationData>(strategy.FilePath);
         if (data == null) return;
 
-        FromXml(data, targetRepository);
+        FromXml(data, targetRepository, strategy.Validation);
     }
 
     /// <summary>
@@ -42,8 +44,10 @@ public class XmlImportHandler : ServiceBase, IImportHandler<XmlInputStrategy>
     /// </summary>
     /// <param name="data"></param>
     /// <param name="targetRepository"></param>
+    /// <param name="validationLevel"></param>
     /// <exception cref="LibraryInitialisationException"></exception>
-    protected void FromXml(LocalisationData data, ITranslationRepository targetRepository)
+    protected void FromXml(LocalisationData data, ITranslationRepository targetRepository,
+        IInputStrategy.ValidationLevel validationLevel)
     {
         var languageMap =
             Services.GetService<IAlamoLanguageSupportService>()?.CreateLanguageIdentifierMapping() ??
@@ -58,9 +62,14 @@ public class XmlImportHandler : ServiceBase, IImportHandler<XmlInputStrategy>
         foreach (var loc in data.LocalisationHolder)
         {
             var id = OrderedTranslationItemId.Of(loc.Key);
-            if (id == null)
+            if (id == null || !Services.GetService<IDatKeyValidator>()!.Validate(loc.Key))
             {
-                Logger.LogWarning("Could not create a valid {} from {}. Skipping.", nameof(OrderedTranslationItemId),
+                if (validationLevel != IInputStrategy.ValidationLevel.Lenient)
+                    throw new InvalidDataException(
+                        $"Invalid data found: Could not create a valid {nameof(OrderedTranslationItemId)} from {loc.Key}");
+
+                Logger.LogWarning("Could not create a valid {} from {}. Skipping.",
+                    nameof(OrderedTranslationItemId),
                     loc.Key);
                 continue;
             }
@@ -74,16 +83,19 @@ public class XmlImportHandler : ServiceBase, IImportHandler<XmlInputStrategy>
                     continue;
                 }
 
-                var lang = languageMap[t.Language];
-                if (lang == null)
+                if (!languageMap.TryGetValue(t.Language, out var lang))
                 {
+                    if (validationLevel != IInputStrategy.ValidationLevel.Lenient)
+                        throw new InvalidDataException(
+                            $"Invalid data found: Could not determine the {nameof(IAlamoLanguageDefinition)} for {t.Language}");
+
                     Logger.LogWarning("Could not determine the language for {}. Skipping.", t.Language);
                     continue;
                 }
 
                 var c = new TranslationItemContent
                 {
-                    Key = id.Raw(),
+                    Key = id.Unwrap(),
                     Value = t.Text
                 };
                 contentMap[lang].Add(OrderedTranslationItem.Of(c));

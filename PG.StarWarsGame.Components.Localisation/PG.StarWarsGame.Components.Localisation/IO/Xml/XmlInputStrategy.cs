@@ -17,9 +17,15 @@ public readonly record struct XmlInputStrategy : IInputStrategy
     ///     .ctor
     /// </summary>
     /// <param name="filePath"></param>
-    public XmlInputStrategy(string filePath)
+    /// <param name="validation"></param>
+    public XmlInputStrategy(string filePath,
+        IInputStrategy.ValidationLevel validation = IInputStrategy.ValidationLevel.Lenient)
     {
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException($"'{filePath}' is not a valid file path.", nameof(filePath));
+
         FilePaths = new HashSet<string> { filePath };
+        Validation = validation;
     }
 
     /// <summary>
@@ -29,6 +35,9 @@ public readonly record struct XmlInputStrategy : IInputStrategy
 
     /// <inheritdoc />
     public IInputStrategy.FileImportGrouping ImportGrouping => IInputStrategy.FileImportGrouping.Single;
+
+    /// <inheritdoc />
+    public IInputStrategy.ValidationLevel Validation { get; }
 
     /// <inheritdoc />
     public string FileFilter => throw new InvalidOperationException(

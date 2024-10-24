@@ -145,7 +145,7 @@ public class XmlImportHandlerTest
     }
 
     [Fact]
-    public void Test_Import_WithInvalidKeyLenient_ThrowsInvalidDataException()
+    public void Test_Import_WithInvalidKeyStrict_ThrowsInvalidDataException()
     {
         var filePath = CreateMockFilePath("./invalid_key_test", InvalidKey);
         var resourcePath = GetResourcePath(InvalidKey);

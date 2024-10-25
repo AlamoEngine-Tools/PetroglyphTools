@@ -3,7 +3,7 @@ using System;
 namespace PG.Commons.Data;
 
 /// <inheritdoc cref="PG.Commons.Data.IdBase" />
-public abstract class RootIdBase<T> : IdBase, IComparable<RootIdBase<T>> where T : class, IComparable<T>
+public abstract record RootIdBase<T> : IdBase, IComparable<RootIdBase<T>> where T : class, IComparable<T>
 {
     /// <inheritdoc />
     protected RootIdBase(T rawId) : base(rawId)

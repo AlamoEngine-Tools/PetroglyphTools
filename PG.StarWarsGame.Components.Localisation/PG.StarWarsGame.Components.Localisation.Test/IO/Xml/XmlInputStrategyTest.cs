@@ -28,7 +28,7 @@ public class XmlInputStrategyTest
     }
 
     [Fact]
-    public void Test_XmlInputStrategy_MissingFilePathThrowsIllegalArgumentException()
+    public void Test_XmlInputStrategy_InvalidArgumentsThrowIllegalArgumentException()
     {
         Assert.Throws<ArgumentException>(() => new XmlInputStrategy(null));
         Assert.Throws<ArgumentException>(() => new XmlInputStrategy(string.Empty));

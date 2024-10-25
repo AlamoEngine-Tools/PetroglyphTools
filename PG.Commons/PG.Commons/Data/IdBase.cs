@@ -6,11 +6,12 @@ using PG.Commons.Exceptions;
 namespace PG.Commons.Data;
 
 /// <inheritdoc />
-public abstract class IdBase : IId
+public abstract record IdBase : IId
 {
     /// <summary>
     ///     The ID components.
     /// </summary>
+    // ReSharper disable once TypeWithSuspiciousEqualityIsUsedInRecord.Global
     protected readonly object?[] Components;
 
     /// <summary>

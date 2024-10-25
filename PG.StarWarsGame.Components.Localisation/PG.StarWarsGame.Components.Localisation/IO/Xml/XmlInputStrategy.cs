@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -18,6 +19,7 @@ public readonly record struct XmlInputStrategy : IInputStrategy
     /// </summary>
     /// <param name="filePath"></param>
     /// <param name="validation"></param>
+    [ExcludeFromCodeCoverage]
     public XmlInputStrategy(string filePath,
         IInputStrategy.ValidationLevel validation = IInputStrategy.ValidationLevel.Lenient)
     {

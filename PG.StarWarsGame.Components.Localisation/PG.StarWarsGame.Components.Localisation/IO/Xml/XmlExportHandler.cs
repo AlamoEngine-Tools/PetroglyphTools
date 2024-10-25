@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PG.Commons.Data.Serialization;
 using PG.Commons.Services;
 using PG.StarWarsGame.Components.Localisation.IO.Xml.Serializable.v1;
@@ -25,9 +26,16 @@ public class XmlExportHandler : ServiceBase, IExportHandler<XmlOutputStrategy>
     /// <inheritdoc />
     public void Export(XmlOutputStrategy strategy, ITranslationRepository repository)
     {
+        if (!repository.Content.Any()) return;
         FileSystem.Directory.CreateDirectory(strategy.ExportBasePath.FullName);
         var xml = ToXml(repository);
-        Services.GetService<IXmlSerializationSupportService>()?.SerializeObjectAndStoreToDisc(strategy.FileName, xml);
+        if (xml.LocalisationHolder.Count == 0)
+        {
+            Logger.LogWarning("Empty xml export file, skipping export: {}", xml);
+            return;
+        }
+
+        Services.GetService<IXmlSerializationSupportService>()?.SerializeObjectAndStoreToDisc(strategy.FilePath, xml);
     }
 
     /// <summary>
@@ -45,16 +53,13 @@ public class XmlExportHandler : ServiceBase, IExportHandler<XmlOutputStrategy>
         {
             var loc = new Serializable.v1.Localisation
             {
-                Key = key.ToUpper(),
+                Key = key.Unwrap().ToUpper(),
                 TranslationData = new TranslationData()
             };
             foreach (var t in languages.Select(lang => new Translation
                      {
                          Language = lang.LanguageIdentifier.ToUpper(),
-                         Text = repository.GetTranslationItem(lang,
-                                 OrderedTranslationItemId.Of(key) ??
-                                 throw new InvalidOperationException(
-                                     $"No valid {nameof(OrderedTranslationItemId)} could be created from {key}"))
+                         Text = repository.GetTranslationItem(lang, key)
                              .Content
                              .Value
                      }))
@@ -71,12 +76,14 @@ public class XmlExportHandler : ServiceBase, IExportHandler<XmlOutputStrategy>
     /// </summary>
     /// <param name="repository"></param>
     /// <returns></returns>
-    protected ISet<string> GetKeys(ITranslationRepository repository)
+    protected ISet<OrderedTranslationItemId> GetKeys(ITranslationRepository repository)
     {
-        var keySet = new HashSet<string>();
+        var keySet = new HashSet<OrderedTranslationItemId>();
         foreach (var items in repository.Content.Values)
         foreach (var item in items)
-            keySet.Add(item.Content.Key);
+            keySet.Add(item.ItemId as OrderedTranslationItemId ??
+                       throw new InvalidOperationException(
+                           $"No valid {nameof(OrderedTranslationItemId)} could be created from {item.ItemId}"));
         return keySet;
     }
 

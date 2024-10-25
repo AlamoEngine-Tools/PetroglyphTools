@@ -5,7 +5,7 @@ namespace PG.StarWarsGame.Components.Localisation.Repository.Content;
 /// <summary>
 ///     Item ID for ordered translation items. Equivalent to the raw string key from a sorted DAT file.
 /// </summary>
-public class OrderedTranslationItemId : RootIdBase<string>, ITranslationItemId
+public record OrderedTranslationItemId : RootIdBase<string>, ITranslationItemId
 {
     /// <inheritdoc />
     protected OrderedTranslationItemId(string rawId) : base(rawId)

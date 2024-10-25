@@ -1,7 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.IO;
+using System.IO.Abstractions;
 
 namespace PG.StarWarsGame.Components.Localisation.IO;
 
@@ -48,5 +48,5 @@ public interface IOutputStrategy
     /// <summary>
     ///     The export base path.
     /// </summary>
-    DirectoryInfo ExportBasePath { get; }
+    IDirectoryInfo ExportBasePath { get; }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+  ~ // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+  ~ // Licensed under the MIT license. See LICENSE file in the project root for details.
+  -->
+
+<LocalisationData>
+    <Localisation Key="€">
+        <TranslationData>
+            <Translation Language="GERMAN"><![CDATA[Test text for key TEST_KEY_00]]></Translation>
+            <Translation Language="ENGLISH"><![CDATA[Test text for key TEST_KEY_00]]></Translation>
+            <Translation Language="FRENCH"><![CDATA[Test text for key TEST_KEY_00]]></Translation>
+            <Translation Language="SPANISH"><![CDATA[Test text for key TEST_KEY_00]]></Translation>
+            <Translation Language="ITALIAN"><![CDATA[Test text for key TEST_KEY_00]]></Translation>
+        </TranslationData>
+    </Localisation>
+</LocalisationData>

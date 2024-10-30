@@ -1,6 +1,7 @@
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Attributes;
+using PG.Commons.Data.Serialization;
 using PG.Commons.Extensibility;
 using PG.Commons.Hashing;
 
@@ -16,5 +17,6 @@ public sealed class PGServiceContribution : IServiceContribution
     {
         serviceCollection.AddSingleton<IHashAlgorithmProvider>(sp => new Crc32HashingProvider());
         serviceCollection.AddSingleton<ICrc32HashingService>(sp => new Crc32HashingService(sp));
+        serviceCollection.AddSingleton<IXmlSerializationSupportService>(sp => new XmlSerializationSupportService(sp));
     }
 }

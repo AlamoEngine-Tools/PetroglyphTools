@@ -1,3 +1,8 @@
+<!--
+  - // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+  - // Licensed under the MIT license. See LICENSE file in the project root for details.
+  -->
+
 <Project>
     <PropertyGroup>
         <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
@@ -10,15 +15,15 @@
         <Authors>Alamo Engine Tools and Contributors</Authors>
         <Copyright>Copyright © 2023 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
         <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
-		<LicenseFile>$(MSBuildThisFileDirectory)LICENSE</LicenseFile>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <LicenseFile>$(MSBuildThisFileDirectory)LICENSE</LicenseFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Company>Alamo Engine Tools</Company>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-	    <PackageIcon>aet.png</PackageIcon>
-    
-</PropertyGroup>
+        <PackageIcon>aet.png</PackageIcon>
+
+    </PropertyGroup>
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>disable</ImplicitUsings>
@@ -38,8 +43,8 @@
         <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
 
-	<ItemGroup Condition="'$(IsPackable)' == 'true'">
-		<None Include="$(LicenseFile)" Pack="true" PackagePath=""/>
-		<None Include="$(MSBuildThisFileDirectory)aet.png" Pack="true" PackagePath=""/>
-	</ItemGroup>
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+        <None Include="$(LicenseFile)" Pack="true" PackagePath=""/>
+        <None Include="$(MSBuildThisFileDirectory)aet.png" Pack="true" PackagePath=""/>
+    </ItemGroup>
 </Project>

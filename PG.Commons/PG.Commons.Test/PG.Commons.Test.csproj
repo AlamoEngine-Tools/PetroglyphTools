@@ -25,7 +25,7 @@
 		</PackageReference>
 		<PackageReference Include="System.IO.Abstractions" Version="21.1.1" />
 		<PackageReference Include="Testably.Abstractions.Testing" Version="3.2.3" />
-		<PackageReference Include="System.IO.Hashing" Version="8.0.0" />
+		<PackageReference Include="System.IO.Hashing" Version="9.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />

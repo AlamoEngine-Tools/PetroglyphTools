@@ -71,7 +71,7 @@ public interface IDatModelService
     /// <remarks>
     /// A common use-case for this is if you have an English model and a foreign language model.
     /// In most cases the english model is the reference model which contains the newest keys. In that case, call
-    /// <code>MergeUnsorted(ForeignModel, EnglishModel, DatMergeOptions.KeepExisting)</code>
+    /// <code>MergeSorted(ForeignModel, EnglishModel, DatMergeOptions.KeepExisting)</code>
     /// This will create a new model will all foreign text, but only adds the new keys (with english values).
     /// </remarks>
     /// <param name="baseDatModel">The base model.</param>

@@ -72,7 +72,7 @@ internal abstract class DatModel : IDatModel
 
     public bool ContainsKey(string key)
     {
-        return Keys.Contains(key);
+        return _firstKeyValueDictionary.ContainsKey(key);
     }
 
     public string GetValue(string key)
@@ -91,7 +91,7 @@ internal abstract class DatModel : IDatModel
 
     public bool ContainsKey(Crc32 key)
     {
-        return CrcKeys.Contains(key);
+        return _firstCrcKeyValueDictionary.ContainsKey(key);
     }
 
     public abstract ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);

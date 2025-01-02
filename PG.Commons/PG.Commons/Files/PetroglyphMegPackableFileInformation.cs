@@ -7,12 +7,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace PG.Commons.Files;
 
 /// <summary>
-/// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TParam}"/>. The file may be packed inside a MEG archive.
+/// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TParam}"/> that may be packed inside a MEG archive.
 /// </summary>
 public abstract record PetroglyphMegPackableFileInformation : PetroglyphFileInformation
 {
     /// <summary>
-    /// Gets whether the file info is packed inside a MEG archive.
+    /// Gets a value indicating whether the file is packed inside a MEG archive.
     /// </summary>
     public bool IsInsideMeg { get; init; }
 

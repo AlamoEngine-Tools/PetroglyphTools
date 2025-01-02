@@ -8,12 +8,12 @@ namespace PG.Commons.Numerics;
 public readonly struct Vector2Int : IEquatable<Vector2Int>
 {
     /// <summary>
-    /// The first component of the vector.
+    /// Gets the first component of the vector.
     /// </summary>
     public int First { get; }
 
     /// <summary>
-    /// The second component of the vector.
+    /// Gets the second component of the vector.
     /// </summary>
     public int Second { get; }
 

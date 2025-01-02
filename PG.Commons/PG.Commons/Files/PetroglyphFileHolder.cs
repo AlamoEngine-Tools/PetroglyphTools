@@ -59,12 +59,12 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
     protected internal IFileSystem FileSystem { get; }
 
     /// <summary>
-    /// The service provider.
+    /// Returns the service provider.
     /// </summary>
     protected internal IServiceProvider Services { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TParam}" /> class.
+    /// Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TParam}" /> class with the specified model and file information.
     /// </summary>
     /// <remarks>
     /// <paramref name="fileInformation"/> can be safely disposed after initialization without affecting <see cref="FileInformation"/>.
@@ -109,7 +109,7 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
         {
             // We can only check whether the file exists if it is a local file.
             if (!fileInfo.Exists)
-                throw new FileNotFoundException($"MEG file '{fileInfo.FullName}' not found.", fileInfo.FullName);
+                throw new FileNotFoundException($"File '{fileInfo.FullName}' not found.", fileInfo.FullName);
 
             // Use absolute paths for local files.
             FilePath = fileInfo.FullName;

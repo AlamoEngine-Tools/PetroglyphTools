@@ -40,8 +40,8 @@ public abstract class BinaryBase : IBinary
     protected abstract int GetSizeCore();
 
     /// <summary>
-    /// Converts this instance into an byte array.
+    /// Converts the binary model into an array of bytes.
     /// </summary>
-    /// <returns>Byte representation.</returns>
+    /// <returns>An array of bytes of the binary model.</returns>
     protected abstract byte[] ToBytesCore();
 }

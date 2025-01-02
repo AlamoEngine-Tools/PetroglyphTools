@@ -219,7 +219,7 @@ public class DatFileServiceTest
         _converter.Setup(c => c.BinaryToModel(unsortedBinary))
             .Returns(unsortedModel.Object);
 
-        Assert.Throws<NotSupportedException>(() =>
+        Assert.Throws<InvalidOperationException>(() =>
             _service.LoadAs("unsorted.dat", DatFileType.OrderedByCrc32));
     }
 

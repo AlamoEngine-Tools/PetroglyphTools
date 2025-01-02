@@ -6,7 +6,7 @@ using PG.StarWarsGame.Files.DAT.Data;
 namespace PG.StarWarsGame.Files.DAT.Services;
 
 /// <summary>
-/// Represents the result of an altering merge operation of a specific key.
+/// Represents the result of a merge operation for a specific key.
 /// </summary>
 public readonly struct MergedKeyResult
 {

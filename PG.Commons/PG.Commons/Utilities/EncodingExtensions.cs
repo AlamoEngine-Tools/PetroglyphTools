@@ -16,16 +16,15 @@ public static class EncodingExtensions
     ///     Gets the number of bytes required for encoding a given number of characters.
     /// </summary>
     /// <remarks>
-    ///     This method should <b>only</b> be used while reading a .DAT or .MEG file as it is probably not safe in other use cases
-    ///     (given how complex the .NET source code is).
+    ///     This method should <b>only</b> be used while reading a .DAT or .MEG file as it is not safe in other use cases.
     /// <br/>
     /// <br/>
     ///     Note:
     /// <br/>
     ///     PG binary files are not consistent whether they store the number of characters (.DAT or .MEG)
-    ///     or the required bytes (chunked files). Since most strings in PG games are ASCII-encoded
-    ///     we do have a 1:1 relation between # char and # bytes, this does not matter most of the time.
-    ///     But in DAT Values we use UTF16 (Unicode), which requires 2x more bytes than characters.
+    ///     or the required bytes (chunked files). Since most strings in PG games are ASCII-encoded,
+    ///     which has a 1:1 relation between # chars and # bytes, this does not matter most of the time.
+    ///     But DAT Values use UTF16 (Unicode), which requires 2x more bytes than characters.
     /// <br/>
     /// <br/>
     ///     The assumption made here for this method to work is that, who ever created the binary file, did proper encoding -

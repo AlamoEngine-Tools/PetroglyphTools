@@ -10,7 +10,7 @@ using PG.Commons.Utilities;
 namespace PG.StarWarsGame.Files.DAT.Data;
 
 /// <summary>
-/// A simple representation of a key-value pair that can be stored in a DAT file.
+/// A key-value pair that can be stored in a DAT file.
 /// </summary>
 /// <remarks>
 /// Equality is based on <see cref="Key"/>, <see cref="Crc32"/> and <see cref="Value"/>.
@@ -19,7 +19,7 @@ namespace PG.StarWarsGame.Files.DAT.Data;
 public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
 {
     /// <summary>
-    /// Gets the entry's key. Does not have to be unique. 
+    /// Gets the entry's key.
     /// </summary>
     public string Key { get; }
     

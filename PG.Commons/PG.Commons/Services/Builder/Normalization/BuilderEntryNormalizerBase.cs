@@ -12,9 +12,9 @@ namespace PG.Commons.Services.Builder.Normalization;
 public abstract class BuilderEntryNormalizerBase<T> : IBuilderEntryNormalizer<T>
 {
     /// <summary>
-    /// Gets the file system.
+    /// Returns the service provider.
     /// </summary>
-    protected IServiceProvider ServiceProvider { get; }
+    protected readonly IServiceProvider ServiceProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BuilderEntryNormalizerBase{T}"/> class.

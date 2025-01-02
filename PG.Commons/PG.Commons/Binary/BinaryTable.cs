@@ -10,9 +10,9 @@ using System.Runtime.CompilerServices;
 namespace PG.Commons.Binary;
 
 /// <summary>
-/// A read-only list of binary items. 
+/// Represents a read-only list of binary elements. 
 /// </summary>
-/// <typeparam name="T">The type of the table's items</typeparam>
+/// <typeparam name="T">The type of the table's elements.</typeparam>
 public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
 {
     /// <summary>
@@ -55,7 +55,7 @@ public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
     protected override byte[] ToBytesCore()
     {
         if (Size == 0)
-            return Array.Empty<byte>();
+            return [];
         var bytes = new List<byte>(Size);
         foreach (var item in Items)
             bytes.AddRange(item.Bytes);

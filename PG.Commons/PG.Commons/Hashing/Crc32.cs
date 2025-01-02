@@ -57,7 +57,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     }
 
     /// <inheritdoc cref="object.ToString()"/>
-    /// <param name="asSignedInteger">When <see langword="true"/>, this checksum shall be represented by a signed integer; unsigned otherwise.</param>
+    /// <param name="asSignedInteger">When <see langword="true"/>, the checksum is represented by a signed integer; unsigned otherwise.</param>
     public string ToString(bool asSignedInteger)
     {
         var sb = new StringBuilder("CRC: ");

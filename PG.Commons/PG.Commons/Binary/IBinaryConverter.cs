@@ -28,6 +28,6 @@ public interface IBinaryConverter<TBinaryModel, TFileModel> where TBinaryModel :
     /// <param name="binary">The <see cref="IBinaryFile" /> to convert.</param>
     /// <returns>The <typeparamref name="TFileModel"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="binary"/> is <see langword="null"/>.</exception>
-    /// <exception cref="BinaryCorruptedException"><paramref name="binary"/> is not valid.</exception>
+    /// <exception cref="BinaryCorruptedException"><paramref name="binary"/> cannot be converted to <typeparamref name="TFileModel"/>.</exception>
     TFileModel BinaryToModel(TBinaryModel binary);
 }

@@ -8,7 +8,6 @@ using System;
 using AnakinRaW.CommonUtilities.Extensions;
 #endif
 
-
 namespace PG.Commons.Utilities;
 
 /// <summary>

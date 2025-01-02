@@ -10,7 +10,7 @@ using AnakinRaW.CommonUtilities.Hashing;
 namespace PG.Commons.Hashing;
 
 /// <summary>
-/// A service to compute CRC32 checksum which is used throughout the Alamo Engine 
+/// A service to compute CRC32 checksum which is used throughout the Alamo Engine.
 /// </summary>
 internal class Crc32HashingProvider : IHashAlgorithmProvider
 {

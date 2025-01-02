@@ -9,12 +9,12 @@ namespace PG.Commons.DataTypes;
 /// An interface representing data that has a CRC32 checksum.
 /// </summary>
 /// <remarks>
-/// It is up to the data type to decide which properties are considered for the CRC32 checksum.
+/// It is up to the implementation to decide which properties are considered for the CRC32 checksum.
 /// </remarks>
 public interface IHasCrc32
 {
     /// <summary>
-    /// Gets the CRC32 checksum of the data type.
+    /// Gets the CRC32 checksum of the data.
     /// </summary>
     Crc32 Crc32 { get; }
 }

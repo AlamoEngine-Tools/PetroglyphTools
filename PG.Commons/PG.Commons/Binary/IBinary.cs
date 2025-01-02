@@ -4,17 +4,17 @@
 namespace PG.Commons.Binary;
 
 /// <summary>
-/// Represents a Petroglyph binary file part. This can be a table record, chunks, etc.
+/// Represents a binary element or binary file.
 /// </summary>
 public interface IBinary
 {
     /// <summary>
-    /// Gets the byte array representation of this instance.
+    /// Gets an array of bytes of the binary.
     /// </summary>
     byte[] Bytes { get; }
     
     /// <summary>
-    /// Gets the size in bytes of this instance
+    /// Gets the size in bytes of the binary.
     /// </summary>
     int Size { get; }
 }

@@ -17,22 +17,22 @@ public interface IFileBuilder<out TData, in TFileInformation> : IDisposable
     where TData : notnull
 {
     /// <summary>
-    /// Gets a copy of the data this builder holds.
+    /// Gets a copy of the data from the <see cref="IFileBuilder{TData,TFileInformation}"/>.
     /// </summary>
     TData BuilderData { get; }
 
     /// <summary>
-    /// Create a file from this instance.
+    /// Creates a file from the <see cref="IFileBuilder{TData,TFileInformation}"/>.
     /// </summary>
     /// <param name="fileInformation">The file parameters of the new file.</param>
     /// <param name="overwrite">When set to <see langword="true"/> an existing file of the same path will be overwritten; otherwise an <see cref="IOException"/> is thrown if the file already exists.</param>
     /// <exception cref="ArgumentNullException"><paramref name="fileInformation"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException"><paramref name="fileInformation"/> is not valid.</exception>
-    /// <exception cref="IOException">The MEG file could not be created due to an IO error.</exception>
+    /// <exception cref="IOException">The file could not be created due to an IO error.</exception>
     void Build(TFileInformation fileInformation, bool overwrite);
 
     /// <summary>
-    /// Checks whether the specified file information is valid for this <see cref="IFileBuilder{TData,TFileInformation}"/>.
+    /// Checks whether the specified file information is valid for the <see cref="IFileBuilder{TData,TFileInformation}"/>.
     /// </summary>
     /// <param name="fileInformation">The file information to validate</param>
     /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>

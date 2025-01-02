@@ -6,7 +6,7 @@ using System;
 namespace PG.Commons.Files;
 
 /// <summary>
-/// A wrapper around Petroglyph game files that holds the file content in an accessible data structure as well as other file information.
+/// A wrapper around Petroglyph game files that holds the file's content in an accessible data structure as well as other file information.
 /// </summary>
 public interface IPetroglyphFileHolder : IDisposable
 {
@@ -14,13 +14,13 @@ public interface IPetroglyphFileHolder : IDisposable
     /// Gets a copy of the file information. 
     /// </summary>
     /// <remarks>
-    /// The returned file information can be safely disposed without affecting this instance.
+    /// The returned file information can be safely disposed without affecting the <see cref="IPetroglyphFileHolder"/>.
     /// </remarks>
-    /// <exception cref="ObjectDisposedException">The current instance is already disposed.</exception>
+    /// <exception cref="ObjectDisposedException">The current instance is disposed.</exception>
     PetroglyphFileInformation FileInformation { get; }
 
     /// <summary>
-    /// Gets the data model of the alamo file in a usable data format.
+    /// Gets the data model of the file in a usable data format.
     /// </summary>
     object Content { get; }
 
@@ -33,7 +33,7 @@ public interface IPetroglyphFileHolder : IDisposable
     string FilePath { get; }
 
     /// <summary>
-    /// The relative or absolute directory path of the file e.g, "my/path"
+    /// Gets the relative or absolute directory path of the file e.g, "my/path"
     /// or <see cref="string.Empty"/> if the file does not contain directory information.
     /// </summary>
     /// <remarks>
@@ -42,13 +42,13 @@ public interface IPetroglyphFileHolder : IDisposable
     string Directory { get; }
 
     /// <summary>
-    /// The file name with extension, e.g, "myfile.txt".
+    /// Gets the file name with extension, e.g, "myfile.txt".
     /// </summary>
     string FileName { get; }
 }
 
 /// <summary>
-/// A generic wrapper around Petroglyph game files that holds the file content in an accessible data structure as well as other file information.
+/// A generic wrapper around Petroglyph game files that holds the file's content in an accessible data structure as well as other file information.
 /// </summary>
 /// <typeparam name="TModel">The type of the content this file holds.</typeparam>
 /// <typeparam name="TFileInfo">The type of the file information.</typeparam>
@@ -62,11 +62,11 @@ public interface IPetroglyphFileHolder<out TModel, out TFileInfo> : IPetroglyphF
     /// <remarks>
     /// The returned file information can be safely disposed without affecting this instance.
     /// </remarks>
-    /// <exception cref="ObjectDisposedException">The current instance is already disposed.</exception>
+    /// <exception cref="ObjectDisposedException">The current instance is disposed.</exception>
     new TFileInfo FileInformation { get; }
 
     /// <summary>
-    /// Gets the data model of the alamo file in a usable data format.
+    /// Gets the data model of the file in a usable data format.
     /// </summary>
     new TModel Content { get; }
 }

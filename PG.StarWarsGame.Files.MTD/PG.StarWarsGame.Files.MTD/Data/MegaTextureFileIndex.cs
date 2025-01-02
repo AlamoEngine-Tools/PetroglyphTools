@@ -17,22 +17,22 @@ namespace PG.StarWarsGame.Files.MTD.Data;
 public sealed class MegaTextureFileIndex : IEquatable<MegaTextureFileIndex>, IHasCrc32
 {
     /// <summary>
-    /// The ASCII file name of the entry.
+    /// Gets the ASCII file name of the entry.
     /// </summary>
     public string FileName { get; }
 
     /// <summary>
-    /// The area of the entry within the associated Mega Texture.
+    /// Gets the area of the entry within the associated Mega Texture.
     /// </summary>
     public Rectangle Area { get; }
 
     /// <summary>
-    /// Gets a value whether this entry has an alpha channel.
+    /// Gets a value indicating whether the entry has an alpha channel.
     /// </summary>
     public bool HasAlpha { get; }
 
     /// <summary>
-    /// The <see cref="PG.Commons.Hashing.Crc32"/> checksum of <see cref="FileName"/>.
+    /// Gets the CRC32 checksum of the entry.
     /// </summary>
     public Crc32 Crc32 { get; }
 

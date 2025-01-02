@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.IO;
 using AnakinRaW.CommonUtilities.Extensions;
-using AnakinRaW.CommonUtilities.FileSystem;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 

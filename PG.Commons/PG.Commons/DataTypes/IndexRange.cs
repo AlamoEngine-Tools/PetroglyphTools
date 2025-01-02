@@ -11,16 +11,18 @@ namespace PG.Commons.DataTypes;
 /// </summary>
 public readonly struct IndexRange
 {
-    /// <summary>Represent the inclusive start index of the Range.</summary>
+    /// <summary>
+    /// Gets the inclusive start index of the Range.
+    /// </summary>
     public int Start { get; }
 
     /// <summary>
-    /// The length of the index range.
+    /// Gets the length of the index range.
     /// </summary>
     public int Length { get; }
 
     /// <summary>
-    /// The last index, inclusive, of the range.
+    /// Gets the last index, inclusive, of the range.
     /// </summary>
     public int End => Start + Length - 1;
 
@@ -42,7 +44,9 @@ public readonly struct IndexRange
             throw new OverflowException("Range exceeds the maximum allowed size.");
     }
 
-    /// <summary>Indicates whether the current Range object is equal to another object of the same type.</summary>
+    /// <summary>
+    /// Indicates whether the current Range object is equal to another object of the same type.
+    /// </summary>
     /// <param name="value">An object to compare with this object</param>
     public override bool Equals(object? value)
     {
@@ -51,14 +55,18 @@ public readonly struct IndexRange
         return other.Start.Equals(Start) && other.Length.Equals(Length);
     }
 
-    /// <summary>Indicates whether the current Range object is equal to another Range object.</summary>
+    /// <summary>
+    /// Indicates whether the current Range object is equal to another Range object.
+    /// </summary>
     /// <param name="other">An object to compare with this object</param>
     public bool Equals(IndexRange other)
     {
         return other.Start.Equals(Start) && other.Length.Equals(Length);
     }
 
-    /// <summary>Returns the hash code for this instance.</summary>
+    /// <summary>
+    /// Returns the hash code for this instance.
+    /// </summary>
     public override int GetHashCode()
     {
         return HashCode.Combine(Start, Length);

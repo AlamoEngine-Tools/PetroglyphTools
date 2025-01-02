@@ -9,7 +9,7 @@ namespace PG.Commons.Binary;
 // limited to *signed* int32 for indexing native list-like structures.  
 
 /// <summary>
-/// A readonly list-like table used by Petroglyph binary models in order to hold index-based metadata information
+/// A read-only list-like table used by Petroglyph binary models to hold index-based metadata information.
 /// </summary>
-/// <typeparam name="T">The content type of this table.</typeparam>
+/// <typeparam name="T">The type of the binary elements of the table.</typeparam>
 public interface IBinaryTable<out T> : IBinary, IReadOnlyList<T> where T : IBinary;

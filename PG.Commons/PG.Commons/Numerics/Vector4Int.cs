@@ -8,22 +8,22 @@ namespace PG.Commons.Numerics;
 public readonly struct Vector4Int : IEquatable<Vector4Int>
 {
     /// <summary>
-    /// The first component of the vector.
+    /// Gets the first component of the vector.
     /// </summary>
     public int First { get; }
 
     /// <summary>
-    /// The second component of the vector.
+    /// Gets the second component of the vector.
     /// </summary>
     public int Second { get; }
 
     /// <summary>
-    /// The third component of the vector.
+    /// Gets the third component of the vector.
     /// </summary>
     public int Third { get; }
 
     /// <summary>
-    /// The fourth component of the vector.
+    /// Gets the fourth component of the vector.
     /// </summary>
     public int Fourth { get; }
 

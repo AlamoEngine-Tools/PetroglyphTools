@@ -35,20 +35,37 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
 
     public IDatFile Load(string filePath)
     {
+        if (filePath == null) 
+            throw new ArgumentNullException(nameof(filePath));
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
         var fileType = GetDatFileType(fs);
         fs.Seek(0, SeekOrigin.Begin);
         return LoadAs(fs, fileType);
     }
 
+    public IDatFile Load(FileSystemStream fileStream)
+    {
+        if (fileStream == null) 
+            throw new ArgumentNullException(nameof(fileStream));
+        var currentPos = fileStream.Position;
+        var fileType = GetDatFileType(fileStream);
+        fileStream.Seek(currentPos, SeekOrigin.Begin);
+        return LoadAs(fileStream, fileType);
+    }
+
     public IDatFile LoadAs(string filePath, DatFileType requestedFileType)
     {
+        if (filePath == null) 
+            throw new ArgumentNullException(nameof(filePath));
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
         return LoadAs(fs, requestedFileType);
     }
 
-    private IDatFile LoadAs(FileSystemStream fileStream, DatFileType requestedFileType)
+    public IDatFile LoadAs(FileSystemStream fileStream, DatFileType requestedFileType)
     {
+        if (fileStream == null) 
+            throw new ArgumentNullException(nameof(fileStream));
+
         var reader = Services.GetRequiredService<IDatFileReader>();
         var datBinary = reader.ReadBinary(fileStream);
 
@@ -59,7 +76,7 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
             datModel = sorted.ToUnsortedModel();
 
         if (requestedFileType == DatFileType.OrderedByCrc32 && datModel is IUnsortedDatModel)
-            throw new NotSupportedException("Unsorted DAT file cannot be loaded as sorted DAT file");
+            throw new InvalidOperationException("Unsorted DAT file cannot be loaded as sorted DAT file");
 
         var filePath = FileSystem.Path.GetFullPath(fileStream.Name);
         var fileInfo = new DatFileInformation { FilePath = filePath };

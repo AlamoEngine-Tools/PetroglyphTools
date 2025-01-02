@@ -105,7 +105,7 @@ public class DatFileServiceIntegrationTest
         var resortedBytes = _fileSystem.File.ReadAllBytes("New.dat");
         Assert.NotEqual(creditBytes, resortedBytes);
 
-        Assert.Throws<NotSupportedException>(() => _service.LoadAs("Credits.dat", DatFileType.OrderedByCrc32));
+        Assert.Throws<InvalidOperationException>(() => _service.LoadAs("Credits.dat", DatFileType.OrderedByCrc32));
     }
 
     [Fact]
@@ -119,6 +119,9 @@ public class DatFileServiceIntegrationTest
         }
         
         var model = _service.Load("Empty.dat");
+        Assert.Empty(model.Content);
+
+        model = _service.Load(_fileSystem.File.OpenRead("Empty.dat"));
         Assert.Empty(model.Content);
     }
 
@@ -135,6 +138,10 @@ public class DatFileServiceIntegrationTest
         var model = _service.Load("EmptyKeyWithValue.dat");
         Assert.Single(model.Content);
         Assert.True(model.Content.ContainsKey(string.Empty));
+
+        model = _service.Load(_fileSystem.File.OpenRead("EmptyKeyWithValue.dat"));
+        Assert.Single(model.Content);
+        Assert.True(model.Content.ContainsKey(string.Empty));
     }
 
     [Fact]
@@ -148,6 +155,10 @@ public class DatFileServiceIntegrationTest
         }
 
         var model = _service.Load("Sorted_TwoEntriesDuplicate.dat");
+        Assert.Equal(2, model.Content.Count);
+        Assert.Single(model.Content.Keys);
+
+        model = _service.Load(_fileSystem.File.OpenRead("Sorted_TwoEntriesDuplicate.dat"));
         Assert.Equal(2, model.Content.Count);
         Assert.Single(model.Content.Keys);
     }

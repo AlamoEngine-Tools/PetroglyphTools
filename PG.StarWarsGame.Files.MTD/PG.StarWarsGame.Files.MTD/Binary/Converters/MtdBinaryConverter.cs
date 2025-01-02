@@ -19,6 +19,9 @@ internal class MtdBinaryConverter(IServiceProvider serviceProvider): ServiceBase
 
     public MtdBinaryFile ModelToBinary(IMegaTextureDirectory model)
     {
+        if (model == null) 
+            throw new ArgumentNullException(nameof(model));
+
         var header = new MtdHeader((uint)model.Count);
         
         var entries = model
@@ -38,6 +41,8 @@ internal class MtdBinaryConverter(IServiceProvider serviceProvider): ServiceBase
 
     public IMegaTextureDirectory BinaryToModel(MtdBinaryFile binary)
     {
+        if (binary == null) 
+            throw new ArgumentNullException(nameof(binary));
         var entries = binary.Items.Select(CreateEntryFromBinary);
         try
         {

@@ -6,7 +6,8 @@ using AnakinRaW.CommonUtilities.Hashing;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Extensibility;
+using PG.Commons;
+using PG.StarWarsGame.Files.DAT;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using Testably.Abstractions.Testing;
 
@@ -43,7 +44,8 @@ public class DatBuilderBenchmark
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
+        sc.SupportDAT();
+        PetroglyphCommons.ContributeServices(sc);
 
         _builder = new EmpireAtWarMasterTextBuilder(false, sc.BuildServiceProvider());
     }

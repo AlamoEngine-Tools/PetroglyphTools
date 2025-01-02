@@ -1,30 +1,33 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using PG.Commons.Binary.File;
 
 namespace PG.Commons.Binary;
 
 /// <summary>
-///     A builder that is capable of converting a generic file model to its <see cref="IBinaryFile"/>
+///     A builder that is capable of converting a generic file model to its binary
 ///     representation and vice versa.
 /// </summary>
-/// <typeparam name="TBinaryModel">The associated <see cref="IBinaryFile" /> of this builder.</typeparam>
-/// <typeparam name="TFileModel">The associated file model of this builder.</typeparam>
+/// <typeparam name="TBinaryModel">The type of the binary model.</typeparam>
+/// <typeparam name="TFileModel">The type of the file model.</typeparam>
 public interface IBinaryConverter<TBinaryModel, TFileModel> where TBinaryModel : IBinaryFile
 {
     /// <summary>
-    ///     Builds a <typeparamref name="TBinaryModel"/> from a given <typeparamref name="TFileModel"/>.
+    ///     Builds a binary model from the specified file model.
     /// </summary>
     /// <param name="model">The model of the binary file.</param>
     /// <returns>The converted binary file.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="model"/> is <see langword="null"/>.</exception>
     TBinaryModel ModelToBinary(TFileModel model);
 
     /// <summary>
-    ///     Builds a <typeparamref name="TFileModel"/> from a given <typeparamref name="TBinaryModel"/>.
+    ///     Builds a file model from the specified binary model.
     /// </summary>
     /// <param name="binary">The <see cref="IBinaryFile" /> to convert.</param>
     /// <returns>The <typeparamref name="TFileModel"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="binary"/> is <see langword="null"/>.</exception>
     /// <exception cref="BinaryCorruptedException"><paramref name="binary"/> is not valid.</exception>
     TFileModel BinaryToModel(TBinaryModel binary);
 }

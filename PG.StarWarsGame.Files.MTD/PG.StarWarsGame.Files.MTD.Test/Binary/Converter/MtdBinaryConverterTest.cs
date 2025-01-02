@@ -27,8 +27,8 @@ public class MtdBinaryConverterTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(fs);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        new PGServiceContribution().ContributeServices(sc);
-        sc.AddMtdServices();
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMTD();
 
         var sp = sc.BuildServiceProvider();
         _binaryConverter = new MtdBinaryConverter(sp);

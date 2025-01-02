@@ -19,8 +19,8 @@ public class MtdFileServiceIntegrationTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.AddMtdServices();
-        new PGServiceContribution().ContributeServices(sc);
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMTD();
 
 
         var sp = sc.BuildServiceProvider();

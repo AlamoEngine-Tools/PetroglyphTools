@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons;
 using PG.Commons.Binary;
 using PG.StarWarsGame.Files.MTD.Binary;
 using Testably.Abstractions.Testing;
@@ -23,7 +24,8 @@ public class MtdFileBinaryReaderTest
         var fs = new MockFileSystem();
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(fs);
-        sc.AddMtdServices();
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMTD();
         _binaryReader = new MdtFileReader(sc.BuildServiceProvider());
     }
 

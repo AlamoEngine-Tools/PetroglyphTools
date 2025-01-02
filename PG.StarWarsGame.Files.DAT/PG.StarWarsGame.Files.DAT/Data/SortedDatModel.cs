@@ -24,7 +24,7 @@ internal sealed class SortedDatModel : DatModel, ISortedDatModel
 
     public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
     {
-        return Crc32Utilities.ItemsWithCrc(key, _crcToIndexMap!, Entries);
+        return Crc32Utilities.ItemsWithCrc(key, Entries, _crcToIndexMap);
     }
 
     public IUnsortedDatModel ToUnsortedModel()

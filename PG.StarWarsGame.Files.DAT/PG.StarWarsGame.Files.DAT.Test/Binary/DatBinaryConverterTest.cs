@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons;
 using PG.Commons.Binary;
-using PG.Commons.Extensibility;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -26,7 +26,8 @@ public class DatBinaryConverterTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportDAT();
         var sp = sc.BuildServiceProvider();
 
         _binaryConverter = new DatBinaryConverter(sp);

@@ -2,20 +2,22 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Attributes;
-using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
-
 namespace PG.StarWarsGame.Files.DAT;
 
-/// <inheritdoc />
-[Order(1100)]
-public class DatServiceContribution : IServiceContribution
+/// <summary>
+/// Provides initialization routines for this library.
+/// </summary>
+public static class DatServiceContribution
 {
-    /// <inheritdoc />
-    public void ContributeServices(IServiceCollection serviceCollection)
+    // ReSharper disable once InconsistentNaming
+    /// <summary>
+    /// Adds all necessary services provided by this library to the specified <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add services to.</param>
+    public static void SupportDAT(this IServiceCollection serviceCollection)
     {
         serviceCollection
             .AddSingleton<IDatFileService>(sp => new DatFileService(sp))

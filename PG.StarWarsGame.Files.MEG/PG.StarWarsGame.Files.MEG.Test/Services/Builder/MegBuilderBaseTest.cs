@@ -6,7 +6,7 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using PG.Commons.Extensibility;
+using PG.Commons;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -39,7 +39,8 @@ public class MegBuilderBaseTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMEG();
         var builderMock = new Mock<MegBuilderBase>(sc.BuildServiceProvider()) { CallBase = true };
 
         var builder = builderMock.Object;
@@ -462,7 +463,8 @@ public class MegBuilderBaseTest
         var fs = new Mock<IFileSystem>();
 
         var sc = new ServiceCollection();
-        sc.CollectPgServiceContributions();
+        sc.SupportMEG();
+        PetroglyphCommons.ContributeServices(sc); 
         sc.AddSingleton(_ => fs.Object);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
         sc.AddSingleton(_ => _megFileService.Object);
@@ -810,7 +812,7 @@ public class MegBuilderBaseTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
+        PetroglyphCommons.ContributeServices(sc);
         sc.AddSingleton(_ => _megFileService.Object);
 
         _entryValidator = new TestMegBuilderInfoValidator(validationResult);

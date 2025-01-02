@@ -5,7 +5,7 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using PG.Commons.Extensibility;
+using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -28,7 +28,8 @@ public class MegFileServiceIntegrationTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(_fileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMEG();
         var sp = sc.BuildServiceProvider();
         _megFileService = sp.GetRequiredService<IMegFileService>();
     }

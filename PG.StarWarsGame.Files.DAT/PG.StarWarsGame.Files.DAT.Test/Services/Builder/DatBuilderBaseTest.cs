@@ -5,7 +5,7 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using PG.Commons.Extensibility;
+using PG.Commons;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
@@ -31,8 +31,8 @@ public abstract class DatBuilderBaseTest
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(FileSystem);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
-       
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportDAT();
         sc.AddSingleton(_ => DatFileService.Object);
         return sc.BuildServiceProvider();
     }

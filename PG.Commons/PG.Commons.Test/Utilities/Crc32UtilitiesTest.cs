@@ -133,8 +133,8 @@ public class Crc32UtilitiesTest
     [Fact]
     public void Test_ItemsWithCrc_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, new Dictionary<Crc32, IndexRange>(), (IList<CrcHolder>)null!));
-        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, null!, new List<CrcHolder>()));
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc<CrcHolder>(default, null!, new Dictionary<Crc32, IndexRange>()));
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, new List<CrcHolder>(), null!));
     }
 
     [Theory]
@@ -147,7 +147,7 @@ public class Crc32UtilitiesTest
 
         foreach (var queryData in queries)
         {
-            var items = Crc32Utilities.ItemsWithCrc(queryData.Crc, map, list);
+            var items = Crc32Utilities.ItemsWithCrc(queryData.Crc, list, map);
             Assert.Equal(queryData.ExpectedItems, items);
         }
     }

@@ -3,6 +3,7 @@
 		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Product>PG.Commons</Product>
 		<Title>PG.Commons</Title>
+		<Description>Provides fundamental classes and interfaces for working with Petroglyph's Star Wars Empire At War game engine.</Description>
 		<PackageId>AlamoEngineTools.PG.Commons</PackageId>
 		<PackageTags>alamo,petroglyph,glyphx</PackageTags>
 		<NeutralLanguage>en</NeutralLanguage>

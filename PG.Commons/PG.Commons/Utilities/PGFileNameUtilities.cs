@@ -11,15 +11,15 @@ namespace PG.Commons.Utilities;
 /// Provides helper methods to handle and validate file names for a Petroglyph Star Wars game.
 /// </summary>
 public static class PGFileNameUtilities
-{ 
+{
     /// <summary>
     /// Checks whether a given filename is can be used for a Petroglyph Star Wars game.
     /// </summary>
     /// <remarks>
     /// A filename is considered to be invalid under the following conditions: <br/>
     ///     a) The filename is <see langword="null"/>,<br/>
-    ///     b) The filename is not valid under Windows in general,<br/>
-    ///     c) The filename contains a non ASCII (> 0xFF) character,<br/>
+    ///     b) The filename is not valid for Windows in general,<br/>
+    ///     c) The filename contains a non ASCII character (char > 0xFF).<br/>
     /// </remarks>
     /// <param name="filename">The filename to check.</param>
     /// <param name="result">Detailed information status. Can be used for error message reporting.</param>
@@ -46,8 +46,11 @@ public static class PGFileNameUtilities
     private static bool ContainsInvalidPGChars(ReadOnlySpan<char> value)
     {
         foreach (var t in value)
+        {
             if (IsInvalidFileCharacter(t))
                 return true;
+
+        }
 
         return false;
     }

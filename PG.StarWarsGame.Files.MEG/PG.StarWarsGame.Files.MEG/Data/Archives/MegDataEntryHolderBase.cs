@@ -77,7 +77,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     /// <inheritdoc />
     public ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc)
     {
-        return Crc32Utilities.ItemsWithCrc(crc, _crcToIndexMap, Entries);
+        return Crc32Utilities.ItemsWithCrc(crc, Entries, _crcToIndexMap);
     }
 
     /// <inheritdoc />

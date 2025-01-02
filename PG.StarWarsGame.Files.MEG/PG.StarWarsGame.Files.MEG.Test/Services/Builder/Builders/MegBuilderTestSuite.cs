@@ -2,7 +2,7 @@
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Extensibility;
+using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -25,7 +25,8 @@ public abstract class MegBuilderTestSuite
     {
         serviceCollection.AddSingleton<IFileSystem>(FileSystem);
         serviceCollection.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        serviceCollection.CollectPgServiceContributions();
+        PetroglyphCommons.ContributeServices(serviceCollection);
+        serviceCollection.SupportMEG();
     }
 
     protected IServiceProvider CreateServiceProvider()

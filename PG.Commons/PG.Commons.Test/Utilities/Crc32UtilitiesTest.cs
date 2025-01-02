@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.Testing;

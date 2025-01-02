@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using AnakinRaW.CommonUtilities.Collections;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Files;

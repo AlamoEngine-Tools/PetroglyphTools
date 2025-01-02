@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PG.Commons.DataTypes;
+namespace PG.Commons.Data;
 
 /// <summary>
 /// Represent a range has a start index and a length.

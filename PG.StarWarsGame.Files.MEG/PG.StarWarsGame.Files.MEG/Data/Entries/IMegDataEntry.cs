@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;

@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using AnakinRaW.CommonUtilities;
-using PG.Commons.Utilities;
+using PG.Commons.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Utilities;
 

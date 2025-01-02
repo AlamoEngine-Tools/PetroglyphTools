@@ -1,5 +1,5 @@
 ﻿using System;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.Commons.Hashing;
 using Xunit;
 

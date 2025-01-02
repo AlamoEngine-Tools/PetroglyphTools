@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 

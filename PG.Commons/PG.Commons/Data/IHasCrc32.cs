@@ -3,7 +3,7 @@
 
 using PG.Commons.Hashing;
 
-namespace PG.Commons.DataTypes;
+namespace PG.Commons.Data;
 
 /// <summary>
 /// An interface representing data that has a CRC32 checksum.

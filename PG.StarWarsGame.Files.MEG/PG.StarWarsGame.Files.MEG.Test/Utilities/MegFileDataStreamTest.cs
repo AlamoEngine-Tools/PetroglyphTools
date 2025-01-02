@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using PG.Commons.Utilities;
+using PG.Commons.Data;
 using PG.StarWarsGame.Files.MEG.Utilities;
 using Xunit;
 

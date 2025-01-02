@@ -3,7 +3,7 @@
 
 using System;
 using PG.Commons.Binary;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;

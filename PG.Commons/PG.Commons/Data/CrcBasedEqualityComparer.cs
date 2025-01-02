@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace PG.Commons.DataTypes;
+namespace PG.Commons.Data;
 
 /// <summary>
 /// Represents a CRC32-based comparison method.

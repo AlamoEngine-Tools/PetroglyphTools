@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Title>PG.StarWarsGame.Files.MEG</Title>
+		<Description>Provides classes to read and write Petroglyph MEG archive files.</Description>
 		<PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MEG</PackageId>
 		<Product>PG.StarWarsGame.Files.MEG</Product>
 	</PropertyGroup>

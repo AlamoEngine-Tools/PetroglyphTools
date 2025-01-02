@@ -3,6 +3,7 @@
 		<IsPackable>true</IsPackable>
 		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Title>PG.StarWarsGame.Files.MTD</Title>
+		<Description>Provides classes to read Petroglyph MTD files.</Description>
 		<PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MTD</PackageId>
 		<Product>PG.StarWarsGame.Files.MTD</Product>
 	</PropertyGroup>

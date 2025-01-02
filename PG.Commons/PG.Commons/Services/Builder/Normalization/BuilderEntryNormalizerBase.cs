@@ -28,7 +28,18 @@ public abstract class BuilderEntryNormalizerBase<T> : IBuilderEntryNormalizer<T>
     /// <inheritdoc/>
     public abstract T Normalize(T entry);
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Tries to normalize the specified entry.
+    /// </summary>
+    /// <param name="entry">
+    /// A reference to the entry to normalize. When this method returns, contains the normalized value, if successful.
+    /// The original value is not restored if <see langword="false"/> is returned.
+    /// </param>
+    /// <param name="notNormalizedMessage">
+    /// When this method returns, contains an optional error message, if the operation was not successful.
+    /// The value may be <see langword="null"/>, even if the operation was not successful.</param>
+    /// <returns>The normalized entry.
+    /// </returns>
     public bool TryNormalize(ref T entry, out string? notNormalizedMessage)
     {
         notNormalizedMessage = null;

@@ -33,7 +33,7 @@ public class EmpireAtWarKeyValidatorTest
 
     public static IEnumerable<object[]> InvalidTestData()
     {
-        yield return [null];
+        yield return [null!];
         yield return [""];
         yield return ["  leadingSpace"];
         yield return ["trailingSpace  "];

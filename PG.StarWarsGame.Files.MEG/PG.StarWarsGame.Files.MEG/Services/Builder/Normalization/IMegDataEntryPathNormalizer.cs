@@ -1,7 +1,6 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using PG.Commons.Services.Builder.Normalization;
 using System;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
@@ -9,17 +8,24 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 /// <summary>
 /// Provides methods to normalize a data entry's file path to store it into a MEG archive.
 /// </summary>
-public interface IMegDataEntryPathNormalizer : IBuilderEntryNormalizer<string>
+public interface IMegDataEntryPathNormalizer
 {
     /// <summary>
-    /// Normalizes a specified MEG data entry path and writes it into the specified string builder.
+    /// Normalizes the specified MEG data entry path.
+    /// </summary>
+    /// <param name="filePath">The entry's file path to normalize.</param>
+    /// <returns>The normalized path.</returns>
+    string Normalize(string filePath);
+
+    /// <summary>
+    /// Normalizes the specified span containing a MEG data entry path.
     /// </summary>
     /// <param name="filePath">The entry's file path to normalize.</param>
     /// <returns>The normalized path.</returns>
     string Normalize(ReadOnlySpan<char> filePath);
 
     /// <summary>
-    /// Normalizes a specified MEG data entry path and tries to write it into a span of characters.
+    /// Attempts to normalize the specified span containing a MEG data entry path to a preallocated character span, and returns a value that indicates whether the operation succeeded.
     /// </summary>
     /// <remarks>
     /// This method may require more characters for <paramref name="destination"/>

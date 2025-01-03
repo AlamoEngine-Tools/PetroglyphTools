@@ -5,7 +5,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using Moq;
 using Moq.Protected;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;

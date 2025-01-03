@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.Binary;
 using Xunit;
 
-namespace PG.Commons.Test.Binary;
+namespace PG.StarWarsGame.Files.Test.Binary;
 
 public class BinaryTableClassTest : BinaryTableTest<TestClassBinary>
 {
@@ -41,7 +41,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     protected abstract T CreateFile(uint index, uint seed);
 
     [Fact]
-    public void Test_EmptyTable()
+    public void EmptyTable()
     {
         var table = CreateFileTable(new List<T>(0));
         Assert.Empty(table);
@@ -50,7 +50,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     }
 
     [Fact]
-    public void Test_Size_1_Entry()
+    public void Size_1_Entry()
     {
         var entry = CreateFile(0, 1);
         var table = CreateFileTable(new List<T>
@@ -61,7 +61,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     }
 
     [Fact]
-    public void Test_Size_2_Entries()
+    public void Size_2_Entries()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);
@@ -74,7 +74,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     }
 
     [Fact]
-    public void IFileNameTable_Test_Index()
+    public void Index()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);
@@ -91,7 +91,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     }
 
     [Fact]
-    public void Test_Enumerate()
+    public void Enumerate()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);
@@ -111,7 +111,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     }
 
     [Fact]
-    public void Test_Enumerate_AsIEnumerable()
+    public void Enumerate_AsIEnumerable()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);
@@ -131,7 +131,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     }
 
     [Fact]
-    public void Test_Enumerate_ResetEnumerator()
+    public void Enumerate_ResetEnumerator()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);
@@ -155,7 +155,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     }
 
     [Fact]
-    public void Test_Bytes()
+    public void Bytes()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);

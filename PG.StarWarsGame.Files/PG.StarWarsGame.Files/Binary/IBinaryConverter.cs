@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.Binary.File;
+using PG.StarWarsGame.Files.Binary.File;
 
-namespace PG.Commons.Binary;
+namespace PG.StarWarsGame.Files.Binary;
 
 /// <summary>
 ///     A builder that is capable of converting a generic file model to its binary

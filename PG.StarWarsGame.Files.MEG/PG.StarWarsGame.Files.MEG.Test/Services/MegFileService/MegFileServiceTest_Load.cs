@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using Moq;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;

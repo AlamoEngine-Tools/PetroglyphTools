@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using AnakinRaW.CommonUtilities;
 
-namespace PG.Commons.Files;
+namespace PG.StarWarsGame.Files;
 
 /// <summary>
 /// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TParam}"/>.

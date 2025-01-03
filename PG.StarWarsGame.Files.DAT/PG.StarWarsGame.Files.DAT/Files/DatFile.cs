@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.Files;
 using PG.StarWarsGame.Files.DAT.Data;
 
 namespace PG.StarWarsGame.Files.DAT.Files;

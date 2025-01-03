@@ -3,7 +3,7 @@
 
 using System;
 
-namespace PG.Commons.Binary;
+namespace PG.StarWarsGame.Files.Binary;
 
 /// <summary>
 ///  The exception that is thrown when a Petroglyph binary file is corrupted.

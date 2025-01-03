@@ -10,7 +10,6 @@ using AnakinRaW.CommonUtilities;
 using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
-using PG.Commons.Services.Builder;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -18,6 +17,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
+using PG.StarWarsGame.Files.Services.Builder;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 

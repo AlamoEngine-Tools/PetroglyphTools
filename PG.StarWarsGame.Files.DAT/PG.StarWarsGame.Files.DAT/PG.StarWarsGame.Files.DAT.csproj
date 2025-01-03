@@ -35,5 +35,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files\PG.StarWarsGame.Files.csproj" />
 	</ItemGroup>
 </Project>

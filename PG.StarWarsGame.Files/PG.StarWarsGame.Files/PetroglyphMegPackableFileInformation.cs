@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PG.Commons.Files;
+namespace PG.StarWarsGame.Files;
 
 /// <summary>
 /// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TParam}"/> that may be packed inside a MEG archive.

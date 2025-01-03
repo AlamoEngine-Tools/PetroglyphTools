@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using PG.Commons.Binary;
-using PG.Commons.Binary.File;
+using PG.StarWarsGame.Files.Binary;
+using PG.StarWarsGame.Files.Binary.File;
 
 namespace PG.StarWarsGame.Files.MTD.Binary.Metadata;
 

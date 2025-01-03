@@ -5,8 +5,8 @@ using System;
 using System.Buffers.Binary;
 using System.Diagnostics;
 using AnakinRaW.CommonUtilities;
-using PG.Commons.Binary;
 using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.Binary;
 #if NETSTANDARD2_0
 using AnakinRaW.CommonUtilities.Extensions;
 #endif

@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AnakinRaW.CommonUtilities.Extensions;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Files;
 

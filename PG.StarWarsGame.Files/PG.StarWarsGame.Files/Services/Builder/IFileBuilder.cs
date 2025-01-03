@@ -3,9 +3,8 @@
 
 using System;
 using System.IO;
-using PG.Commons.Files;
 
-namespace PG.Commons.Services.Builder;
+namespace PG.StarWarsGame.Files.Services.Builder;
 
 /// <summary>
 /// Service to write data into their file representation. 

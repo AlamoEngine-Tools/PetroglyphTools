@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
@@ -15,6 +14,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using AnakinRaW.CommonUtilities;
+using PG.StarWarsGame.Files.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 

@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PG.Commons.Files;
+namespace PG.StarWarsGame.Files;
 
 /// <inheritdoc cref="IPetroglyphFileHolder{TModel,TFileInfo}"/>
 public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject, IPetroglyphFileHolder<TModel, TFileInfo>
@@ -76,9 +76,9 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
     /// <exception cref="FileNotFoundException">The underlying local file of the <see cref="IPetroglyphFileHolder{TModel,TFileInfo}"/> does not exist.</exception>
     protected PetroglyphFileHolder(TModel model, TFileInfo fileInformation, IServiceProvider serviceProvider)
     {
-        if (model == null) 
+        if (model == null)
             throw new ArgumentNullException(nameof(model));
-        if (fileInformation == null) 
+        if (fileInformation == null)
             throw new ArgumentNullException(nameof(fileInformation));
 
         Content = model;

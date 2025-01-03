@@ -39,6 +39,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\PG.Commons\PG.Commons\PG.Commons.csproj" />
+		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files\PG.StarWarsGame.Files.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="C:\Users\Anakin\Source\Repos\AlamoEngine-Tools\PetroglyphTools\aet.png" Link="aet.png" />

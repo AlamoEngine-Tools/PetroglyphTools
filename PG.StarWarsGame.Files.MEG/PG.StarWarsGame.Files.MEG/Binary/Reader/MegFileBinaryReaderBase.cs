@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using AnakinRaW.CommonUtilities.Extensions;
-using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;

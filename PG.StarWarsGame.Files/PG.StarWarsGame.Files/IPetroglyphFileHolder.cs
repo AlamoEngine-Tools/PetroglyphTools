@@ -3,7 +3,7 @@
 
 using System;
 
-namespace PG.Commons.Files;
+namespace PG.StarWarsGame.Files;
 
 /// <summary>
 /// A wrapper around Petroglyph game files that holds the file's content in an accessible data structure as well as other file information.

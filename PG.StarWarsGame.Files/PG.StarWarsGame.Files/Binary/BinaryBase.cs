@@ -3,7 +3,7 @@
 
 using System;
 
-namespace PG.Commons.Binary;
+namespace PG.StarWarsGame.Files.Binary;
 
 /// <summary>
 /// Represents a readonly binary data structure with lazy bytes and size calculation.

@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace PG.Commons.Binary;
+namespace PG.StarWarsGame.Files.Binary;
 
 // Note: The Alamo specifications usually allows tables with *unsigned* int32 possible entries, however in .NET we are
 // limited to *signed* int32 for indexing native list-like structures.  

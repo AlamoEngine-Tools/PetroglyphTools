@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace PG.Commons.Binary;
+namespace PG.StarWarsGame.Files.Binary;
 
 /// <summary>
 /// Represents a read-only list of binary elements. 

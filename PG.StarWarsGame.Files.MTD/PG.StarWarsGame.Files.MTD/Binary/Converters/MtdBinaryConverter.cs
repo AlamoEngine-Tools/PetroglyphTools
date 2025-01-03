@@ -5,9 +5,9 @@ using System;
 using System.Drawing;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MTD.Binary.Metadata;
 using PG.StarWarsGame.Files.MTD.Data;
 

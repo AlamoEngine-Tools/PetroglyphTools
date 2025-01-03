@@ -5,9 +5,9 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities.FileSystem;
-using PG.Commons.Files;
+using PG.Commons.Services;
 
-namespace PG.Commons.Services.Builder;
+namespace PG.StarWarsGame.Files.Services.Builder;
 
 /// <summary>
 /// Base class for a <see cref="IFileBuilder{TData,TFileInformation}"/> service providing the fundamental implementations.

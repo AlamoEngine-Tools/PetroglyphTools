@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 
-namespace PG.Commons.Binary.File;
+namespace PG.StarWarsGame.Files.Binary.File;
 
 /// <summary>
 /// A reader that is capable of converting a stream of bytes into a binary model.

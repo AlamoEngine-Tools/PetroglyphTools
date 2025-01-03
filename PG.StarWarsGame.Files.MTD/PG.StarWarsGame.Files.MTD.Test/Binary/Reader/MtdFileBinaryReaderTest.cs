@@ -7,7 +7,7 @@ using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MTD.Binary;
 using Testably.Abstractions.Testing;
 using Xunit;

@@ -60,6 +60,6 @@ public class SortedDatModelTest : DatModelTest
         var unsorted = model.ToUnsortedModel();
 
         Assert.Equal(model.ToList(), unsorted.ToList());
-        Assert.Equal(DatFileType.NotOrdered, unsorted.KeySortOder);
+        Assert.Equal(DatFileType.NotOrdered, unsorted.KeySortOrder);
     }
 }

@@ -46,6 +46,6 @@ public class UnsortedDatModelTest : DatModelTest
         var sorted = model.ToSortedModel();
         
         Assert.True(Crc32Utilities.IsSortedByCrc32(sorted));
-        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOder);
+        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOrder);
     }
 }

@@ -19,7 +19,7 @@ internal class ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatFile
 
     public int Count => _entries.Count;
 
-    public DatFileType KeySortOder { get; } = fileType;
+    public DatFileType KeySortOrder { get; } = fileType;
 
     public DatStringEntry this[int index] => _entries[index];
 

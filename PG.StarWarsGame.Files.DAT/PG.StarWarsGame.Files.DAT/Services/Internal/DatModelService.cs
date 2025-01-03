@@ -40,7 +40,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         var newEntries = new LinkedHashSet<DatStringEntry>(datModel, CrcBasedEqualityComparer<DatStringEntry>.Instance)
             .ToList();
         
-        if (datModel.KeySortOder == DatFileType.OrderedByCrc32)
+        if (datModel.KeySortOrder == DatFileType.OrderedByCrc32)
         {
             newEntries = Crc32Utilities.SortByCrc32(newEntries);
             return new SortedDatModel(newEntries);
@@ -82,9 +82,9 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datToMerge == null)
             throw new ArgumentNullException(nameof(datToMerge));
 
-        if (baseDatModel.KeySortOder != DatFileType.OrderedByCrc32)
+        if (baseDatModel.KeySortOrder != DatFileType.OrderedByCrc32)
             throw new ArgumentException("DAT model not sorted.", nameof(baseDatModel));
-        if (datToMerge.KeySortOder != DatFileType.OrderedByCrc32)
+        if (datToMerge.KeySortOrder != DatFileType.OrderedByCrc32)
             throw new ArgumentException("DAT model not sorted.", nameof(datToMerge));
 
         var newEntries = baseDatModel.ToList();
@@ -130,9 +130,9 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datToMerge == null)
             throw new ArgumentNullException(nameof(datToMerge));
 
-        if (baseDatModel.KeySortOder != DatFileType.NotOrdered)
+        if (baseDatModel.KeySortOrder != DatFileType.NotOrdered)
             throw new ArgumentException("DAT model not unsorted.", nameof(baseDatModel));
-        if (datToMerge.KeySortOder != DatFileType.NotOrdered)
+        if (datToMerge.KeySortOrder != DatFileType.NotOrdered)
             throw new ArgumentException("DAT model not unsorted.", nameof(datToMerge));
 
         mergedKeys = new List<MergedKeyResult>();
@@ -254,10 +254,10 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
 //        if (datToMerge == null) 
 //            throw new ArgumentNullException(nameof(datToMerge));
 
-//        if (baseDatModel.KeySortOder != datToMerge.KeySortOder)
+//        if (baseDatModel.KeySortOrder != datToMerge.KeySortOrder)
 //            throw new NotSupportedException("Key sort order type must be equal for both DAT models.");
 
-//        if (baseDatModel.KeySortOder == DatFileType.OrderedByCrc32)
+//        if (baseDatModel.KeySortOrder == DatFileType.OrderedByCrc32)
 //            return MergeSorted(baseDatModel, datToMerge, out mergedKeys, mergeOptions);
 
 //        return MergeUnsorted(baseDatModel, datToMerge, out mergedKeys, mergeOptions);

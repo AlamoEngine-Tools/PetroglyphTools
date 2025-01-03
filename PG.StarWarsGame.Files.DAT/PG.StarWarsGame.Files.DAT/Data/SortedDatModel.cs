@@ -14,7 +14,7 @@ internal sealed class SortedDatModel : DatModel, ISortedDatModel
 {
     private readonly IReadOnlyDictionary<Crc32, IndexRange> _crcToIndexMap;
 
-    public override DatFileType KeySortOder => DatFileType.OrderedByCrc32;
+    public override DatFileType KeySortOrder => DatFileType.OrderedByCrc32;
 
 
     public SortedDatModel(IEnumerable<DatStringEntry> entries) : base(entries)

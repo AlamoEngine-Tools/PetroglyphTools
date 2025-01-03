@@ -32,7 +32,7 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// Game credit models <b>may</b> also be sorted by pure chance.
     /// So this property does not provide a safe way to determine the semantics of this model.
     /// </remarks>
-    public DatFileType KeySortOder { get; }
+    public DatFileType KeySortOrder { get; }
 
     /// <summary>
     /// Determines whether the <see cref="IDatModel"/> contains the specified key.

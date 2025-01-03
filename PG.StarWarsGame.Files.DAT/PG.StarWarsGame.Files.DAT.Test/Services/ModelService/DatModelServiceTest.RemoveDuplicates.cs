@@ -21,7 +21,7 @@ public partial class DatModelServiceTest
     public void Test_RemoveDuplicates(IList<DatStringEntry> entries, IList<DatStringEntry> expected)
     {
         var model = CreateModel(entries);
-        if (model.KeySortOder == DatFileType.OrderedByCrc32)
+        if (model.KeySortOrder == DatFileType.OrderedByCrc32)
             expected = Crc32Utilities.SortByCrc32(expected);
 
         var newModel = Service.RemoveDuplicates(model);

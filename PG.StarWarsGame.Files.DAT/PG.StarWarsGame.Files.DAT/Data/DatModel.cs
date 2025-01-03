@@ -29,7 +29,7 @@ internal abstract class DatModel : IDatModel
 
     public ISet<Crc32> CrcKeys => new HashSet<Crc32>(_firstCrcKeyValueDictionary.Keys);
 
-    public abstract DatFileType KeySortOder { get; }
+    public abstract DatFileType KeySortOrder { get; }
 
     protected DatModel(IEnumerable<DatStringEntry> entries)
     {

@@ -301,7 +301,7 @@ public abstract class DatBuilderBaseTest
         builder.Object.AddEntry("key3", "value");
 
         var model = builder.Object.BuildModel();
-        Assert.Equal(builder.Object.TargetKeySortOrder, model.KeySortOder);
+        Assert.Equal(builder.Object.TargetKeySortOrder, model.KeySortOrder);
         Assert.Equal(3, model.Count);
         Assert.Equal(["key1", "key2", "key3"], model.Keys);
     }

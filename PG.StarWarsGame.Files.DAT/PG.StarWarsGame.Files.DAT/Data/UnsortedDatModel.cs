@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.DAT.Data;
 
 internal sealed class UnsortedDatModel(IEnumerable<DatStringEntry> entries) : DatModel(entries), IUnsortedDatModel
 {
-    public override DatFileType KeySortOder => DatFileType.NotOrdered;
+    public override DatFileType KeySortOrder => DatFileType.NotOrdered;
 
     public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
     {

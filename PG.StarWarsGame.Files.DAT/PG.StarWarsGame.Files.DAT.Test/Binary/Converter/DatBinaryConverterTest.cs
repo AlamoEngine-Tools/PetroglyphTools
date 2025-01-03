@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
+using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using PG.Commons.Hashing;
+using PG.Commons;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -19,15 +19,33 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.Converter;
 public class DatBinaryConverterTest
 {
     private readonly DatBinaryConverter _converter;
-    private readonly Mock<ICrc32HashingService> _hashingService;
 
     public DatBinaryConverterTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());
-        _hashingService = new Mock<ICrc32HashingService>();
-        sc.AddSingleton(_hashingService.Object);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        PetroglyphCommons.ContributeServices(sc);
         _converter = new DatBinaryConverter(sc.BuildServiceProvider());
+    }
+
+    private static KeyTableRecord CreateKeyRecord(string key, string? alternateKey = null)
+    {
+        return new KeyTableRecord(key, alternateKey ?? key);
+    }
+
+    private static IndexTableRecord CreateIndexRecord(bool small, uint valueLength = 1)
+    {
+        return small
+            ? new IndexTableRecord(DatTestData.SmallCrc, (uint)DatTestData.SmallCrcValue.Length, valueLength)
+            : new IndexTableRecord(DatTestData.BigCrc, (uint)DatTestData.BigCrcValue.Length, valueLength);
+    }
+
+    private static DatStringEntry CreateEntry(bool small, string value)
+    {
+        return small
+            ? new DatStringEntry(DatTestData.SmallCrcValue, DatTestData.SmallCrc, value)
+            : new DatStringEntry(DatTestData.BigCrcValue, DatTestData.BigCrc, value);
     }
 
     [Fact]
@@ -42,16 +60,16 @@ public class DatBinaryConverterTest
         var header = new DatHeader(3);
         var indexTable = new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
         {
-            new(new Crc32(1), 1, 1),
-            new(new Crc32(1), 1, 1),
-            new(new Crc32(2), 1, 1),
+            CreateIndexRecord(true),
+            CreateIndexRecord(true),
+            CreateIndexRecord(false)
         });
 
         var keyTable = new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
         {
-            new("1", "1"),
-            new("1", "1"),
-            new("2", "2"),
+           CreateKeyRecord(DatTestData.SmallCrcValue),
+           CreateKeyRecord(DatTestData.SmallCrcValue),
+           CreateKeyRecord(DatTestData.BigCrcValue)
         });
         var valueTable = new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
         {
@@ -64,12 +82,12 @@ public class DatBinaryConverterTest
         var model = _converter.BinaryToModel(binary);
 
         Assert.Equal(binary.RecordNumber, model.Count);
-        Assert.Equal(DatFileType.OrderedByCrc32, model.KeySortOder);
+        Assert.Equal(DatFileType.OrderedByCrc32, model.KeySortOrder);
 
         Assert.Equal([
-            new("1", new Crc32(1), "a"),
-            new("1", new Crc32(1), "b"),
-            new("2", new Crc32(2), "c")
+            CreateEntry(true, "a"),
+            CreateEntry(true, "b"),
+            CreateEntry(false, "c"),
         ], model.ToList());
     }
 
@@ -79,16 +97,16 @@ public class DatBinaryConverterTest
         var header = new DatHeader(3);
         var indexTable = new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
         {
-            new(new Crc32(2), 1, 1),
-            new(new Crc32(2), 1, 1),
-            new(new Crc32(1), 1, 1),
+            CreateIndexRecord(false),
+            CreateIndexRecord(false),
+            CreateIndexRecord(true),
         });
 
         var keyTable = new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
         {
-            new("2", "2"),
-            new("2", "2"),
-            new("1", "1"),
+            CreateKeyRecord(DatTestData.BigCrcValue),
+            CreateKeyRecord(DatTestData.BigCrcValue),
+            CreateKeyRecord(DatTestData.SmallCrcValue),
         });
         var valueTable = new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
         {
@@ -101,12 +119,12 @@ public class DatBinaryConverterTest
         var model = _converter.BinaryToModel(binary);
 
         Assert.Equal(binary.RecordNumber, model.Count);
-        Assert.Equal(DatFileType.NotOrdered, model.KeySortOder);
+        Assert.Equal(DatFileType.NotOrdered, model.KeySortOrder);
 
         Assert.Equal([
-            new("2", new Crc32(2), "a"),
-            new("2", new Crc32(2), "b"),
-            new("1", new Crc32(1), "c")
+            CreateEntry(false, "a"),
+            CreateEntry(false, "b"),
+            CreateEntry(true, "c"),
         ], model.ToList());
     }
 
@@ -121,18 +139,15 @@ public class DatBinaryConverterTest
     {
         var modelEntries = new List<DatStringEntry>
         {
-            new("1", new Crc32(0), "abc"),
-            new("1", new Crc32(0), "d"),
-            new("2", new Crc32(0), new string('a', 260)),
+            CreateEntry(true, "abc"),
+            CreateEntry(true, "d"),
+            CreateEntry(false, new string('a', 260)),
         };
 
         var model = new Mock<IDatModel>();
         model.Setup(m => m.Count).Returns(3);
         model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
-        model.Setup(m => m.KeySortOder).Returns(DatFileType.OrderedByCrc32);
-
-        _hashingService.Setup(h => h.GetCrc32("1", Encoding.ASCII)).Returns(new Crc32(1));
-        _hashingService.Setup(h => h.GetCrc32("2", Encoding.ASCII)).Returns(new Crc32(2));
+        model.Setup(m => m.KeySortOrder).Returns(DatFileType.OrderedByCrc32);
 
         var binary = _converter.ModelToBinary(model.Object);
 
@@ -140,15 +155,15 @@ public class DatBinaryConverterTest
         Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
 
         Assert.Equal([
-            new(new Crc32(1), 1, 3),
-            new(new Crc32(1), 1, 1),
-            new(new Crc32(2), 1, 260)
+            CreateIndexRecord(true, 3),
+            CreateIndexRecord(true),
+            CreateIndexRecord(false, 260),
         ],binary.IndexTable.ToList());
 
         Assert.Equal([
-            new("1", "1"),
-            new("1", "1"),
-            new("2", "2")
+            CreateKeyRecord(DatTestData.SmallCrcValue),
+            CreateKeyRecord(DatTestData.SmallCrcValue),
+            CreateKeyRecord(DatTestData.BigCrcValue),
         ], binary.KeyTable.ToList());
 
         Assert.Equal([
@@ -163,17 +178,14 @@ public class DatBinaryConverterTest
     {
         var modelEntries = new List<DatStringEntry>
         {
-            new("2", new Crc32(0), "abc"),
-            new("1", new Crc32(0), "d"),
+            CreateEntry(false, "abc"),
+            CreateEntry(true, "d"),
         };
 
         var model = new Mock<IDatModel>();
         model.Setup(m => m.Count).Returns(2);
-        model.Setup(m => m.KeySortOder).Returns(DatFileType.NotOrdered);
+        model.Setup(m => m.KeySortOrder).Returns(DatFileType.NotOrdered);
         model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
-
-        _hashingService.Setup(h => h.GetCrc32("1", Encoding.ASCII)).Returns(new Crc32(1));
-        _hashingService.Setup(h => h.GetCrc32("2", Encoding.ASCII)).Returns(new Crc32(2));
 
         var binary = _converter.ModelToBinary(model.Object);
 
@@ -181,13 +193,13 @@ public class DatBinaryConverterTest
         Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
 
         Assert.Equal([
-            new(new Crc32(2), 1, 3),
-            new(new Crc32(1), 1, 1)
+            CreateIndexRecord(false, 3),
+            CreateIndexRecord(true),
         ], binary.IndexTable.ToList());
 
         Assert.Equal([
-            new("2", "2"),
-            new("1", "1")
+            CreateKeyRecord(DatTestData.BigCrcValue),
+            CreateKeyRecord(DatTestData.SmallCrcValue),
         ], binary.KeyTable.ToList());
 
         Assert.Equal([
@@ -201,17 +213,14 @@ public class DatBinaryConverterTest
     {
         var modelEntries = new List<DatStringEntry>
         {
-            new("2", new Crc32(0), "abc"),
-            new("1", new Crc32(0), "d"),
+            CreateEntry(false, "abc"),
+            CreateEntry(true, "d"),
         };
 
         var model = new Mock<IDatModel>();
         model.Setup(m => m.Count).Returns(2);
-        model.Setup(m => m.KeySortOder).Returns(DatFileType.OrderedByCrc32);
+        model.Setup(m => m.KeySortOrder).Returns(DatFileType.OrderedByCrc32);
         model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
-
-        _hashingService.Setup(h => h.GetCrc32("1", Encoding.ASCII)).Returns(new Crc32(1));
-        _hashingService.Setup(h => h.GetCrc32("2", Encoding.ASCII)).Returns(new Crc32(2));
 
         Assert.Throws<ArgumentException>(() => _converter.ModelToBinary(model.Object));
     }

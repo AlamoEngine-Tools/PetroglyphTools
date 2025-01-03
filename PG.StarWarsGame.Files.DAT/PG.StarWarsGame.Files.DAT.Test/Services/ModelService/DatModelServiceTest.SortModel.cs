@@ -23,14 +23,14 @@ public abstract partial class DatModelServiceTest
     {
         var model = CreateModel(entries);
         var sorted = Service.SortModel(model);
-        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOder);
+        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOrder);
         Assert.Equal(expectedList, sorted.ToList());
 
 
         var modelMock = new Mock<IDatModel>();
         modelMock.Setup(m => m.GetEnumerator()).Returns(entries.GetEnumerator());
         var sortedMock = Service.SortModel(modelMock.Object);
-        Assert.Equal(DatFileType.OrderedByCrc32, sortedMock.KeySortOder);
+        Assert.Equal(DatFileType.OrderedByCrc32, sortedMock.KeySortOrder);
         Assert.Equal(expectedList, sortedMock.ToList());
     }
 

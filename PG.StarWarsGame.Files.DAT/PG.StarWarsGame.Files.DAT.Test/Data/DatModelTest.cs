@@ -28,7 +28,7 @@ public abstract class DatModelTest
     {
         var model = CreateModel(CreateDataEntries());
 
-        Assert.Equal(ExpectedFileType, model.KeySortOder);
+        Assert.Equal(ExpectedFileType, model.KeySortOrder);
         Assert.Equal(4, model.Count);
         Assert.Equivalent(new HashSet<string>{ "1", "3", "4" }.ToList(), model.Keys.ToList());
         Assert.Equivalent(new HashSet<Crc32> { new(1), new(3), new(4) }.ToList(), model.CrcKeys.ToList());

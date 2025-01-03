@@ -52,7 +52,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
             lastCrc = keyChecksum;
         }
         
-        if (model.KeySortOder == DatFileType.OrderedByCrc32 && !isSorted)
+        if (model.KeySortOrder == DatFileType.OrderedByCrc32 && !isSorted)
             throw new ArgumentException("MasterTextModel must be sorted.", nameof(model));
 
         return new DatBinaryFile(header, new BinaryTable<IndexTableRecord>(indexRecords), new BinaryTable<ValueTableRecord>(values), new BinaryTable<KeyTableRecord>(keys));

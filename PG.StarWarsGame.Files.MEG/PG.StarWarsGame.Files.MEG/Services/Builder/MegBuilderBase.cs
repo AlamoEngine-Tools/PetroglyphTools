@@ -194,54 +194,41 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
         if (entryPath.Length == 0)
             throw new ArgumentException("entryPath cannot be empty", nameof(entryPath));
 
-
-        var entryPathStringBuilder = new ValueStringBuilder(stackalloc char[260]);
-        
-        try
+        if (NormalizesEntryPaths)
         {
-            if (NormalizesEntryPaths)
+            try
             {
-                try
-                {
-                    DataEntryPathNormalizer.Normalize(entryPath, ref entryPathStringBuilder);
-                }
-                catch (Exception e)
-                {
-                    return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, e.Message);
-                }
+                entryPath = DataEntryPathNormalizer.Normalize(entryPath).AsSpan();
             }
-            else
-                entryPathStringBuilder.Append(entryPath);
-
-
-            if (entryPathStringBuilder.Length == 0)
-                throw new InvalidOperationException("entryPath cannot be null");
-
-            var entryLength = entryPathStringBuilder.Length;
-            var encodedEntryBuffer = entryLength > 265 ? new char[entryLength] : stackalloc char[entryLength];
-            var encodedEntry = EncodeEntryPath(entryPathStringBuilder.AsSpan(), encodedEntryBuffer, out Crc32 crc);
-
-            var validationResult = DataEntryValidator.Validate(encodedEntry, encrypt, size);
-            if (!validationResult)
-                return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
-                    $"The entry with entry path '{encodedEntry.ToString()}' is not valid.");
-
-            if (_dataEntries.TryGetValue(crc, out var currentInfo))
+            catch (Exception e)
             {
-                if (!OverwritesDuplicateEntries)
-                    return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
+                return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.FailedNormalization, e.Message);
             }
-
-            var infoToAdd = new MegFileDataEntryBuilderInfo(originInfoFactory(state), encodedEntry.ToString(), size, encrypt);
-
-            _dataEntries[crc] = infoToAdd;
-
-            return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
         }
-        finally
+
+        if (entryPath.Length == 0)
+            throw new InvalidOperationException("entryPath cannot be null");
+
+        var entryLength = entryPath.Length;
+        var encodedEntryBuffer = entryLength > 265 ? new char[entryLength] : stackalloc char[entryLength];
+        var encodedEntry = EncodeEntryPath(entryPath, encodedEntryBuffer, out var crc);
+
+        var validationResult = DataEntryValidator.Validate(encodedEntry, encrypt, size);
+        if (!validationResult)
+            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.InvalidEntry,
+                $"The entry with entry path '{encodedEntry.ToString()}' is not valid.");
+
+        if (_dataEntries.TryGetValue(crc, out var currentInfo))
         {
-            entryPathStringBuilder.Dispose();
+            if (!OverwritesDuplicateEntries)
+                return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
         }
+
+        var infoToAdd = new MegFileDataEntryBuilderInfo(originInfoFactory(state), encodedEntry.ToString(), size, encrypt);
+
+        _dataEntries[crc] = infoToAdd;
+
+        return AddDataEntryToBuilderResult.EntryAdded(infoToAdd, currentInfo);
     }
 
     private ReadOnlySpan<char> EncodeEntryPath(ReadOnlySpan<char> entryPath, Span<char> buffer, out Crc32 crc)

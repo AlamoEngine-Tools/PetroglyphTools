@@ -1,11 +1,10 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools- and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services.Builder.Normalization;
-using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -29,7 +28,21 @@ public abstract class MegDataEntryPathNormalizerBase : BuilderEntryNormalizerBas
     }
 
     /// <inheritdoc />
-    public abstract void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder);
+    public abstract string Normalize(ReadOnlySpan<char> filePath);
+
+    /// <inheritdoc />
+    public override string Normalize(string entry)
+    {
+        return Normalize(entry.AsSpan());
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="destination"></param>
+    /// <returns></returns>
+    protected abstract int Normalize(ReadOnlySpan<char> filePath, Span<char> destination);
 
     /// <inheritdoc />
     public bool TryNormalize(ReadOnlySpan<char> filePath, Span<char> destination, out int charsWritten)
@@ -39,19 +52,16 @@ public abstract class MegDataEntryPathNormalizerBase : BuilderEntryNormalizerBas
             charsWritten = 0;
             return true;
         }
-
-        var sb = new ValueStringBuilder(stackalloc char[260]);
-        Normalize(filePath, ref sb);
-        var result = sb.TryCopyTo(destination, out charsWritten);
-        sb.Dispose();
-        return result;
-    }
-
-    /// <inheritdoc />
-    public override string Normalize(string entry)
-    {
-        var sb = new ValueStringBuilder(stackalloc char[260]);
-        Normalize(entry.AsSpan(), ref sb);
-        return sb.ToString();
+        try
+        {
+            charsWritten = Normalize(filePath, destination);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            charsWritten = 0;
+            return false;
+        }
     }
 }

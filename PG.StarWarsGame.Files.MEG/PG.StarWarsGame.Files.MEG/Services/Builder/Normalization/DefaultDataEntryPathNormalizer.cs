@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Buffers;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
-using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -27,12 +27,31 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     }
 
     /// <inheritdoc />
-    public override void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder)
+    public override string Normalize(ReadOnlySpan<char> filePath)
     {
         if (filePath.Length == 0)
-            return;
-        stringBuilder.EnsureCapacity(filePath.Length);
-        var length = PathNormalizer.Normalize(filePath, stringBuilder.RawChars, DefaultNormalizeOptions);
-        stringBuilder.Length = length;
+            return string.Empty;
+
+        char[]? pooledCharArray = null;
+        try
+        {
+            var buffer = filePath.Length > 265
+                ? pooledCharArray = ArrayPool<char>.Shared.Rent(filePath.Length)
+                : stackalloc char[filePath.Length];
+
+            var normalizedLength = PathNormalizer.Normalize(filePath, buffer, DefaultNormalizeOptions);
+            return buffer.Slice(0, normalizedLength).ToString();
+        }
+        finally
+        {
+            if (pooledCharArray is not null)
+                ArrayPool<char>.Shared.Return(pooledCharArray);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+    {
+        return filePath.Length == 0 ? 0 : PathNormalizer.Normalize(filePath, destination, DefaultNormalizeOptions);
     }
 }

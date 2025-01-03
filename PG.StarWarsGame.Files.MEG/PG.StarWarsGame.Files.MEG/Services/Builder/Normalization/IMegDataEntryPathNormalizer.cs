@@ -3,7 +3,6 @@
 
 using PG.Commons.Services.Builder.Normalization;
 using System;
-using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -16,8 +15,8 @@ public interface IMegDataEntryPathNormalizer : IBuilderEntryNormalizer<string>
     /// Normalizes a specified MEG data entry path and writes it into the specified string builder.
     /// </summary>
     /// <param name="filePath">The entry's file path to normalize.</param>
-    /// <param name="stringBuilder">The string builder to store the normalized path into.</param>
-    void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder);
+    /// <returns>The normalized path.</returns>
+    string Normalize(ReadOnlySpan<char> filePath);
 
     /// <summary>
     /// Normalizes a specified MEG data entry path and tries to write it into a span of characters.

@@ -1,6 +1,11 @@
 using System;
+using System.Buffers;
+using System.Text;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
-using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.MEG.Binary;
+#if NETSTANDARD2_0 || NETFRAMEWORK
+using System.Runtime.InteropServices;
+#endif
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
@@ -18,31 +23,93 @@ public sealed class EmpireAtWarMegDataEntryPathNormalizer(IServiceProvider servi
     };
 
     /// <inheritdoc />
-    public override void Normalize(ReadOnlySpan<char> filePath, ref ValueStringBuilder stringBuilder)
+    public override string Normalize(ReadOnlySpan<char> filePath)
     {
         if (filePath.Length == 0)
-            return;
+            return string.Empty;
 
-        var normalizing = new ValueStringBuilder(stackalloc char[260]);
-        normalizing.EnsureCapacity(filePath.Length);
-
+        char[]? pooledCharArray = null;
         try
         {
-            var ln = PathNormalizer.Normalize(filePath, normalizing.RawChars, PetroglyphNormalizeOptions);
-            var normalized = normalizing.AsSpan(0, ln);
+            var buffer = filePath.Length > 265
+                ? pooledCharArray = ArrayPool<char>.Shared.Rent(filePath.Length)
+                : stackalloc char[filePath.Length];
+
+            var normalizedLength = PathNormalizer.Normalize(filePath, buffer, PetroglyphNormalizeOptions);
+            var normalized = buffer.Slice(0, normalizedLength);
 
             SplitPath(normalized, out var path, out var file);
 
+            var sb = new StringBuilder(MegFileConstants.EawMaxEntryPathLength);
             if (path.Length > 0)
             {
-                stringBuilder.Append(path);
-                stringBuilder.Append('\\');
+                AppendRosToSb(path, sb);
+                sb.Append('\\');
             }
-            stringBuilder.Append(file);
+
+            AppendRosToSb(file, sb);
+            return sb.ToString();
         }
         finally
         {
-            normalizing.Dispose();
+            if (pooledCharArray is not null)
+                ArrayPool<char>.Shared.Return(pooledCharArray);
+        }
+    }
+
+
+    private static void AppendRosToSb(ReadOnlySpan<char> value, StringBuilder sb)
+    {
+        if (value.Length <= 0)
+            return;
+#if NETSTANDARD2_0 || NETFRAMEWORK
+        unsafe
+        {
+            fixed (char* valueChars = &MemoryMarshal.GetReference(value))
+                sb.Append(valueChars, value.Length);
+        }
+#else
+        sb.Append(value);
+#endif
+    }
+
+
+    /// <inheritdoc />
+    protected override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+    {
+        if (filePath.Length == 0)
+            return 0;
+
+        char[]? pooledCharArray = null;
+        try
+        {
+            var normalizationBuffer = destination.Length > 265
+                ? pooledCharArray = ArrayPool<char>.Shared.Rent(destination.Length)
+                : stackalloc char[destination.Length];
+
+            var normalizedLength = PathNormalizer.Normalize(filePath, normalizationBuffer, PetroglyphNormalizeOptions);
+            var normalized = normalizationBuffer.Slice(0, normalizedLength);
+
+            SplitPath(normalized, out var path, out var file);
+
+            var pos = 0;
+            if (path.Length > 0)
+            {
+                path.CopyTo(destination);
+                destination[path.Length] = '\\';
+
+                pos = path.Length + 1;
+            }
+
+            var fileSpan = destination.Slice(pos);
+            file.CopyTo(fileSpan);
+
+            return pos + file.Length;
+        }
+        finally
+        {
+            if (pooledCharArray is not null)
+                ArrayPool<char>.Shared.Return(pooledCharArray);
         }
     }
 

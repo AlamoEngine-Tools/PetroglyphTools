@@ -24,11 +24,6 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
     private static readonly char[] ForbiddenChars = ['/', ' ', '\0', '\t', '\r', '\n'];
 
     /// <summary>
-    /// The max number of characters allowed in Empire at War game for MEG entry paths.
-    /// </summary>
-    private const int EawMaxMegFilePathLength = 259;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarMegBuilderDataEntryValidator"/> class.
     /// </summary>
     /// <param name="serviceProvider">The service provider.</param>
@@ -42,7 +37,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
         if (encrypted)
             return false;
 
-        if (entryPath.Length is 0 or > EawMaxMegFilePathLength)
+        if (entryPath.Length is 0 or > MegFileConstants.EawMaxEntryPathLength)
             return false;
 
         if (IsRootedOrStartsWithCurrent(entryPath))
@@ -55,7 +50,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
         if (entryPath.IndexOf(':') > 0 && entryPath.IndexOf('\\') != -1)
             return false;
 
-        Span<char> pathBuffer = stackalloc char[EawMaxMegFilePathLength];
+        Span<char> pathBuffer = stackalloc char[MegFileConstants.EawMaxEntryPathLength];
        
         var upperLength = entryPath.ToUpperInvariant(pathBuffer);
         var upper = pathBuffer.Slice(0, upperLength);

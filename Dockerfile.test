@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0
 RUN wget https://aka.ms/getvsdbgsh && \
     sh getvsdbgsh -v latest  -l /vsdbg
 	
-ENV MONO_VERSION 6.12.0.182
+ENV MONO_VERSION 6.12.0.200
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends gnupg dirmngr ca-certificates \

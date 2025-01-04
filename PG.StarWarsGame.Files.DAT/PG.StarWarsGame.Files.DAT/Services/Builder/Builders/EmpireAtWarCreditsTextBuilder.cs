@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
@@ -19,7 +18,7 @@ public sealed class EmpireAtWarCreditsTextBuilder : DatBuilderBase
     public override DatFileType TargetKeySortOrder => DatFileType.NotOrdered;
 
     /// <inheritdoc />
-    public override IDatKeyValidator KeyValidator { get; }
+    public override IDatKeyValidator KeyValidator => EmpireAtWarKeyValidator.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextBuilder"/> class.
@@ -27,6 +26,5 @@ public sealed class EmpireAtWarCreditsTextBuilder : DatBuilderBase
     /// <param name="services">The service provider.</param>
     public EmpireAtWarCreditsTextBuilder(IServiceProvider services) : base(BuilderOverrideKind.AllowDuplicate ,services)
     {
-        KeyValidator = Services.GetRequiredService<EmpireAtWarKeyValidator>();
     }
 }

@@ -51,6 +51,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
+		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.Test\PG.StarWarsGame.Files.Test.csproj" />
 		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
 	</ItemGroup>

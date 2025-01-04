@@ -31,11 +31,12 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo>
     }
 
     protected virtual string DefaultFileName => "file.txt";
+
+    protected virtual bool FileInfoIsAlwaysValid => false;
     protected abstract TBuilder CreateBuilder();
     protected abstract TFileInfo CreateFileInfo(bool valid, string path);
     protected abstract void AddDataToBuilder(TModel data, TBuilder builder);
     protected abstract (TModel Data, byte[] Bytes) CreateValidData();
-    protected abstract TModel CreateInvalidData();
 
     [Fact]
     public void Dispose_ThrowsOnBuild()
@@ -81,6 +82,9 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo>
     [Fact]
     public void Test_Build_FileInfoNotValid_ThrowsInvalidOperationException()
     {
+        if (FileInfoIsAlwaysValid)
+            return;
+
         using var builder = CreateBuilder();
 
         var fileInfo = CreateFileInfo(false, DefaultFileName);

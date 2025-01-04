@@ -4,7 +4,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Services;
-using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 namespace PG.StarWarsGame.Files.DAT;
 
 /// <summary>
@@ -23,7 +22,6 @@ public static class DatServiceContribution
             .AddSingleton<IDatFileService>(sp => new DatFileService(sp))
             .AddSingleton<IDatModelService>(sp => new DatModelService(sp))
             .AddTransient<IDatFileReader>(sp => new DatFileReader(sp))
-            .AddTransient<IDatBinaryConverter>(sp => new DatBinaryConverter(sp))
-            .AddSingleton(_ => new EmpireAtWarKeyValidator());
+            .AddTransient<IDatBinaryConverter>(sp => new DatBinaryConverter(sp));
     }
 }

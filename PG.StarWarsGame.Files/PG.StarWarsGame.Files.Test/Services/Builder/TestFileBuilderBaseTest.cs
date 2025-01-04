@@ -22,9 +22,4 @@ public class TestFileBuilderBaseTest : FileBuilderTestBase<TestFileBuilder, byte
         var bytes = new byte[] { 1, 2, 3, 4, 5, 6 };
         return (bytes, bytes);
     }
-
-    protected override byte[] CreateInvalidData()
-    {
-        return null!;
-    }
 }

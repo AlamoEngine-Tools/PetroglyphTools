@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace PG.Testing;
@@ -48,5 +49,12 @@ public static class TestUtility
         using var ms = new MemoryStream();
         stream.CopyTo(ms);
         return ms.ToArray();
+    }
+
+    public static T GetRandom<T>(IEnumerable<T> items)
+    {
+        var list = items.ToList();
+        var r = new Random().Next(list.Count);
+        return list[r];
     }
 }

@@ -6,8 +6,6 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons;
-using PG.StarWarsGame.Files.Binary;
-using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
@@ -47,8 +45,8 @@ public class DatFileServiceTest
     [Fact]
     public void CreateDatFile_PreserveOrder()
     {
-        var binary = CreateUnsortedBinary();
-        var model = CreateUnsortedModel();
+        var binary = DatTestData.CreateUnsortedBinary();
+        var model = DatTestData.CreateUnsortedModel();
 
         var fs = _fileSystem.FileStream.New("test.dat", FileMode.Create);
         _service.CreateDatFile(fs, model, DatFileType.NotOrdered);
@@ -60,8 +58,8 @@ public class DatFileServiceTest
     [Fact]
     public void CreateDatFile_SortEntries()
     {
-        var binary = CreateSortedBinary();
-        var model = CreateUnsortedModel();
+        var binary = DatTestData.CreateSortedBinary();
+        var model = DatTestData.CreateUnsortedModel();
 
         var fs = _fileSystem.FileStream.New("test.dat", FileMode.Create);
         _service.CreateDatFile(fs, model, DatFileType.OrderedByCrc32);
@@ -91,8 +89,8 @@ public class DatFileServiceTest
     [Fact]
     public void Load()
     {
-        var sortedBinary = CreateSortedBinary();
-        var unsortedBinary = CreateUnsortedBinary();
+        var sortedBinary = DatTestData.CreateSortedBinary();
+        var unsortedBinary = DatTestData.CreateUnsortedBinary();
 
         _fileSystem.Initialize()
             .WithFile("sorted.dat").Which(a => a.HasBytesContent(sortedBinary.Bytes))
@@ -102,19 +100,19 @@ public class DatFileServiceTest
         Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FilePath);
         Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FileInformation.FilePath);
         Assert.Equal(DatFileType.OrderedByCrc32, sortedFileHolder.Content.KeySortOrder);
-        Assert.Equal(CreateSortedModel(), sortedFileHolder.Content.ToList());
+        Assert.Equal(DatTestData.CreateSortedModel(), sortedFileHolder.Content.ToList());
 
         var unsortedFileHolder = _service.Load("unsorted.dat");
         Assert.Equal(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FilePath);
         Assert.Equal(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FileInformation.FilePath);
         Assert.Equal(DatFileType.NotOrdered, unsortedFileHolder.Content.KeySortOrder);
-        Assert.Equal(CreateUnsortedModel(), unsortedFileHolder.Content.ToList());
+        Assert.Equal(DatTestData.CreateUnsortedModel(), unsortedFileHolder.Content.ToList());
     }
 
     [Fact]
     public void LoadAs_SortedAsUnsorted()
     {
-        var sortedBinary = CreateSortedBinary();
+        var sortedBinary = DatTestData.CreateSortedBinary();
 
         _fileSystem.Initialize()
             .WithFile("sorted.dat").Which(a => a.HasBytesContent(sortedBinary.Bytes));
@@ -125,13 +123,13 @@ public class DatFileServiceTest
         Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FileInformation.FilePath);
         // Entries are still sorted, but the key sort oder was adjusted
         Assert.Equal(DatFileType.NotOrdered, unsortedFileHolder.Content.KeySortOrder);
-        Assert.Equal(CreateSortedModel(), unsortedFileHolder.Content.ToList());
+        Assert.Equal(DatTestData.CreateSortedModel(), unsortedFileHolder.Content.ToList());
     }
 
     [Fact]
     public void LoadAs_UnsortedAsSorted_Throws()
     {
-        var unsortedBinary = CreateUnsortedBinary();
+        var unsortedBinary = DatTestData.CreateUnsortedBinary();
 
         _fileSystem.Initialize()
             .WithFile("unsorted.dat").Which(a => a.HasBytesContent(unsortedBinary.Bytes));
@@ -295,81 +293,5 @@ public class DatFileServiceTest
 
         using (var fs = _fileSystem.FileStream.New("newSorted.dat", FileMode.Create))
             _service.CreateDatFile(fs, sorted, DatFileType.OrderedByCrc32);
-    }
-
-
-    private static DatBinaryFile CreateUnsortedBinary()
-    {
-        return new DatBinaryFile(new DatHeader(2),
-            new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
-            {
-                CreateIndexRecord(false),
-                CreateIndexRecord(true),
-            }),
-            new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
-            {
-                new("b"),
-                new("a"),
-            }),
-            new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
-            {
-                CreateKeyRecord(DatTestData.BigCrcValue),
-                CreateKeyRecord(DatTestData.SmallCrcValue),
-            }));
-    }
-
-    private static IReadOnlyList<DatStringEntry> CreateUnsortedModel()
-    {
-        return [
-            CreateEntry(false, "b"),
-            CreateEntry(true, "a"),
-        ];
-    }
-
-    private static IReadOnlyList<DatStringEntry> CreateSortedModel()
-    {
-        return [
-            CreateEntry(true, "a"),
-            CreateEntry(false, "b"),
-        ];
-    }
-
-    private static DatBinaryFile CreateSortedBinary()
-    {
-        return new DatBinaryFile(new DatHeader(2),
-            new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
-            {
-                CreateIndexRecord(true),
-                CreateIndexRecord(false),
-            }),
-            new BinaryTable<ValueTableRecord>(new List<ValueTableRecord>
-            {
-                new("a"),
-                new("b"),
-            }),
-            new BinaryTable<KeyTableRecord>(new List<KeyTableRecord>
-            {
-                CreateKeyRecord(DatTestData.SmallCrcValue),
-                CreateKeyRecord(DatTestData.BigCrcValue),
-            }));
-    }
-
-    private static KeyTableRecord CreateKeyRecord(string key, string? alternateKey = null)
-    {
-        return new KeyTableRecord(key, alternateKey ?? key);
-    }
-
-    private static IndexTableRecord CreateIndexRecord(bool small, uint valueLength = 1)
-    {
-        return small
-            ? new IndexTableRecord(DatTestData.SmallCrc, (uint)DatTestData.SmallCrcValue.Length, valueLength)
-            : new IndexTableRecord(DatTestData.BigCrc, (uint)DatTestData.BigCrcValue.Length, valueLength);
-    }
-
-    private static DatStringEntry CreateEntry(bool small, string value)
-    {
-        return small
-            ? new DatStringEntry(DatTestData.SmallCrcValue, DatTestData.SmallCrc, value)
-            : new DatStringEntry(DatTestData.BigCrcValue, DatTestData.BigCrc, value);
     }
 }

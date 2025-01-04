@@ -83,7 +83,7 @@ public interface IDatBuilder : IFileBuilder<IReadOnlyList<DatStringEntry>, DatFi
     bool IsKeyValid(string key);
 
     /// <summary>
-    /// Create a DAT model from the <see cref="IDatBuilder"/>.
+    /// Creates a DAT model from the <see cref="IDatBuilder"/>.
     /// </summary>
     /// <returns>
     /// A DAT model containing all entries of the <see cref="IDatBuilder"/>.

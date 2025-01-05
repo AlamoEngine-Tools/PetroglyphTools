@@ -1,35 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using PG.Commons.Hashing;
+using Microsoft.Extensions.DependencyInjection;
+using System.IO;
+using System.Linq;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
 public class EmpireAtWarCreditsTextBuilderTest : DatBuilderBaseTest
 {
+    protected override bool IsOrderedBuilder => false;
+
     protected override BuilderOverrideKind OverrideKind => BuilderOverrideKind.AllowDuplicate;
 
     protected override DatBuilderBase CreateBuilder()
     {
         return new EmpireAtWarCreditsTextBuilder(ServiceProvider);
-    }
-
-    protected override DatFileInformation CreateFileInfo(bool valid, string path)
-    {
-        return new DatFileInformation
-        {
-            FilePath = valid ? path : string.Empty
-        };
-    }
-
-    protected override void AddDataToBuilder(IReadOnlyList<DatStringEntry> data, DatBuilderBase builder)
-    {
-        foreach (var entry in data) 
-            builder.AddEntry(entry.Key, entry.Value);
     }
 
     protected override (IReadOnlyList<DatStringEntry> Data, byte[] Bytes) CreateValidData()
@@ -52,7 +44,7 @@ public class EmpireAtWarCreditsTextBuilderTest : DatBuilderBaseTest
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var builder = CreateBuilder();
         Assert.NotNull(builder.BuilderData);
@@ -64,22 +56,30 @@ public class EmpireAtWarCreditsTextBuilderTest : DatBuilderBaseTest
     }
 
     [Fact]
-    public void Test_AddEntry_CorrectCrc()
+    public void IntegrationTest_Unsorted_Credits_CreateFromModelAndBuild()
     {
+        using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
+        {
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
+            stream.CopyTo(fs);
+        }
+
+        var creditsModel = ServiceProvider.GetRequiredService<IDatFileService>().LoadAs("Credits.dat", DatFileType.NotOrdered).Content;
+
         var builder = CreateBuilder();
 
-        var result = builder.AddEntry("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", "someValue");
-        Assert.Equal(new Crc32(72402613), result.AddedEntry!.Value.Crc32);
+        foreach (var entry in creditsModel)
+        {
+            var addedResult = builder.AddEntry(entry.Key, entry.Value);
+            Assert.True(addedResult.Added);
+            Assert.False(addedResult.WasOverwrite);
+            Assert.Equal(entry, addedResult.AddedEntry);
+        }
 
-        result = builder.AddEntry("Tatooine", "someValue");
-        Assert.Equal(new Crc32(-256176565), result.AddedEntry!.Value.Crc32);
+        Assert.Equal(creditsModel.ToList(), builder.BuildModel().ToList());
 
-        result = builder.AddEntry("Corulag", "someValue");
-        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+        builder.Build(CreateFileInfo(true, DefaultFileName), false);
 
-        result = builder.AddEntry("Corulag", "someOtherValue");
-        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
-
-        Assert.Equal(4, builder.BuilderData.Count);
+        Assert.Equal(FileSystem.File.ReadAllBytes("Credits.dat"), FileSystem.File.ReadAllBytes(DefaultFileName));
     }
 }

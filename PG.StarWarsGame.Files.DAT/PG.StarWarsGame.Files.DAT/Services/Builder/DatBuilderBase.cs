@@ -129,10 +129,8 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     }
 
     /// <inheritdoc />
-    public bool IsKeyValid(string key)
+    public bool IsKeyValid(string? key)
     {
-        if (key == null) 
-            throw new ArgumentNullException(nameof(key));
         return KeyValidator.Validate(key);
     }
 

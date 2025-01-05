@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Test.Services.Builder.Validation;
 using PG.StarWarsGame.Files.Test.Services.Builder;
@@ -18,9 +21,25 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
 {
     protected override string DefaultFileName => "textfile.dat";
 
+    protected abstract bool IsOrderedBuilder { get; }
+
     protected abstract BuilderOverrideKind OverrideKind { get; }
 
     protected override bool FileInfoIsAlwaysValid => true;
+
+    protected override DatFileInformation CreateFileInfo(bool valid, string path)
+    {
+        return new DatFileInformation
+        {
+            FilePath = valid ? path : string.Empty
+        };
+    }
+
+    protected override void AddDataToBuilder(IReadOnlyList<DatStringEntry> data, DatBuilderBase builder)
+    {
+        foreach (var entry in data)
+            builder.AddEntry(entry.Key, entry.Value);
+    }
 
     protected override void BuildServices(IServiceCollection sc)
     {
@@ -34,8 +53,6 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
     public void IsKeyValid()
     {
         var builder = CreateBuilder();
-
-        Assert.Throws<ArgumentNullException>(() => builder.IsKeyValid(null!));
         Assert.True(builder.IsKeyValid(TestUtility.GetRandomStringOfLength(12)));
         Assert.False(builder.IsKeyValid((string)TestUtility.GetRandom(EmpireAtWarKeyValidatorTest.InvalidTestData())[0]));
     }
@@ -228,6 +245,21 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
     #endregion
 
     [Fact]
+    public void Test_AddEntry_CorrectCrc()
+    {
+        var builder = CreateBuilder();
+
+        var result = builder.AddEntry("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", "someValue");
+        Assert.Equal(new Crc32(72402613), result.AddedEntry!.Value.Crc32);
+
+        result = builder.AddEntry("Tatooine", "someValue");
+        Assert.Equal(new Crc32(-256176565), result.AddedEntry!.Value.Crc32);
+
+        result = builder.AddEntry("Corulag", "someValue");
+        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+    }
+
+    [Fact]
     public void BuildModel()
     {
         var builder = CreateBuilder();
@@ -240,5 +272,43 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
         Assert.Equal(builder.TargetKeySortOrder, model.KeySortOrder);
         Assert.Equal(3, model.Count);
         Assert.Equal(["key1", "key2", "key3"], model.Keys);
+    }
+
+    [Fact]
+    public void IntegrationTest_Sorted_MasterText_CreateFromModelAndBuild()
+    {
+        using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
+        {
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
+            stream.CopyTo(fs);
+        }
+
+        var masterTextModel = ServiceProvider.GetRequiredService<IDatFileService>().LoadAs("MasterTextFile.dat",
+            IsOrderedBuilder ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered).Content;
+
+        var builder = CreateBuilder();
+
+        foreach (var entry in masterTextModel) 
+            builder.AddEntry(entry.Key, entry.Value);
+
+        // For some reason the original FoC MasterTextFile has a duplicate key 'TEXT_END_OF_DATA'
+        if (OverrideKind == BuilderOverrideKind.AllowDuplicate) 
+            Assert.Equal(masterTextModel.ToList(), builder.BuildModel().ToList());
+        else
+        {
+            var dupFreeModel = ServiceProvider.GetRequiredService<IDatModelService>().RemoveDuplicates(masterTextModel);
+            Assert.Equal(dupFreeModel.ToList(), builder.BuildModel().ToList());
+        }
+
+        builder.Build(CreateFileInfo(true, DefaultFileName), false);
+
+        if (OverrideKind == BuilderOverrideKind.AllowDuplicate)
+            Assert.Equal(FileSystem.File.ReadAllBytes("MasterTextFile.dat"), FileSystem.File.ReadAllBytes(DefaultFileName));
+        else
+        {
+            var actualBytes = FileSystem.File.ReadAllBytes(DefaultFileName);
+            Assert.NotEmpty(actualBytes);
+            Assert.NotEqual(FileSystem.File.ReadAllBytes("MasterTextFile.dat"), actualBytes);
+        }
     }
 }

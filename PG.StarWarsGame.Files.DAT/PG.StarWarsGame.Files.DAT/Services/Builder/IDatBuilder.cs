@@ -80,7 +80,7 @@ public interface IDatBuilder : IFileBuilder<IReadOnlyList<DatStringEntry>, DatFi
     /// </summary>
     /// <param name="key">The key to validate</param>
     /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    bool IsKeyValid(string key);
+    bool IsKeyValid(string? key);
 
     /// <summary>
     /// Creates a DAT model from the <see cref="IDatBuilder"/>.

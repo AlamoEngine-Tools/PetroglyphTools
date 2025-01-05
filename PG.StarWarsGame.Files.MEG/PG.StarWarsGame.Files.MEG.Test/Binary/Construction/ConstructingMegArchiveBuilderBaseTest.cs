@@ -4,11 +4,14 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-using Moq;
+using AnakinRaW.CommonUtilities.Hashing;
+using Microsoft.Extensions.DependencyInjection;
+using PG.Commons;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
@@ -21,10 +24,10 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Construction;
 
 public abstract class ConstructingMegArchiveBuilderBaseTest
 {
-    private readonly Mock<IServiceProvider> _serviceProviderMock = null!;
-    protected MockFileSystem FileSystem = new();
-
-    private protected abstract ConstructingMegArchiveBuilderBase CreateService(IServiceProvider serviceProvider);
+    protected readonly IServiceProvider ServiceProvider;
+    protected readonly MockFileSystem FileSystem = new();
+    
+    private protected abstract ConstructingMegArchiveBuilderBase CreateService();
 
     protected abstract int GetExpectedHeaderSize();
 
@@ -32,29 +35,35 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
 
     protected ConstructingMegArchiveBuilderBaseTest()
     {
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(FileSystem);
-        sp.Setup(s => s.GetService(typeof(ICrc32HashingService))).Returns(new ParseIntCrc32HashingService());
-        _serviceProviderMock = sp;
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(FileSystem);
+        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMEG();
+
+        sc.AddSingleton<ICrc32HashingService>(_ => new ParseIntCrc32HashingService());
+
+        ServiceProvider = sc.BuildServiceProvider();
     }
 
     [Fact]
-    public void Test_Ctor_Throws()
+    public void MaxEntryFileSize_Is4GB()
     {
-        Assert.Throws<ArgumentNullException>(() => CreateService(null!));
+        var builder = CreateService();
+        Assert.Equal(uint.MaxValue, builder.MaxEntryFileSize);
     }
-    
+
     [Fact]
     public void Test_BuildConstructingMegArchive_ThrowsArgs()
     {
-        var service = CreateService(_serviceProviderMock.Object);
+        var service = CreateService();
         Assert.Throws<ArgumentNullException>(() => service.BuildConstructingMegArchive(null!));
     }
 
     [Fact]
     public void Test_BuildConstructingMegArchive_FileNotFound_Throws()
     {
-        var service = CreateService(_serviceProviderMock.Object);
+        var service = CreateService();
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
@@ -63,24 +72,13 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     }
 
     [Fact]
-    public void Test_BuildConstructingMegArchive_FileLargerThan4GB_Throws()
+    public void Test_BuildConstructingMegArchive_FileTooLarge_Throws()
     {
-        var mockPath = new Mock<IPath>();
-        mockPath.Setup(p => p.GetFullPath("A")).Returns("A");
-        
-        var mockLargeFileInfo = new Mock<IFileInfo>();
-        mockLargeFileInfo.SetupGet(fi => fi.Length).Returns((long)uint.MaxValue + 1);
-        
-        var mockFsInfoFactory = new Mock<IFileInfoFactory>();
-        mockFsInfoFactory.Setup(f => f.New("A")).Returns(mockLargeFileInfo.Object);
+        const uint maxFileSize = 6u;
 
-        var mockFs = new Mock<IFileSystem>();
-        mockFs.SetupGet(fs => fs.FileInfo).Returns(mockFsInfoFactory.Object);
-        mockFs.SetupGet(fs => fs.Path).Returns(mockPath.Object);
+        FileSystem.File.WriteAllBytes("A", [1, 2, 3, 4, 5, 6, 7]);
 
-        _serviceProviderMock.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(mockFs.Object);
-        
-        var service = CreateService(_serviceProviderMock.Object);
+        var service = new SmallMaxFileSizeConstructingService(maxFileSize, ServiceProvider);
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
@@ -91,15 +89,16 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     [Fact]
     public void Test_BuildConstructingMegArchive_BinarySizeOverflows_Throws()
     {
-        var service = new BinarySizeOverflowingConstructingService(_serviceProviderMock.Object);
+        var service = new BinarySizeOverflowingConstructingService(ServiceProvider);
 
-        var meg = new Mock<IMegFile>();
+        FileSystem.File.Create("file.meg");
+        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
 
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo(
                     new MegDataEntryLocationReference(
-                        meg.Object,
+                        megFile,
                         MegDataEntryTest.CreateEntry("A", default, 0, 5)
                     )),
                 "0")
@@ -111,17 +110,18 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     [Fact]
     public void Test_BuildConstructingMegArchive_NonASCIITreatment()
     {
-        var expectedCrc = new Crc32(63+63+63); // 63 == '?'
-        
-        var service = CreateService(_serviceProviderMock.Object);
+        var expectedCrc = new Crc32(63 + 63 + 63); // 63 == '?'
 
-        var meg = new Mock<IMegFile>();
+        var service = CreateService();
+
+        FileSystem.File.Create("file.meg");
+        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
 
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo(
                     new MegDataEntryLocationReference(
-                        meg.Object,
+                        megFile,
                         MegDataEntryTest.CreateEntry("A", default, 0, 5)
                     )),
                 "ÄÖÜ")
@@ -130,11 +130,11 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         var archive = service.BuildConstructingMegArchive(builderEntries);
 
         // Check that filename gets encoded
-        Assert.Equal("???",archive[0].FilePath);
-        Assert.Equal("ÄÖÜ",archive[0].DataEntry.OriginalFilePath);
+        Assert.Equal("???", archive[0].FilePath);
+        Assert.Equal("ÄÖÜ", archive[0].DataEntry.OriginalFilePath);
         Assert.Equal("???", archive.Archive[0].FilePath);
         Assert.Equal("ÄÖÜ", archive.Archive[0].OriginalFilePath);
-        
+
         // Ensures that ASCII encoding was used for creating the CRC
         Assert.Equal(expectedCrc, archive.Archive[0].Crc32);
         Assert.Equal(expectedCrc, archive[0].Crc32);
@@ -145,7 +145,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     {
         var testData = "test data";
         FileSystem.Initialize().WithFile("A").Which(m => m.HasStringContent(testData));
-        var service = CreateService(_serviceProviderMock.Object);
+        var service = CreateService();
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
@@ -176,7 +176,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             }
         }
         
-        var service = CreateService(_serviceProviderMock.Object);
+        var service = CreateService();
 
         var archive = service.BuildConstructingMegArchive(testDataInput.BuilderEntries);
         
@@ -392,6 +392,23 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         
         // Offset with (FileNameTable, FileTable) size but without header size.
         public uint RelativeOffset { get; } = relativeOffset;
+    }
+
+    private class SmallMaxFileSizeConstructingService(uint maxEntrySize, IServiceProvider services) : ConstructingMegArchiveBuilderBase(services)
+    {
+        internal override uint MaxEntryFileSize => maxEntrySize;
+
+        protected override MegFileVersion FileVersion => MegFileVersion.V1;
+
+        protected override int GetFileDescriptorSize(bool entryGetsEncrypted)
+        {
+            return MEG.Binary.Metadata.V1.MegFileTableRecord.SizeValue;
+        }
+
+        protected override int GetHeaderSize()
+        {
+            return MEG.Binary.Metadata.V1.MegHeader.SizeValue;
+        }
     }
 
     private class BinarySizeOverflowingConstructingService(IServiceProvider services) : ConstructingMegArchiveBuilderBase(services)

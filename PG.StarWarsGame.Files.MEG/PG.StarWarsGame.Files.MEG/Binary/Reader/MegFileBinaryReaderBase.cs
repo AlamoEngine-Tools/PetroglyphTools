@@ -29,7 +29,7 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
         using var binaryReader = new BinaryReader(byteStream, MegFileConstants.MegDataEntryPathEncoding, true);
 
         var header = BuildMegHeader(binaryReader) ?? throw new InvalidOperationException("MEG header must not be null.");
-        var fileNameTable = BuildFileNameTable(binaryReader, header) ?? throw new InvalidOperationException("MEG file name table must not be null.");
+        var fileNameTable = BuildFileNameTable(binaryReader, header.FileNumber) ?? throw new InvalidOperationException("MEG file name table must not be null.");
         var fileTable = BuildFileTable(binaryReader, header) ?? throw new InvalidOperationException("MEG file table must not be null."); ;
 
         return CreateMegMetadata(header, fileNameTable, fileTable);
@@ -41,7 +41,7 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
 
     protected internal abstract TMegFileTable BuildFileTable(BinaryReader binaryReader, TMegHeader header);
 
-    protected internal virtual BinaryTable<MegFileNameTableRecord> BuildFileNameTable(BinaryReader binaryReader, TMegHeader header)
+    public virtual BinaryTable<MegFileNameTableRecord> BuildFileNameTable(BinaryReader binaryReader, int fileNumber)
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
         
@@ -50,7 +50,7 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
         // NB: We use Latin1 encoding here, so that we can stay compatible with Mike.NL's tools. 
         var extendedEncoding = MegFileConstants.ExtendedMegEntryPathEncoding;
 
-        for (uint i = 0; i < header.FileNumber; i++)
+        for (uint i = 0; i < fileNumber; i++)
         {
             var fileNameLength = binaryReader.ReadUInt16();
 

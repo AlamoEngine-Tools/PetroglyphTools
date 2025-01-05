@@ -14,14 +14,14 @@ public class NormalizingMegBuilderTest : MegBuilderTestSuite
     protected override bool? ExpectedOverwritesDuplicates => true;
     protected override bool? ExpectedAutomaticallyAddFileSizes => false;
 
-    protected override MegBuilderBase CreateBuilder(IServiceProvider serviceProvider)
+    protected override MegBuilderBase CreateBuilder()
     {
-        return new NormalizingMegBuilder(serviceProvider);
+        return new NormalizingMegBuilder(ServiceProvider);
     }
 
-    protected override void SetupServiceCollection(IServiceCollection serviceCollection)
+    protected override void SetupServices(ServiceCollection serviceCollection)
     {
-        base.SetupServiceCollection(serviceCollection);
+        base.SetupServices(serviceCollection);
         serviceCollection.AddSingleton(sp => new DefaultDataEntryPathNormalizer(sp));
     }
 }

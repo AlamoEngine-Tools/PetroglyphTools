@@ -1,7 +1,7 @@
-using Moq;
 using System.IO;
-using System;
 using System.IO.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using Testably.Abstractions.Testing;
@@ -16,11 +16,11 @@ public class MegFileSizeValidatorV1IntegrationTest
 
     public MegFileSizeValidatorV1IntegrationTest()
     {
-        var fs = new MockFileSystem();
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
-
-        _binaryReader = new MegFileBinaryReaderV1(sp.Object);
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(new MockFileSystem());
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMEG();
+        _binaryReader = new MegFileBinaryReaderV1(sc.BuildServiceProvider());
     }
 
     [Fact]

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using Xunit;
 

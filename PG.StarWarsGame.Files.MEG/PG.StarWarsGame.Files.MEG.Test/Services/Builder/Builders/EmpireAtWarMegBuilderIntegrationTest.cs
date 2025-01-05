@@ -1,52 +1,80 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
-using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Test.Files;
+using PG.StarWarsGame.Files.Test.Services.Builder;
 using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace PG.StarWarsGame.Files.MEG.Test.IntegrationTests;
+namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-
-public class EmpireAtWarMegBuilderIntegrationTest
+public class EmpireAtWarMegBuilderIntegrationTest : FileBuilderTestBase<EmpireAtWarMegBuilder, IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>
 {
-    private readonly MockFileSystem _fileSystem = new();
     private readonly EmpireAtWarMegBuilder _eawMegBuilder;
-    private readonly IServiceProvider _serviceProvider;
+
+    protected override string DefaultFileName => "test.meg";
+
+    protected override void SetupServices(ServiceCollection serviceCollection)
+    {
+        base.SetupServices(serviceCollection);
+        serviceCollection.SupportMEG();
+    }
+
+    protected override EmpireAtWarMegBuilder CreateBuilder()
+    {
+        return new EmpireAtWarMegBuilder("game/corruption/", ServiceProvider);
+    }
+
+    protected override MegFileInformation CreateFileInfo(bool valid, string path)
+    {
+        return new MegFileInformation(path, valid ? MegFileVersion.V1 : MegFileVersion.V2);
+    }
+
+    protected override void AddDataToBuilder(IReadOnlyCollection<MegFileDataEntryBuilderInfo> data, EmpireAtWarMegBuilder builder)
+    {
+        foreach (var info in data)
+        {
+            var entryPath = builder.ResolveEntryPath(FileSystem.Path.GetFullPath(info.FilePath));
+            //using var fs = FileSystem.File.Create(info.FilePath);
+            builder.AddFile(info.FilePath, entryPath);
+        }
+    }
+
+    protected override (IReadOnlyCollection<MegFileDataEntryBuilderInfo> Data, byte[] Bytes) CreateValidData()
+    {
+        FileSystem.Directory.CreateDirectory("game/corruption/DATA/XML");
+
+        FileSystem.File.WriteAllText("game/corruption/DATA/XML/GAMEOBJECTFILES.XML", MegTestConstants.GameObjectFilesContent);
+        FileSystem.File.WriteAllText("game/corruption/DATA/XML/CAMPAIGNFILES.XML", MegTestConstants.CampaignFilesContent);
+
+        var testMeg = new List<MegFileDataEntryBuilderInfo>
+        {
+            new(new MegDataEntryOriginInfo("game/corruption/DATA/XML/GAMEOBJECTFILES.XML")),
+            new(new MegDataEntryOriginInfo("game/corruption/DATA/XML/CAMPAIGNFILES.XML"))
+        };
+
+        return (testMeg, MegTestConstants.ContentMegFileV1);
+    }
 
     public EmpireAtWarMegBuilderIntegrationTest()
     {
         var gamePath = "/game/corruption/data";
-        _fileSystem.Initialize().WithSubdirectory(gamePath);
-
-        _serviceProvider = CreateServiceProvider();
-
-        _eawMegBuilder = new EmpireAtWarMegBuilder(gamePath, _serviceProvider);
-    }
-
-    private IServiceProvider CreateServiceProvider()
-    {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(_fileSystem);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PetroglyphCommons.ContributeServices(sc);
-        sc.SupportMEG();
-        return sc.BuildServiceProvider();
+        //FileSystem.Initialize().WithSubdirectory(gamePath);
+        
+        _eawMegBuilder = new EmpireAtWarMegBuilder(gamePath, ServiceProvider);
     }
 
     [Fact]
     public void Test_BuildMeg()
     {
-        _fileSystem.Initialize().WithFile("entry.txt").Which(m => m.HasStringContent("test"));
+        FileSystem.Initialize().WithFile("entry.txt").Which(m => m.HasStringContent("test"));
 
         var entry1 = _eawMegBuilder.ResolveEntryPath("entry1.txt");
         var entry2 = _eawMegBuilder.ResolveEntryPath("/game/corruption/data/xml/entry2.txt");
@@ -83,9 +111,9 @@ public class EmpireAtWarMegBuilderIntegrationTest
 
         _eawMegBuilder.Build(new MegFileInformation("new.meg", MegFileVersion.V1), false);
 
-        Assert.True(_fileSystem.File.Exists("new.meg"));
+        Assert.True(FileSystem.File.Exists("new.meg"));
 
-        var megFileService = _serviceProvider.GetRequiredService<IMegFileService>();
+        var megFileService = ServiceProvider.GetRequiredService<IMegFileService>();
         var meg = megFileService.Load("new.meg");
 
         Assert.Equal(4, meg.Archive.Count);
@@ -100,7 +128,7 @@ public class EmpireAtWarMegBuilderIntegrationTest
         Assert.NotNull(packedEntry3);
         Assert.NotNull(packedEntry4);
 
-        var extractor = _serviceProvider.GetRequiredService<IMegFileExtractor>();
+        var extractor = ServiceProvider.GetRequiredService<IMegFileExtractor>();
         var entry1Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry1));
         var entry2Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry2));
         var entry3Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry3));

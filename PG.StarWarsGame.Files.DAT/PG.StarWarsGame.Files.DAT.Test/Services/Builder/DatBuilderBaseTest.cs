@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -41,12 +39,10 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
             builder.AddEntry(entry.Key, entry.Value);
     }
 
-    protected override void BuildServices(IServiceCollection sc)
+    protected override void SetupServices(ServiceCollection serviceCollection)
     {
-        base.BuildServices(sc);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PetroglyphCommons.ContributeServices(sc);
-        sc.SupportDAT();
+        base.SetupServices(serviceCollection);
+        serviceCollection.SupportDAT();
     }
 
     [Fact]

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -26,10 +25,7 @@ public abstract partial class DatModelServiceTest
         Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOrder);
         Assert.Equal(expectedList, sorted.ToList());
 
-
-        var modelMock = new Mock<IDatModel>();
-        modelMock.Setup(m => m.GetEnumerator()).Returns(entries.GetEnumerator());
-        var sortedMock = Service.SortModel(modelMock.Object);
+        var sortedMock = Service.SortModel(new UnsortedDatModel(entries));
         Assert.Equal(DatFileType.OrderedByCrc32, sortedMock.KeySortOrder);
         Assert.Equal(expectedList, sortedMock.ToList());
     }

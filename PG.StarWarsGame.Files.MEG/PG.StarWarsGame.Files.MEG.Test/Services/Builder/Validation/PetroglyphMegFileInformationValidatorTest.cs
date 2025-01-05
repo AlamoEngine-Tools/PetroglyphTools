@@ -12,7 +12,6 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-
 public class PetroglyphMegFileInformationValidatorTest
 {
     private readonly TestPetroglyphMegFileInformationValidator _validator;

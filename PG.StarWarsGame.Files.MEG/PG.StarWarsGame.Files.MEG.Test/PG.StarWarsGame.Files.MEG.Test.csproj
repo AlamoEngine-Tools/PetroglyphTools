@@ -16,6 +16,7 @@
 		<None Remove="Services\Builder\MegBuilderBaseTest.cs~RF11bba75.TMP" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="Moq" Version="4.20.72" />
 		<PackageReference Include="coverlet.msbuild" Version="6.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -36,6 +37,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
+		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.Test\PG.StarWarsGame.Files.Test.csproj" />
 		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.MEG\PG.StarWarsGame.Files.MEG.csproj" />
 	</ItemGroup>

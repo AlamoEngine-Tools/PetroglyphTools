@@ -1,42 +1,41 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
-using AnakinRaW.CommonUtilities;
-using Microsoft.Extensions.DependencyInjection;
 using PG.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.Test;
 
-public class PetroglyphFileHolderTest
+public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : CommonTestBase
+    where TModel : notnull
+    where TFileInfo : PetroglyphFileInformation
+    where THolder : PetroglyphFileHolder<TModel, TFileInfo>
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly MockFileSystem _fileSystem = new();
+    protected virtual string DefaultFileName => "test.txt";
 
-    public PetroglyphFileHolderTest()
-    {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(_fileSystem);
-        _serviceProvider = sc.BuildServiceProvider();
-    }
+    protected abstract TModel CreateModel();
+
+    protected abstract TFileInfo CreateFileInfo(string path, bool inMeg = false);
+
+    protected abstract THolder CreateFileHolder(TModel model, TFileInfo fileInfo);
+
 
     [Fact]
     public void Ctor_SetupProperties()
     {
-        var model = new object();
+        var model = CreateModel();
 
-        _fileSystem.Initialize().WithFile("test");
+        FileSystem.Initialize().WithFile(DefaultFileName);
+        var param = CreateFileInfo(DefaultFileName);
 
-        var param = new TestParam { FilePath = "test" };
-        var holder = new TestFileHolder(model, param, _serviceProvider);
+        var holder = CreateFileHolder(model, param);
 
         Assert.Same(model, holder.Content);
         Assert.NotSame(holder.FileInformation, param);
 
-        Assert.Equal(_fileSystem.Path.GetFullPath("test"), holder.FilePath);
-        Assert.Equal(_fileSystem.Path.GetDirectoryName(_fileSystem.Path.GetFullPath("test")), holder.Directory);
-        Assert.Same(_serviceProvider, holder.Services);
+        Assert.Equal(FileSystem.Path.GetFullPath(DefaultFileName), holder.FilePath);
+        Assert.Equal(FileSystem.Path.GetDirectoryName(FileSystem.Path.GetFullPath(DefaultFileName)), holder.Directory);
+        Assert.Same(ServiceProvider, holder.Services);
         Assert.NotNull(holder.Logger);
     }
 
@@ -47,15 +46,18 @@ public class PetroglyphFileHolderTest
     [InlineData("path/test", false)]
     public void Ctor_SetupProperties_MegSupport(string path, bool inMeg)
     {
-        var model = new object();
+        if (!typeof(TFileInfo).IsAssignableFrom(typeof(PetroglyphMegPackableFileInformation)))
+            return;
+
+        var model = CreateModel();
 
         if (!inMeg)
-            _fileSystem.Initialize().WithFile(path);
+            FileSystem.Initialize().WithFile(path);
 
-        var param = new MegTestParam { FilePath = path, IsInsideMeg = inMeg };
-        Assert.Equal(inMeg, param.IsInsideMeg);
+        var param = CreateFileInfo(path, inMeg);
+        Assert.Equal(inMeg, (param as PetroglyphMegPackableFileInformation)!.IsInsideMeg);
 
-        var holder = new TestFileHolder(model, param, _serviceProvider);
+        var holder = CreateFileHolder(model, param);
 
         Assert.Same(model, holder.Content);
         Assert.Same(model, ((IPetroglyphFileHolder)holder).Content);
@@ -65,20 +67,20 @@ public class PetroglyphFileHolderTest
         if (inMeg)
         {
             Assert.Equal(param.FilePath, holder.FilePath);
-            Assert.Equal(_fileSystem.Path.GetDirectoryName(path), holder.Directory);
+            Assert.Equal(FileSystem.Path.GetDirectoryName(path), holder.Directory);
             Assert.NotNull(holder.Directory);
 
             Assert.Equal(holder.FileInformation, param);
         }
         else
         {
-            Assert.Equal(_fileSystem.Path.GetFullPath(path), holder.FilePath);
-            Assert.Equal(_fileSystem.Path.GetDirectoryName(_fileSystem.Path.GetFullPath(path)), holder.Directory);
+            Assert.Equal(FileSystem.Path.GetFullPath(path), holder.FilePath);
+            Assert.Equal(FileSystem.Path.GetDirectoryName(FileSystem.Path.GetFullPath(path)), holder.Directory);
 
             Assert.NotEqual(holder.FileInformation, param);
         }
 
-        Assert.Same(_serviceProvider, holder.Services);
+        Assert.Same(ServiceProvider, holder.Services);
     }
 
     [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
@@ -87,11 +89,9 @@ public class PetroglyphFileHolderTest
     //[InlineData("   ", "   ", "/", "/   ")]  // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void Test_PassingFileNames_Whitespace_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFullPath)
     {
-        var model = new object();
-
-        _fileSystem.Initialize().WithFile(filePath);
-
-        var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, _serviceProvider);
+        var model = CreateModel();
+        FileSystem.Initialize().WithFile(filePath);
+        var holder = CreateFileHolder(model, CreateFileInfo(filePath));
 
         if (expectedFileName is not null)
         {
@@ -113,15 +113,9 @@ public class PetroglyphFileHolderTest
     //[InlineData("\u00A0", "\u00A0", "C:\\\u00A0", "C:\\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void Test_PassingFileNames_Windows(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
     {
-       var model = new object();
-       
-
-        _fileSystem.Initialize().WithFile(filePath);
-
-        var fi = _fileSystem.FileInfo.New(filePath);
-        var e = fi.Exists;
-
-        var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, _serviceProvider);
+        var model = CreateModel();
+        FileSystem.Initialize().WithFile(filePath);
+        var holder = CreateFileHolder(model, CreateFileInfo(filePath));
 
         if (expectedFileName is not null)
         {
@@ -141,11 +135,9 @@ public class PetroglyphFileHolderTest
     // [InlineData("\u00A0", "\u00A0", "/\u00A0", "/\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void Test_PassingFileNames_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
     {
-        var model = new object();
-       
-        _fileSystem.Initialize().WithFile(filePath);
-
-        var holder = new TestFileHolder(model, new TestParam { FilePath = filePath }, _serviceProvider);
+        var model = CreateModel();
+        FileSystem.Initialize().WithFile(filePath);
+        var holder = CreateFileHolder(model, CreateFileInfo(filePath));
 
         if (expectedFileName is not null)
         {
@@ -155,103 +147,66 @@ public class PetroglyphFileHolderTest
         }
     }
 
-    [Fact]
-    public void Test_Ctor_ThrowsArgumentNullException()
-    {
-        var model = new object();
-        Assert.Throws<ArgumentNullException>(() => new TestFileHolder(model, new TestParam { FilePath = "test" }, null!));
-        Assert.Throws<ArgumentNullException>(() => new TestFileHolder(model, null!, _serviceProvider));
-        Assert.Throws<ArgumentNullException>(() => new TestFileHolder(null!, new TestParam { FilePath = "test" }, _serviceProvider));
-    }
-
     [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
     [InlineData("   ", typeof(ArgumentException))]
     public void Test_Ctor_InvalidPath_Whitespace_Windows_Throws(string path, Type type)
     {
-        var model = new object();
-        Assert.Throws(type, () => new TestFileHolder(model, new TestParam { FilePath = path }, _serviceProvider));
+        var model = CreateModel();
+        var fileInfo = CreateFileInfo(path);
+        Assert.Throws(type, () => CreateFileHolder(model, fileInfo));
     }
 
     [Theory]
     [InlineData("dir/")]
-    [InlineData("")]
     [InlineData("..")]
     [InlineData(".")]
     public void Test_Ctor_InvalidPaths_Throws(string path)
     {
-        var model = new object();
-        Assert.Throws<ArgumentException>(() => new TestFileHolder(model, new TestParam { FilePath = path }, _serviceProvider));
+        var model = CreateModel();
+        var fileInfo = CreateFileInfo(path);
+        Assert.Throws<ArgumentException>(() => CreateFileHolder(model, fileInfo));
     }
 
     [Fact]
     public void Test_Ctor_FileNotFound_Throws()
     {
-        var model = new object();
+        var model = CreateModel();
 
-        Assert.Throws<FileNotFoundException>(() =>
-            new TestFileHolder(model, new TestParam { FilePath = "notfound.txt" }, _serviceProvider));
+        Assert.Throws<FileNotFoundException>(() => CreateFileHolder(model, CreateFileInfo("notFound")));
 
-        Assert.Throws<FileNotFoundException>(() =>
-            new TestFileHolder(model, new MegTestParam { FilePath = "notfound.txt", IsInsideMeg = false }, _serviceProvider));
+        if (!typeof(TFileInfo).IsAssignableFrom(typeof(PetroglyphMegPackableFileInformation)))
+            return;
 
-        ExceptionUtilities.AssertDoesNotThrowException(() =>
-            new TestFileHolder(model, new MegTestParam { FilePath = "notfound.txt", IsInsideMeg = true }, _serviceProvider));
+        ExceptionUtilities.AssertDoesNotThrowException(() => CreateFileHolder(model, CreateFileInfo("notFound", true)));
     }
 
     [Fact]
     public void Test_Dispose()
     {
-        var model = new DisposableModel();
+        var model = CreateModel();
 
-        _fileSystem.Initialize().WithFile("test");
+        FileSystem.Initialize().WithFile(DefaultFileName);
 
-        var disposableParam = new DisposableTestParam { FilePath = "test" };
-        var holder = new TestFileHolder(model, disposableParam, _serviceProvider);
+        var disposableParam = CreateFileInfo(DefaultFileName);
+        var holder = CreateFileHolder(model, disposableParam);
 
         holder.Dispose();
-        Assert.False(disposableParam.IsDisposed);
         Assert.Throws<ObjectDisposedException>(() => holder.FileInformation);
-
-        Assert.True(model.IsDisposed);
     }
 
     [Fact]
-    public void Test_FileInformation()
+    public void FileInformation_ReturnsCopy()
     {
-        var model = new DisposableModel();
+        var model = CreateModel();
 
-        _fileSystem.Initialize().WithFile("test");
-
-        var disposableParam = new DisposableTestParam { FilePath = "test" };
-        var holder = new TestFileHolder(model, disposableParam, _serviceProvider);
-
-        disposableParam.Dispose();
-
-        Assert.False(((DisposableTestParam)holder.FileInformation).IsDisposed);
-
+        FileSystem.Initialize().WithFile(DefaultFileName);
+        var disposableParam = CreateFileInfo(DefaultFileName);
+        var holder = CreateFileHolder(model, disposableParam);
+        
         var a = holder.FileInformation;
         var b = holder.FileInformation;
         Assert.NotSame(a, b);
+        Assert.Equal(a, b);
     }
 
-    private record TestParam : PetroglyphFileInformation;
-
-    private record MegTestParam : PetroglyphMegPackableFileInformation;
-
-    private record DisposableTestParam : PetroglyphMegPackableFileInformation
-    {
-        public bool IsDisposed { get; private set; }
-
-        protected override void Dispose(bool disposing)
-        {
-            IsDisposed = true;
-            base.Dispose(disposing);
-        }
-    }
-
-    private class DisposableModel : DisposableObject;
-
-
-    private class TestFileHolder(object model, PetroglyphFileInformation fileInformation, IServiceProvider serviceProvider)
-        : PetroglyphFileHolder<object, PetroglyphFileInformation>(model, fileInformation, serviceProvider);
 }

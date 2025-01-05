@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -28,36 +26,30 @@ public abstract partial class DatModelServiceTest
     [Fact]
     public void Test_MergeSorted_Throws()
     {
-        var sortedModel = new Mock<IDatModel>();
-        sortedModel.SetupGet(m => m.KeySortOrder).Returns(DatFileType.OrderedByCrc32);
+        var sortedModel = new SortedDatModel([]);
+        var unsortedModel = new UnsortedDatModel([]);
 
-        var unsortedModel = new Mock<IDatModel>();
-        unsortedModel.SetupGet(m => m.KeySortOrder).Returns(DatFileType.NotOrdered);
-
-        Assert.Throws<ArgumentNullException>(() => Service.MergeSorted(null!, sortedModel.Object, out _));
-        Assert.Throws<ArgumentNullException>(() => Service.MergeSorted(sortedModel.Object, null!, out _));
+        Assert.Throws<ArgumentNullException>(() => Service.MergeSorted(null!, sortedModel, out _));
+        Assert.Throws<ArgumentNullException>(() => Service.MergeSorted(sortedModel, null!, out _));
 
 
-        Assert.Throws<ArgumentException>(() => Service.MergeSorted(unsortedModel.Object, sortedModel.Object, out _));
-        Assert.Throws<ArgumentException>(() => Service.MergeSorted(sortedModel.Object, unsortedModel.Object, out _));
-        Assert.Throws<ArgumentException>(() => Service.MergeSorted(unsortedModel.Object, unsortedModel.Object, out _));
+        Assert.Throws<ArgumentException>(() => Service.MergeSorted(unsortedModel, sortedModel, out _));
+        Assert.Throws<ArgumentException>(() => Service.MergeSorted(sortedModel, unsortedModel, out _));
+        Assert.Throws<ArgumentException>(() => Service.MergeSorted(unsortedModel, unsortedModel, out _));
     }
 
     [Fact]
     public void Test_MergeUnsorted_Throws()
     {
-        var sortedModel = new Mock<IDatModel>();
-        sortedModel.SetupGet(m => m.KeySortOrder).Returns(DatFileType.OrderedByCrc32);
+        var sortedModel = new SortedDatModel([]);
+        var unsortedModel = new UnsortedDatModel([]);
 
-        var unsortedModel = new Mock<IDatModel>();
-        unsortedModel.SetupGet(m => m.KeySortOrder).Returns(DatFileType.NotOrdered);
-
-        Assert.Throws<ArgumentNullException>(() => Service.MergeUnsorted(null!, unsortedModel.Object, out _));
-        Assert.Throws<ArgumentNullException>(() => Service.MergeUnsorted(unsortedModel.Object, null!, out _));
+        Assert.Throws<ArgumentNullException>(() => Service.MergeUnsorted(null!, unsortedModel, out _));
+        Assert.Throws<ArgumentNullException>(() => Service.MergeUnsorted(unsortedModel, null!, out _));
 
 
-        Assert.Throws<ArgumentException>(() => Service.MergeUnsorted(unsortedModel.Object, sortedModel.Object, out _));
-        Assert.Throws<ArgumentException>(() => Service.MergeUnsorted(sortedModel.Object, unsortedModel.Object, out _));
-        Assert.Throws<ArgumentException>(() => Service.MergeUnsorted(sortedModel.Object, sortedModel.Object, out _));
+        Assert.Throws<ArgumentException>(() => Service.MergeUnsorted(unsortedModel, sortedModel, out _));
+        Assert.Throws<ArgumentException>(() => Service.MergeUnsorted(sortedModel, unsortedModel, out _));
+        Assert.Throws<ArgumentException>(() => Service.MergeUnsorted(sortedModel, sortedModel, out _));
     }
 }

@@ -7,7 +7,6 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-
 public class NotNullDataEntryValidatorTest
 {
     private readonly NotNullDataEntryValidator _validator = NotNullDataEntryValidator.Instance;

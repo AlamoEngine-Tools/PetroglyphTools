@@ -5,5 +5,5 @@ namespace PG.StarWarsGame.Files.MEG.Binary.Validation;
 
 internal interface IMegFileSizeValidator
 {
-    bool Validate(IMegBinaryValidationInformation info);
+    bool Validate(MegBinaryValidationInformation info);
 }

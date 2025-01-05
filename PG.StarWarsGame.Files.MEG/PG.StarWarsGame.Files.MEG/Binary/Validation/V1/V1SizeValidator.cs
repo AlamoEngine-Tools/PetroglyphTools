@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Validation.V1;
 
-internal class V1SizeValidator
+internal static class V1SizeValidator
 {
-    public bool Validate(IMegBinaryValidationInformation info)
+    public static bool Validate(MegBinaryValidationInformation info)
     {
         if (info.BytesRead != info.Metadata.Size)
             return false;

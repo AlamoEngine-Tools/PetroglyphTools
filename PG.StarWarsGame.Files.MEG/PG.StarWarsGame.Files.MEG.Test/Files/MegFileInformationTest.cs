@@ -1,10 +1,8 @@
 ﻿using System;
-
 using PG.StarWarsGame.Files.MEG.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Files;
-
 
 public class MegFileInformationTest
 {

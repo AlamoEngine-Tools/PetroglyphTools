@@ -12,8 +12,8 @@ public class PrimitiveMegBuilderTest : MegBuilderTestSuite
     protected override bool? ExpectedOverwritesDuplicates => true;
     protected override bool? ExpectedAutomaticallyAddFileSizes => false;
 
-    protected override MegBuilderBase CreateBuilder(IServiceProvider serviceProvider)
+    protected override MegBuilderBase CreateBuilder()
     {
-        return new PrimitiveMegBuilder(serviceProvider);
+        return new PrimitiveMegBuilder(ServiceProvider);
     }
 }

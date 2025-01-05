@@ -23,7 +23,7 @@ public class VirtualMegDataEntryReferenceTest_Path : MegDataEntryBaseTest<MegDat
     }
 
     [Fact]
-    public void Test_Equals_HashCode()
+    public void Equals_HashCode()
     {
         var entry = CreateVirtualMegDataEntryReference("path", DefaultCrc, CreateLocation(1));
         var entryEquals = CreateVirtualMegDataEntryReference("path", DefaultCrc, CreateLocation(1));

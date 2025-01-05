@@ -1,12 +1,9 @@
 ﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
-
 
 public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 {
@@ -15,18 +12,6 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
     protected override Type ExpectedFileInfoValidatorType => typeof(EmpireAtWarMegFileInformationValidator);
 
     protected override Type ExpectedDataEntryPathNormalizerType => typeof(EmpireAtWarMegDataEntryPathNormalizer);
-
-    protected override void SetupServiceCollection(IServiceCollection serviceCollection)
-    {
-        base.SetupServiceCollection(serviceCollection);
-        serviceCollection.AddSingleton(sp => new EmpireAtWarMegBuilderDataEntryValidator(sp));
-        serviceCollection.AddSingleton(sp => new EmpireAtWarMegFileInformationValidator(sp));
-    }
-
-    private EmpireAtWarMegBuilder CreateEaWBuilder(IServiceProvider serviceProvider)
-    {
-        return new EmpireAtWarMegBuilder(BasePath, serviceProvider);
-    }
 
     private EmpireAtWarMegBuilder CreateEaWBuilder(string path, IServiceProvider serviceProvider)
     {
@@ -38,8 +23,8 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         return CreateEaWBuilder(basePath, serviceProvider);
     }
 
-    protected override MegBuilderBase CreateBuilder(IServiceProvider serviceProvider)
+    protected override MegBuilderBase CreateBuilder()
     {
-        return CreateEaWBuilder(BasePath, serviceProvider);
+        return CreateEaWBuilder(BasePath,  ServiceProvider);
     }
 }

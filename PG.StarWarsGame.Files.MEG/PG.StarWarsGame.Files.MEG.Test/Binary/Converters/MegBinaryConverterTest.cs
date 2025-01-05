@@ -22,7 +22,7 @@ public abstract class MegBinaryConverterTest
 
     internal abstract IMegBinaryConverter CreateConverter(IServiceProvider sp);
 
-    public MegBinaryConverterTest()
+    protected MegBinaryConverterTest()
     {
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new MockFileSystem());

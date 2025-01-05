@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.Services.Builder;
 using PG.Testing;
 using Testably.Abstractions.Testing;
@@ -9,27 +7,11 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.Test.Services.Builder;
 
-public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo>
+public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : CommonTestBase
     where TBuilder : IFileBuilder<TModel, TFileInfo>
     where TModel : notnull 
     where TFileInfo : PetroglyphFileInformation
 {
-    protected readonly MockFileSystem FileSystem = new();
-    protected readonly ServiceProvider ServiceProvider;
-
-    protected FileBuilderTestBase()
-    {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(FileSystem);
-        // ReSharper disable once VirtualMemberCallInConstructor
-        BuildServices(sc);
-        ServiceProvider = sc.BuildServiceProvider();
-    }
-
-    protected virtual void BuildServices(IServiceCollection sc)
-    {
-    }
-
     protected virtual string DefaultFileName => "file.txt";
 
     protected virtual bool FileInfoIsAlwaysValid => false;
@@ -146,6 +128,12 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo>
         var dataInfo = CreateValidData();
         AddDataToBuilder(dataInfo.Data, builder);
 
-        Assert.Throws<IOException>(() => builder.Build(fileInfo, false));
+        if (FileInfoIsAlwaysValid)
+            Assert.ThrowsAny<IOException>(() => builder.Build(fileInfo, false));
+        else
+        {
+            // Validation *might catch it and throw something different.*
+            Assert.ThrowsAny<Exception>(() => builder.Build(fileInfo, false));
+        }
     }
 }

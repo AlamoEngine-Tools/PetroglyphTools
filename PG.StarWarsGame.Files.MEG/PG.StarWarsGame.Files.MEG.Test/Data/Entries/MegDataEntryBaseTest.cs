@@ -1,5 +1,4 @@
 using System;
-
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
@@ -11,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.TestLocation>
 {
     [Fact]
-    public void Test_CtorNull()
+    public void CtorNull()
     {
         Assert.Throws<ArgumentNullException>(() => CreateEntry("path", new Crc32(0), null!));
     }
@@ -37,13 +36,13 @@ public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.Te
 
 }
 
-public abstract class MegDataEntryBaseTest<T> where T : IDataEntryLocation
+public abstract class MegDataEntryBaseTest<T> : CommonMegTestBase where T : IDataEntryLocation
 {
     protected static readonly Crc32 DefaultCrc = new(123);
     protected static readonly Crc32 SecondaryCrc = new(456);
 
     [Fact]
-    public void Test_CompareTo()
+    public void CompareTo()
     {
         var seed = 251;
 
@@ -66,7 +65,7 @@ public abstract class MegDataEntryBaseTest<T> where T : IDataEntryLocation
     }
 
     [Fact]
-    public void Test_Equals_HashCode_Base()
+    public void Equals_HashCode_Base()
     {
         var seed = 251;
 

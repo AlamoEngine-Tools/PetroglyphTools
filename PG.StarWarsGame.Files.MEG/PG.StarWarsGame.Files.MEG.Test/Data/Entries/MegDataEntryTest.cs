@@ -1,8 +1,4 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
 using System;
-
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
@@ -10,11 +6,10 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
-
 public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
 {
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var entry = new MegDataEntry("path ab", new Crc32(123), new MegDataEntryLocation(1, 2), true, "path\u00A0ab");
 
@@ -27,7 +22,7 @@ public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
     }
 
     [Fact]
-    public void Test_Ctor_DefaultLocations()
+    public void Ctor_DefaultLocations()
     {
         var entry = new MegDataEntry("path", new Crc32(123), default, true, "path");
 
@@ -40,7 +35,7 @@ public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
     }
 
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
             new MegDataEntry(null!, new Crc32(0), default, false, null!));
@@ -57,7 +52,7 @@ public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
 
 
     [Fact]
-    public void Test_Equals_HashCode()
+    public void Equals_HashCode()
     {
         var t = CreateLocation(1);
         var entry1 = CreateEntry("path", new Crc32(123), t, false, null);

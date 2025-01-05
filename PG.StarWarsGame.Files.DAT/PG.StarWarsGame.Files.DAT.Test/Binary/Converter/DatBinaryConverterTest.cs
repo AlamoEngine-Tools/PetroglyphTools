@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using AnakinRaW.CommonUtilities.Collections;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using PG.Commons;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
@@ -144,15 +145,12 @@ public class DatBinaryConverterTest
             CreateEntry(false, new string('a', 260)),
         };
 
-        var model = new Mock<IDatModel>();
-        model.Setup(m => m.Count).Returns(3);
-        model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
-        model.Setup(m => m.KeySortOrder).Returns(DatFileType.OrderedByCrc32);
+        var model = new SortedDatModel(modelEntries);
 
-        var binary = _converter.ModelToBinary(model.Object);
+        var binary = _converter.ModelToBinary(model);
 
-        Assert.Equal(model.Object.Count, binary.RecordNumber);
-        Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
+        Assert.Equal(model.Count, binary.RecordNumber);
+        Assert.Equal(model.Count, (int)binary.Header.RecordCount);
 
         Assert.Equal([
             CreateIndexRecord(true, 3),
@@ -182,15 +180,12 @@ public class DatBinaryConverterTest
             CreateEntry(true, "d"),
         };
 
-        var model = new Mock<IDatModel>();
-        model.Setup(m => m.Count).Returns(2);
-        model.Setup(m => m.KeySortOrder).Returns(DatFileType.NotOrdered);
-        model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
+        var model = new UnsortedDatModel(modelEntries);
 
-        var binary = _converter.ModelToBinary(model.Object);
+        var binary = _converter.ModelToBinary(model);
 
-        Assert.Equal(model.Object.Count, binary.RecordNumber);
-        Assert.Equal(model.Object.Count, (int)binary.Header.RecordCount);
+        Assert.Equal(model.Count, binary.RecordNumber);
+        Assert.Equal(model.Count, (int)binary.Header.RecordCount);
 
         Assert.Equal([
             CreateIndexRecord(false, 3),
@@ -217,11 +212,19 @@ public class DatBinaryConverterTest
             CreateEntry(true, "d"),
         };
 
-        var model = new Mock<IDatModel>();
-        model.Setup(m => m.Count).Returns(2);
-        model.Setup(m => m.KeySortOrder).Returns(DatFileType.OrderedByCrc32);
-        model.Setup(m => m.GetEnumerator()).Returns(modelEntries.GetEnumerator());
+        var model = new InvalidDatModel(modelEntries);
 
-        Assert.Throws<ArgumentException>(() => _converter.ModelToBinary(model.Object));
+        Assert.Throws<ArgumentException>(() => _converter.ModelToBinary(model));
+    }
+
+    // Model claims to be sorted, while it does not enforce it.
+    private class InvalidDatModel(IEnumerable<DatStringEntry> entries) : DatModel(entries)
+    {
+        public override DatFileType KeySortOrder => DatFileType.OrderedByCrc32;
+
+        public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

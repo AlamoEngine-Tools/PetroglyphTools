@@ -1,13 +1,14 @@
 using System;
-using Moq;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
-public class MegDataEntryOriginInfoTest
+public class MegDataEntryOriginInfoTest : CommonTestBase
 {
     [Fact]
     public void Test_Ctor_Throws()
@@ -34,7 +35,10 @@ public class MegDataEntryOriginInfoTest
     [Fact]
     public void Test_Ctor_ReferenceLocation()
     {
-        var meg = new Mock<IMegFile>().Object;
+        using var _ = FileSystem.File.Create("test.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1),
+            ServiceProvider);
+
         var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 
         var originInfo = new MegDataEntryOriginInfo(location);
@@ -49,7 +53,10 @@ public class MegDataEntryOriginInfoTest
     [Fact]
     public void Test_HashCode()
     {
-        var meg = new Mock<IMegFile>().Object;
+        using var _ = FileSystem.File.Create("test.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1),
+            ServiceProvider);
+
         var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
         var otherLocation = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 
@@ -67,7 +74,10 @@ public class MegDataEntryOriginInfoTest
     [Fact]
     public void Test_Equals()
     {
-        var meg = new Mock<IMegFile>().Object;
+        using var _ = FileSystem.File.Create("test.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1),
+            ServiceProvider);
+
         var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
         var otherLocation = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 

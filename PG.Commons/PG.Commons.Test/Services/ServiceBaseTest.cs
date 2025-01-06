@@ -1,24 +1,12 @@
 ﻿using System;
-using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
-using Testably.Abstractions.Testing;
+using PG.Testing;
 using Xunit;
 
 namespace PG.Commons.Test.Services;
 
-public class ServiceBaseTest
+public class ServiceBaseTest : CommonTestBase
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly MockFileSystem _fileSystem = new();
-
-    public ServiceBaseTest()
-    {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(_fileSystem);
-        _serviceProvider = sc.BuildServiceProvider();
-    }
-
     [Fact]
     public void Test_Ctor_ThrowsNullArg()
     {
@@ -28,9 +16,9 @@ public class ServiceBaseTest
     [Fact]
     public void Test_Ctor_SetupProperties()
     {
-       var service = new MyService(_serviceProvider);
-        Assert.Equal(_serviceProvider, service.Services);
-        Assert.Equal(_fileSystem, service.FileSystem);
+       var service = new MyService(ServiceProvider);
+        Assert.Equal(ServiceProvider, service.Services);
+        Assert.Equal(FileSystem, service.FileSystem);
         Assert.NotNull(service.Logger);
     }
 

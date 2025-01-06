@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// A <see cref="IMegBuilder"/> which normalizes and encodes entry paths.
-/// However, entry path will not be resolved nor validated whether the final encoded path contains illegal file characters (such as '?').
+/// However, entry paths will not be resolved nor validated whether their final encoded path contains illegal file characters.
 /// <br/>
 /// Duplicate entries get overwritten.
 /// </summary>
@@ -28,7 +28,7 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// <remarks>
     /// This builder normalizes entry paths by the following rules:
     /// <code>
-    /// - Upper case all characters using the invariant culture.
+    /// - Upper case all characters using the invariant culture (even on Linux systems).
     /// - Replace path separators ('/' or '\') to the current system's default separator, which is '\' on Windows and '/' on Linux/macOS.
     /// </code>
     /// <br/>

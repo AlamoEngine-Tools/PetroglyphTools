@@ -6,7 +6,6 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
-
 public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBase
 {
     protected override IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider)
@@ -24,7 +23,7 @@ public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBas
     
     public static IEnumerable<object[]> ValidPathsToNormalize()
     {
-        yield return [null, ""];
+        yield return [null!, ""];
         yield return ["", ""];
 
         yield return ["file.öäü", "FILE.ÖÄÜ"];

@@ -1,38 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
-using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MTD.Binary;
 using PG.StarWarsGame.Files.MTD.Binary.Metadata;
 using PG.StarWarsGame.Files.MTD.Data;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MTD.Test.Binary.Converter;
 
-public class MtdBinaryConverterTest
+public class MtdBinaryConverterTest : CommonMtdTestBase
 {
     private readonly MtdBinaryConverter _binaryConverter;
     private readonly ICrc32HashingService _hashingService;
 
     public MtdBinaryConverterTest()
     {
-        var fs = new MockFileSystem();
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(fs);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PetroglyphCommons.ContributeServices(sc);
-        sc.SupportMTD();
-
-        var sp = sc.BuildServiceProvider();
-        _binaryConverter = new MtdBinaryConverter(sp);
-        _hashingService = sp.GetRequiredService<ICrc32HashingService>();
+        _binaryConverter = new MtdBinaryConverter(ServiceProvider);
+        _hashingService = ServiceProvider.GetRequiredService<ICrc32HashingService>();
 
     }
 

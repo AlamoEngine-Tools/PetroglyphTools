@@ -13,10 +13,12 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </summary>
 public abstract class PetroglyphMegFileInformationValidator : IMegFileInformationValidator
 {
+    // The game arbitrary varies between 260 and 256, so we chose the larger value here. Mind that the value is 260 - 1,
+    // because we need to reserve one byte for the zero-terminator '\0'.
     /// <summary>
     /// The max number of characters allowed in a PG game for file paths.
     /// </summary>
-    protected const int PetroglyphMaxFilePathLength = 260;
+    protected const int PetroglyphMaxFilePathLength = 259;
 
     /// <summary>
     /// Gets the file system.

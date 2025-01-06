@@ -67,7 +67,7 @@ public class PetroglyphMegFileInformationValidatorTest
     {
         yield return
         [
-            CreateData(new MegFileInformation(new string('a', 261), MegFileVersion.V1),
+            CreateData(new MegFileInformation(new string('a', 260), MegFileVersion.V1),
                 [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
         ];
     }

@@ -1,33 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Collections;
-using AnakinRaW.CommonUtilities.Hashing;
-using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
-using Testably.Abstractions.Testing;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Converter;
 
-public class DatBinaryConverterTest
+public class DatBinaryConverterTest : CommonTestBase
 {
     private readonly DatBinaryConverter _converter;
 
     public DatBinaryConverterTest()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(new MockFileSystem());
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PetroglyphCommons.ContributeServices(sc);
-        _converter = new DatBinaryConverter(sc.BuildServiceProvider());
+        _converter = new DatBinaryConverter(ServiceProvider);
     }
 
     private static KeyTableRecord CreateKeyRecord(string key, string? alternateKey = null)

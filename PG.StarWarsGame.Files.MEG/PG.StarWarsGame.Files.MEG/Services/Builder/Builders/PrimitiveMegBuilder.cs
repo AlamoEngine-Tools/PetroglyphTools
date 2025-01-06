@@ -6,7 +6,7 @@ using System;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
-/// A primitive <see cref="IMegBuilder"/> which neither performs path normalization nor encoding.
+/// A primitive <see cref="IMegBuilder"/> which performs not entry path normalization.
 /// <br/>
 /// Duplicate entries get overwritten.
 /// </summary>

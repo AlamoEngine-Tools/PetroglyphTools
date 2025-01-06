@@ -8,26 +8,20 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
 public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestBase<PetroglyphGameMegBuilder>
 {
-    public const string BasePath = "/Games/Petroglyph/corruption/";
+    public const string BasePath = "Games/Petroglyph/corruption/";
+    
     protected override Type ExpectedFileInfoValidatorType => typeof(PetroglyphMegFileInformationValidator);
     protected override Type ExpectedDataEntryValidatorType => typeof(NotNullDataEntryValidator);
     protected override Type ExpectedDataEntryPathNormalizerType => typeof(PetroglyphDataEntryPathNormalizer);
     protected override bool? ExpectedOverwritesDuplicates => true;
     protected override bool? ExpectedAutomaticallyAddFileSizes => true;
 
-    protected abstract PetroglyphGameMegBuilder CreatePetroBuilder(string basePath, IServiceProvider serviceProvider);
-
-    [Fact]
-    public void PetroglyphGameMegBuilderTest_Test_Ctor_Throws()
-    {
-        Assert.Throws<ArgumentNullException>(() => new EmpireAtWarMegBuilder(null!, ServiceProvider));
-        Assert.Throws<ArgumentException>(() => new EmpireAtWarMegBuilder("", ServiceProvider));
-    }
+    protected abstract PetroglyphGameMegBuilder CreatePetroBuilder(string basePath);
 
     [Fact]
     public void PetroglyphGameMegBuilderTest_Test_Ctor()
     {
-        var builder = CreatePetroBuilder(BasePath, ServiceProvider);
+        var builder = CreatePetroBuilder(BasePath);
         Assert.Equal(FileSystem.Path.GetFullPath(BasePath), builder.BaseDirectory);
     }
 
@@ -35,19 +29,9 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestBase<Petrogly
     public void PetroglyphGameMegBuilderTest_Test_Ctor_BasePathIsTreatedAsDirectory()
     { 
         // Skipping trailing path separator on purpose
-        var builder = CreatePetroBuilder("/game/corruption.dir", ServiceProvider);
+        var builder = CreatePetroBuilder("/game/corruption.dir");
 
         // Assert trailing path separator in instance.
         Assert.Equal(FileSystem.Path.GetFullPath("/game/corruption.dir/"), builder.BaseDirectory);
     }
-
-    // TODO: Use test cases from resolver test
-    //[Fact]
-    //public void Test_ResolveEntryPath()
-    //{
-    //    var builder = CreatePetroBuilder(BasePath, ServiceProvider);
-    //    EntryPathResolver.Setup(r => r.ResolvePath("somePath", builder.BaseDirectory))
-    //        .Returns("someReturn");
-    //    Assert.Equal("someReturn", builder.ResolveEntryPath("somePath"));
-    //}
 }

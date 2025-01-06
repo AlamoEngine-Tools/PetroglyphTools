@@ -34,18 +34,20 @@ public class PetroglyphRelativeDataEntryPathResolverTest
     [InlineData("./../corruption/test.xml", "test.xml")]
     [InlineData("./../corruption/../test.xml", null)]
     [InlineData("../corruption1/test.xml", null)]
-    [InlineData("/Games/Petroglyph/corruption/test", "test")]
-    [InlineData("/Games/Petroglyph/corruption/test/", null)]
-    [InlineData("/Games/Petroglyph/corruption1/test", null)]
-    public void Test_ResolveEntryPath_Relative(string? path, string? expectedEntryPath)
+    [InlineData("Games/Petroglyph/corruption/test", "test", true)]
+    [InlineData("Games/Petroglyph/corruption/test/", null, true)]
+    [InlineData("Games/Petroglyph/corruption1/test", null, true)]
+    public void Test_ResolveEntryPath_Relative(string? path, string? expectedEntryPath, bool resolvePathFull = false)
     {
-        const string basePath = "/Games/Petroglyph/corruption/";
+        const string basePath = "Games/Petroglyph/corruption/";
 
 
         var normalizedExpected = expectedEntryPath is not null
             ? PathNormalizer.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifyDirectorySeparators = true })
             : expectedEntryPath;
 
+        if (resolvePathFull)
+            path = _fileSystem.Path.GetFullPath(path!);
 
         var actualEntryPath = _pathResolver.ResolvePath(path, basePath);
         Assert.Equal(normalizedExpected, actualEntryPath);

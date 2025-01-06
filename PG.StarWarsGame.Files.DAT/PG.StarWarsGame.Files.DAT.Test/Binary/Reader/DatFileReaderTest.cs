@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.Testing;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Reader;
 
-public class DatFileReaderTest
+public class DatFileReaderTest : CommonTestBase
 {
     private readonly DatFileReader _reader;
 
     public DatFileReaderTest()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(new MockFileSystem());
-        _reader = new DatFileReader(sc.BuildServiceProvider());
+        _reader = new DatFileReader(ServiceProvider);
     }
 
     [Fact]

@@ -29,6 +29,8 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     private readonly Dictionary<Crc32, MegFileDataEntryBuilderInfo> _dataEntries = new();
     private readonly ICrc32HashingService _hashingService;
 
+    internal virtual uint MaxFileSize => uint.MaxValue;
+
     /// <inheritdoc />
     public sealed override IReadOnlyCollection<MegFileDataEntryBuilderInfo> BuilderData => DataEntries;
 
@@ -37,7 +39,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     public bool NormalizesEntryPaths => DataEntryPathNormalizer is not null;
 
     /// <inheritdoc/>
-    public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries => new List<MegFileDataEntryBuilderInfo>(_dataEntries.Values);
+    public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries => [.._dataEntries.Values];
 
     /// <inheritdoc/>
     /// <remarks>
@@ -94,7 +96,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
             return AddDataEntryToBuilderResult.FromFileNotFound(fileInfo.FullName);
 
         long? fileSize = AutomaticallyAddFileSizes ? fileInfo.Length : null;
-        if (fileSize > uint.MaxValue)
+        if (fileSize > MaxFileSize)
         {
             return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.EntryFileTooLarge,
                 $"Source file '{fileInfo.FullName}' is larger than 4GB.");

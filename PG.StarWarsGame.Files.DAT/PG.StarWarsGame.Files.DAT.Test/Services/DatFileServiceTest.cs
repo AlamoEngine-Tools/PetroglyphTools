@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
-using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
@@ -15,21 +12,13 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
-public class DatFileServiceTest
+public class DatFileServiceTest : CommonDatTestBase
 {
     private readonly DatFileService _service;
-    private readonly MockFileSystem _fileSystem = new();
-    private readonly IServiceProvider _serviceProvider;
 
     public DatFileServiceTest()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.AddSingleton<IFileSystem>(_fileSystem);
-        PetroglyphCommons.ContributeServices(sc);
-        sc.SupportDAT();
-        _serviceProvider = sc.BuildServiceProvider();
-        _service = new DatFileService(_serviceProvider);
+        _service = new DatFileService(ServiceProvider);
     }
 
     [Fact]
@@ -39,7 +28,7 @@ public class DatFileServiceTest
             _service.CreateDatFile(null!, new List<DatStringEntry>(), DatFileType.NotOrdered));
 
         Assert.Throws<ArgumentNullException>(() =>
-            _service.CreateDatFile(_fileSystem.FileStream.New("test.dat", FileMode.Create), null!, DatFileType.NotOrdered));
+            _service.CreateDatFile(FileSystem.FileStream.New("test.dat", FileMode.Create), null!, DatFileType.NotOrdered));
     }
 
     [Fact]
@@ -48,11 +37,11 @@ public class DatFileServiceTest
         var binary = DatTestData.CreateUnsortedBinary();
         var model = DatTestData.CreateUnsortedModel();
 
-        var fs = _fileSystem.FileStream.New("test.dat", FileMode.Create);
+        var fs = FileSystem.FileStream.New("test.dat", FileMode.Create);
         _service.CreateDatFile(fs, model, DatFileType.NotOrdered);
         fs.Dispose();
 
-        Assert.Equal(binary.Bytes, _fileSystem.File.ReadAllBytes("test.dat"));
+        Assert.Equal(binary.Bytes, FileSystem.File.ReadAllBytes("test.dat"));
     }
 
     [Fact]
@@ -61,27 +50,27 @@ public class DatFileServiceTest
         var binary = DatTestData.CreateSortedBinary();
         var model = DatTestData.CreateUnsortedModel();
 
-        var fs = _fileSystem.FileStream.New("test.dat", FileMode.Create);
+        var fs = FileSystem.FileStream.New("test.dat", FileMode.Create);
         _service.CreateDatFile(fs, model, DatFileType.OrderedByCrc32);
         fs.Dispose();
 
-        Assert.Equal(binary.Bytes, _fileSystem.File.ReadAllBytes("test.dat"));
+        Assert.Equal(binary.Bytes, FileSystem.File.ReadAllBytes("test.dat"));
     }
 
     [Fact]
     public void GetDatFileType_MatchesExpected()
     {
-        using (var fs = _fileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
             stream.CopyTo(fs);
         }
-        using (var fs = _fileSystem.FileStream.New("Credits.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
         }
-        
+
         Assert.Equal(DatFileType.OrderedByCrc32, _service.GetDatFileType("MasterTextFile.dat"));
         Assert.Equal(DatFileType.NotOrdered, _service.GetDatFileType("Credits.dat"));
     }
@@ -92,19 +81,19 @@ public class DatFileServiceTest
         var sortedBinary = DatTestData.CreateSortedBinary();
         var unsortedBinary = DatTestData.CreateUnsortedBinary();
 
-        _fileSystem.Initialize()
+        FileSystem.Initialize()
             .WithFile("sorted.dat").Which(a => a.HasBytesContent(sortedBinary.Bytes))
             .WithFile("unsorted.dat").Which(a => a.HasBytesContent(unsortedBinary.Bytes));
 
-        var sortedFileHolder =_service.Load("sorted.dat");
-        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FilePath);
-        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat") , sortedFileHolder.FileInformation.FilePath);
+        var sortedFileHolder = _service.Load("sorted.dat");
+        Assert.Equal(FileSystem.Path.GetFullPath("sorted.dat"), sortedFileHolder.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath("sorted.dat"), sortedFileHolder.FileInformation.FilePath);
         Assert.Equal(DatFileType.OrderedByCrc32, sortedFileHolder.Content.KeySortOrder);
         Assert.Equal(DatTestData.CreateSortedModel(), sortedFileHolder.Content.ToList());
 
         var unsortedFileHolder = _service.Load("unsorted.dat");
-        Assert.Equal(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FilePath);
-        Assert.Equal(_fileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FileInformation.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath("unsorted.dat"), unsortedFileHolder.FileInformation.FilePath);
         Assert.Equal(DatFileType.NotOrdered, unsortedFileHolder.Content.KeySortOrder);
         Assert.Equal(DatTestData.CreateUnsortedModel(), unsortedFileHolder.Content.ToList());
     }
@@ -114,13 +103,13 @@ public class DatFileServiceTest
     {
         var sortedBinary = DatTestData.CreateSortedBinary();
 
-        _fileSystem.Initialize()
+        FileSystem.Initialize()
             .WithFile("sorted.dat").Which(a => a.HasBytesContent(sortedBinary.Bytes));
 
         var unsortedFileHolder = _service.LoadAs("sorted.dat", DatFileType.NotOrdered);
 
-        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FilePath);
-        Assert.Equal(_fileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FileInformation.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath("sorted.dat"), unsortedFileHolder.FileInformation.FilePath);
         // Entries are still sorted, but the key sort oder was adjusted
         Assert.Equal(DatFileType.NotOrdered, unsortedFileHolder.Content.KeySortOrder);
         Assert.Equal(DatTestData.CreateSortedModel(), unsortedFileHolder.Content.ToList());
@@ -131,7 +120,7 @@ public class DatFileServiceTest
     {
         var unsortedBinary = DatTestData.CreateUnsortedBinary();
 
-        _fileSystem.Initialize()
+        FileSystem.Initialize()
             .WithFile("unsorted.dat").Which(a => a.HasBytesContent(unsortedBinary.Bytes));
 
         Assert.Throws<InvalidOperationException>(() =>
@@ -141,8 +130,8 @@ public class DatFileServiceTest
     [Fact]
     public void LoadStore_Sorted()
     {
-        _fileSystem.Initialize();
-        using (var fs = _fileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
+        FileSystem.Initialize();
+        using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
             stream.CopyTo(fs);
@@ -151,24 +140,24 @@ public class DatFileServiceTest
         var datFile = _service.Load("MasterTextFile.dat").Content;
         Assert.Equal(DatFileType.OrderedByCrc32, datFile.KeySortOrder);
 
-        using (var fs = _fileSystem.FileStream.New("NewSorted.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("NewSorted.dat", FileMode.Create))
             _service.CreateDatFile(fs, datFile, DatFileType.OrderedByCrc32);
 
         var asUnsortedDatFile = _service.LoadAs("MasterTextFile.dat", DatFileType.NotOrdered).Content;
         Assert.Equal(DatFileType.NotOrdered, asUnsortedDatFile.KeySortOrder);
 
-        using (var fs = _fileSystem.FileStream.New("NewUnsorted.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("NewUnsorted.dat", FileMode.Create))
             _service.CreateDatFile(fs, asUnsortedDatFile, DatFileType.NotOrdered);
 
 
-        using (var fs = _fileSystem.FileStream.New("NewSorted.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("NewSorted.dat", FileMode.Create))
             _service.CreateDatFile(fs, datFile, DatFileType.OrderedByCrc32);
-        using (var fs = _fileSystem.FileStream.New("NewUnsorted.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("NewUnsorted.dat", FileMode.Create))
             _service.CreateDatFile(fs, asUnsortedDatFile, DatFileType.OrderedByCrc32);
 
-        var expectedBytes = _fileSystem.File.ReadAllBytes("MasterTextFile.dat");
-        var actualBytesSorted = _fileSystem.File.ReadAllBytes("NewSorted.dat");
-        var actualBytesUnsorted = _fileSystem.File.ReadAllBytes("NewUnsorted.dat");
+        var expectedBytes = FileSystem.File.ReadAllBytes("MasterTextFile.dat");
+        var actualBytesSorted = FileSystem.File.ReadAllBytes("NewSorted.dat");
+        var actualBytesUnsorted = FileSystem.File.ReadAllBytes("NewUnsorted.dat");
         Assert.Equal(expectedBytes, actualBytesSorted);
         Assert.Equal(expectedBytes, actualBytesUnsorted);
     }
@@ -176,8 +165,8 @@ public class DatFileServiceTest
     [Fact]
     public void LoadStore_Unsorted()
     {
-        _fileSystem.Initialize();
-        using (var fs = _fileSystem.FileStream.New("Credits.dat", FileMode.Create))
+        FileSystem.Initialize();
+        using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
@@ -186,19 +175,19 @@ public class DatFileServiceTest
         var datFile = _service.Load("Credits.dat").Content;
         Assert.Equal(DatFileType.NotOrdered, datFile.KeySortOrder);
 
-        using (var fs = _fileSystem.FileStream.New("New.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("New.dat", FileMode.Create))
             _service.CreateDatFile(fs, datFile, DatFileType.NotOrdered);
 
-        var expectedBytes = _fileSystem.File.ReadAllBytes("Credits.dat");
-        var actualBytesSorted = _fileSystem.File.ReadAllBytes("New.dat");
+        var expectedBytes = FileSystem.File.ReadAllBytes("Credits.dat");
+        var actualBytesSorted = FileSystem.File.ReadAllBytes("New.dat");
         Assert.Equal(expectedBytes, actualBytesSorted);
     }
 
     [Fact]
     public void LoadStore_UnsortedAsSortedThrows()
     {
-        _fileSystem.Initialize();
-        using (var fs = _fileSystem.FileStream.New("Credits.dat", FileMode.Create))
+        FileSystem.Initialize();
+        using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
@@ -206,11 +195,11 @@ public class DatFileServiceTest
 
         var datFile = _service.Load("Credits.dat").Content;
 
-        using (var fs = _fileSystem.FileStream.New("New.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("New.dat", FileMode.Create))
             _service.CreateDatFile(fs, datFile, DatFileType.OrderedByCrc32);
 
-        var creditBytes = _fileSystem.File.ReadAllBytes("Credits.dat");
-        var resortedBytes = _fileSystem.File.ReadAllBytes("New.dat");
+        var creditBytes = FileSystem.File.ReadAllBytes("Credits.dat");
+        var resortedBytes = FileSystem.File.ReadAllBytes("New.dat");
         Assert.NotEqual(creditBytes, resortedBytes);
 
         Assert.Throws<InvalidOperationException>(() => _service.LoadAs("Credits.dat", DatFileType.OrderedByCrc32));
@@ -219,8 +208,8 @@ public class DatFileServiceTest
     [Fact]
     public void Load_Empty()
     {
-        _fileSystem.Initialize();
-        using (var fs = _fileSystem.FileStream.New("Empty.dat", FileMode.Create))
+        FileSystem.Initialize();
+        using (var fs = FileSystem.FileStream.New("Empty.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Empty.dat");
             stream.CopyTo(fs);
@@ -229,15 +218,15 @@ public class DatFileServiceTest
         var model = _service.Load("Empty.dat");
         Assert.Empty(model.Content);
 
-        model = _service.Load(_fileSystem.File.OpenRead("Empty.dat"));
+        model = _service.Load(FileSystem.File.OpenRead("Empty.dat"));
         Assert.Empty(model.Content);
     }
 
     [Fact]
     public void Load_EmptyKeyWithValue()
     {
-        _fileSystem.Initialize();
-        using (var fs = _fileSystem.FileStream.New("EmptyKeyWithValue.dat", FileMode.Create))
+        FileSystem.Initialize();
+        using (var fs = FileSystem.FileStream.New("EmptyKeyWithValue.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.EmptyKeyWithValue.dat");
             stream.CopyTo(fs);
@@ -247,7 +236,7 @@ public class DatFileServiceTest
         Assert.Single(model.Content);
         Assert.True(model.Content.ContainsKey(string.Empty));
 
-        model = _service.Load(_fileSystem.File.OpenRead("EmptyKeyWithValue.dat"));
+        model = _service.Load(FileSystem.File.OpenRead("EmptyKeyWithValue.dat"));
         Assert.Single(model.Content);
         Assert.True(model.Content.ContainsKey(string.Empty));
     }
@@ -255,8 +244,8 @@ public class DatFileServiceTest
     [Fact]
     public void Load_Sorted_TwoEntriesDuplicate()
     {
-        _fileSystem.Initialize();
-        using (var fs = _fileSystem.FileStream.New("Sorted_TwoEntriesDuplicate.dat", FileMode.Create))
+        FileSystem.Initialize();
+        using (var fs = FileSystem.FileStream.New("Sorted_TwoEntriesDuplicate.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Sorted_TwoEntriesDuplicate.dat");
             stream.CopyTo(fs);
@@ -266,7 +255,7 @@ public class DatFileServiceTest
         Assert.Equal(2, model.Content.Count);
         Assert.Single(model.Content.Keys);
 
-        model = _service.Load(_fileSystem.File.OpenRead("Sorted_TwoEntriesDuplicate.dat"));
+        model = _service.Load(FileSystem.File.OpenRead("Sorted_TwoEntriesDuplicate.dat"));
         Assert.Equal(2, model.Content.Count);
         Assert.Single(model.Content.Keys);
     }
@@ -275,8 +264,8 @@ public class DatFileServiceTest
     [Fact]
     public void LoadModifyCreate()
     {
-        _fileSystem.Initialize();
-        using (var fs = _fileSystem.FileStream.New("Index_WithDuplicates.dat", FileMode.Create))
+        FileSystem.Initialize();
+        using (var fs = FileSystem.FileStream.New("Index_WithDuplicates.dat", FileMode.Create))
         {
             using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Index_WithDuplicates.dat");
             stream.CopyTo(fs);
@@ -284,14 +273,14 @@ public class DatFileServiceTest
 
         var model = _service.LoadAs("Index_WithDuplicates.dat", DatFileType.NotOrdered).Content;
         Assert.Equal(DatFileType.NotOrdered, model.KeySortOrder);
-        var modelService = _serviceProvider.GetRequiredService<IDatModelService>();
+        var modelService = ServiceProvider.GetRequiredService<IDatModelService>();
         Assert.True(modelService.GetDuplicateEntries(model).Any());
         var withoutDups = modelService.RemoveDuplicates(model);
         Assert.False(modelService.GetDuplicateEntries(withoutDups).Any());
         var sorted = modelService.SortModel(withoutDups);
         Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOrder);
 
-        using (var fs = _fileSystem.FileStream.New("newSorted.dat", FileMode.Create))
+        using (var fs = FileSystem.FileStream.New("newSorted.dat", FileMode.Create))
             _service.CreateDatFile(fs, sorted, DatFileType.OrderedByCrc32);
     }
 }

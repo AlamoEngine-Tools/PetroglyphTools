@@ -55,7 +55,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void MegBuilderTestSuite_Test_Ctor()
+    public void MegBuilderTestSuite_Ctor()
     {
         var builder = CreateBuilder();
 
@@ -138,7 +138,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_Dispose_ThrowsOnAddingOrBuildingMethods()
+    public void Dispose_ThrowsOnAddingOrBuildingMethods()
     {
         var builder = CreateBuilder();
 
@@ -170,7 +170,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     #region AddFile
     
     [Fact]
-    public void Test_AddFile_Throws()
+    public void AddFile_Throws()
     {
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
@@ -186,7 +186,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddFile_WithFileSize()
+    public void AddFile_WithFileSize()
     {
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
@@ -218,7 +218,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddFile_AssureEncoding_WithNormalization()
+    public void AddFile_AssureEncoding_WithNormalization()
     {
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/fileWithNonAsciiÖ.txt";
@@ -237,7 +237,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddFile_LongStringHandling()
+    public void AddFile_LongStringHandling()
     {
         const string fileToAdd = "file.txt";
 
@@ -266,7 +266,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddFile_Override()
+    public void AddFile_Override()
     {
         const string fileToAdd = "file1.txt";
         const string otherFileToAdd = "file2.txt";
@@ -310,7 +310,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddFile_ValidatorFails()
+    public void AddFile_ValidatorFails()
     {
         if (!CanProduceInvalidEntryPaths)
             return;
@@ -330,7 +330,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Test_AddFile_AddFileSize_FileTooLarge_Throws(bool addFileSize)
+    public void AddFile_AddFileSize_FileTooLarge_Throws(bool addFileSize)
     {
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "file.txt";
@@ -359,7 +359,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     #region AddEntry
 
     [Fact]
-    public void Test_AddEntry_Throws()
+    public void AddEntry_Throws()
     {
         var builder = CreateBuilder();
 
@@ -368,7 +368,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddEntry_EntryNotFound()
+    public void AddEntry_EntryNotFound()
     {
         var builder = CreateBuilder();
 
@@ -383,7 +383,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddEntry()
+    public void AddEntry()
     {
         var builder = CreateBuilder();
 
@@ -405,7 +405,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddEntry_OverrideProperties()
+    public void AddEntry_OverrideProperties()
     {
         var builder = CreateBuilder();
 
@@ -425,7 +425,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void Test_AddEntry_Override()
+    public void AddEntry_Override()
     {
         const string fileToAdd = "file.txt";
         FileSystem.Initialize().WithFile(fileToAdd).Which(x => x.HasBytesContent([1, 2, 3]));
@@ -456,12 +456,12 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.Single(builder.DataEntries);
             Assert.Same(addedFile.AddedBuilderInfo, resultSecondAdd.OverwrittenBuilderInfo);
             Assert.True(builder.DataEntries.First().OriginInfo.IsEntryReference);
-            Assert.Same(meg, builder.DataEntries.First().OriginInfo.MegFileLocation.MegFile);
+            Assert.Same(meg, builder.DataEntries.First().OriginInfo.MegFileLocation!.MegFile);
         }
     }
 
     [Fact]
-    public void Test_AddEntry_ValidatorFails()
+    public void AddEntry_ValidatorFails()
     {
         if (!CanProduceInvalidEntryPaths)
             return;

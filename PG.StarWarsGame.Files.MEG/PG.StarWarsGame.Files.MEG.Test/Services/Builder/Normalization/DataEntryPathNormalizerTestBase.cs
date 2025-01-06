@@ -1,20 +1,18 @@
 ﻿using System;
-using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
-using Testably.Abstractions.Testing;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
-public abstract class DataEntryPathNormalizerTestBase
+public abstract class DataEntryPathNormalizerTestBase : CommonTestBase
 {
     protected abstract IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider);
 
     [Fact]
     public void TestTryNormalizePathFails()
     {
-        var normalizer = CreateNormalizer(CreateServiceProvider());
+        var normalizer = CreateNormalizer(ServiceProvider);
 
         Span<char> tooShortBuffer = new char[5];
 
@@ -23,13 +21,13 @@ public abstract class DataEntryPathNormalizerTestBase
 
     protected void TestNormalizePathPasses(string source, string expected)
     {
-        var normalizer = CreateNormalizer(CreateServiceProvider());
+        var normalizer = CreateNormalizer(ServiceProvider);
 
-        Test_Normalize_Pass(normalizer, source, expected);
-        Test_Normalize_Pass_Span(normalizer, source, expected);
+        TestNormalizePass(normalizer, source, expected);
+        TestNormalizePassSpan(normalizer, source, expected);
     }
 
-    private void Test_Normalize_Pass_Span(IMegDataEntryPathNormalizer normalizer, string source, string expected)
+    private void TestNormalizePassSpan(IMegDataEntryPathNormalizer normalizer, string source, string expected)
     {
         Span<char> buffer = new char[source.AsSpan().Length * 2 + 1];
         
@@ -38,19 +36,12 @@ public abstract class DataEntryPathNormalizerTestBase
         Assert.Equal(expected, buffer.Slice(0, length).ToString());
     }
 
-    private void Test_Normalize_Pass(IMegDataEntryPathNormalizer normalizer, string source, string expected)
+    private void TestNormalizePass(IMegDataEntryPathNormalizer normalizer, string source, string expected)
     {
         var actual = normalizer.Normalize(source);
         Assert.Equal(expected, actual);
 
         actual = normalizer.Normalize(source.AsSpan());
         Assert.Equal(expected, actual);
-    }
-
-    private IServiceProvider CreateServiceProvider()
-    {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(new MockFileSystem());
-        return sc.BuildServiceProvider();
     }
 }

@@ -17,14 +17,14 @@ public class MtdFileBinaryReaderTest : CommonMtdTestBase
     }
 
     [Fact]
-    public void Test__BuildMegHeader_NullStream_Throws()
+    public void BuildMegHeader_NullStream_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => _binaryReader.ReadBinary(null!));
     }
 
     [Theory]
     [MemberData(nameof(MtdTestData.InvalidMtdData), MemberType = typeof(MtdTestData))]
-    public void Test__BuildMegHeader_BinaryCorrupted(byte[] data)
+    public void BuildMegHeader_BinaryCorrupted(byte[] data)
     {
         var dataStream = new MemoryStream(data);
         Assert.Throws<BinaryCorruptedException>(() => _binaryReader.ReadBinary(dataStream));
@@ -32,7 +32,7 @@ public class MtdFileBinaryReaderTest : CommonMtdTestBase
 
     [Theory]
     [MemberData(nameof(MtdTestData.ValidMtdData), MemberType = typeof(MtdTestData))]
-    public void Test__BuildMegHeader_Correct(byte[] data, IList<MtdEntryInformationContainer> files)
+    public void BuildMegHeader_Correct(byte[] data, IList<MtdEntryInformationContainer> files)
     {
         var dataStream = new MemoryStream(data);
         var mtd = _binaryReader.ReadBinary(dataStream);

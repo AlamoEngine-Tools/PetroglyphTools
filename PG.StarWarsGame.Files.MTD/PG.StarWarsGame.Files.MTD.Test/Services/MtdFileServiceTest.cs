@@ -23,7 +23,7 @@ public class MtdFileServiceTest : CommonMtdTestBase
     }
 
     [Fact]
-    public void Test_Load_ArgumentException()
+    public void Load_ArgumentException_Throws()
     {
         Assert.Throws<ArgumentException>(() => _mtdFileService.Load(""));
         Assert.Throws<ArgumentNullException>(() => _mtdFileService.Load((string)null!));
@@ -32,14 +32,14 @@ public class MtdFileServiceTest : CommonMtdTestBase
 
 
     [Fact]
-    public void Test_Load_ThrowFileNotFound()
+    public void Load_FileNotFound_Throws()
     {
         Assert.Throws<FileNotFoundException>(() => _mtdFileService.Load("test.mtd"));
     }
 
     [Theory]
     [MemberData(nameof(MtdTestData.InvalidMtdData), MemberType = typeof(MtdTestData))]
-    public void Test_Load_CorruptedFile_Throws(byte[] data)
+    public void Load_CorruptedFile_Throws(byte[] data)
     {
         FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
 
@@ -49,7 +49,7 @@ public class MtdFileServiceTest : CommonMtdTestBase
 
     [Theory]
     [MemberData(nameof(MtdTestData.ValidMtdData), MemberType = typeof(MtdTestData))]
-    public void Test_Load_ValidBinary(byte[] data, IList<MtdEntryInformationContainer> files)
+    public void Load_ValidBinary(byte[] data, IList<MtdEntryInformationContainer> files)
     {
         FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
 
@@ -58,7 +58,7 @@ public class MtdFileServiceTest : CommonMtdTestBase
     }
 
     [Fact]
-    public void Test_Load_FocMtd()
+    public void Load_FocMtd()
     {
         var focFile = TestUtility.GetEmbeddedResource(GetType(), "Files.MT_COMMANDBAR.MTD");
         ExceptionUtilities.AssertDoesNotThrowException(() => _mtdFileService.Load(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));

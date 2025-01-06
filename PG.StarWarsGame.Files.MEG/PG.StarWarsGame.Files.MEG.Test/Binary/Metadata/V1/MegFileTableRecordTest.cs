@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 public class MegFileTableRecordTest
 {
     [Fact]
-    public void Ctor_Test__ThrowsArgumentOutOfRangeException()
+    public void Ctor_InvalidArgs_ThrowsArgumentOutOfRangeException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new MegFileTableRecord(
                 new Crc32(0),
@@ -27,7 +27,7 @@ public class MegFileTableRecordTest
     }
 
     [Fact]
-    public void Ctor_Test__Correct()
+    public void Ctor()
     {
         var record = new MegFileTableRecord(new Crc32(0), 1, 2, 3, 4);
         Assert.Equal(0, (int)record.Crc32);
@@ -38,7 +38,7 @@ public class MegFileTableRecordTest
     }
 
     [Fact]
-    public void Ctor_Test__Compare()
+    public void Comparison()
     {
         var r0 = new MegFileTableRecord(new Crc32(0), 1, 1, 1, 1);
         var r1 = new MegFileTableRecord(new Crc32(1), 0, 0, 0, 0);
@@ -62,7 +62,7 @@ public class MegFileTableRecordTest
     }
 
     [Fact]
-    public void Ctor_Test__Bytes()
+    public void Bytes()
     {
         var record = new MegFileTableRecord(new Crc32(1), 2, 3, 4, 5);
 

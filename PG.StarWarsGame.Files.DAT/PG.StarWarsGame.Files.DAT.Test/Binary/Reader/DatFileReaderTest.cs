@@ -21,20 +21,20 @@ public class DatFileReaderTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_PeekFileType_ThrowsArgumentNullException()
+    public void PeekFileType_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => _reader.PeekFileType(null!));
     }
 
     [Fact]
-    public void Test_PeekFileType_ThrowsBinaryCorruptedException()
+    public void PeekFileType_ThrowsBinaryCorruptedException()
     {
         Assert.Throws<BinaryCorruptedException>(() => _reader.PeekFileType(new MemoryStream()));
     }
 
     [Theory]
     [MemberData(nameof(DatFileTypeTestData))]
-    public void Test_PeekFileType(Stream stream, DatFileType expectedFileType)
+    public void PeekFileType(Stream stream, DatFileType expectedFileType)
     {
         var fileType = _reader.PeekFileType(stream);
         Assert.Equal(expectedFileType, fileType);
@@ -42,8 +42,8 @@ public class DatFileReaderTest : CommonTestBase
 
     public static IEnumerable<object[]> DatFileTypeTestData()
     {
-        return new[]
-        {
+        return
+        [
             [
                 // Empty .DAT: While the file type is not specified by the interface, this test must not crash.
                 new MemoryStream([0x0, 0x0, 0x0, 0x0]),
@@ -107,28 +107,27 @@ public class DatFileReaderTest : CommonTestBase
                 TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Index_WithDuplicates.dat"),
                 DatFileType.NotOrdered
             ],
-            new object[]
-            {
+            [
                 TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"),
                 DatFileType.NotOrdered
-            },
-        };
+            ]
+        ];
     }
 
     [Fact]
-    public void Test_ReadBinary_ThrowsArgumentNullException()
+    public void ReadBinary_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => _reader.ReadBinary(null!));
     }
 
     [Fact]
-    public void Test_ReadBinary_ThrowsBinaryCorruptedException()
+    public void ReadBinary_ThrowsBinaryCorruptedException()
     {
         Assert.Throws<BinaryCorruptedException>(() => _reader.ReadBinary(new MemoryStream()));
     }
 
     [Fact]
-    public void Test_ReadBinary_Integration()
+    public void ReadBinary_Integration()
     {
         ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"));
         ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"));
@@ -136,7 +135,7 @@ public class DatFileReaderTest : CommonTestBase
 
     [Theory]
     [MemberData(nameof(DatReadTestData))]
-    public void Test_ReadBinary(Stream stream, ExpectedDatData expectedDat)
+    public void ReadBinary(Stream stream, ExpectedDatData expectedDat)
     {
         var binary = _reader.ReadBinary(stream);
         Assert.Equal(expectedDat.Number, binary.RecordNumber);
@@ -148,8 +147,8 @@ public class DatFileReaderTest : CommonTestBase
 
     public static IEnumerable<object[]> DatReadTestData()
     {
-        return new[]
-        {
+        return
+        [
             [
                 TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Empty.dat"),
                 new ExpectedDatData
@@ -206,8 +205,7 @@ public class DatFileReaderTest : CommonTestBase
                 }
             ],
 
-            new object[]
-            {
+            [
                 new MemoryStream([
                     0x1, 0x0, 0x0, 0x0, // Header
                     0x1, 0x0, 0x0, 0x0, // Crc
@@ -225,8 +223,8 @@ public class DatFileReaderTest : CommonTestBase
                     OriginalKeys = new List<string>{"ä"},
                     Values = new List<string>{"a"}
                 }
-            },
-        };
+            ]
+        ];
     }
 
     public class ExpectedDatData

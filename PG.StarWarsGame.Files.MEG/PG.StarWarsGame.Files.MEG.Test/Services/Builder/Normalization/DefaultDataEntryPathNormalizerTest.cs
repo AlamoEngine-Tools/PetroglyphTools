@@ -15,12 +15,11 @@ public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBas
 
     [Theory]
     [MemberData(nameof(ValidPathsToNormalize))]
-    public void Test_Normalize_Success(string source, string expected)
+    public void Normalize_Success(string source, string expected)
     {
         TestNormalizePathPasses(source, expected);
     }
 
-    
     public static IEnumerable<object[]> ValidPathsToNormalize()
     {
         yield return [null!, ""];

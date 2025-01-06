@@ -24,7 +24,7 @@ public class MegFileSizeValidatorV1IntegrationTest
     }
 
     [Fact]
-    public void Test__ValidateCore_CorrectSize()
+    public void ValidateCore_CorrectSize()
     {
         var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
         var metadata = _binaryReader.ReadBinary(data);
@@ -45,7 +45,7 @@ public class MegFileSizeValidatorV1IntegrationTest
     [InlineData(0, -1)]
     [InlineData(-1, 0)]
     [InlineData(1, 0)]
-    public void Test__ValidateCore_IncorrectSize(int offsetBytesRead, int offsetArchiveSize)
+    public void ValidateCore_IncorrectSize(int offsetBytesRead, int offsetArchiveSize)
     {
         var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
         var metadata = _binaryReader.ReadBinary(data);

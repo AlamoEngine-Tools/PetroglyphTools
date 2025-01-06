@@ -40,7 +40,7 @@ public class UnsortedDatModelTest : DatModelTest
     }
 
     [Fact]
-    public void Test_ToSortedModel()
+    public void ToSortedModel()
     {
         var model = CreateUnsortedModel(CreateDataEntries());
         var sorted = model.ToSortedModel();

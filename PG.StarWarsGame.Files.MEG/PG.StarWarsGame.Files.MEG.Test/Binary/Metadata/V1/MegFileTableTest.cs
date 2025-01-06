@@ -32,13 +32,13 @@ public class MegFileTableTest : MegFileTableBaseTest
     }
 
     [Fact]
-    public void Ctor_Test__ThrowsArgumentNullException()
+    public void Ctor_NullArgs_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new MegFileTable(null!));
     }
 
     [Fact]
-    public void Test_Index()
+    public void Index()
     {
         var entry1 = CreateFileRecordV1(CreateFile(0, 1));
         var entry2 = CreateFileRecordV1(CreateFile(1, 2));

@@ -7,13 +7,13 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.Metadata;
 public class MtdHeaderTest
 {
     [Fact]
-    public void Ctor_Test__ThrowsArgumentOORException()
+    public void Ctor_InvalidArgs_ThrowsArgumentOORException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new MtdHeader((uint)int.MaxValue + 1));
     }
     
     [Fact]
-    public void Ctor_Test__Correct()
+    public void Ctor()
     {
         new MtdHeader(0);
         new MtdHeader(1);
@@ -22,20 +22,20 @@ public class MtdHeaderTest
     }
 
     [Fact]
-    public void Ctor_Test__FileNumber()
+    public void Ctor_FileNumber()
     {
         var header = new MtdHeader(123);
         Assert.Equal(123u, header.Count);
     }
 
     [Fact]
-    public void Test_Size()
+    public void Size()
     {
         Assert.Equal(4, default(MtdHeader).Size);
     }
 
     [Fact]
-    public void Test_Bytes()
+    public void Bytes()
     {
         var header = new MtdHeader(2);
         var expectedBytes = new byte[]

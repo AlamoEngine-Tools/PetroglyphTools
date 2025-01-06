@@ -37,7 +37,7 @@ public class PetroglyphRelativeDataEntryPathResolverTest
     [InlineData("Games/Petroglyph/corruption/test", "test", true)]
     [InlineData("Games/Petroglyph/corruption/test/", null, true)]
     [InlineData("Games/Petroglyph/corruption1/test", null, true)]
-    public void Test_ResolveEntryPath_Relative(string? path, string? expectedEntryPath, bool resolvePathFull = false)
+    public void ResolveEntryPath_Relative(string? path, string? expectedEntryPath, bool resolvePathFull = false)
     {
         const string basePath = "Games/Petroglyph/corruption/";
 

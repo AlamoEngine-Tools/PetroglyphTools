@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Data;
 public class DatStringEntryTest
 {
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var entry = new DatStringEntry("abc", new Crc32(1), "valueöäü😊", "def");
         Assert.Equal("abc", entry.Key);
@@ -18,7 +18,7 @@ public class DatStringEntryTest
     }
 
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
             new DatStringEntry(null!, new Crc32(1), "value", "def"));
@@ -34,7 +34,7 @@ public class DatStringEntryTest
     }
 
     [Fact]
-    public void Test_EqualsHashCode()
+    public void Equals_HashCode()
     {
         var entry1 = new DatStringEntry("123", new Crc32(1), "abc", "456");
         var entry2 = new DatStringEntry("123", new Crc32(2), "abc", "456");

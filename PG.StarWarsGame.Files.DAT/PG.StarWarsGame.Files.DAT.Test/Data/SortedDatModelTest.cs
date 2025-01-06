@@ -41,7 +41,7 @@ public class SortedDatModelTest : DatModelTest
     }
 
     [Fact]
-    public void Test_Ctor_NotSorted_ThrowsInvalidOperationException()
+    public void Ctor_NotSorted_ThrowsInvalidOperationException()
     {
         Assert.Throws<InvalidOperationException>(() =>
         {
@@ -54,7 +54,7 @@ public class SortedDatModelTest : DatModelTest
     }
 
     [Fact]
-    public void Test_ToUnsortedModel()
+    public void ToUnsortedModel()
     {
         var model = CreateSortedModel(CreateDataEntries());
         var unsorted = model.ToUnsortedModel();

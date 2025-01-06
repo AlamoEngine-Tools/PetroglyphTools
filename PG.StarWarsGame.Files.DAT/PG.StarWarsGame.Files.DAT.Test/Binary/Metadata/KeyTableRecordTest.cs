@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 public class KeyTableRecordTest
 {
     [Fact]
-    public void Test_Ctor_ThrowsArgumentNullException()
+    public void Ctor_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new KeyTableRecord(null!, ""));
         Assert.Throws<ArgumentNullException>(() => new KeyTableRecord("", null!));
@@ -18,7 +18,7 @@ public class KeyTableRecordTest
     [InlineData("testöäü")]
     [InlineData("👌")]
     [InlineData("\u00A0")]
-    public void Test_Ctor_NotAscii_Throws(string input)
+    public void Ctor_NotAscii_Throws(string input)
     {
         Assert.Throws<ArgumentException>(() => new KeyTableRecord(input, input));
     }
@@ -29,7 +29,7 @@ public class KeyTableRecordTest
     [InlineData("test", "randomÖÄÜ")]
     [InlineData("test\tTAB", "randomÖÄÜ")]
     [InlineData("test\\r\\n", "randomÖÄÜ")]
-    public void Test_Ctor(string input, string original)
+    public void Ctor(string input, string original)
     {
         var record = new KeyTableRecord(input, original);
         Assert.Equal(input, record.Key);

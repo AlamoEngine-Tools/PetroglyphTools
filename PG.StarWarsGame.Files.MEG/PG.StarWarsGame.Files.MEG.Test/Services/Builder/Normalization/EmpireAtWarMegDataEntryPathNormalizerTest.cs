@@ -14,7 +14,7 @@ public class EmpireAtWarMegDataEntryPathNormalizerTest : PetroglyphDataEntryPath
 
     [Theory]
     [MemberData(nameof(ValidPathsToNormalize))]
-    public void Test_Normalize_Success(string source, string expected)
+    public void Normalize_Success(string source, string expected)
     {
         TestNormalizePathPasses(source, expected);
     }

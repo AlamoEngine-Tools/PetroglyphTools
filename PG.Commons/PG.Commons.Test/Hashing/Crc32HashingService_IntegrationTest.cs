@@ -1,27 +1,22 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
 using System.Text;
-using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
-using Testably.Abstractions.Testing;
+using PG.Testing;
 using Xunit;
 
 namespace PG.Commons.Test.Hashing;
 
-public class Crc32HashingService_IntegrationTest
+public class Crc32HashingService_IntegrationTest : CommonTestBase
 {
 
-    private readonly Crc32HashingService _crc32HashingService = null!;
+    private readonly Crc32HashingService _crc32HashingService;
 
     public Crc32HashingService_IntegrationTest()
     {
         var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(sp => new MockFileSystem());
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.AddSingleton<IHashAlgorithmProvider>(new Crc32HashingProvider());
-        _crc32HashingService = new Crc32HashingService(sc.BuildServiceProvider());
+        _crc32HashingService = new Crc32HashingService(ServiceProvider);
     }
 
 
@@ -34,7 +29,7 @@ public class Crc32HashingService_IntegrationTest
     [InlineData("", 0)]
     [InlineData("Gcum8qzFZ1xYTTzY1N9avqWRM1q3qk22sfANKZykb8YGIb3fm1znkEPytzwk3qbzhwkIOlTVsC3dGde0vMxqcS6lF2wQi3rI7oMaJMdVdwkvYSf2zNU2qUBDXF1wGgHhhqeMvE6X479nKlsPFjjKG2AHRYqfOQttbZ8AW4n7p5wkrP2ScL08KGLls8vuZ8TXigsiySnBMqOX9SThW7IAApIn60NGiFNZtsC4FrhUXkLhuvDLtO9NyvdVMNLf5Z7iacGWSGrcTI0w9PrUBxFETwy3M2klGlvUM2P3kpvZzigYpPgo7wkicm7IclUbVjrBv2nLtzFDzXDtg2nP5RTXkPLtFEoeTMK1Y9nH6U9omcikyW92lyfUgh60fYWXIPsPwiCmS9K3jBcOz9V07T5HARtJmQFU9Z6nTwRRszzDqHs9KbWVV9cnCJ7bdPX2T3bS5O0lHnlVGhWYhiS5Il3lBJSyzuRLZ3N6OhO8uJ2gdGImN1hg928JRE132s0tOWGx", 1080801695)]
     // This test method accepts long so that we can interpret expectedChecksum as either uint or int.
-    public void Test_GetChecksum_KnowsPG_Values(string value, long expectedChecksum)
+    public void GetChecksum_KnowsPG_Values(string value, long expectedChecksum)
     {
         var crc = _crc32HashingService.GetCrc32(value, Encoding.ASCII);
         Assert.Equal((int)expectedChecksum, (int)crc);
@@ -63,14 +58,14 @@ public class Crc32HashingService_IntegrationTest
     [InlineData("a", 3554254475)]
     [InlineData("abcdefghijklmnopqrstuvwxyz0123456789", 374730529)]
 
-    public void Test_GetCrc32Upper(string input, long expectedCrc)
+    public void GetCrc32Upper(string input, long expectedCrc)
     {
         var crc = _crc32HashingService.GetCrc32Upper(input.AsSpan(), Encoding.ASCII);
         Assert.Equal((int)expectedCrc, (int)crc);
         Assert.Equal((uint)expectedCrc, (uint)crc);
     }
     [Fact]
-    public void Test_GetChecksum_String_Encoding_Ambiguity()
+    public void GetChecksum_String_Encoding_Ambiguity()
     {
         var crc1 = _crc32HashingService.GetCrc32("Ä", Encoding.ASCII);
         var crc2 = _crc32HashingService.GetCrc32("ü", Encoding.ASCII);
@@ -86,7 +81,7 @@ public class Crc32HashingService_IntegrationTest
     }
 
     [Fact]
-    public void Test_GetChecksum_String_Encoding_NoAmbiguity()
+    public void GetChecksum_String_Encoding_NoAmbiguity()
     {
         var crc1 = _crc32HashingService.GetCrc32("Ä", Encoding.Unicode);
         var crc2 = _crc32HashingService.GetCrc32("ü", Encoding.Unicode);

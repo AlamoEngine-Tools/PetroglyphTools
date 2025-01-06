@@ -8,19 +8,14 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 public class MegHeaderTest
 {
     [Fact]
-    public void Ctor_Test__ThrowsArgumentOORException()
+    public void Ctor_InvalidArgs_ThrowsArgumentOORException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new MegHeader((uint)int.MaxValue + 1, (uint)int.MaxValue + 1));
-    }
-
-    [Fact]
-    public void Ctor_Test__ThrowsArgumentException()
-    {
         Assert.Throws<ArgumentException>(() => new MegHeader(1, 2));
     }
 
     [Fact]
-    public void Ctor_Test__Correct()
+    public void Ctor()
     {
         new MegHeader(0, 0);
         new MegHeader(1, 1);
@@ -29,20 +24,20 @@ public class MegHeaderTest
     }
 
     [Fact]
-    public void Ctor_Test__FileNumber()
+    public void FileNumber()
     {
         IMegHeader header = new MegHeader(1, 1);
         Assert.Equal(1, header.FileNumber);
     }
 
     [Fact]
-    public void Test_Size()
+    public void Size()
     {
         Assert.Equal(8, default(MegHeader).Size);
     }
 
     [Fact]
-    public void Test_Bytes()
+    public void Bytes()
     {
         var header = new MegHeader(2, 2);
         var expectedBytes = new byte[]

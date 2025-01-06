@@ -20,27 +20,27 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new MegDataStreamFactory(null!));
     }
 
     [Fact]
-    public void Test_GetDataStream_Throws()
+    public void GetDataStream_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => _streamFactory.GetDataStream((MegDataEntryOriginInfo)null!));
         Assert.Throws<ArgumentNullException>(() => _streamFactory.GetDataStream((MegDataEntryLocationReference)null!));
     }
 
     [Fact]
-    public void Test_GetFileData_OriginInfo_Throws_FileNotFound()
+    public void GetFileData_OriginInfo_Throws_FileNotFound()
     {
        var originInfo = new MegDataEntryOriginInfo("test.txt");
         Assert.Throws<FileNotFoundException>(() => _streamFactory.GetDataStream(originInfo));
     }
 
     [Fact]
-    public void Test_GetFileData_OriginInfo_File()
+    public void GetFileData_OriginInfo_File()
     {
         FileSystem.Initialize().WithFile("test.txt").Which(m => m.HasBytesContent([1,2,3]));
 
@@ -54,7 +54,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_GetFileData_OriginInfo_LocationReference()
+    public void GetFileData_OriginInfo_LocationReference()
     {
         FileSystem.Initialize().WithFile("a.meg").Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
 
@@ -76,7 +76,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
 
 
     [Fact]
-    public void Test_GetFileData_LocationReference_Throws_FileNotInMeg()
+    public void GetFileData_LocationReference_Throws_FileNotInMeg()
     {
         FileSystem.Initialize().WithFile("a.meg");
         var entry = MegDataEntryTest.CreateEntry("file.txt");
@@ -92,7 +92,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_GetFileData_LocationReference_EmptyData_MegFileNotExists_Throws()
+    public void GetFileData_LocationReference_EmptyData_MegFileNotExists_Throws()
     {
         FileSystem.Initialize().WithFile("a.meg");
 
@@ -111,7 +111,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_GetFileData_LocationReference_EmptyDataFile()
+    public void GetFileData_LocationReference_EmptyDataFile()
     {
         FileSystem.Initialize().WithFile("a.meg");
         var entry = MegDataEntryTest.CreateEntry("file.txt", offset: 2, size: 0);
@@ -128,7 +128,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_GetFileData_LocationReference_File()
+    public void GetFileData_LocationReference_File()
     {
         FileSystem.Initialize().WithFile("a.meg").Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
 

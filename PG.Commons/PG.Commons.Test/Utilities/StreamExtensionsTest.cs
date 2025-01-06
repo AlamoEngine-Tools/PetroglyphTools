@@ -10,7 +10,7 @@ namespace PG.Commons.Test.Utilities;
 public class StreamExtensionsTest
 {
     [Fact]
-    public void Test_GetFilePath_FileStream()
+    public void GetFilePath_FileStream()
     {
         var expectedPath = "testfile.txt";
         using var fileStream = new FileStream(expectedPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024, FileOptions.DeleteOnClose);
@@ -20,7 +20,7 @@ public class StreamExtensionsTest
     }
 
     [Fact]
-    public void Test_GetFilePath_FileSystemStream()
+    public void GetFilePath_FileSystemStream()
     {
         var fs = new MockFileSystem();
         var expectedPath = "filesystemfile.txt";
@@ -31,7 +31,7 @@ public class StreamExtensionsTest
     }
 
     [Fact]
-    public void Test_GetFilePath_IMegFileDataStream()
+    public void GetFilePath_IMegFileDataStream()
     {
         var expectedPath = "megfiledatafile.txt";
         var megFileDataStream = new TestMegDataStream("megfiledatafile.txt", Stream.Null);
@@ -42,7 +42,7 @@ public class StreamExtensionsTest
     }
 
     [Fact]
-    public void Test_GetFilePath_StreamWithoutPath_ThrowsInvalidOperationException()
+    public void GetFilePath_StreamWithoutPath_ThrowsInvalidOperationException()
     {
         var memoryStream = new MemoryStream();
         Assert.Throws<InvalidOperationException>(memoryStream.GetFilePath);

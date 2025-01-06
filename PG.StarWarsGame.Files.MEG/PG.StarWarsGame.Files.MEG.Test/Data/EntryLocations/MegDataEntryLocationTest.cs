@@ -6,7 +6,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 public class MegDataEntryLocationTest
 {
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var location = new MegDataEntryLocation(1, 2);
         Assert.Equal(1u, location.Offset);
@@ -14,7 +14,7 @@ public class MegDataEntryLocationTest
     }
 
     [Fact]
-    public void Test_CtorEmpty()
+    public void Ctor_Empty()
     {
         var location = new MegDataEntryLocation();
         Assert.Equal(0u, location.Offset);
@@ -22,7 +22,7 @@ public class MegDataEntryLocationTest
     }
 
     [Fact]
-    public void Test_Default()
+    public void Default()
     {
         var location = default(MegDataEntryLocation);
         Assert.Equal(0u, location.Offset);
@@ -30,7 +30,7 @@ public class MegDataEntryLocationTest
     }
 
     [Fact]
-    public void Test_Equality_HashCode()
+    public void Equality_HashCode()
     {
         var location1 = new MegDataEntryLocation(1, 2);
         var location2 = new MegDataEntryLocation(1, 2);

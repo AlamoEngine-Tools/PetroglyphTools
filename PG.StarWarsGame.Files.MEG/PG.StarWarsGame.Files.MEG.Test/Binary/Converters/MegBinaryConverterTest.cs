@@ -41,7 +41,7 @@ public abstract class MegBinaryConverterTest
     private protected abstract IMegFileTable CreateFileTable(List<IMegFileDescriptor> records);
 
     [Fact]
-    public void Test_BinaryToModel()
+    public void BinaryToModel()
     {
         var entries = new List<MegDataEntry>
         {
@@ -73,7 +73,7 @@ public abstract class MegBinaryConverterTest
     }
 
     [Fact]
-    public void Test_BinaryToModel_EmptyArchive()
+    public void BinaryToModel_EmptyArchive()
     {
         var entries = new List<MegDataEntry>();
         var binary = CreateMetadata(entries);
@@ -82,7 +82,7 @@ public abstract class MegBinaryConverterTest
     }
 
     [Fact]
-    public void Test_BinaryToModel_NotSorted_Throws()
+    public void BinaryToModel_NotSorted_Throws()
     {
         var entries = new List<MegDataEntry>
         {
@@ -96,14 +96,14 @@ public abstract class MegBinaryConverterTest
     }
 
     [Fact]
-    public void Test_BinaryToModel_Null_Throws()
+    public void BinaryToModel_Null_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => _converter.BinaryToModel(null!));
     }
 
 
     [Fact]
-    public void Test_ModelToBinary()
+    public void ModelToBinary()
     {
         var model = new MegArchive(new List<MegDataEntry>
         {
@@ -138,7 +138,7 @@ public abstract class MegBinaryConverterTest
     }
 
     [Fact]
-    public void Test_ModelToBinary_Null_Throws()
+    public void ModelToBinary_Null_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => _converter.ModelToBinary(null!));
     }

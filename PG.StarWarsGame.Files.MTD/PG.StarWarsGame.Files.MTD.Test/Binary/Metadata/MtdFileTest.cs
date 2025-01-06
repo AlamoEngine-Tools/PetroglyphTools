@@ -10,13 +10,13 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.Metadata;
 public class MtdFileTest
 {
     [Fact]
-    public void Ctor_Test__ThrowsArgumentNullException()
+    public void Ctor_NullArgs_ThrowsArgumentNullException()
     { 
         Assert.Throws<ArgumentNullException>(() => new MtdBinaryFile(default, null!));
     }
 
     [Fact]
-    public void Ctor_Test__ThrowsArgumentException()
+    public void Ctor_InvalidArgs_ThrowsArgumentException()
     {
         var header = new MtdHeader(1);
 
@@ -32,7 +32,7 @@ public class MtdFileTest
 
 
     [Fact]
-    public void Ctor_Test__Correct()
+    public void Ctor()
     {
         var header = new MtdHeader(2);
 
@@ -45,7 +45,7 @@ public class MtdFileTest
     }
 
     [Fact]
-    public void Test_SizeBytes_WithContent()
+    public void SizeBytes_WithContent()
     {
         var header = new MtdHeader(2);
         var fileTable = new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>
@@ -66,7 +66,7 @@ public class MtdFileTest
     }
 
     [Fact]
-    public void Test_SizeBytes_Empty()
+    public void SizeBytes_Empty()
     {
         var header = new MtdHeader(0);
         var fileTable = new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>());

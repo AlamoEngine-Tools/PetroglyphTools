@@ -9,7 +9,7 @@ namespace PG.Commons.Test.Utilities;
 public class BinaryReaderUtilitiesTest
 {
     [Fact]
-    public void Test_ReadString_NullArgs()
+    public void ReadString_NullArgs_Throws()
     {
         var encoding = Encoding.Default;
         var ms = new MemoryStream([]);
@@ -25,7 +25,7 @@ public class BinaryReaderUtilitiesTest
     [InlineData("123")]
     [InlineData("123  ")]
     [InlineData("123\0\0")]
-    public void Test_ReadString_NormalCondition_Ascii(string input)
+    public void ReadString_NormalCondition_Ascii(string input)
     {
         var ascii = Encoding.ASCII;
         var stringBytes = ascii.GetBytes(input);
@@ -48,7 +48,7 @@ public class BinaryReaderUtilitiesTest
     [InlineData("123\0\0")]
     [InlineData("öäü")]
     [InlineData("😅")]
-    public void Test_ReadString_NormalCondition_Unicode(string input)
+    public void ReadString_NormalCondition_Unicode(string input)
     {
         var ascii = Encoding.Unicode;
         var stringBytes = ascii.GetBytes(input);
@@ -71,7 +71,7 @@ public class BinaryReaderUtilitiesTest
     [InlineData("123", 0, "")]
     [InlineData("123\0\0", 5, "123\0\0")]
     [InlineData("123  ", 5, "123  ")]
-    public void Test_ReadString_Count_Ascii(string input, int count, string expected)
+    public void ReadString_Count_Ascii(string input, int count, string expected)
     {
         var unicode = Encoding.ASCII;
         var stringBytes = unicode.GetBytes(input);
@@ -95,7 +95,7 @@ public class BinaryReaderUtilitiesTest
     [InlineData("😅", 4, "😅")]
     [InlineData("123\0\0", 10, "123\0\0")]
     [InlineData("123  ", 10, "123  ")]
-    public void Test_ReadString_Count_Unicode(string input, int count, string expected)
+    public void ReadString_Count_Unicode(string input, int count, string expected)
     {
         var unicode = Encoding.Unicode;
         var stringBytes = unicode.GetBytes(input);
@@ -112,7 +112,7 @@ public class BinaryReaderUtilitiesTest
     }
 
     [Fact]
-    public void Test_ReadString_InvalidCount_Ascii()
+    public void ReadString_InvalidCount_Ascii()
     {
         var ascii = Encoding.ASCII;
         var stringBytes = ascii.GetBytes("123");
@@ -122,7 +122,7 @@ public class BinaryReaderUtilitiesTest
     }
 
     [Fact]
-    public void Test_ReadString_InvalidCount_Unicode()
+    public void ReadString_InvalidCount_Unicode()
     {
         var ascii = Encoding.Unicode;
         var stringBytes = ascii.GetBytes("123");
@@ -132,7 +132,7 @@ public class BinaryReaderUtilitiesTest
     }
 
     [Fact]
-    public void Test_ReadString_LongString_Ascii()
+    public void ReadString_LongString_Ascii()
     {
         var ascii = Encoding.ASCII;
         var stringBytes = ascii.GetBytes(new string('a', 257));
@@ -146,7 +146,7 @@ public class BinaryReaderUtilitiesTest
     [InlineData("123\0\0", "123")]
     [InlineData("123  \0\0", "123  ")]
     [InlineData("123\0456\0", "123")]
-    public void Test_ReadString_ZeroTermination(string input, string expected)
+    public void ReadString_ZeroTermination(string input, string expected)
     {
         var encoding = Encoding.ASCII;
         var stringBytes = encoding.GetBytes(input);
@@ -164,7 +164,7 @@ public class BinaryReaderUtilitiesTest
     }
 
     [Fact]
-    public void Test_ReadString_ZeroTerminationRequired_Throws()
+    public void ReadString_ZeroTerminationRequired_Throws()
     {
         var encoding = Encoding.ASCII;
         var stringBytes = encoding.GetBytes("123 ");

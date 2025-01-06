@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 public class MegMetadataTest
 {
     [Fact]
-    public void Ctor_Test__ThrowsArgumentNullException()
+    public void Ctor_NullArgs_ThrowsArgumentNullException()
     {
         var fileTable = new MegFileTable(new List<MegFileTableRecord>
             { new(default, 0, 0, 0, 0) });
@@ -25,7 +25,7 @@ public class MegMetadataTest
     }
 
     [Fact]
-    public void Ctor_Test__ThrowsArgumentException()
+    public void Ctor_InvalidArgs_ThrowsArgumentException()
     {
         var header1 = new MegHeader(1, 1);
         var header2 = new MegHeader(2, 2);
@@ -56,7 +56,7 @@ public class MegMetadataTest
     }
 
     [Fact]
-    public void Test_SizeBytes_WithContent()
+    public void SizeBytes_WithContent()
     {
         var header = new MegHeader(1, 1);
         var fileNameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("123") });
@@ -75,7 +75,7 @@ public class MegMetadataTest
     }
 
     [Fact]
-    public void Test_SizeBytes_Empty()
+    public void SizeBytes_Empty()
     {
         var header = new MegHeader(0, 0);
         var fileNameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>());

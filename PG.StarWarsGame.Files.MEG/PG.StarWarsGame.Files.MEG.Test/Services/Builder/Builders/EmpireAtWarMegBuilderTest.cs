@@ -90,7 +90,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
     }
 
     [Fact]
-    public void Test_BuildMeg()
+    public void BuildMeg()
     {
         var builder = CreateBuilder();
 

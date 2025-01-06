@@ -19,7 +19,7 @@ public abstract partial class DatModelServiceTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_MergeSorted_Throws()
+    public void MergeSorted_Throws()
     {
         var sortedModel = new SortedDatModel([]);
         var unsortedModel = new UnsortedDatModel([]);
@@ -34,7 +34,7 @@ public abstract partial class DatModelServiceTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_MergeUnsorted_Throws()
+    public void MergeUnsorted_Throws()
     {
         var sortedModel = new SortedDatModel([]);
         var unsortedModel = new UnsortedDatModel([]);

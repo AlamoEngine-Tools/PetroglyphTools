@@ -46,7 +46,7 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : CommonT
     }
 
     [Fact]
-    public void Test_Build()
+    public void Build()
     {
         using var builder = CreateBuilder();
 
@@ -62,7 +62,7 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : CommonT
     }
 
     [Fact]
-    public void Test_Build_FileInfoNotValid_ThrowsInvalidOperationException()
+    public void Build_FileInfoNotValid_ThrowsInvalidOperationException()
     {
         if (FileInfoIsAlwaysValid)
             return;
@@ -80,7 +80,7 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : CommonT
     }
 
     [Fact]
-    public void Test_Build_DoNotOverwrite_Throws()
+    public void Build_DoNotOverwrite_Throws()
     {
         using var builder = CreateBuilder();
 
@@ -98,7 +98,7 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : CommonT
     }
 
     [Fact]
-    public void Test_Build_DoOverwrite()
+    public void Build_DoOverwrite()
     {
         using var builder = CreateBuilder();
 
@@ -120,7 +120,7 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : CommonT
     [InlineData("./..")]
     [InlineData("path/")]
     [InlineData("/")]
-    public void Test_Build_InvalidInfoPath_Throws(string path)
+    public void Build_InvalidInfoPath_Throws(string path)
     {
         using var builder = CreateBuilder();
 

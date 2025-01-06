@@ -54,14 +54,14 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     }
 
     [Fact]
-    public void Test_BuildConstructingMegArchive_ThrowsArgs()
+    public void BuildConstructingMegArchive_ThrowsArgs()
     {
         var service = CreateService();
         Assert.Throws<ArgumentNullException>(() => service.BuildConstructingMegArchive(null!));
     }
 
     [Fact]
-    public void Test_BuildConstructingMegArchive_FileNotFound_Throws()
+    public void BuildConstructingMegArchive_FileNotFound_Throws()
     {
         var service = CreateService();
         var builderEntries = new List<MegFileDataEntryBuilderInfo>
@@ -72,7 +72,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     }
 
     [Fact]
-    public void Test_BuildConstructingMegArchive_FileTooLarge_Throws()
+    public void BuildConstructingMegArchive_FileTooLarge_Throws()
     {
         const uint maxFileSize = 6u;
 
@@ -87,7 +87,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     }
 
     [Fact]
-    public void Test_BuildConstructingMegArchive_BinarySizeOverflows_Throws()
+    public void BuildConstructingMegArchive_BinarySizeOverflows_Throws()
     {
         var service = new BinarySizeOverflowingConstructingService(ServiceProvider);
 
@@ -108,7 +108,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     }
 
     [Fact]
-    public void Test_BuildConstructingMegArchive_NonASCIITreatment()
+    public void BuildConstructingMegArchive_NonASCIITreatment()
     {
         var expectedCrc = new Crc32(63 + 63 + 63); // 63 == '?'
 
@@ -141,7 +141,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
     }
 
     [Fact]
-    public void Test_BuildConstructingMegArchive_GetSizeAtRuntime()
+    public void BuildConstructingMegArchive_GetSizeAtRuntime()
     {
         var testData = "test data";
         FileSystem.Initialize().WithFile("A").Which(m => m.HasStringContent(testData));
@@ -157,7 +157,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
 
     [Theory]
     [MemberData(nameof(MegConstructionTestData_NotEncrypted), MemberType = typeof(ConstructingMegArchiveBuilderBaseTest))]
-    public void Test_BuildConstructingMegArchive_Normal(ConstructingMegTestData testDataInput)
+    public void BuildConstructingMegArchive_Normal(ConstructingMegTestData testDataInput)
     {
         Assert.Equal(testDataInput.BuilderEntries.Count(), testDataInput.ExpectedData.Count);
         

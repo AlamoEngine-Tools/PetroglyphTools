@@ -10,14 +10,14 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 public abstract partial class DatModelServiceTest
 {
     [Fact]
-    public void Test_GetDuplicateEntries_Throws()
+    public void GetDuplicateEntries_NullArgs_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => Service.GetDuplicateEntries(null!));
     }
 
     [Theory]
     [MemberData(nameof(GetDuplicateEntries_ModelsWithoutDuplicates))]
-    public void Test_GetDuplicateEntries_NoDuplicates(IList<DatStringEntry> entries)
+    public void GetDuplicateEntries_NoDuplicates(IList<DatStringEntry> entries)
     {
         var model = CreateModel(entries);
         var duplicates = Service.GetDuplicateEntries(model);
@@ -48,7 +48,7 @@ public abstract partial class DatModelServiceTest
     }
 
     [Fact]
-    public void Test_GetDuplicateEntries_HasDuplicates()
+    public void GetDuplicateEntries_HasDuplicates()
     {
         var entries = new List<DatStringEntry>
         {

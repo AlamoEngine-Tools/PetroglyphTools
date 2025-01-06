@@ -87,7 +87,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
     [InlineData("/   ", "   ", "/", "/   ")]
     [InlineData("./   ", "   ", "/", "/   ")]
     //[InlineData("   ", "   ", "/", "/   ")]  // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
-    public void Test_PassingFileNames_Whitespace_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFullPath)
+    public void PassingFileNames_Whitespace_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFullPath)
     {
         var model = CreateModel();
         FileSystem.Initialize().WithFile(filePath);
@@ -111,7 +111,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
     [InlineData("test/\u00A0", "\u00A0", "C:\\test", "C:\\test\\\u00A0")]
 #endif
     //[InlineData("\u00A0", "\u00A0", "C:\\\u00A0", "C:\\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
-    public void Test_PassingFileNames_Windows(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
+    public void PassingFileNames_Windows(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
     {
         var model = CreateModel();
         FileSystem.Initialize().WithFile(filePath);
@@ -133,7 +133,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
     [InlineData("a/b", "b", "/a", "/a/b")]
     [InlineData("test/\u00A0", "\u00A0", "/test", "/test/\u00A0")]
     // [InlineData("\u00A0", "\u00A0", "/\u00A0", "/\u00A0")] // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
-    public void Test_PassingFileNames_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
+    public void PassingFileNames_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFilePath)
     {
         var model = CreateModel();
         FileSystem.Initialize().WithFile(filePath);
@@ -149,7 +149,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
 
     [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
     [InlineData("   ", typeof(ArgumentException))]
-    public void Test_Ctor_InvalidPath_Whitespace_Windows_Throws(string path, Type type)
+    public void Ctor_InvalidPath_Whitespace_Windows_Throws(string path, Type type)
     {
         var model = CreateModel();
         var fileInfo = CreateFileInfo(path);
@@ -160,7 +160,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
     [InlineData("dir/")]
     [InlineData("..")]
     [InlineData(".")]
-    public void Test_Ctor_InvalidPaths_Throws(string path)
+    public void Ctor_InvalidPaths_Throws(string path)
     {
         var model = CreateModel();
         var fileInfo = CreateFileInfo(path);
@@ -168,7 +168,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
     }
 
     [Fact]
-    public void Test_Ctor_FileNotFound_Throws()
+    public void Ctor_FileNotFound_Throws()
     {
         var model = CreateModel();
 
@@ -181,7 +181,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
     }
 
     [Fact]
-    public void Test_Dispose()
+    public void Dispose()
     {
         var model = CreateModel();
 

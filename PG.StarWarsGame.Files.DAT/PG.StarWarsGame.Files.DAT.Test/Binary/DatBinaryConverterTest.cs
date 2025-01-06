@@ -23,7 +23,7 @@ public class DatBinaryConverterTest : CommonDatTestBase
     }
 
     [Fact]
-    public void Test_ToHolder__ValidModelCreatesValidHolder()
+    public void ToHolder_ValidModelCreatesValidHolder()
     {
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
         var binaryModel = new DatBinaryFile(

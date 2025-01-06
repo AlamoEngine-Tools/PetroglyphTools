@@ -9,13 +9,13 @@ namespace PG.StarWarsGame.Files.MEG.Test.Utilities;
 public class MegFileDataStreamTest
 {
     [Fact]
-    public void Test_ImplementsInterface()
+    public void ImplementsInterface()
     {
         Assert.True(typeof(IMegFileDataStream).IsAssignableFrom(typeof(MegFileDataStream)));
     }
 
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new MegFileDataStream("path", null!, 0, 0));
         Assert.Throws<ArgumentNullException>(() => new MegFileDataStream(null!, Stream.Null, 0, 0));
@@ -30,7 +30,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var ms = new MemoryStream(new byte[20]);
         var stream = new MegFileDataStream("path", ms, 0, 5);
@@ -43,7 +43,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_NotSupportedOperations()
+    public void NotSupportedOperations()
     {
         var ms = new MemoryStream();
         var stream = new MegFileDataStream("path", ms, 0, 0);
@@ -54,7 +54,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Dispose()
+    public void Dispose()
     {
         var ms = new MemoryStream();
         var stream = new MegFileDataStream("path", ms, 0, 0);
@@ -68,7 +68,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Read_Throws()
+    public void Read_Throws()
     {
         var baseStream = new CustomStream();
         var stream = new MegFileDataStream("path", baseStream, 0, 0);
@@ -82,7 +82,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Read_ThrowsOutOfRange_Computed()
+    public void Read_ThrowsOutOfRange_Computed()
     {
         var baseStream = new MemoryStream([1, 2, 3]);
         var stream = new MegFileDataStream("path", baseStream, 0, 3);
@@ -94,7 +94,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Read_AllAtOnce()
+    public void Read_AllAtOnce()
     {
         // 0xFF represents data we should never read
         var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
@@ -108,7 +108,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_CopyTo()
+    public void CopyTo()
     {
         // 0xFF represents data we should never read
         var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
@@ -122,7 +122,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Read_BytePerByte()
+    public void Read_BytePerByte()
     {
         // 0xFF represents data we should never read
         var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
@@ -148,7 +148,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Read_SuddenCutOfData_Throws()
+    public void Read_SuddenCutOfData_Throws()
     {
         // 0xFF represents data we should never read
         var source = new byte[] { 1, 2, 3 };
@@ -168,7 +168,7 @@ public class MegFileDataStreamTest
 
 
     [Fact]
-    public void Test_Position()
+    public void Position()
     {
         var source = new byte[] { 9, 9, 9, 1, 2, 3, 9, 9, 9 };
         var ms = new MemoryStream(source);
@@ -188,7 +188,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Seek()
+    public void Seek()
     {
         var source = new byte[] { 9, 9, 9, 1, 2, 3, 9, 9, 9 };
         var ms = new MemoryStream(source);
@@ -216,7 +216,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_Flush_NOP()
+    public void Flush_NOP()
     {
         var ms = new MemoryStream();
         var stream = new MegFileDataStream("path", ms, 0, 0);
@@ -225,7 +225,7 @@ public class MegFileDataStreamTest
     }
 
     [Fact]
-    public void Test_EmptyDataStream()
+    public void EmptyDataStream()
     {
         var stream = MegFileDataStream.CreateEmptyStream("path");
 

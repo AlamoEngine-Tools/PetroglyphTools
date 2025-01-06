@@ -8,13 +8,13 @@ namespace PG.Commons.Test.Services;
 public class ServiceBaseTest : CommonTestBase
 {
     [Fact]
-    public void Test_Ctor_ThrowsNullArg()
+    public void Ctor_ThrowsNullArg()
     {
         Assert.Throws<ArgumentNullException>(() => new MyService(null!));
     }
 
     [Fact]
-    public void Test_Ctor_SetupProperties()
+    public void Ctor_SetupProperties()
     {
        var service = new MyService(ServiceProvider);
         Assert.Equal(ServiceProvider, service.Services);

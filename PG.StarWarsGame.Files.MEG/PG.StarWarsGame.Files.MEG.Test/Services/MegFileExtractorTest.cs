@@ -22,7 +22,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_GetAbsoluteFilePath_Throws()
+    public void GetAbsoluteFilePath_Throws()
     {
         var entry = CreateEntry("path");
         Assert.Throws<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(null!, "path", false));
@@ -47,7 +47,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     [InlineData("..a.txt", "D:\\", false, "D:\\..a.txt")]
     [InlineData("C:/a.txt", "D:\\", false, "D:\\a.txt")]
 
-    public void Test_GetAbsoluteFilePath_Windows(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
+    public void GetAbsoluteFilePath_Windows(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
         var path = _extractor.GetAbsoluteFilePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
         Assert.Equal(expectedPath, path);
@@ -67,21 +67,21 @@ public class MegFileExtractorTest : CommonMegTestBase
     [InlineData("..a.txt", "/", false, "/..a.txt")]
     [InlineData("/new/a.txt", "/path/", false, "/path/a.txt")]
 
-    public void Test_GetAbsoluteFilePath_Linux(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
+    public void GetAbsoluteFilePath_Linux(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
         var path = _extractor.GetAbsoluteFilePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
         Assert.Equal(expectedPath, path);
     }
 
     [Fact]
-    public void Test_GetAbsoluteFilePath_ThrowsInvalidOperation()
+    public void GetAbsoluteFilePath_ThrowsInvalidOperation()
     {
         var entry = CreateEntry("notAFile.txt/");
         Assert.Throws<InvalidOperationException>(() => _extractor.GetAbsoluteFilePath(entry, "someRoot", false));
     }
 
     [Fact]
-    public void Test_GetFileData_ThrowsArgumentNull()
+    public void GetFileData_ThrowsArgumentNull()
     {
         Assert.Throws<ArgumentNullException>(() => _extractor.GetFileData(null!));
     }
@@ -102,7 +102,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_ExtractFile_ThrowsArgumentsIncorrect()
+    public void ExtractFile_ThrowsArgumentsIncorrect()
     {
         Assert.Throws<ArgumentNullException>(() => _extractor.ExtractFile(null!, "path", false));
 
@@ -123,7 +123,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
     [InlineData("c:/")]
     [InlineData("c:")]
-    public void Test_ExtractData_Throws_IllegalPath_Windows(string filePathWhereToExtract)
+    public void ExtractData_Throws_IllegalPath_Windows(string filePathWhereToExtract)
     {
         FileSystem.Initialize().WithFile("a.meg");
 
@@ -137,7 +137,7 @@ public class MegFileExtractorTest : CommonMegTestBase
 
     [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
     [InlineData("/")]
-    public void Test_ExtractData_Throws_IllegalPath_Linux(string filePathWhereToExtract)
+    public void ExtractData_Throws_IllegalPath_Linux(string filePathWhereToExtract)
     {
         FileSystem.Initialize().WithFile("a.meg");
 
@@ -151,7 +151,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_GetFileData()
+    public void GetFileData()
     {
         FileSystem.Initialize()
             .WithFile("test.meg").Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
@@ -171,7 +171,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_ExtractData_NoOverwrite()
+    public void ExtractData_NoOverwrite()
     {
         FileSystem.Initialize()
             .WithFile("test.meg").Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
@@ -204,7 +204,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_ExtractData_Overwrite()
+    public void ExtractData_Overwrite()
     {
         var existingFileData = new byte[] { 4, 3, 2, 1 };
         FileSystem.Initialize()
@@ -227,7 +227,7 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_ExtractData_CreateDirectories()
+    public void ExtractData_CreateDirectories()
     { 
         const string filePathWhereToExtract = "new/file.txt";
 

@@ -241,7 +241,7 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
     #endregion
 
     [Fact]
-    public void Test_AddEntry_CorrectCrc()
+    public void AddEntry_CorrectCrc()
     {
         var builder = CreateBuilder();
 

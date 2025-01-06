@@ -18,13 +18,13 @@ public abstract class DatModelTest
     protected abstract IList<DatStringEntry> CreateDataEntries();
 
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_NullArgs_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => CreateModel(null!));
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var model = CreateModel(CreateDataEntries());
 
@@ -35,7 +35,7 @@ public abstract class DatModelTest
     }
 
     [Fact]
-    public void Test_Enumerate()
+    public void Enumerate()
     {
         var entries = CreateDataEntries();
 
@@ -51,7 +51,7 @@ public abstract class DatModelTest
     }
 
     [Fact]
-    public void Test_ContainsKey()
+    public void ContainsKey()
     {
         var entry1 = new DatStringEntry("1", new Crc32(1), "value1");
 
@@ -70,7 +70,7 @@ public abstract class DatModelTest
     }
 
     [Fact]
-    public void Test_GetValueTryGetValue()
+    public void GetValueTryGetValue()
     {
         var entry1 = new DatStringEntry("1", new Crc32(1), "value1");
         var entry2 = new DatStringEntry("1", new Crc32(1), "value2");
@@ -102,7 +102,7 @@ public abstract class DatModelTest
     }
 
     [Fact]
-    public void Test_EntriesWithCrc()
+    public void EntriesWithCrc()
     {
         var model = CreateModel(CreateDataEntries());
         var entriesWithCrc1 = model.EntriesWithCrc(new Crc32(1));
@@ -113,7 +113,7 @@ public abstract class DatModelTest
     }
 
     [Fact]
-    public void Test_EntriesWithKey()
+    public void EntriesWithKey()
     {
         var model = CreateModel(CreateDataEntries());
         var entriesWithCrc1 = model.EntriesWithKey("1");
@@ -124,7 +124,7 @@ public abstract class DatModelTest
     }
 
     [Fact]
-    public void Test_FirstEntryWithCrc()
+    public void FirstEntryWithCrc()
     {
         var model = CreateModel(CreateDataEntries());
 
@@ -135,7 +135,7 @@ public abstract class DatModelTest
     }
 
     [Fact]
-    public void Test_FirstEntryWithKey()
+    public void FirstEntryWithKey()
     {
         var model = CreateModel(CreateDataEntries());
 

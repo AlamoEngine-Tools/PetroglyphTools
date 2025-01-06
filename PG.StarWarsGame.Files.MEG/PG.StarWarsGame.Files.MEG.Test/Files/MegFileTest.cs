@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Files;
 public class MegFileTest : CommonMegTestBase
 {
     [Fact]
-    public void Test_Ctor_ThrowsArgumentNullException()
+    public void Ctor_ThrowsArgumentNullException()
     {
         FileSystem.Initialize().WithFile("test.meg");
         var param = new MegFileInformation("test.meg", MegFileVersion.V1);
@@ -22,7 +22,7 @@ public class MegFileTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_Ctor_SetupProperties()
+    public void Ctor_SetupProperties()
     {
         const string name = "test.meg";
         var param = new MegFileInformation(name, MegFileVersion.V2);
@@ -41,7 +41,7 @@ public class MegFileTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_Ctor_SetupProperties_DisposeFileInfoParam()
+    public void Ctor_SetupProperties_DisposeFileInfoParam()
     {
         const string name = "test.meg";
 
@@ -64,7 +64,7 @@ public class MegFileTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_Ctor_SetupProperties_Encrypted()
+    public void Ctor_SetupProperties_Encrypted()
     {
         var key = new byte[16];
         var iv = new byte[16];
@@ -88,7 +88,7 @@ public class MegFileTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_EncryptionKeyHandling()
+    public void EncryptionKeyHandling()
     {
         var keyIv = new byte[16];
         RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);

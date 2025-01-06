@@ -10,7 +10,7 @@ public class DatHeaderTest
     [InlineData(0u)]
     [InlineData(1u)]
     [InlineData(100u)]
-    public void Test_Ctor(uint number)
+    public void Ctor(uint number)
     {
         var header = new DatHeader(number);
         Assert.Equal(number, header.RecordCount);
@@ -19,7 +19,7 @@ public class DatHeaderTest
     }
 
     [Fact]
-    public void Test_Ctor_ThrowsArgumentOutOfRangeException()
+    public void Ctor_ThrowsArgumentOutOfRangeException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new DatHeader((uint)int.MaxValue + 1));
     }

@@ -11,7 +11,7 @@ public abstract class MegFileTableBaseTest
     private protected abstract IMegFileDescriptor CreateFile(uint index, uint seed);
 
     [Fact]
-    public void Test_Enumerate()
+    public void Enumerate()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);
@@ -31,7 +31,7 @@ public abstract class MegFileTableBaseTest
     }
 
     [Fact]
-    public void Test_Enumerate_ResetEnumerator()
+    public void Enumerate_ResetEnumerator()
     {
         var entry1 = CreateFile(0, 1);
         var entry2 = CreateFile(1, 2);

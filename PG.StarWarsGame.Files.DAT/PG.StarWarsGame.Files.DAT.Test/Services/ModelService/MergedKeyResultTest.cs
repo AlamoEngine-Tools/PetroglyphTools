@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 public class MergedKeyResultTest
 {
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
 
         var result = new MergedKeyResult(default);
@@ -21,7 +21,7 @@ public class MergedKeyResultTest
     }
 
     [Fact]
-    public void Test_Getters()
+    public void NewEntry_OldEntry()
     {
         var newEntry = new DatStringEntry("1", new Crc32(1), "a");
         var oldEntry = new DatStringEntry("2", new Crc32(2), "b");

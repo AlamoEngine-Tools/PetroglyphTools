@@ -7,7 +7,7 @@ namespace PG.Commons.Test.DataTypes;
 public class IndexRangeTest
 {
     [Fact]
-    public void Test_Ctor()
+    public void Ctor_SetsProperties()
     {
         var range = new IndexRange(1, 2);
         Assert.Equal(1, range.Start);
@@ -15,7 +15,7 @@ public class IndexRangeTest
     }
 
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_InvalidArgs_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexRange(-1, 1));
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexRange(0, -1));
@@ -28,14 +28,13 @@ public class IndexRangeTest
     [InlineData(1, 1, 1)]
     [InlineData(0, 2, 1)]
     [InlineData(1, 2, 2)]
-    [InlineData(1, 2, 2)]
-    public void Test_End(int start, int length, int expectedEnd)
+    public void End(int start, int length, int expectedEnd)
     {
         Assert.Equal(expectedEnd, new IndexRange(start, length).End);
     }
 
     [Fact]
-    public void Test_Equals_HashCode()
+    public void Equals_HashCode()
     {
         var range1 = new IndexRange(1, 2);
         var range2 = new IndexRange(1, 2);

@@ -23,7 +23,7 @@ public class MegFileBinaryReaderV1IntegrationTest
     }
 
     [Fact]
-    public void Test__ReadBinary_EmptyMeg()
+    public void ReadBinary_EmptyMeg()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_empty.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
@@ -33,7 +33,7 @@ public class MegFileBinaryReaderV1IntegrationTest
     }
 
     [Fact]
-    public void Test__ReadBinary_OneFile()
+    public void ReadBinary_OneFile()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_1_file_data.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
@@ -50,7 +50,7 @@ public class MegFileBinaryReaderV1IntegrationTest
     }
 
     [Fact]
-    public void Test__ReadBinary_TwoFiles()
+    public void ReadBinary_TwoFiles()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_2_files_empty.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
@@ -63,7 +63,7 @@ public class MegFileBinaryReaderV1IntegrationTest
     }
 
     [Fact]
-    public void Test__ReadBinary_TwoFilesWithNonAsciiName()
+    public void ReadBinary_TwoFilesWithNonAsciiName()
     {
         var emptyMeg = TestUtility.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_2_files_with_extended_ascii_name.meg");
         var megMetadata = _binaryReader.ReadBinary(emptyMeg);
@@ -81,7 +81,7 @@ public class MegFileBinaryReaderV1IntegrationTest
     }
 
     [Fact]
-    public void Test__ReadBinary_TwoFiles2()
+    public void ReadBinary_TwoFiles2()
     {
         var megMetadata = _binaryReader.ReadBinary(new MemoryStream(MegTestConstants.ContentMegFileV1));
 

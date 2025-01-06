@@ -9,36 +9,36 @@ namespace PG.Commons.Test.Utilities;
 public class EncodingExtensionsTest
 {
     [Fact]
-    public void Test_GetByteCountPG_NullArgs_Throws()
+    public void GetByteCountPG_NullArgs_Throws()
     {
         Encoding encoding = null!;
         Assert.Throws<ArgumentNullException>(() => encoding.GetByteCountPG(4));
     }
 
     [Fact]
-    public void Test_GetByteCountPG_NegativeCount_Throws()
+    public void GetByteCountPG_NegativeCount_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Encoding.ASCII.GetByteCountPG(-1));
     }
 
     [Theory]
     [MemberData(nameof(EncodingTestData))]
-    public void Test_GetByteCountPG(Encoding encoding, int charCount, int expectedBytesCount)
+    public void GetByteCountPG(Encoding encoding, int charCount, int expectedBytesCount)
     {
         Assert.Equal(expectedBytesCount, encoding.GetByteCountPG(charCount));
     }
 
     [Theory]
     [MemberData(nameof(NotSupportedEncodings))]
-    public void Test_GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
+    public void GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
     {
         Assert.Throws<NotSupportedException>(() => encoding.GetByteCountPG(4));
     }
 
     public static IEnumerable<object[]> EncodingTestData()
     {
-        return new[]
-        {
+        return
+        [
             [Encoding.Unicode, 0, 0],
             [Encoding.Unicode, 1, 2],
             [Encoding.Unicode, 2, 4],
@@ -49,8 +49,8 @@ public class EncodingExtensionsTest
             [Encoding.ASCII, 1, 1],
             [Encoding.ASCII, 2, 2],
             [Encoding.ASCII, 3, 3],
-            new object[] { Encoding.ASCII, 256, 256 },
-        };
+            [Encoding.ASCII, 256, 256]
+        ];
     }
 
     public static IEnumerable<object[]> NotSupportedEncodings()

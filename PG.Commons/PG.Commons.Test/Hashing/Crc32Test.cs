@@ -9,7 +9,7 @@ namespace PG.Commons.Test.Hashing;
 public class Crc32Test
 {
     [Fact]
-    public unsafe void Test_Default_Behavior()
+    public unsafe void Default_Behavior()
     {
         var crcEmpty = new Crc32();
         var crcDefault = default(Crc32);
@@ -31,7 +31,7 @@ public class Crc32Test
     }
 
     [Fact]
-    public void Test_Construction()
+    public void Construction()
     {
         var crc1u = new Crc32(1U);
         Assert.Equal(1, (int)crc1u);
@@ -49,7 +49,7 @@ public class Crc32Test
     }
 
     [Fact]
-    public void Test_Construction_Negative()
+    public void Construction_Negative()
     {
         var crcM1 = new Crc32(-1);
         Assert.Equal(-1, (int)crcM1);
@@ -57,7 +57,7 @@ public class Crc32Test
     }
 
     [Fact]
-    public void Test_Construction_BigEndian()
+    public void Construction_BigEndian()
     {
         Span<byte> data = stackalloc byte[sizeof(int)];
         BinaryPrimitives.WriteInt32BigEndian(data, 1);
@@ -67,7 +67,7 @@ public class Crc32Test
     }
 
     [Fact]
-    public void Test_Compare()
+    public void Comparison()
     {
         var crc1 = new Crc32(1);
         var crc2 = new Crc32(2);
@@ -86,7 +86,7 @@ public class Crc32Test
     }
 
     [Fact]
-    public void Test_ToString()
+    public void ToString_WithFormat()
     {
         var crc1 = new Crc32(1);
         var crcM1 = new Crc32(-1);
@@ -98,7 +98,7 @@ public class Crc32Test
     }
 
     [Fact]
-    public void Test_GetBytes()
+    public void GetBytes()
     {
         var crcM1 = new Crc32(-1);
         var crcMax = new Crc32(uint.MaxValue);
@@ -114,7 +114,20 @@ public class Crc32Test
     }
 
     [Fact]
-    public void Test_Boxing()
+    public void GetBytes_LittleEndian()
+    {
+        var crcM1 = new Crc32(1);
+
+        var expected = new byte[] { 0x1, 0x00, 0x00, 0x00 };
+        Assert.Equal(expected, crcM1.GetBytes());
+
+        var data = new byte[sizeof(uint)];
+        crcM1.GetBytes(data);
+        Assert.Equal(expected, data.ToArray());
+    }
+
+    [Fact]
+    public void Boxing()
     {
         object crc = new Crc32(2);
         Assert.Equal((object)new Crc32(2), (Crc32)crc);

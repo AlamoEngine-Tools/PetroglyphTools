@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services;
 public class VirtualMegArchiveBuilderTest : CommonMegTestBase
 {
     [Fact]
-    public void Test_BuildFrom_NullArgs_Throws()
+    public void BuildFrom_NullArgs_Throws()
     {
         var service = new VirtualMegArchiveBuilder();
 
@@ -26,7 +26,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_BuildFrom_ListOfReferences_DoesNotExists_Throws()
+    public void BuildFrom_ListOfReferences_DoesNotExists_Throws()
     {
         var service = new VirtualMegArchiveBuilder();
 
@@ -45,7 +45,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_BuildFrom_ListOfReferences_DoNotReplace()
+    public void BuildFrom_ListOfReferences_DoNotReplace()
     {
         var service = new VirtualMegArchiveBuilder();
 
@@ -79,7 +79,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_BuildFrom_ListOfReferences_Replace()
+    public void BuildFrom_ListOfReferences_Replace()
     {
         var service = new VirtualMegArchiveBuilder();
 
@@ -113,7 +113,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_BuildFrom_SingleMeg()
+    public void BuildFrom_SingleMeg()
     {
         var service = new VirtualMegArchiveBuilder();
 
@@ -137,7 +137,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_BuildFrom_ListOfMegs_DoNotReplace()
+    public void BuildFrom_ListOfMegs_DoNotReplace()
     {
         var service = new VirtualMegArchiveBuilder();
 
@@ -167,7 +167,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_BuildFrom_ListOfMegs_Replace()
+    public void BuildFrom_ListOfMegs_Replace()
     {
         var service = new VirtualMegArchiveBuilder();
 

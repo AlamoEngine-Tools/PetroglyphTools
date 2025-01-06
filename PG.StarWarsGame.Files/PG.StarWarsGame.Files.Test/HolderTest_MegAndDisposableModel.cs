@@ -21,7 +21,7 @@ public class HolderTest_MegAndDisposableModel : PetroglyphFileHolderTest<Disposa
     }
 
     [Fact]
-    public void Test_Ctor_ThrowsArgumentNullException()
+    public void Ctor_ThrowsArgumentNullException()
     {
         var model = CreateModel();
         var fileInfo = CreateFileInfo(DefaultFileName);

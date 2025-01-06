@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 public class DatBinaryFileTest
 {
     [Fact]
-    public void Test_Ctor_ThrowsArgumentNullException()
+    public void Ctor_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new DatBinaryFile(default, null!, new BinaryTable<ValueTableRecord>([]), new BinaryTable<KeyTableRecord>([])));
         Assert.Throws<ArgumentNullException>(() => new DatBinaryFile(default, new BinaryTable<IndexTableRecord>([]), null!, new BinaryTable<KeyTableRecord>([])));
@@ -18,7 +18,7 @@ public class DatBinaryFileTest
     }
 
     [Fact]
-    public void Test_Ctor_Empty()
+    public void Ctor_Empty()
     {
         DatHeader header = default;
         var index = new BinaryTable<IndexTableRecord>([]);
@@ -36,7 +36,7 @@ public class DatBinaryFileTest
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var header = new DatHeader(2);
         var index = new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>

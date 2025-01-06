@@ -24,7 +24,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
     }
 
     [Fact]
-    public void Test__CreateMegMetadata()
+    public void CreateMegMetadata()
     {
         var header = (MegHeader)default;
 
@@ -39,7 +39,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
     }
 
     [Fact]
-    public void Test__BuildMegHeader_NotSupportedFileCount()
+    public void BuildMegHeader_NotSupportedFileCount()
     {
         var data = new byte[]
         {
@@ -52,7 +52,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
     }
 
     [Fact]
-    public void Test__BuildMegHeader_NotEqualFile_FileName_Count()
+    public void BuildMegHeader_NotEqualFile_FileName_Count()
     {
         var data = new byte[]
         {
@@ -66,7 +66,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
 
     [Theory]
     [MemberData(nameof(HeaderTestData))]
-    public void Test__BuildMegHeader_Correct(byte[] data, uint numFiles, uint numNames)
+    public void BuildMegHeader_Correct(byte[] data, uint numFiles, uint numNames)
     {
         var reader = new BinaryReader(new MemoryStream(data));
         var header = CreateV1Reader().BuildMegHeader(reader);
@@ -117,7 +117,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
 
     [Theory]
     [MemberData(nameof(FileTableIntegrationTestData))]
-    public void Test__BuildFileTable_Integration(
+    public void BuildFileTable_Integration(
         uint numberEntries,
         byte[] data,
         int dataToInspect,
@@ -195,7 +195,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
 
     [Theory]
     [MemberData(nameof(NotSupportedFileTableRecords))]
-    public void Test__BuildFileTable_NotSupported(uint numberEntries, byte[] data)
+    public void BuildFileTable_NotSupported(uint numberEntries, byte[] data)
     {
         var header = new MegHeader(numberEntries, numberEntries);
         var reader = new BinaryReader(new MemoryStream(data));

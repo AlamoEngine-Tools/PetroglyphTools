@@ -28,7 +28,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     #region Create Meg Archive
 
     [Fact]
-    public void Test_CreateMegArchive_Throws()
+    public void CreateMegArchive_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegFileDataEntryBuilderInfo>()));
         Assert.Throws<ArgumentNullException>(() =>
@@ -39,7 +39,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_CreateMegArchive_DoesNotCreateDirectories_Throws()
+    public void CreateMegArchive_DoesNotCreateDirectories_Throws()
     {
         const string megFileName = "test/a.meg";
 
@@ -53,7 +53,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_CreateMegArchive_EntryNotFoundInMeg_Throws()
+    public void CreateMegArchive_EntryNotFoundInMeg_Throws()
     {
         const string megFileName = "test.meg";
         const string dummyMegFile = "dummy.meg";
@@ -81,7 +81,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_CreateMegArchive_EntryNotFoundOnFileSystem_Throws()
+    public void CreateMegArchive_EntryNotFoundOnFileSystem_Throws()
     {
         const string megFileName = "test.meg";
         const string newFileName = "new.meg";
@@ -102,7 +102,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_CreateMegArchive_MegWithEntriesOfSameNameButWithDifferentData()
+    public void CreateMegArchive_MegWithEntriesOfSameNameButWithDifferentData()
     {
         const string megFileName = "test.meg";
 
@@ -138,7 +138,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_CreateMegArchive_InvalidSize_Throws()
+    public void CreateMegArchive_InvalidSize_Throws()
     {
         const string megFileName = "test.meg";
 
@@ -158,7 +158,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     #region Generic Read
 
     [Fact]
-    public void Test_Load_InvalidBinary()
+    public void Load_InvalidBinary()
     {
         const string megFileName = "test.meg";
         const string fileData = "some random data";
@@ -169,13 +169,13 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_Load_ThrowFileNotFound()
+    public void Load_ThrowFileNotFound()
     {
         Assert.Throws<FileNotFoundException>(() => _megFileService.Load("notFound.meg"));
     }
 
     [Fact]
-    public void Test_Load_NullArgs()
+    public void Load_NullArgs()
     {
         Assert.Throws<ArgumentNullException>(() => _megFileService.Load((string)null!));
         Assert.Throws<ArgumentNullException>(() => _megFileService.Load((FileSystemStream)null!));
@@ -186,7 +186,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     #region Read / Write V1
 
     [Fact]
-    public void Test_MegV1_WithEntries()
+    public void MegV1_WithEntries()
     {
         const string megFileName = "test.meg";
 
@@ -210,7 +210,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_MegV1_Empty()
+    public void MegV1_Empty()
     {
         const string megFileName = "test.meg";
         const string megResource = "Files.v1_empty.meg";
@@ -232,7 +232,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Test_MegV1_EntriesHaveNonAsciiNames()
+    public void MegV1_EntriesHaveNonAsciiNames()
     {
         const string megFileName = "test.meg";
         const string megResource = "Files.v1_2_files_with_extended_ascii_name.meg";
@@ -263,7 +263,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     #region GetFileVersion
 
     [Fact]
-    public void Test_GetMegFileVersion()
+    public void GetMegFileVersion()
     {
         WriteMegFromResources("Files.v1_1_file_data.meg", "v1.meg");
         WriteMegFromResources("Files.v2_2_files_data.meg", "v2.meg");
@@ -286,7 +286,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
 
 
     [Fact]
-    public void Test_GetMegFileVersion_Throws_FileNotFound()
+    public void GetMegFileVersion_Throws_FileNotFound()
     {
         Assert.Throws<FileNotFoundException>(() => _megFileService.GetMegFileVersion("test.meg", out _));
     }

@@ -11,27 +11,27 @@ public class MegFileNameTableRecordTest
     [InlineData("", "org")]
     [InlineData("   ", "org")]
     [InlineData("path", "")]
-    public void Ctor_Test_ThrowsArgumentException(string fileName, string originalFileName)
+    public void Ctor_InvalidArgs_ThrowsArgumentException(string fileName, string originalFileName)
     {
         Assert.Throws<ArgumentException>(() => new MegFileNameTableRecord(fileName, originalFileName));
     }
 
     [Fact]
-    public void Ctor_Test_ThrowsArgumentNullException()
+    public void Ctor_NullArgs_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new MegFileNameTableRecord(null!, "org"));
         Assert.Throws<ArgumentNullException>(() => new MegFileNameTableRecord("path", null!));
     }
 
     [Fact]
-    public void Ctor_Test_StringTooLong_ThrowsArgumentException()
+    public void Ctor_StringTooLong_ThrowsArgumentException()
     {
         var fn = new string('a', ushort.MaxValue + 1);
         Assert.Throws<ArgumentException>(() => new MegFileNameTableRecord(fn, "org"));
     }
 
     [Fact]
-    public void Ctor_Test_OriginalPath()
+    public void Ctor_OriginalPath()
     {
         const string expectedOrgPath = "someUnusualStringÜöä😅";
         var record = ExceptionUtilities.AssertDoesNotThrowException(() => new MegFileNameTableRecord("path", expectedOrgPath));
@@ -42,7 +42,7 @@ public class MegFileNameTableRecordTest
     [Theory]
     [InlineData("abc", 2 + 3)]
     [InlineData("abc123", 2 + 6)]
-    public void Ctor_Test_Size(string fileName, int expectedSize)
+    public void Ctor_Size(string fileName, int expectedSize)
     {
         var record = new MegFileNameTableRecord(fileName, "org");
         Assert.Equal(expectedSize, record.Size);
@@ -54,7 +54,7 @@ public class MegFileNameTableRecordTest
     [InlineData("🍔")] // Long byte emojii
     [InlineData("❓")] // Short byte emojii
     [InlineData("a\u00A0")] 
-    public void Test_NonAsciiPath_Throws(string fileName)
+    public void NonAsciiPath_Throws(string fileName)
     {
         Assert.Throws<ArgumentException>(() => new MegFileNameTableRecord(fileName, "org"));
     }
@@ -62,7 +62,7 @@ public class MegFileNameTableRecordTest
     [Theory]
     [InlineData("a", new byte[] { 0x1, 0x0, 0x61 })]
     [InlineData("ab", new byte[] { 0x2, 0x0, 0x61, 0x62 })]
-    public void Test_GetBytes(string fileName, byte[] expectedBytes)
+    public void GetBytes(string fileName, byte[] expectedBytes)
     {
         var record = new MegFileNameTableRecord(fileName, "org");
         Assert.Equal(expectedBytes, record.Bytes);

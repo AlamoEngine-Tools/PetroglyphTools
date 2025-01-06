@@ -19,14 +19,14 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestBase<Petrogly
     protected abstract PetroglyphGameMegBuilder CreatePetroBuilder(string basePath);
 
     [Fact]
-    public void PetroglyphGameMegBuilderTest_Test_Ctor()
+    public void PetroglyphGameMegBuilderTes_Ctor()
     {
         var builder = CreatePetroBuilder(BasePath);
         Assert.Equal(FileSystem.Path.GetFullPath(BasePath), builder.BaseDirectory);
     }
 
     [Fact]
-    public void PetroglyphGameMegBuilderTest_Test_Ctor_BasePathIsTreatedAsDirectory()
+    public void Ctor_BasePathIsTreatedAsDirectory()
     { 
         // Skipping trailing path separator on purpose
         var builder = CreatePetroBuilder("/game/corruption.dir");

@@ -42,13 +42,13 @@ public class DatBinaryConverterTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_BinaryToModel_ThrowsArgumentNullException()
+    public void BinaryToModel_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => _converter.BinaryToModel(null!));
     }
 
     [Fact]
-    public void Test_BinaryToModel_Sorted()
+    public void BinaryToModel_Sorted()
     {
         var header = new DatHeader(3);
         var indexTable = new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
@@ -85,7 +85,7 @@ public class DatBinaryConverterTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_BinaryToModel_Unsorted()
+    public void BinaryToModel_Unsorted()
     {
         var header = new DatHeader(3);
         var indexTable = new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
@@ -122,13 +122,13 @@ public class DatBinaryConverterTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_ModelToBinary_ThrowsArgumentNullException()
+    public void ModelToBinary_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => _converter.ModelToBinary(null!));
     }
 
     [Fact]
-    public void Test_ModelToBinary_Ordered()
+    public void ModelToBinary_Ordered()
     {
         var modelEntries = new List<DatStringEntry>
         {
@@ -164,7 +164,7 @@ public class DatBinaryConverterTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_ModelToBinary_Unsorted()
+    public void ModelToBinary_Unsorted()
     {
         var modelEntries = new List<DatStringEntry>
         {
@@ -196,7 +196,7 @@ public class DatBinaryConverterTest : CommonTestBase
     }
 
     [Fact]
-    public void Test_ModelToBinary_WantsSortedButIsNot_ThrowsArgumentException()
+    public void ModelToBinary_WantsSortedButIsNot_ThrowsArgumentException()
     {
         var modelEntries = new List<DatStringEntry>
         {

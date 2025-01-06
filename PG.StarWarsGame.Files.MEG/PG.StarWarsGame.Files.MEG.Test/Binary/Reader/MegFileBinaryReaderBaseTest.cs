@@ -28,13 +28,13 @@ public abstract class MegFileBinaryReaderBaseTest
     private protected abstract IMegFileBinaryReader CreateService();
 
     [Fact]
-    public void Test__Ctor_ThrowsNullArg()
+    public void Ctor_NullArgs_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new TestMegFileBinaryReader(null!));
     }
 
     [Fact]
-    public void Test__ReadBinary_ThrowsArgs()
+    public void ReadBinary_InvalidArgs_Throws()
     {
         var service = CreateService();
 
@@ -46,7 +46,7 @@ public abstract class MegFileBinaryReaderBaseTest
 
     [Theory]
     [MemberData(nameof(FileTableTestData))]
-    public void Test__ReadBinary_BuildFileNameTable(int fileNumber, byte[] data, string[] expectedValues)
+    public void ReadBinary_BuildFileNameTable(int fileNumber, byte[] data, string[] expectedValues)
     {
         var service = CreateService();
 

@@ -396,7 +396,11 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Single(builder.DataEntries);
 
         var actualEntry = builder.DataEntries.First();
-        Assert.Equal("DATA\\XML\\CAMPAIGNFILES.XML", actualEntry.FilePath);
+
+        var expectedEntryPath = MegFileConstants.MegDataEntryPathEncoding.EncodeString(MegFileConstants.MegDataEntryPathEncoding.EncodeString(
+            builder.DataEntryPathNormalizer?.Normalize(entry.FilePath) ?? entry.FilePath));
+
+        Assert.Equal(expectedEntryPath, actualEntry.FilePath);
         Assert.Same(entry, actualEntry.OriginInfo.MegFileLocation!.DataEntry);
     }
 
@@ -466,7 +470,6 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var entry = meg.Archive[0];
 
         var builder = CreateBuilder();
-
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg, entry), GetFailingEntryPath());
 

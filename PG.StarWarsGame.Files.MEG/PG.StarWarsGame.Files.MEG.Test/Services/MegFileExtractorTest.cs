@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
@@ -168,7 +167,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         var ms = new MemoryStream();
         stream.CopyTo(ms);
 
-        Assert.Equal(Encoding.ASCII.GetBytes(MegTestConstants.CampaignFilesContent), ms.ToArray());
+        Assert.Equal(MegTestConstants.CampaignFilesContent, ms.ToArray());
     }
 
     [Fact]
@@ -189,7 +188,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         Assert.True(FileSystem.File.Exists("file.txt"));
 
         var actualFileData = FileSystem.File.ReadAllBytes("file.txt");
-        Assert.Equal(Encoding.ASCII.GetBytes(MegTestConstants.CampaignFilesContent), actualFileData);
+        Assert.Equal(MegTestConstants.CampaignFilesContent, actualFileData);
 
 
         // Overwrite File with some other data;
@@ -224,7 +223,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         Assert.True(extracted);
 
         var actualFileData = FileSystem.File.ReadAllBytes("file.txt");
-        Assert.Equal(Encoding.ASCII.GetBytes(MegTestConstants.CampaignFilesContent), actualFileData);
+        Assert.Equal(MegTestConstants.CampaignFilesContent, actualFileData);
     }
 
     [Fact]
@@ -246,6 +245,6 @@ public class MegFileExtractorTest : CommonMegTestBase
         Assert.True(extracted);
 
         var actualFileData = FileSystem.File.ReadAllBytes(filePathWhereToExtract);
-        Assert.Equal(Encoding.ASCII.GetBytes(MegTestConstants.CampaignFilesContent), actualFileData);
+        Assert.Equal(MegTestConstants.CampaignFilesContent, actualFileData);
     }
 }

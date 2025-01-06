@@ -70,8 +70,8 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         var goFile = FileSystem.Path.Combine(xmlDir.FullName, "GAMEOBJECTFILES.XML");
         var cfFile = FileSystem.Path.Combine(xmlDir.FullName, "CAMPAIGNFILES.XML");
 
-        FileSystem.File.WriteAllText(goFile, MegTestConstants.GameObjectFilesContent);
-        FileSystem.File.WriteAllText(cfFile, MegTestConstants.CampaignFilesContent);
+        FileSystem.File.WriteAllBytes(goFile, MegTestConstants.GameObjectFilesContent);
+        FileSystem.File.WriteAllBytes(cfFile, MegTestConstants.CampaignFilesContent);
 
         var testMeg = new List<MegFileDataEntryBuilderInfo>
         {

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestSuite
+public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestBase<PetroglyphGameMegBuilder>
 {
     public const string BasePath = "/Games/Petroglyph/corruption/";
     protected override Type ExpectedFileInfoValidatorType => typeof(PetroglyphMegFileInformationValidator);
@@ -16,11 +16,6 @@ public abstract class PetroglyphGameMegBuilderTest : MegBuilderTestSuite
     protected override bool? ExpectedAutomaticallyAddFileSizes => true;
 
     protected abstract PetroglyphGameMegBuilder CreatePetroBuilder(string basePath, IServiceProvider serviceProvider);
-
-    protected override MegBuilderBase CreateBuilder()
-    {
-        return CreatePetroBuilder(BasePath, ServiceProvider);
-    }
 
     [Fact]
     public void PetroglyphGameMegBuilderTest_Test_Ctor_Throws()

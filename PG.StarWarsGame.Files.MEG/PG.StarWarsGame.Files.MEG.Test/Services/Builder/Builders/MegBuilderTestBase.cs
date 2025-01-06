@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
+using PG.StarWarsGame.Files.Test.Services.Builder;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-public abstract class MegBuilderTestSuite : CommonMegTestBase
+public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilder, IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>
+    where TBuilder : MegBuilderBase
 {
     protected abstract Type ExpectedFileInfoValidatorType { get; }
     protected abstract Type ExpectedDataEntryValidatorType { get; }
@@ -12,8 +17,6 @@ public abstract class MegBuilderTestSuite : CommonMegTestBase
     protected abstract bool? ExpectedOverwritesDuplicates { get; }
     protected abstract bool? ExpectedAutomaticallyAddFileSizes { get; }
 
-    protected abstract MegBuilderBase CreateBuilder();
-    
     [Fact]
     public void MegBuilderTestSuite_Test_Ctor()
     {

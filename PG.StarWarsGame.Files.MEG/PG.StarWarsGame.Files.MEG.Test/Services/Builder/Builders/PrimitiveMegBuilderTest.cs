@@ -4,7 +4,7 @@ using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-public class PrimitiveMegBuilderTest : MegBuilderTestSuite
+public class PrimitiveMegBuilderTest : MegBuilderTestBase
 {
     protected override Type ExpectedFileInfoValidatorType => typeof(DefaultMegFileInformationValidator);
     protected override Type ExpectedDataEntryValidatorType => typeof(NotNullDataEntryValidator);

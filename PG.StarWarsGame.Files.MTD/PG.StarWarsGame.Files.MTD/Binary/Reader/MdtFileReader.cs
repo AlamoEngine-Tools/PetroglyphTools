@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using PG.Commons.Services;
-using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MTD.Binary.Metadata;
+using PG.StarWarsGame.Files.Utilities;
 
 namespace PG.StarWarsGame.Files.MTD.Binary;
 

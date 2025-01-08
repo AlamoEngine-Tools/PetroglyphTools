@@ -1,14 +1,12 @@
 ﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.IO;
 using System.Text;
-using System;
-#if NETSTANDARD2_0
 using AnakinRaW.CommonUtilities.Extensions;
-#endif
 
-namespace PG.Commons.Utilities;
+namespace PG.StarWarsGame.Files.Utilities;
 
 /// <summary>
 ///     Provides useful extension methods to the <see cref="BinaryReader"/> type to read PG binary data.
@@ -16,7 +14,7 @@ namespace PG.Commons.Utilities;
 public static class BinaryReaderUtilities
 {
     /// <summary>
-    ///     Reads a string from the current stream. This operation requires the string length <b>in bytes</b> to be known beforehand.
+    ///     Reads a string from the binary reader. This operation requires the string length <b>in bytes</b> to be known beforehand.
     /// <br/>
     /// <br/>
     ///     This method can be used to read:
@@ -31,8 +29,8 @@ public static class BinaryReaderUtilities
     ///     BinaryReader does not restore the file position after an unsuccessful read.
     /// </remarks>
     /// <param name="reader">The binary reader instance.</param>
-    /// <param name="length">The length in <b>bytes</b>.</param>
-    /// <param name="encoding">The encoding used to produce the string.</param>
+    /// <param name="length">The number of <b>bytes</b> to read.</param>
+    /// <param name="encoding">The encoding to produce the string.</param>
     /// <param name="isZeroTerminated">When set to <see langword="true"/>, the resulting string is truncated to the first found null-terminator ('\0'). Default is <see langword="false"/>.</param>
     /// <returns>The string being read.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="reader"/> or <paramref name="encoding"/> is <see langword="null"/>.</exception>
@@ -75,10 +73,9 @@ public static class BinaryReaderUtilities
         if (!isZeroTerminated) 
             return result;
 
-
         var firstZero = result.IndexOf('\0');
         if (firstZero == -1)
-            throw new IOException("The string is not zero terminated.");
+            throw new IOException("The string is not zero-terminated.");
         
         return result.Substring(0, firstZero);
     }

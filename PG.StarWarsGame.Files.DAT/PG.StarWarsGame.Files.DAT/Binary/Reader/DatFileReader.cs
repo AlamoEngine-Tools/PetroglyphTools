@@ -12,6 +12,7 @@ using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.Utilities;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 

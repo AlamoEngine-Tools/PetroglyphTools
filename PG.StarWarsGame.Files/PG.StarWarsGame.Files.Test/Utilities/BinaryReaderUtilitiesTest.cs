@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.Utilities;
 using Xunit;
 
-namespace PG.Commons.Test.Utilities;
+namespace PG.StarWarsGame.Files.Test.Utilities;
 
 public class BinaryReaderUtilitiesTest
 {
@@ -17,7 +17,7 @@ public class BinaryReaderUtilitiesTest
         Assert.Throws<ArgumentNullException>(() => binaryReader.ReadString(4, encoding));
 
         binaryReader = new BinaryReader(ms);
-        Assert.Throws<ArgumentNullException>(() => binaryReader!.ReadString(4, null!));
+        Assert.Throws<ArgumentNullException>(() => binaryReader.ReadString(4, null!));
     }
 
     [Theory]
@@ -29,7 +29,7 @@ public class BinaryReaderUtilitiesTest
     {
         var ascii = Encoding.ASCII;
         var stringBytes = ascii.GetBytes(input);
-        
+
         var ms = new MemoryStream(stringBytes);
 
         var binaryReader = new BinaryReader(ms);
@@ -50,8 +50,8 @@ public class BinaryReaderUtilitiesTest
     [InlineData("😅")]
     public void ReadString_NormalCondition_Unicode(string input)
     {
-        var ascii = Encoding.Unicode;
-        var stringBytes = ascii.GetBytes(input);
+        var unicode = Encoding.Unicode;
+        var stringBytes = unicode.GetBytes(input);
 
         var ms = new MemoryStream(stringBytes);
 
@@ -59,7 +59,7 @@ public class BinaryReaderUtilitiesTest
 
         var posBeforeRead = binaryReader.BaseStream.Position;
 
-        var resultString = binaryReader.ReadString(stringBytes.Length, ascii);
+        var resultString = binaryReader.ReadString(stringBytes.Length, unicode);
         Assert.Equal(input, resultString);
         Assert.Equal(posBeforeRead + stringBytes.Length, binaryReader.BaseStream.Position);
     }
@@ -127,7 +127,7 @@ public class BinaryReaderUtilitiesTest
         var ascii = Encoding.Unicode;
         var stringBytes = ascii.GetBytes("123");
         var ms = new MemoryStream(stringBytes);
-        var binaryReader = new BinaryReader(ms); 
+        var binaryReader = new BinaryReader(ms);
         Assert.Throws<EndOfStreamException>(() => binaryReader.ReadString(7, ascii));
     }
 

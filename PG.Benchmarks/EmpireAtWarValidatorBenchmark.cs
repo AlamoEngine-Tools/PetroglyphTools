@@ -41,7 +41,7 @@ public class EmpireAtWarValidatorBenchmark
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new FileSystem());
 
-        _validator = new EmpireAtWarMegBuilderDataEntryValidator(sc.BuildServiceProvider());
+        _validator = EmpireAtWarMegBuilderDataEntryValidator.Instance;
     }
 
     [Benchmark(Baseline = true)]

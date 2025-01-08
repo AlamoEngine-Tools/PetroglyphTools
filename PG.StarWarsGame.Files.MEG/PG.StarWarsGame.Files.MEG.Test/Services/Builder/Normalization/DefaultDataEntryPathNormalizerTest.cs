@@ -1,5 +1,4 @@
 ﻿using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Xunit;

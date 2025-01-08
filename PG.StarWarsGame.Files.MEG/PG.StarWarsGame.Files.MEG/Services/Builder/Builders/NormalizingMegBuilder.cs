@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;

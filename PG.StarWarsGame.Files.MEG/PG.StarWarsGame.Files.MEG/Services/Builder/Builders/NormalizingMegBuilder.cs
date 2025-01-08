@@ -34,7 +34,7 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// <br/>
     /// Note: Path operators ("./" or "../") will <b>not</b> get resolved.
     /// </remarks>
-    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer { get; }
+    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => DefaultDataEntryPathNormalizer.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NormalizingMegBuilder"/> class.
@@ -43,6 +43,5 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public NormalizingMegBuilder(IServiceProvider services) : base(services)
     {
-        DataEntryPathNormalizer = services.GetRequiredService<DefaultDataEntryPathNormalizer>();
     }
 }

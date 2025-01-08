@@ -3,23 +3,13 @@ using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO.Abstractions;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
 public class EmpireAtWarMegBuilderDataEntryValidatorTest
 {
-    private readonly EmpireAtWarMegBuilderDataEntryValidator _validator;
-
-    public EmpireAtWarMegBuilderDataEntryValidatorTest()
-    {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(new MockFileSystem());
-        _validator = new EmpireAtWarMegBuilderDataEntryValidator(sc.BuildServiceProvider());
-    }
+    private readonly EmpireAtWarMegBuilderDataEntryValidator _validator = EmpireAtWarMegBuilderDataEntryValidator.Instance;
 
     [Theory]
     [MemberData(nameof(ValidTestData))]

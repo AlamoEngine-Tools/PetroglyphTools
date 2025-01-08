@@ -12,9 +12,17 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 /// <summary>
 /// Normalizes a path in the same way the Empire at War Alamo engine normalizes meg entry paths (e.g, for file lookups).
 /// </summary>
-public sealed class EmpireAtWarMegDataEntryPathNormalizer(IServiceProvider serviceProvider)
-    : PetroglyphDataEntryPathNormalizer(serviceProvider)
+public sealed class EmpireAtWarMegDataEntryPathNormalizer : PetroglyphDataEntryPathNormalizer
 {
+    /// <summary>
+    /// Returns a singleton instance of the <see cref="EmpireAtWarMegDataEntryPathNormalizer"/>.
+    /// </summary>
+    public static readonly EmpireAtWarMegDataEntryPathNormalizer Instance = new();
+
+    private EmpireAtWarMegDataEntryPathNormalizer()
+    {
+    }
+
     private static readonly PathNormalizeOptions PetroglyphNormalizeOptions = new()
     {
         UnifyDirectorySeparators = true,

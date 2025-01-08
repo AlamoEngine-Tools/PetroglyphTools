@@ -17,17 +17,18 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </remarks>
 public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuilderDataEntryValidator
 {
+    /// <summary>
+    /// Returns a singleton instance of the <see cref="EmpireAtWarMegBuilderDataEntryValidator"/>.
+    /// </summary>
+    public static readonly EmpireAtWarMegBuilderDataEntryValidator Instance = new();
+
     // Slashes are not allowed, cause the engine normalized them into back-slashes.
     // Whitespaces (space, tab, new line) *technically* are allowed but there are scenarios where file names are separated by spaces in XML code.
     // Since there is no space escaping implemented in the engine, file lookup would break at this point.
     // Thus, this validator is a little more sensitive.
     private static readonly char[] ForbiddenChars = ['/', ' ', '\0', '\t', '\r', '\n'];
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EmpireAtWarMegBuilderDataEntryValidator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    public EmpireAtWarMegBuilderDataEntryValidator(IServiceProvider serviceProvider) : base(serviceProvider)
+    private EmpireAtWarMegBuilderDataEntryValidator()
     {
     }
 

@@ -1,18 +1,17 @@
 ﻿using System;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
-using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
-public abstract class DataEntryPathNormalizerTestBase : CommonTestBase
+public abstract class DataEntryPathNormalizerTestBase
 {
-    protected abstract IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider);
+    protected abstract IMegDataEntryPathNormalizer CreateNormalizer();
 
     [Fact]
     public void TestTryNormalizePathFails()
     {
-        var normalizer = CreateNormalizer(ServiceProvider);
+        var normalizer = CreateNormalizer();
 
         Span<char> tooShortBuffer = new char[5];
 
@@ -21,7 +20,7 @@ public abstract class DataEntryPathNormalizerTestBase : CommonTestBase
 
     protected void TestNormalizePathPasses(string source, string expected)
     {
-        var normalizer = CreateNormalizer(ServiceProvider);
+        var normalizer = CreateNormalizer();
 
         TestNormalizePass(normalizer, source, expected);
         TestNormalizePassSpan(normalizer, source, expected);

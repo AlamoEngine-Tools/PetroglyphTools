@@ -8,9 +8,9 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
 public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBase
 {
-    protected override IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider)
+    protected override IMegDataEntryPathNormalizer CreateNormalizer()
     {
-        return new DefaultDataEntryPathNormalizer(serviceProvider);
+        return DefaultDataEntryPathNormalizer.Instance;
     }
 
     [Theory]

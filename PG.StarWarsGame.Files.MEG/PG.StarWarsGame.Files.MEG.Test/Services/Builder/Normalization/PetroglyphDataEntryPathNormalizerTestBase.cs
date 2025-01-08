@@ -1,14 +1,13 @@
-﻿using System;
-using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
+﻿using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
 public abstract class PetroglyphDataEntryPathNormalizerTestBase : DataEntryPathNormalizerTestBase
 {
-    protected sealed override IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider)
+    protected sealed override IMegDataEntryPathNormalizer CreateNormalizer()
     {
-        return CreatePGNormalizer(serviceProvider);
+        return CreatePGNormalizer();
     }
 
-    protected abstract PetroglyphDataEntryPathNormalizer CreatePGNormalizer(IServiceProvider serviceProvider);
+    protected abstract PetroglyphDataEntryPathNormalizer CreatePGNormalizer();
 }

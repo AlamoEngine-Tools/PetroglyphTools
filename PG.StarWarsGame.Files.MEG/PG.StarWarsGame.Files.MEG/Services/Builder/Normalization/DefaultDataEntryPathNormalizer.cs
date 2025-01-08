@@ -12,17 +12,18 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 /// </summary>
 public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerBase
 {
+    /// <summary>
+    /// Returns a singleton instance of the <see cref="DefaultDataEntryPathNormalizer"/>.
+    /// </summary>
+    public static readonly DefaultDataEntryPathNormalizer Instance = new();
+
     private static readonly PathNormalizeOptions DefaultNormalizeOptions = new()
     {
         UnifyDirectorySeparators = true,
         UnifyCase = UnifyCasingKind.UpperCaseForce
     };
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DefaultDataEntryPathNormalizer"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    public DefaultDataEntryPathNormalizer(IServiceProvider serviceProvider) : base(serviceProvider)
+    private DefaultDataEntryPathNormalizer()
     {
     }
 

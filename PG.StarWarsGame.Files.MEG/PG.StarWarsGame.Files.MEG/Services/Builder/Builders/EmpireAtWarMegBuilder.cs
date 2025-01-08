@@ -15,13 +15,14 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
 {
     /// <inheritdoc />
-    protected override PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer { get; }
+    protected override PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer =>
+        EmpireAtWarMegDataEntryPathNormalizer.Instance;
 
     /// <summary>
     /// Validates data entries to be compliant to Empire at War
     /// Also, data entries with rooted paths or path operates (".", "..") are not allowed.
     /// </summary>
-    protected override PetroglyphMegBuilderDataEntryValidator PetroDataEntryValidator { get; }
+    protected override PetroglyphMegBuilderDataEntryValidator PetroDataEntryValidator => EmpireAtWarMegBuilderDataEntryValidator.Instance;
 
     /// <summary>
     /// Validates file information to be compliant to Empire at War
@@ -40,8 +41,6 @@ public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
     /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
     public EmpireAtWarMegBuilder(string baseDirectory, IServiceProvider services) : base(baseDirectory, services)
     {
-        PetroDataEntryValidator = services.GetRequiredService<EmpireAtWarMegBuilderDataEntryValidator>();
         PetroMegFileInformationValidator = services.GetRequiredService<EmpireAtWarMegFileInformationValidator>();
-        PetroglyphPathNormalizer = services.GetRequiredService<EmpireAtWarMegDataEntryPathNormalizer>();
     }
 }

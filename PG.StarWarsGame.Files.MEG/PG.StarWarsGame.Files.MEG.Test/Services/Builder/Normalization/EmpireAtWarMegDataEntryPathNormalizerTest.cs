@@ -7,9 +7,9 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
 public class EmpireAtWarMegDataEntryPathNormalizerTest : PetroglyphDataEntryPathNormalizerTestBase
 {
-    protected override PetroglyphDataEntryPathNormalizer CreatePGNormalizer(IServiceProvider serviceProvider)
+    protected override PetroglyphDataEntryPathNormalizer CreatePGNormalizer()
     {
-        return new EmpireAtWarMegDataEntryPathNormalizer(serviceProvider);
+        return EmpireAtWarMegDataEntryPathNormalizer.Instance;
     }
 
     [Theory]

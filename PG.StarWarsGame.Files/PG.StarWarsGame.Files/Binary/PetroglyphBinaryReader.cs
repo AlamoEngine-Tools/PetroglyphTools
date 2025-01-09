@@ -95,7 +95,11 @@ public sealed class PetroglyphBinaryReader : BinaryReader
     /// <param name="encoding">The encoding to produce the string.</param>
     /// <param name="numberOfChars">The number of characters to read.</param>
     /// <param name="isZeroTerminated">When set to <see langword="true"/>, the resulting string is truncated to the first found null-terminator ('\0'). Default is <see langword="false"/>.</param>
-    /// <returns>The total number of characters read into the buffer, which is always the value as <paramref name="numberOfChars"/>.</returns>
+    /// <returns>
+    /// The total number of characters read into the buffer.
+    /// This might be less than <paramref name="numberOfChars"/> if <paramref name="isZeroTerminated"/> is <see langword="true"/>
+    /// and the read string contained multiple zero-terminators.
+    /// </returns>
     /// <exception cref="EndOfStreamException">The number of bytes read, mismatches the expected number of bytes.</exception>
     /// <exception cref="ArgumentException"><paramref name="destination"/> does not have enough capacity to accommodate the resulting characters.</exception>
     /// <exception cref="IOException">An I/O error occurred.</exception>

@@ -87,10 +87,14 @@ public abstract class PetroglyphBinaryReaderTestBase
     [InlineData("123")]
     [InlineData("123  ")]
     [InlineData("123\0\0")]
+    [InlineData("123\0\0123")]
+    [InlineData("öäü")]
+    [InlineData("😅")]
     public void ReadString(string input)
     {
         var encoding = GetEncoding();
         var stringBytes = encoding.GetBytes(input);
+        var expected = encoding.GetString(stringBytes);
         var ms = new MemoryStream(stringBytes);
 
         var reader = new PetroglyphBinaryReader(ms, false);
@@ -99,7 +103,7 @@ public abstract class PetroglyphBinaryReaderTestBase
 
         var resultString = reader.ReadString(encoding, input.Length);
         
-        Assert.Equal(input, resultString);
+        Assert.Equal(expected, resultString);
         Assert.Equal(posBeforeRead + encoding.GetByteCount(input), reader.BaseStream.Position);
     }
 
@@ -220,6 +224,7 @@ public abstract class PetroglyphBinaryReaderTestBase
     [InlineData("123")]
     [InlineData("123  ")]
     [InlineData("123\0\0")]
+    [InlineData("123\0\0123")]
     [InlineData("öäü")]
     [InlineData("😅")]
     public void ReadString_Span(string input)
@@ -322,7 +327,7 @@ public abstract class PetroglyphBinaryReaderTestBase
         var buffer = new char[input.Length + 10].AsSpan();
         var n = reader.ReadString(buffer, encoding, input.Length, true);
 
-        Assert.Equal(input.Length, n);
+        Assert.Equal(input.IndexOf('\0'), n);
         Assert.Equal(expected, buffer.Slice(0, n).ToString());
         Assert.Equal(posBeforeRead + encoding.GetByteCount(input), reader.BaseStream.Position);
     }

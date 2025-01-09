@@ -7,7 +7,6 @@ using System.IO;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MTD.Binary.Metadata;
-using PG.StarWarsGame.Files.Utilities;
 
 namespace PG.StarWarsGame.Files.MTD.Binary;
 
@@ -20,7 +19,7 @@ internal class MdtFileReader(IServiceProvider serviceProvider) : ServiceBase(ser
 
         try
         {
-            using var reader = new BinaryReader(byteStream);
+            using var reader = new PetroglyphBinaryReader(byteStream, true);
             var header = new MtdHeader(reader.ReadUInt32());
 
             var entries = new List<MtdBinaryFileInfo>();
@@ -28,8 +27,7 @@ internal class MdtFileReader(IServiceProvider serviceProvider) : ServiceBase(ser
             for (var i = 0; i < header.Count; i++)
             {
                 // 64 here because ReadString already handles the \0 character.
-                var name = reader.ReadString(64, MtdFileConstants.NameEncoding, true);
-
+                var name = reader.ReadString(MtdFileConstants.NameEncoding, 64, true);
                 var x = reader.ReadUInt32();
                 var y = reader.ReadUInt32();
                 var width = reader.ReadUInt32();

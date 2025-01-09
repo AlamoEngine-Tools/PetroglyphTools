@@ -57,6 +57,20 @@ public class MtdFileServiceTest : CommonMtdTestBase
         CompareFileWithExpected(files, _mtdFileService.Load(new TestMegDataStream("test.mtd", data)));
     }
 
+    [Theory]
+    [MemberData(nameof(MtdTestData.ValidMtdData), MemberType = typeof(MtdTestData))]
+    public void Load_StreamStaysOpen(byte[] data, IList<MtdEntryInformationContainer> files)
+    {
+        FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
+
+        using var fs = FileSystem.File.OpenRead("test.mtd");
+
+        CompareFileWithExpected(files, _mtdFileService.Load(fs));
+
+        // Resetting the position should not throw
+        fs.Position = 0;
+    }
+
     [Fact]
     public void Load_FocMtd()
     {

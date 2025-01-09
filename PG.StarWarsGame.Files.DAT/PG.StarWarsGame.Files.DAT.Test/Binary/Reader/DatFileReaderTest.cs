@@ -38,6 +38,9 @@ public class DatFileReaderTest : CommonTestBase
     {
         var fileType = _reader.PeekFileType(stream);
         Assert.Equal(expectedFileType, fileType);
+
+        // Ensure that stream is not disposed after read operation
+        stream.Position = 1;
     }
 
     public static IEnumerable<object[]> DatFileTypeTestData()
@@ -143,6 +146,9 @@ public class DatFileReaderTest : CommonTestBase
         Assert.Equal(expectedDat.Keys.ToList(), binary.KeyTable.Select(k => k.Key).ToList());
         Assert.Equal(expectedDat.OriginalKeys.ToList(), binary.KeyTable.Select(k => k.OriginalKey).ToList());
         Assert.Equal(expectedDat.Values.ToList(), binary.ValueTable.Select(k => k.Value).ToList());
+
+        // Ensure that stream is not disposed after read operation
+        stream.Position = 1;
     }
 
     public static IEnumerable<object[]> DatReadTestData()

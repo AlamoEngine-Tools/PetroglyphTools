@@ -18,9 +18,25 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
         return new MegFileBinaryReaderV1(ServiceProvider);
     }
 
-    private protected override IMegFileBinaryReader CreateService()
+    private protected override IMegFileBinaryReader CreateMegBinaryReader()
     {
         return CreateV1Reader();
+    }
+
+    protected override byte[] GetValidData()
+    {
+        // Empty file
+        return
+        [
+            0, 0, 0, 0,
+            0, 0, 0, 0
+        ];
+    }
+
+    [Fact]
+    public void Ctor_NullArgs_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => new MegFileBinaryReaderV1(null!));
     }
 
     [Fact]
@@ -47,7 +63,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
             0, 0, 0, 0x80
         };
 
-        var reader = new BinaryReader(new MemoryStream(data));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
         Assert.Throws<NotSupportedException>(() => CreateV1Reader().BuildMegHeader(reader));
     }
 
@@ -60,7 +76,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
             2, 0, 0, 0
         };
 
-        var reader = new BinaryReader(new MemoryStream(data));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
         Assert.Throws<BinaryCorruptedException>(() => CreateV1Reader().BuildMegHeader(reader));
     }
 
@@ -68,7 +84,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
     [MemberData(nameof(HeaderTestData))]
     public void BuildMegHeader_Correct(byte[] data, uint numFiles, uint numNames)
     {
-        var reader = new BinaryReader(new MemoryStream(data));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
         var header = CreateV1Reader().BuildMegHeader(reader);
 
         Assert.Equal(numFiles, header.NumFiles);
@@ -129,7 +145,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
     {
         var header = new MegHeader(numberEntries, numberEntries);
 
-        var reader = new BinaryReader(new MemoryStream(data));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
         var fileTable = CreateV1Reader().BuildFileTable(reader, header);
 
         Assert.Equal((int)numberEntries, fileTable.Count);
@@ -198,7 +214,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
     public void BuildFileTable_NotSupported(uint numberEntries, byte[] data)
     {
         var header = new MegHeader(numberEntries, numberEntries);
-        var reader = new BinaryReader(new MemoryStream(data));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
         Assert.Throws<NotSupportedException>(() => CreateV1Reader().BuildFileTable(reader, header));
     }
 

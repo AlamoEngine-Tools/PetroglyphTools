@@ -12,11 +12,14 @@ namespace PG.Commons.Utilities;
 /// </summary>
 public static class EncodingExtensions
 {
+    private static readonly Type Latin1EncodingType = Encoding.GetEncoding(28591).GetType();
+    private static readonly Type AsciiType = typeof(ASCIIEncoding);
+
     /// <summary>
     ///     Gets the number of bytes required for encoding a given number of characters.
     /// </summary>
     /// <remarks>
-    ///     This method should <b>only</b> be used while reading a .DAT or .MEG file as it is not safe in other use cases.
+    ///     This method should <b>only</b> be used while reading a Petroglyph binary file as it is not safe in other use cases.
     /// <br/>
     /// <br/>
     ///     Note:
@@ -35,6 +38,7 @@ public static class EncodingExtensions
     /// <returns>The number of bytes</returns>
     /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langowrd="null"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="numberOfChars"/> is less than zero.</exception>
+    /// <exception cref="NotSupportedException"><paramref name="encoding"/> is not supported.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetByteCountPG(this Encoding encoding, int numberOfChars)
     {
@@ -46,7 +50,7 @@ public static class EncodingExtensions
         // Prevent checking for rogue subtypes
         var encodingType = encoding.GetType();
 
-        if (encoding.IsSingleByte && IsOriginalAsciiEncoding(encodingType))
+        if (encoding.IsSingleByte && IsOriginalAsciiEncodingOrLatin1Encoding(encodingType))
         {
             // 1 : 1 relation for ASCII
             return numberOfChars;
@@ -64,10 +68,11 @@ public static class EncodingExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool IsOriginalAsciiEncoding(Type encodingType)
+    private static bool IsOriginalAsciiEncodingOrLatin1Encoding(Type encodingType)
     {
-        var asciiType = typeof(ASCIIEncoding);
-        return encodingType == asciiType ||
-               (asciiType.IsAssignableFrom(encodingType) && encodingType.Assembly == asciiType.Assembly);
+        if (encodingType == Latin1EncodingType)
+            return true;
+        return encodingType == AsciiType ||
+               (AsciiType.IsAssignableFrom(encodingType) && encodingType.Assembly == AsciiType.Assembly);
     }
 }

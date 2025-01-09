@@ -12,7 +12,13 @@ namespace PG.Testing;
 public static class TestUtility
 {
     private static readonly Random RandomGenerator = new();
-        
+
+    public static bool GetRandomBool()
+    {
+        return RandomGenerator.Next() % 2 == 0;
+    }
+
+
     public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
     {
         Assert.Equal(expected.Count, actual.Count);

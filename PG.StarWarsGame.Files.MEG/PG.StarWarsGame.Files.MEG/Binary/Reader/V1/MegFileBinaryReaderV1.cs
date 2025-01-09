@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
@@ -19,7 +18,7 @@ internal class MegFileBinaryReaderV1(IServiceProvider services) : MegFileBinaryR
         return new MegMetadata(header, fileNameTable, fileTable);
     }
 
-    protected internal override MegHeader BuildMegHeader(BinaryReader binaryReader)
+    protected internal override MegHeader BuildMegHeader(PetroglyphBinaryReader binaryReader)
     {
         var numFileNames = binaryReader.ReadUInt32();
         var numFiles = binaryReader.ReadUInt32();
@@ -39,7 +38,7 @@ internal class MegFileBinaryReaderV1(IServiceProvider services) : MegFileBinaryR
         return new MegHeader(numFileNames, numFiles);
     }
 
-    protected internal override MegFileTable BuildFileTable(BinaryReader binaryReader, MegHeader header)
+    protected internal override MegFileTable BuildFileTable(PetroglyphBinaryReader binaryReader, MegHeader header)
     {
         var fileNumber = header.FileNumber;
         var megFileContentTableRecords = new List<MegFileTableRecord>(fileNumber);
@@ -54,7 +53,7 @@ internal class MegFileBinaryReaderV1(IServiceProvider services) : MegFileBinaryR
         return new MegFileTable(megFileContentTableRecords);
     }
 
-    private static MegFileTableRecord BuildFileTableRecord(BinaryReader binaryReader)
+    private static MegFileTableRecord BuildFileTableRecord(PetroglyphBinaryReader binaryReader)
     {
         var crc32 = new Crc32(binaryReader.ReadUInt32());
         var fileTableRecordIndex = binaryReader.ReadUInt32();

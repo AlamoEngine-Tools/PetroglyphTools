@@ -3,7 +3,6 @@
 
 using System;
 using PG.StarWarsGame.Files.DAT.Files;
-using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
@@ -11,14 +10,11 @@ namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 /// A <see cref="IDatBuilder"/> for building Credit DAT files used by the
 /// Petroglyph game <em>Star Wars: Empire at War</em> and its extension <em>Empire at War: Forces of Corruption</em>.
 /// </summary>
-public sealed class EmpireAtWarCreditsTextBuilder : DatBuilderBase
+public sealed class EmpireAtWarCreditsTextBuilder : PetroglyphStarWarsGameDatBuilder
 {
     /// <inheritdoc/>
     /// <remarks>An instance of this class always returns <see cref="DatFileType.NotOrdered"/>.</remarks>
     public override DatFileType TargetKeySortOrder => DatFileType.NotOrdered;
-
-    /// <inheritdoc />
-    public override IDatKeyValidator KeyValidator => EmpireAtWarKeyValidator.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextBuilder"/> class.

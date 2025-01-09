@@ -17,7 +17,7 @@ public class EmpireAtWarMasterTextBuilderTest_NotOverriding : EmpireAtWarMasterT
     protected override BuilderOverrideKind OverrideKind => BuilderOverrideKind.NoOverwrite;
 }
 
-public abstract class EmpireAtWarMasterTextBuilderTestBase : DatBuilderBaseTest
+public abstract class EmpireAtWarMasterTextBuilderTestBase : PetroglyphStarWarsGameDatBuilder
 {
     protected override bool IsOrderedBuilder => true;
 

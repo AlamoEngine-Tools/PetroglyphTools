@@ -150,7 +150,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     }
 
     /// <inheritdoc />
-    protected sealed override bool ValidateFileInformationCore(DatFileInformation fileInformation, IReadOnlyList<DatStringEntry> builderData,
+    protected override bool ValidateFileInformationCore(DatFileInformation fileInformation, IReadOnlyList<DatStringEntry> builderData,
         out string? failedReason)
     {
         failedReason = null;

@@ -3,8 +3,10 @@
 
 using System;
 using System.IO.Abstractions;
-using AnakinRaW.CommonUtilities.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
+#if NETSTANDARD2_0 || NETFRAMEWORK
+using AnakinRaW.CommonUtilities.FileSystem;
+#endif
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 

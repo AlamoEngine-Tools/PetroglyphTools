@@ -13,7 +13,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-public class EmpireAtWarCreditsTextBuilderTest : DatBuilderBaseTest
+public class EmpireAtWarCreditsTextBuilderTest : PetroglyphStarWarsGameDatBuilder
 {
     protected override bool IsOrderedBuilder => false;
 

@@ -24,10 +24,10 @@ public class DatBuilderBenchmark
     [Params(8_000)]
     public int N;
 
-    private string[] _keys;
-    private string[] _values;
+    private string[] _keys = null!;
+    private string[] _values = null!;
 
-    private EmpireAtWarMasterTextBuilder _builder;
+    private EmpireAtWarMasterTextBuilder _builder = null!;
 
     [GlobalSetup]
     public void Setup()

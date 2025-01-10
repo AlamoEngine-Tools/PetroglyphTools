@@ -108,7 +108,10 @@ public class MegFileExtractorTest : CommonMegTestBase
 
         var entry = CreateEntry("file.txt");
 
-        using (FileSystem.File.Create("test.meg")) ;
+        using (FileSystem.File.Create("test.meg"))
+        {
+        }
+
         var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegFileVersion.V1),
             ServiceProvider);
 

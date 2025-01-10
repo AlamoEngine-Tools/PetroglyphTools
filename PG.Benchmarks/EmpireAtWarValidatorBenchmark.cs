@@ -19,9 +19,8 @@ public class EmpireAtWarValidatorBenchmark
 {
     private static readonly Random Random = new(1138);
 
-    private EmpireAtWarMegBuilderDataEntryValidator _validator;
-
-    private MegFileDataEntryBuilderInfo[] _toValidate;
+    private EmpireAtWarMegBuilderDataEntryValidator _validator = null!;
+    private MegFileDataEntryBuilderInfo[] _toValidate = null!;
 
     [Params(2000, 200_000)]
     //[Params(2000)]

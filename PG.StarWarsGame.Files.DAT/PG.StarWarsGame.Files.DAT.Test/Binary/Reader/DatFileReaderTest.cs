@@ -236,9 +236,9 @@ public class DatFileReaderTest : CommonTestBase
     public class ExpectedDatData
     {
         public int Number { get; init; }
-        public IList<Crc32> Checksums { get; init; }
-        public IList<string> Keys { get; init; }
-        public IList<string> OriginalKeys { get; init; }
-        public IList<string> Values { get; init; }
+        public required IList<Crc32> Checksums { get; init; }
+        public required IList<string> Keys { get; init; }
+        public required IList<string> OriginalKeys { get; init; }
+        public required IList<string> Values { get; init; }
     }
 }

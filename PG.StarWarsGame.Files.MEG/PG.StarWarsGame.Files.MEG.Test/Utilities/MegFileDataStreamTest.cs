@@ -97,12 +97,12 @@ public class MegFileDataStreamTest
     public void Read_AllAtOnce()
     {
         // 0xFF represents data we should never read
-        var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
+        byte[] source = [0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF];
         var ms = new MemoryStream(source);
 
         var stream = new MegFileDataStream("path", ms, 4, 3);
 
-        var data = new byte[] { 99, 99, 99, 99, 99 };
+        byte[] data = [99, 99, 99, 99, 99];
         Assert.Equal(3, stream.Read(data, 1, 4));
         Assert.Equal([99, 1, 2, 3, 99], data);
     }
@@ -111,7 +111,7 @@ public class MegFileDataStreamTest
     public void CopyTo()
     {
         // 0xFF represents data we should never read
-        var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
+        byte[] source = [0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF];
         var ms = new MemoryStream(source);
 
         var stream = new MegFileDataStream("path", ms, 4, 3);
@@ -125,13 +125,13 @@ public class MegFileDataStreamTest
     public void Read_BytePerByte()
     {
         // 0xFF represents data we should never read
-        var source = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF };
+        byte[] source = [0xFF, 0xFF, 0xFF, 0xFF, 1, 2, 3, 0xFF, 0xFF, 0xFF, 0xFF];
         var ms = new MemoryStream(source);
 
         var stream = new MegFileDataStream("path", ms, 4, 3);
 
-
-        var data = new byte[] {99, 99, 99, 99, 99};
+#pragma warning disable CA2022
+        byte[] data = [99, 99, 99, 99, 99];
         Assert.Equal(0, stream.Position);
         stream.Read(data, 1, 1);
         Assert.Equal(1, stream.Position);
@@ -139,6 +139,7 @@ public class MegFileDataStreamTest
         Assert.Equal(2, stream.Position);
         stream.Read(data, 3, 1);
         Assert.Equal(3, stream.Position);
+#pragma warning restore CA2022
 
         // Goes out of bounds of the target data
         Assert.Equal(0, stream.Read(data, 3, 1));
@@ -151,13 +152,13 @@ public class MegFileDataStreamTest
     public void Read_SuddenCutOfData_Throws()
     {
         // 0xFF represents data we should never read
-        var source = new byte[] { 1, 2, 3 };
+        byte[] source = [1, 2, 3];
         var ms = new MemoryStream(source);
 
         var stream = new MegFileDataStream("path", ms, 0, 3);
 
 
-        var data = new byte[] { 99, 99, 99, 99, 99 };
+        byte[] data = [99, 99, 99, 99, 99];
         var n = stream.Read(data, 0, 1);
         Assert.Equal(1, n);
 
@@ -170,7 +171,7 @@ public class MegFileDataStreamTest
     [Fact]
     public void Position()
     {
-        var source = new byte[] { 9, 9, 9, 1, 2, 3, 9, 9, 9 };
+        byte[] source = [9, 9, 9, 1, 2, 3, 9, 9, 9];
         var ms = new MemoryStream(source);
 
         var stream = new MegFileDataStream("path", ms, 3, 3);
@@ -190,7 +191,7 @@ public class MegFileDataStreamTest
     [Fact]
     public void Seek()
     {
-        var source = new byte[] { 9, 9, 9, 1, 2, 3, 9, 9, 9 };
+        byte[] source = [9, 9, 9, 1, 2, 3, 9, 9, 9];
         var ms = new MemoryStream(source);
 
         var stream = new MegFileDataStream("path", ms, 3, 3);
@@ -232,7 +233,7 @@ public class MegFileDataStreamTest
         Assert.Equal("path", stream.EntryPath);
         Assert.Equal(0, stream.Length);
 
-        var buffer = new byte[] { 1, 1, 1 };
+        byte[] buffer = [1, 1, 1];
         var read = stream.Read(buffer, 0, 3);
 
         Assert.Equal([1, 1, 1], buffer);

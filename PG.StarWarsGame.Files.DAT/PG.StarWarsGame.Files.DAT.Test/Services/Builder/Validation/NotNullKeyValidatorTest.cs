@@ -32,6 +32,6 @@ public class NotNullKeyValidatorTest
 
     public static IEnumerable<object[]> InvalidTestData()
     {
-        yield return [null];
+        yield return [null!];
     }
 }

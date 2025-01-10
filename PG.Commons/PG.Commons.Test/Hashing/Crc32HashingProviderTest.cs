@@ -44,7 +44,7 @@ public class Crc32HashingProviderTest
     public async Task HashDataAsync(byte[] inputData, uint expected)
     {
         var destination = new byte[20];
-        var bytesWritten = await new Crc32HashingProvider().HashDataAsync(new MemoryStream(inputData), destination);
+        var bytesWritten = await new Crc32HashingProvider().HashDataAsync(new MemoryStream(inputData), destination, TestContext.Current.CancellationToken);
 
         Assert.Equal(4, bytesWritten);
         var expectedBytes = BitConverter.GetBytes(expected);

@@ -7,7 +7,7 @@ using Xunit;
 namespace PG.StarWarsGame.Files.Test;
 
 public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : CommonTestBase
-    where TModel : notnull
+    where TModel : class
     where TFileInfo : PetroglyphFileInformation
     where THolder : PetroglyphFileHolder<TModel, TFileInfo>
 {

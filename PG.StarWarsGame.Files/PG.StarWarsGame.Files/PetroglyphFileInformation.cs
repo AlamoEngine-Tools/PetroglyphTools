@@ -52,7 +52,9 @@ public abstract record PetroglyphFileInformation : IDisposable
         FilePath = path;
     }
 
-    /// <inheritdoc cref="Finalize"/>
+    /// <summary>
+    /// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
+    /// </summary>
     ~PetroglyphFileInformation()
     {
         Dispose(false);

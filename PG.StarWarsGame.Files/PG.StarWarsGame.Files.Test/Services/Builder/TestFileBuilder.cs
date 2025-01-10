@@ -7,7 +7,7 @@ namespace PG.StarWarsGame.Files.Test.Services.Builder;
 
 public class TestFileBuilder(IServiceProvider services) : FileBuilderBase<byte[], TestFileInfo>(services)
 {
-    private byte[]? _builderData;
+    private byte[] _builderData = null!;
 
     public override byte[] BuilderData => _builderData;
 

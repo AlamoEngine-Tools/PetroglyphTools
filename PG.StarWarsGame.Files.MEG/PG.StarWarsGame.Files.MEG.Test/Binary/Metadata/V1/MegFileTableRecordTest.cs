@@ -48,8 +48,10 @@ public class MegFileTableRecordTest
         Assert.True(r1 > r0);
         Assert.False(r1 < r0);
 
+#pragma warning disable CS1718
         Assert.True(r1 <= r1);
         Assert.True(r1 >= r1);
+#pragma warning restore CS1718
 
         Assert.Equal(0, r0.CompareTo(r0));
         Assert.Equal(-1, r0.CompareTo(r1));

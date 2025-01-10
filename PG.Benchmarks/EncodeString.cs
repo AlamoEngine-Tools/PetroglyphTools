@@ -23,7 +23,7 @@ public class EncodeString
         "et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. " +
         "Stet clita kasd gubergren, no sea takimata sanctus est Lo"
         )]
-    public string StringValue;
+    public string StringValue = null!;
 
     private readonly Encoding _encoding = Encoding.ASCII;
     private int _byteCount;

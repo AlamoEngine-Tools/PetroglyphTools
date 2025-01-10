@@ -14,7 +14,6 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 /// In contrast to <see cref="MegDataEntry"/> this class is aware its owning MEG file
 /// and thus is capable referencing a data entry without further information.
 /// </remarks>
-/// <inheritdoc cref="IMegDataEntry"/>
 public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryLocationReference>, IEquatable<MegDataEntryReference>
 {
     /// <inheritdoc />

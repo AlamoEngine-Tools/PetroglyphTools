@@ -11,15 +11,11 @@ using AnakinRaW.CommonUtilities.FileSystem;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-///  Validates a MEG file information whether it is compliant to the Petroglyph game Empire at War. 
+///  Validates a MEG file information whether it is compliant to a Petroglyph Star Wars game. 
 /// </summary>
 public sealed class EmpireAtWarMegFileInformationValidator : PetroglyphMegFileInformationValidator
-{
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EmpireAtWarMegFileInformationValidator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    public EmpireAtWarMegFileInformationValidator(IServiceProvider serviceProvider) : base(serviceProvider)
+{ 
+    internal EmpireAtWarMegFileInformationValidator(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
 

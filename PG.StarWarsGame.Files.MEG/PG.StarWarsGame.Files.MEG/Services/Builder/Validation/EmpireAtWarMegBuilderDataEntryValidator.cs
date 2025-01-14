@@ -9,12 +9,8 @@ using PG.StarWarsGame.Files.MEG.Binary;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-/// Validates a MEG data entry whether it is compliant to the Petroglyph game Empire at War. 
+/// Validates a MEG data entry whether it is compliant to a Petroglyph Star Wars game. 
 /// </summary>
-/// <remarks>
-/// This validator is a real subset of Empire at War rules. This means that it is more restrictive,
-/// disallowing certain edge-cases which would legal in the game, but are not permitted by this library.
-/// </remarks>
 public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuilderDataEntryValidator
 {
     /// <summary>
@@ -69,7 +65,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
         return true;
     }
 
-    private bool IsRootedOrStartsWithCurrent(ReadOnlySpan<char> path)
+    private static bool IsRootedOrStartsWithCurrent(ReadOnlySpan<char> path)
     {
         // This check is over-sensitive as @"\\" may be a valid path which can be produced by normalization, 
         // however, such a path does not make much sense. 

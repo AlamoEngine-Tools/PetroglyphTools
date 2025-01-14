@@ -27,11 +27,7 @@ public abstract class PetroglyphMegFileInformationValidator : IMegFileInformatio
     /// </summary>
     protected IFileSystem FileSystem { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphMegFileInformationValidator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    protected PetroglyphMegFileInformationValidator(IServiceProvider serviceProvider)
+    private protected PetroglyphMegFileInformationValidator(IServiceProvider serviceProvider)
     {
         FileSystem = serviceProvider.GetRequiredService<IFileSystem>();
     }

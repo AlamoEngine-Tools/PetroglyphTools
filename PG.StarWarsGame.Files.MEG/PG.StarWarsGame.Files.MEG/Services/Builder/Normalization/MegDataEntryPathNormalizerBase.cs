@@ -36,9 +36,8 @@ public abstract class MegDataEntryPathNormalizerBase : IMegDataEntryPathNormaliz
             charsWritten = Normalize(filePath, destination);
             return true;
         }
-        catch (Exception e)
+        catch
         {
-            Console.WriteLine(e);
             charsWritten = 0;
             return false;
         }

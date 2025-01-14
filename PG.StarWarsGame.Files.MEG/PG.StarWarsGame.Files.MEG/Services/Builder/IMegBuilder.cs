@@ -42,7 +42,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <summary>
     /// Gets the data entry validator for this <see cref="IMegBuilder"/>.
     /// </summary>
-    IMegBuilderInfoValidator DataEntryValidator { get; }
+    IMegDataEntryValidator DataEntryValidator { get; }
 
     /// <summary>
     /// Gets the file information validator for this <see cref="IMegBuilder"/>.

@@ -66,7 +66,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     /// <remarks>
     /// By default, a validator instance is used which performs no validation checks.
     /// </remarks>
-    public virtual IMegBuilderInfoValidator DataEntryValidator => NotNullDataEntryValidator.Instance;
+    public virtual IMegDataEntryValidator DataEntryValidator => NotNullDataEntryValidator.Instance;
 
     /// <inheritdoc/>
     /// <remarks>

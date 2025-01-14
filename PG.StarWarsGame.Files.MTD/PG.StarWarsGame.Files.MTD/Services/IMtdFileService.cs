@@ -9,12 +9,12 @@ using PG.StarWarsGame.Files.MTD.Files;
 namespace PG.StarWarsGame.Files.MTD.Services;
 
 /// <summary>
-/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/MtdFileFormat"> .MTD files</a>
+/// A service to load Petroglyph <a href="https://modtools.petrolution.net/docs/MtdFileFormat"> .MTD files</a>
 /// </summary>
 public interface IMtdFileService
 {
     /// <summary>
-    /// Loads a *.MTD stream into a <see cref="IMtdFile" />.
+    /// Loads a *.MTD file into a <see cref="IMtdFile"/>.
     /// </summary>
     /// <param name="filePath">The MTD file path.</param>
     /// <returns>A representation of the MTD file.</returns>
@@ -25,7 +25,7 @@ public interface IMtdFileService
     IMtdFile Load(string filePath);
 
     /// <summary>
-    /// Loads a *.MTD stream into a <see cref="IMtdFile" />.
+    /// Loads a *.MTD stream into a <see cref="IMtdFile"/>.
     /// </summary>
     /// <param name="stream">The MTD file stream.</param>
     /// <returns>A representation of the MTD file.</returns>

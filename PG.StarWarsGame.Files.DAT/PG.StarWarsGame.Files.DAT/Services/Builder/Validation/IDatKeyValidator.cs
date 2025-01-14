@@ -6,7 +6,7 @@ using System;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
 /// <summary>
-/// A validator that checks whether a <see cref="string"/> can be used as a key for DAT files.
+/// A validator that checks whether a string can be used as a key for DAT files.
 /// </summary>
 public interface IDatKeyValidator
 {

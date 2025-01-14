@@ -7,7 +7,7 @@ using PG.StarWarsGame.Files.DAT.Files;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// A <see cref="IDatBuilder"/> for building Credit DAT files used by the
+/// A <see cref="IDatBuilder"/> for building Credits DAT files used by the
 /// Petroglyph game <em>Star Wars: Empire at War</em> and its extension <em>Empire at War: Forces of Corruption</em>.
 /// </summary>
 public sealed class EmpireAtWarCreditsTextBuilder : PetroglyphStarWarsGameDatBuilder

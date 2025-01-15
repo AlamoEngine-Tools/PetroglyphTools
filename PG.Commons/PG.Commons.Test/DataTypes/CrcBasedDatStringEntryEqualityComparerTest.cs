@@ -66,6 +66,13 @@ public class CrcBasedEqualityComparerTest_Class : CrcBasedEqualityComparerTest<H
     {
         return new HasCrcClass(crc);
     }
+
+    [Fact]
+    public void GetHashCode_NullArgs_Throws()
+    {
+        var comparer = CrcBasedEqualityComparer<HasCrcClass>.Instance;
+        Assert.Throws<ArgumentNullException>(() => comparer.GetHashCode(null!));
+    }
 }
 
 public class CrcBasedEqualityComparerTest_Struct : CrcBasedEqualityComparerTest<HasCrcStruct>

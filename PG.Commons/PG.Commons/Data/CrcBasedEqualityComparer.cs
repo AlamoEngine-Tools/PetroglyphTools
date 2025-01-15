@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
 using System.Collections.Generic;
 
 namespace PG.Commons.Data;
@@ -26,6 +27,8 @@ public sealed class CrcBasedEqualityComparer<T> : IEqualityComparer<T> where T :
     /// <inheritdoc />
     public int GetHashCode(T obj)
     {
+        if (obj is null)
+            throw new ArgumentNullException(nameof(obj));
         return obj.Crc32.GetHashCode();
     }
 }

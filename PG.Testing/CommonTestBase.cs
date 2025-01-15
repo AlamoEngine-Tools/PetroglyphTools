@@ -18,6 +18,7 @@ public abstract class CommonTestBase
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
         sc.AddSingleton<IFileSystem>(FileSystem);
         PetroglyphCommons.ContributeServices(sc);
+        // ReSharper disable once VirtualMemberCallInConstructor
         SetupServices(sc);
         ServiceProvider = sc.BuildServiceProvider();
     }

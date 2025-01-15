@@ -25,10 +25,10 @@
 		</PackageReference>
 		<PackageReference Include="AnakinRaW.CommonUtilities" Version="12.0.39-beta" />
 		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="12.0.39-beta" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
 		<PackageReference Include="System.IO.Abstractions" Version="21.1.7" />
-		<PackageReference Include="System.IO.Hashing" Version="9.0.0" />
+		<PackageReference Include="System.IO.Hashing" Version="9.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="$(TargetFramework) == 'netstandard2.0'" Include="Microsoft.Bcl.HashCode" Version="6.0.0" />

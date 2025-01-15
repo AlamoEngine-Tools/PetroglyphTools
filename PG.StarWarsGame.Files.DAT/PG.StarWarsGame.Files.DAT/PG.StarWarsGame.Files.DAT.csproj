@@ -30,7 +30,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
 		<PackageReference Include="System.IO.Abstractions" Version="21.1.7" />
 	</ItemGroup>
 	<ItemGroup>

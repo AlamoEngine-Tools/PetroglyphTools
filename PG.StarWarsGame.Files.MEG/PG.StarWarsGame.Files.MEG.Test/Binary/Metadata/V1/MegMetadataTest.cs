@@ -72,6 +72,13 @@ public class MegMetadataTest
 
         Assert.Equal(header.Size + fileNameTable.Size + fileTable.Size, metadata.Size);
         Assert.Equal(expectedBytes, metadata.Bytes);
+
+        Span<byte> buffer = new byte[metadata.Size];
+        buffer.Fill(1);
+
+        metadata.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer.Slice(0, metadata.Size).ToArray());
     }
 
     [Fact]
@@ -87,5 +94,12 @@ public class MegMetadataTest
 
         Assert.Equal(header.Size, metadata.Size);
         Assert.Equal(expectedBytes, metadata.Bytes);
+
+        Span<byte> buffer = new byte[metadata.Size];
+        buffer.Fill(1);
+
+        metadata.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer.Slice(0, metadata.Size).ToArray());
     }
 }

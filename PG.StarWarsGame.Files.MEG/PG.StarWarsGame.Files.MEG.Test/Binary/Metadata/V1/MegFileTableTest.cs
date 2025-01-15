@@ -8,7 +8,6 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 
-
 public class MegFileTableTest : MegFileTableBaseTest
 {
     private static MegFileTable CreateFileTableV1(IList<MegFileTableRecord> files)

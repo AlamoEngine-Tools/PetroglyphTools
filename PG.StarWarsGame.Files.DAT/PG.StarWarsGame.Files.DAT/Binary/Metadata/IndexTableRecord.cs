@@ -33,19 +33,22 @@ internal readonly struct IndexTableRecord : IHasCrc32, IComparable<IndexTableRec
         get
         {
             var data = new byte[Size];
-            var dataSpan = data.AsSpan();
-            Crc32.GetBytes(dataSpan);
-            var valueArea = dataSpan.Slice(sizeof(uint) * 1);
-            BinaryPrimitives.WriteUInt32LittleEndian(valueArea, ValueLength);
-
-            var keyArea = dataSpan.Slice(sizeof(uint) * 2);
-            BinaryPrimitives.WriteUInt32LittleEndian(keyArea, KeyLength);
-
+            GetBytes(data);
             return data;
         }
     }
 
     public int Size => sizeof(uint) * 3;
+
+    public void GetBytes(Span<byte> bytes)
+    {
+        Crc32.GetBytes(bytes);
+        var valueArea = bytes.Slice(sizeof(uint) * 1);
+        BinaryPrimitives.WriteUInt32LittleEndian(valueArea, ValueLength);
+
+        var keyArea = bytes.Slice(sizeof(uint) * 2);
+        BinaryPrimitives.WriteUInt32LittleEndian(keyArea, KeyLength);
+    }
 
     public int CompareTo(IndexTableRecord other)
     {

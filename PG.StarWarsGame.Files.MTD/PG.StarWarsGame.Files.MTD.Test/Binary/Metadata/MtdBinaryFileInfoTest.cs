@@ -65,6 +65,13 @@ public class MtdBinaryFileInfoTest
             0x1,
         };
         Assert.Equal(bytes, fileInfo.Bytes);
+
+        Span<byte> buffer = stackalloc byte[81];
+        buffer.Fill(1);
+
+        fileInfo.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer.ToArray());
     }
 
     [Fact]
@@ -100,5 +107,12 @@ public class MtdBinaryFileInfoTest
             0x1,
         };
         Assert.Equal(bytes, fileInfo.Bytes);
+
+        Span<byte> buffer = stackalloc byte[81];
+        buffer.Fill(1);
+
+        fileInfo.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer.ToArray());
     }
 }

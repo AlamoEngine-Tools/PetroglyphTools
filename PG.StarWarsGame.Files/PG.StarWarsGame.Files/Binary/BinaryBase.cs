@@ -18,7 +18,12 @@ public abstract class BinaryBase : IBinary
     {
         get
         {
-            _bytes ??= ToBytesCore() ?? throw new InvalidOperationException("Bytes data must not be null");
+            if (_bytes is null)
+            {
+                var bytes = new byte[Size];
+                GetBytes(bytes);
+                _bytes = bytes;
+            }
             return (byte[])_bytes.Clone();
         }
     }
@@ -33,15 +38,12 @@ public abstract class BinaryBase : IBinary
         }
     }
 
+    /// <inheritdoc />
+    public abstract void GetBytes(Span<byte> bytes);
+
     /// <summary>
     /// Calculates the size in bytes of this instance
     /// </summary>
     /// <returns>The size in bytes.</returns>
     protected abstract int GetSizeCore();
-
-    /// <summary>
-    /// Converts the binary model into an array of bytes.
-    /// </summary>
-    /// <returns>An array of bytes of the binary model.</returns>
-    protected abstract byte[] ToBytesCore();
 }

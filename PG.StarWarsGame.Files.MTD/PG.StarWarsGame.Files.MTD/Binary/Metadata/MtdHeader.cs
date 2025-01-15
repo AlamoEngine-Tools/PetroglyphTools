@@ -23,10 +23,15 @@ internal readonly struct MtdHeader : IBinary
         get
         {
             var data = new byte[Size];
-            BinaryPrimitives.WriteUInt32LittleEndian(data, Count);
+            GetBytes(data);
             return data;
         }
     }
 
     public int Size => sizeof(uint);
+
+    public void GetBytes(Span<byte> bytes)
+    {
+        BinaryPrimitives.WriteUInt32LittleEndian(bytes, Count);
+    }
 }

@@ -31,6 +31,13 @@ public class IndexTableRecordTest
             0x2, 0x0, 0x0, 0x0
         };
         Assert.Equal(expectedBytes, record.Bytes);
+
+        var buffer = new byte[record.Size];
+        buffer.AsSpan().Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer);
     }
 
     [Fact]

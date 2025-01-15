@@ -20,11 +20,9 @@ internal readonly struct MegHeader : IMegHeader
     {
         get
         {
-            Span<byte> data = stackalloc byte[Size];
-            BinaryPrimitives.WriteUInt32LittleEndian(data, NumFileNames);
-            var fileNumArea = data.Slice(sizeof(uint));
-            BinaryPrimitives.WriteUInt32LittleEndian(fileNumArea, NumFiles);
-            return data.ToArray();
+            var bytes = new byte[Size];
+            GetBytes(bytes);
+            return bytes;
         }
     }
 
@@ -38,5 +36,12 @@ internal readonly struct MegHeader : IMegHeader
             throw new ArgumentOutOfRangeException(nameof(numFileNames), ".MEG archives with more files than Int32.MaxValue are not supported.");
         NumFileNames = numFileNames;
         NumFiles = numFiles;
+    }
+
+    public void GetBytes(Span<byte> bytes)
+    {
+        BinaryPrimitives.WriteUInt32LittleEndian(bytes, NumFileNames);
+        var fileNumArea = bytes.Slice(sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(fileNumArea, NumFiles);
     }
 }

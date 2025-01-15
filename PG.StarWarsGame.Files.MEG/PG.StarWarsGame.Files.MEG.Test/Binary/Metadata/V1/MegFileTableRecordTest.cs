@@ -77,5 +77,27 @@ public class MegFileTableRecordTest
             0x5, 0x0, 0x0, 0x0,
         };
         Assert.Equal(bytes, record.Bytes);
+    }   
+    
+    [Fact]
+    public void GetBytes()
+    {
+        var record = new MegFileTableRecord(new Crc32(1), 2, 3, 4, 5);
+
+        var bytes = new byte[]
+        {
+            0x1, 0x0, 0x0, 0x0,
+            0x2, 0x0, 0x0, 0x0,
+            0x3, 0x0, 0x0, 0x0,
+            0x4, 0x0, 0x0, 0x0,
+            0x5, 0x0, 0x0, 0x0,
+        };
+
+        Span<byte> buffer = new byte[record.Size];
+        buffer.Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer.Slice(0, record.Size).ToArray());
     }
 }

@@ -2,13 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Collections.Generic;
 using PG.StarWarsGame.Files.Binary;
-using PG.StarWarsGame.Files.Binary.File;
 
 namespace PG.StarWarsGame.Files.MTD.Binary.Metadata;
 
-internal class MtdBinaryFile : BinaryBase, IBinaryFile
+internal class MtdBinaryFile : BinaryFile
 {
     public MtdBinaryFile(MtdHeader header, IBinaryTable<MtdBinaryFileInfo> items)
     {
@@ -25,16 +23,15 @@ internal class MtdBinaryFile : BinaryBase, IBinaryFile
 
     public IBinaryTable<MtdBinaryFileInfo> Items { get; }
 
+    public override void GetBytes(Span<byte> bytes)
+    {
+        Header.GetBytes(bytes);
+        var itemsBytes = bytes.Slice(Header.Size);
+        Items.GetBytes(itemsBytes);
+    }
+
     protected override int GetSizeCore()
     {
         return Header.Size + Items.Size;
-    }
-
-    protected override byte[] ToBytesCore()
-    {
-        var b = new List<byte>();
-        b.AddRange(Header.Bytes);
-        b.AddRange(Items.Bytes);
-        return b.ToArray();
     }
 }

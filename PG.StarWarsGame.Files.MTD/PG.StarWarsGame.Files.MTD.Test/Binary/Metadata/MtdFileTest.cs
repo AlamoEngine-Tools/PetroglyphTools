@@ -21,11 +21,10 @@ public class MtdFileTest
         var header = new MtdHeader(1);
 
         Assert.Throws<ArgumentException>(() => new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(
-            new List<MtdBinaryFileInfo>
-            {
-                new("a", 1, 1, 1, 1, true),
-                new("b", 1, 1, 1, 1, true)
-            })));
+        [
+            new("a", 1, 1, 1, 1, true),
+            new("b", 1, 1, 1, 1, true)
+        ])));
 
         Assert.Throws<ArgumentException>(() => new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>())));
     }
@@ -36,11 +35,11 @@ public class MtdFileTest
     {
         var header = new MtdHeader(2);
 
-        _ = new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>
-        {
+        _ = new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(
+        [
             new("a", 1, 1, 1, 1, true),
             new("b", 1, 1, 1, 1, true)
-        }));
+        ]));
         Assert.True(true);
     }
 
@@ -48,11 +47,11 @@ public class MtdFileTest
     public void SizeBytes_WithContent()
     {
         var header = new MtdHeader(2);
-        var fileTable = new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>
-        {
+        var fileTable = new BinaryTable<MtdBinaryFileInfo>(
+        [
             new("a", 1, 1, 1, 1, true),
             new("b", 1, 1, 1, 1, true)
-        });
+        ]);
 
         var file = new MtdBinaryFile(header, fileTable);
 
@@ -63,13 +62,24 @@ public class MtdFileTest
 
         Assert.Equal(header.Size + fileTable.Size, file.Size);
         Assert.Equal(expectedBytes, file.Bytes);
+
+        Span<byte> buffer = new byte[file.Size + 10];
+        buffer.Fill(1);
+
+        file.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer.Slice(0, file.Size).ToArray());
+
+        Span<byte> ones = new byte[buffer.Length - file.Size];
+        ones.Fill(1);
+        Assert.Equal(ones.ToArray(), buffer.Slice(file.Size).ToArray());
     }
 
     [Fact]
     public void SizeBytes_Empty()
     {
         var header = new MtdHeader(0);
-        var fileTable = new BinaryTable<MtdBinaryFileInfo>(new List<MtdBinaryFileInfo>());
+        var fileTable = new BinaryTable<MtdBinaryFileInfo>([]);
 
         var file = new MtdBinaryFile(header, fileTable);
 
@@ -77,5 +87,16 @@ public class MtdFileTest
 
         Assert.Equal(header.Size, file.Size);
         Assert.Equal(expectedBytes, file.Bytes);
+
+        Span<byte> buffer = new byte[file.Size + 10];
+        buffer.Fill(1);
+
+        file.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer.Slice(0, file.Size).ToArray());
+
+        Span<byte> ones = new byte[buffer.Length - file.Size];
+        ones.Fill(1);
+        Assert.Equal(ones.ToArray(), buffer.Slice(file.Size).ToArray());
     }
 }

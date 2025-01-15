@@ -33,6 +33,13 @@ public class DatBinaryFileTest
         Assert.Same(values, dat.ValueTable);
         Assert.Equal(4, dat.Size);
         Assert.Equal(BitConverter.GetBytes(dat.RecordNumber), dat.Bytes);
+
+        var buffer = new byte[dat.Size];
+        buffer.AsSpan().Fill(1);
+
+        dat.GetBytes(buffer);
+
+        Assert.Equal([0, 0, 0, 0], buffer);
     }
 
     [Fact]
@@ -70,5 +77,12 @@ public class DatBinaryFileTest
         bytes.AddRange(keys.Bytes);
 
         Assert.Equal(bytes, dat.Bytes);
+
+        var buffer = new byte[dat.Size];
+        buffer.AsSpan().Fill(1);
+
+        dat.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer);
     }
 }

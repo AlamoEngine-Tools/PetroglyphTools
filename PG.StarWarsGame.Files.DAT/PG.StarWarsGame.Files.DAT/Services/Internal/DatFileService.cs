@@ -26,11 +26,7 @@ internal class DatFileService(IServiceProvider services) : ServiceBase(services)
 
         var datBinary = Services.GetRequiredService<IDatBinaryConverter>().ModelToBinary(datModel);
 
-#if NETSTANDARD2_1_OR_GREATER || NET
-        fileStream.Write(datBinary.Bytes);
-#else
-        fileStream.Write(datBinary.Bytes, 0, datBinary.Size);
-#endif
+        datBinary.WriteTo(fileStream);
     }
 
     public IDatFile Load(string filePath)

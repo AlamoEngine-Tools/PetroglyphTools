@@ -34,7 +34,14 @@ public class KeyTableRecordTest
         var record = new KeyTableRecord(input, original);
         Assert.Equal(input, record.Key);
         Assert.Equal(original, record.OriginalKey);
-        Assert.Equal(input.Length, record.Size); // Value has unicode which is two times the char length.
+        Assert.Equal(input.Length, record.Size);
         Assert.Equal(Encoding.ASCII.GetBytes(record.Key), record.Bytes);
+
+        var buffer = new byte[record.Size];
+        buffer.AsSpan().Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(Encoding.ASCII.GetBytes(record.Key), buffer);
     }
 }

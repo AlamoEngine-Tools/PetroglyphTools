@@ -40,6 +40,27 @@ public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
         Items = items.ToList();
     }
 
+    /// <inheritdoc />
+    public override void GetBytes(Span<byte> bytes)
+    {
+        if (bytes.Length < Size)
+            throw new ArgumentException("Destination is too short.", nameof(bytes));
+        if (Size == 0)
+            return;
+        if (Items.Count == 1)
+        {
+            Items[0].GetBytes(bytes);
+            return;
+        }
+
+        var offset = 0;
+        foreach (var item in Items)
+        {
+            item.GetBytes(bytes.Slice(offset));
+            offset += item.Size;
+        }
+    }
+
     /// <inheritdoc/>
     protected override int GetSizeCore()
     {
@@ -49,17 +70,6 @@ public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
             1 => Items[0].Size,
             _ => GetSizeSlow()
         };
-    }
-
-    /// <inheritdoc/>
-    protected override byte[] ToBytesCore()
-    {
-        if (Size == 0)
-            return [];
-        var bytes = new List<byte>(Size);
-        foreach (var item in Items)
-            bytes.AddRange(item.Bytes);
-        return bytes.ToArray();
     }
 
     /// <inheritdoc/>

@@ -43,7 +43,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
     [Fact]
     public void EmptyTable()
     {
-        var table = CreateFileTable(new List<T>(0));
+        var table = CreateFileTable([]);
         Assert.Empty(table);
         Assert.Equal(0, table.Size);
         Assert.Equal([], table.Bytes);
@@ -168,16 +168,104 @@ public abstract class BinaryTableTest<T> where T : IBinary
         var expectedTableBytes = entry1.Bytes.Concat(entry2.Bytes).ToArray();
         Assert.Equal(expectedTableBytes, table.Bytes);
     }
+
+    [Fact]
+    public void GetBytes_Empty()
+    {
+        var table = CreateFileTable([]);
+
+        Span<byte> buffer = [1, 2, 3, 4];
+        table.GetBytes(buffer);
+        Assert.Equal([1, 2, 3, 4], buffer.ToArray());
+    }
+
+    [Fact]
+    public void GetBytes_OneEntry()
+    {
+        var entry1 = CreateFile(0, 1);
+        var expectedBytes = entry1.Bytes;
+
+        var table = CreateFileTable([entry1]);
+
+        Span<byte> buffer = new byte[entry1.Size + 10];
+        buffer.Fill(1);
+
+        table.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer.Slice(0, entry1.Size).ToArray());
+
+        Span<byte> ones = new byte[10];
+        ones.Fill(1);
+        Assert.Equal(ones.ToArray(), buffer.Slice(entry1.Size).ToArray());
+    }
+
+    [Fact]
+    public void GetBytes()
+    {
+        var numEntries = new Random().Next(2, 20);
+
+        var entries = new List<T>(numEntries);
+        var expectedBytes = new List<byte>();
+        for (var i = 0; i < numEntries; i++)
+        {
+            var entry = CreateFile((uint)i, 1);
+            entries.Add(entry);
+            expectedBytes.AddRange(entry.Bytes);
+        }
+
+        var table = CreateFileTable(entries);
+
+        Assert.Equal(entries.Sum(x => x.Size), table.Size);
+
+        Span<byte> buffer = new byte[table.Size + 10];
+        buffer.Fill(1);
+
+        table.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes.ToArray(), buffer.Slice(0, table.Size).ToArray());
+
+        Span<byte> ones = new byte[10];
+        ones.Fill(1);
+        Assert.Equal(ones.ToArray(), buffer.Slice(table.Size).ToArray());
+    }
+
+    [Fact]
+    public void GetBytes_TooShortSpan_Throws()
+    {
+        var numEntries = new Random().Next(1, 20);
+
+        var entries = new List<T>(numEntries);
+        for (var i = 0; i < numEntries; i++)
+        {
+            var entry = CreateFile((uint)i, 1);
+            entries.Add(entry);
+        }
+
+        var table = CreateFileTable(entries);
+
+        Assert.Equal(entries.Sum(x => x.Size), table.Size);
+
+        var buffer = new byte[table.Size - 1];
+        buffer.AsSpan().Fill(1);
+
+        var expected = (byte[])buffer.Clone();
+        
+        Assert.Throws<ArgumentException>(() => table.GetBytes(buffer));
+
+        Assert.Equal(expected, buffer);
+    }
 }
 
 public class TestClassBinary(byte[] bytes) : IBinary
 {
     public byte[] Bytes { get; } = bytes;
     public int Size => Bytes.Length;
+    public void GetBytes(Span<byte> bytes) => Bytes.CopyTo(bytes);
 }
 
 public readonly struct TestStructBinary(byte[] bytes) : IBinary
 {
     public byte[] Bytes { get; } = bytes;
     public int Size => Bytes.Length;
+    public void GetBytes(Span<byte> bytes) => Bytes.CopyTo(bytes);
 }

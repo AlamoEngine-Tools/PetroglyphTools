@@ -27,5 +27,12 @@ public class ValueTableRecordTest
         Assert.Equal(input, record.Value);
         Assert.Equal(input.Length * 2, record.Size); // Value has unicode which is two times the char length.
         Assert.Equal(Encoding.Unicode.GetBytes(record.Value), record.Bytes);
+
+        var buffer = new byte[record.Size];
+        buffer.AsSpan().Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(Encoding.Unicode.GetBytes(record.Value), buffer);
     }
 }

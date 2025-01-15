@@ -62,10 +62,25 @@ public class MegFileNameTableRecordTest
     [Theory]
     [InlineData("a", new byte[] { 0x1, 0x0, 0x61 })]
     [InlineData("ab", new byte[] { 0x2, 0x0, 0x61, 0x62 })]
-    public void GetBytes(string fileName, byte[] expectedBytes)
+    public void Bytes(string fileName, byte[] expectedBytes)
     {
         var record = new MegFileNameTableRecord(fileName, "org");
         Assert.Equal(expectedBytes, record.Bytes);
+    }
+
+    [Theory]
+    [InlineData("a", new byte[] { 0x1, 0x0, 0x61 })]
+    [InlineData("ab", new byte[] { 0x2, 0x0, 0x61, 0x62 })]
+    public void GetBytes(string fileName, byte[] expectedBytes)
+    {
+        var record = new MegFileNameTableRecord(fileName, "org");
+
+        Span<byte> buffer = new byte[record.Size];
+        buffer.Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer.Slice(0, record.Size).ToArray());
     }
 
     internal static MegFileNameTableRecord CreateNameRecord(string path, string? orgPath = null)

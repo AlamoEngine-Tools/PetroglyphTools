@@ -29,10 +29,21 @@ public class BinaryBaseTest
     }
 
     [Fact]
-    public void Bytes_Null_Throws()
+    public void GetBytes()
     {
-        var binary = new TestBinary(null!);
+        var expected = new byte[] { 1, 2, 3 };
 
-        Assert.Throws<InvalidOperationException>(() => binary.Bytes);
+        var binary = new TestBinary(expected);
+
+        Span<byte> buffer = new byte[binary.Size + 10];
+        buffer.Fill(1);
+
+        binary.GetBytes(buffer);
+
+        Assert.Equal(expected, buffer.Slice(0, binary.Size).ToArray());
+
+        Span<byte> ones = new byte[10];
+        ones.Fill(1);
+        Assert.Equal(ones.ToArray(), buffer.Slice(binary.Size).ToArray());
     }
 }

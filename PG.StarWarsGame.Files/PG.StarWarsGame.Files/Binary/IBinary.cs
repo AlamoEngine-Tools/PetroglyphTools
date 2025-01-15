@@ -1,6 +1,8 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
+
 namespace PG.StarWarsGame.Files.Binary;
 
 /// <summary>
@@ -17,4 +19,10 @@ public interface IBinary
     /// Gets the size in bytes of the binary.
     /// </summary>
     int Size { get; }
+
+    /// <summary>
+    /// Fills the specified span with the bytes of the binary.
+    /// </summary>
+    /// <param name="bytes">The span of bites to fill.</param>
+    void GetBytes(Span<byte> bytes);
 }

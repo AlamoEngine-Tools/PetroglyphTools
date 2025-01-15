@@ -48,12 +48,9 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
+
+        metadata.WriteTo(fileStream);
         
-#if NETSTANDARD2_1_OR_GREATER || NET
-        fileStream.Write(metadata.Bytes);
-#else
-        fileStream.Write(metadata.Bytes, 0, metadata.Size);
-#endif
         long dataBytesWritten = metadata.Size;
 
         var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();

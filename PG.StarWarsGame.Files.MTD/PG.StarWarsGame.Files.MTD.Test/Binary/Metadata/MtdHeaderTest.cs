@@ -44,4 +44,21 @@ public class MtdHeaderTest
         };
         Assert.Equal(expectedBytes, header.Bytes);
     }
+
+    [Fact]
+    public void GetBytes()
+    {
+        var header = new MtdHeader(2);
+        var expectedBytes = new byte[]
+        {
+            0x2, 0x0, 0x0, 0x0
+        };
+
+        var buffer = new byte[4];
+        buffer.AsSpan().Fill(1);
+
+        header.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer);
+    }
 }

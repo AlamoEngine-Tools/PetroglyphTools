@@ -46,5 +46,23 @@ public class MegHeaderTest
             0x2, 0x0, 0x0, 0x0
         };
         Assert.Equal(expectedBytes, header.Bytes);
+    }   
+    
+    [Fact]
+    public void GetBytes()
+    {
+        var header = new MegHeader(2, 2);
+        var expectedBytes = new byte[]
+        {
+            0x2, 0x0, 0x0, 0x0,
+            0x2, 0x0, 0x0, 0x0
+        };
+
+        Span<byte> buffer = new byte[header.Size];
+        buffer.Fill(1);
+
+        header.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer.Slice(0, header.Size).ToArray());
     }
 }

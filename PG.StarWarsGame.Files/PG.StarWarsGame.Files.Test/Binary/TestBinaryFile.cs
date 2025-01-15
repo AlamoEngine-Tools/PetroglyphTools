@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using PG.StarWarsGame.Files.Binary;
 
 namespace PG.StarWarsGame.Files.Test.Binary;
 
-public class TestBinaryFile(params IList<IBinary> binaries) : BinaryFile
+public class TestBinaryFile(params IBinary[] binaries) : BinaryFile
 {
     public override void GetBytes(Span<byte> bytes)
     {

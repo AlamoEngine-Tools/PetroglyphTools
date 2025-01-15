@@ -31,7 +31,7 @@ public class BinaryFileTest
             bins.Add(new TestBinary(bytes));
         }
 
-        var binary = new TestBinaryFile(bins);
+        var binary = new TestBinaryFile(bins.ToArray());
 
         var ms = new MemoryStream();
 

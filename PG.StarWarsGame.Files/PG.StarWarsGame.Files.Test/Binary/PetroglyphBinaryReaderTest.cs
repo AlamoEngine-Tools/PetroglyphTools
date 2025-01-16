@@ -165,6 +165,7 @@ public abstract class PetroglyphBinaryReaderTestBase
     [InlineData("123\0\0", "123")]
     [InlineData("123  \0\0", "123  ")]
     [InlineData("123\0456\0", "123")]
+    [InlineData("\0", "")]
     public void ReadString_ZeroTermination(string input, string expected)
     {
         var encoding = GetEncoding();
@@ -314,6 +315,7 @@ public abstract class PetroglyphBinaryReaderTestBase
     [InlineData("123\0\0", "123")]
     [InlineData("123  \0\0", "123  ")]
     [InlineData("123\0456\0", "123")]
+    [InlineData("\0", "")]
     public void ReadString_Span_ZeroTermination(string input, string expected)
     {
         var encoding = GetEncoding();

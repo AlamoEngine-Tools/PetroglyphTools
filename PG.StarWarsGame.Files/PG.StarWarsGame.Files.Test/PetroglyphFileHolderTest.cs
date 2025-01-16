@@ -31,7 +31,11 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
         var holder = CreateFileHolder(model, param);
 
         Assert.Same(model, holder.Content);
-        Assert.NotSame(holder.FileInformation, param);
+        Assert.Same(model, ((IPetroglyphFileHolder)holder).Content);
+        Assert.NotSame(param, holder.FileInformation);
+        Assert.NotSame(param, ((IPetroglyphFileHolder)holder).FileInformation);
+        Assert.Equal(FileSystem.Path.GetFullPath(param.FilePath), FileSystem.Path.GetFullPath(holder.FileInformation.FilePath));
+        Assert.Equal(FileSystem.Path.GetFullPath(param.FilePath), FileSystem.Path.GetFullPath(((IPetroglyphFileHolder)holder).FileInformation.FilePath));
 
         Assert.Equal(FileSystem.Path.GetFullPath(DefaultFileName), holder.FilePath);
         Assert.Equal(FileSystem.Path.GetDirectoryName(FileSystem.Path.GetFullPath(DefaultFileName)), holder.Directory);

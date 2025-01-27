@@ -23,7 +23,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.IO.Abstractions" Version="21.1.7" />
+		<PackageReference Include="System.IO.Abstractions" Version="21.2.8" />
 		<PackageReference Include="Testably.Abstractions.Testing" Version="3.2.4" />
 		<PackageReference Include="System.IO.Hashing" Version="9.0.0" />
 	</ItemGroup>

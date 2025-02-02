@@ -1,16 +1,17 @@
 using System;
-using Moq;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
-public class MegDataEntryOriginInfoTest
+public class MegDataEntryOriginInfoTest : CommonTestBase
 {
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_InvalidArgs_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((string)null!));
         Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((MegDataEntryLocationReference)null!));
@@ -20,7 +21,7 @@ public class MegDataEntryOriginInfoTest
     }
 
     [Fact]
-    public void Test_Ctor_Path()
+    public void Ctor_Path()
     {
         var originInfo = new MegDataEntryOriginInfo("path");
 
@@ -32,9 +33,12 @@ public class MegDataEntryOriginInfoTest
     }
 
     [Fact]
-    public void Test_Ctor_ReferenceLocation()
+    public void Ctor_ReferenceLocation()
     {
-        var meg = new Mock<IMegFile>().Object;
+        using var _ = FileSystem.File.Create("test.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1),
+            ServiceProvider);
+
         var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 
         var originInfo = new MegDataEntryOriginInfo(location);
@@ -47,27 +51,12 @@ public class MegDataEntryOriginInfoTest
     }
 
     [Fact]
-    public void Test_HashCode()
+    public void EqualsHashCode()
     {
-        var meg = new Mock<IMegFile>().Object;
-        var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
-        var otherLocation = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
+        using var _ = FileSystem.File.Create("test.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1),
+            ServiceProvider);
 
-        var originLoc = new MegDataEntryOriginInfo(location);
-        var otherOriginLoc = new MegDataEntryOriginInfo(otherLocation);
-        var originPath = new MegDataEntryOriginInfo("path");
-        var otherOriginPath = new MegDataEntryOriginInfo("path");
-
-        Assert.NotEqual(originLoc.GetHashCode(), originPath.GetHashCode());
-
-        Assert.Equal(originLoc.GetHashCode(), otherOriginLoc.GetHashCode());
-        Assert.Equal(originPath.GetHashCode(), otherOriginPath.GetHashCode());
-    }
-
-    [Fact]
-    public void Test_Equals()
-    {
-        var meg = new Mock<IMegFile>().Object;
         var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
         var otherLocation = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
 
@@ -98,5 +87,10 @@ public class MegDataEntryOriginInfoTest
 
         Assert.NotEqual(originLoc,
             new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("PATH"))));
+
+        Assert.NotEqual(originLoc.GetHashCode(), originPath.GetHashCode());
+
+        Assert.Equal(originLoc.GetHashCode(), otherOriginLoc.GetHashCode());
+        Assert.Equal(originPath.GetHashCode(), otherOriginPath.GetHashCode());
     }
 }

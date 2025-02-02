@@ -76,7 +76,7 @@ public interface IDatModelService
     /// </remarks>
     /// <param name="baseDatModel">The base model.</param>
     /// <param name="datToMerge">The model to merge into <paramref name="baseDatModel"/>.</param>
-    /// <param name="mergedKeys">Keys that got added or overwritten will be stored into this variable.</param>
+    /// <param name="mergedKeys">When this method returns, the collection contains keys that got added or overwritten.</param>
     /// <param name="mergeOptions">Specifies how to treat existing keys.</param>
     /// <returns>The merged model.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is <see langword="null"/>.</exception>
@@ -89,7 +89,7 @@ public interface IDatModelService
     /// </summary>
     /// <param name="baseDatModel">The base model.</param>
     /// <param name="datToMerge">The model to merge into <paramref name="baseDatModel"/>.</param>
-    /// <param name="mergedKeys">Keys that got added or overwritten will be stored into this variable.</param>
+    /// <param name="mergedKeys">When this method returns, the collection contains keys that got added or overwritten.</param>
     /// <param name="mergeOptions">Specifies how to treat existing keys.</param>
     /// <returns>The merged model.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is <see langword="null"/>.</exception>

@@ -1,54 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.Testing;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Reader;
 
-public class DatFileReaderTest
+public class DatFileReaderTest : CommonTestBase
 {
     private readonly DatFileReader _reader;
 
     public DatFileReaderTest()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(new MockFileSystem());
-        _reader = new DatFileReader(sc.BuildServiceProvider());
+        _reader = new DatFileReader(ServiceProvider);
     }
 
     [Fact]
-    public void Test_PeekFileType_ThrowsArgumentNullException()
+    public void PeekFileType_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => _reader.PeekFileType(null!));
     }
 
     [Fact]
-    public void Test_PeekFileType_ThrowsBinaryCorruptedException()
+    public void PeekFileType_ThrowsBinaryCorruptedException()
     {
         Assert.Throws<BinaryCorruptedException>(() => _reader.PeekFileType(new MemoryStream()));
     }
 
     [Theory]
     [MemberData(nameof(DatFileTypeTestData))]
-    public void Test_PeekFileType(Stream stream, DatFileType expectedFileType)
+    public void PeekFileType(Stream stream, DatFileType expectedFileType)
     {
         var fileType = _reader.PeekFileType(stream);
         Assert.Equal(expectedFileType, fileType);
+
+        // Ensure that stream is not disposed after read operation
+        stream.Position = 1;
     }
 
     public static IEnumerable<object[]> DatFileTypeTestData()
     {
-        return new[]
-        {
+        return
+        [
             [
                 // Empty .DAT: While the file type is not specified by the interface, this test must not crash.
                 new MemoryStream([0x0, 0x0, 0x0, 0x0]),
@@ -112,28 +110,27 @@ public class DatFileReaderTest
                 TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Index_WithDuplicates.dat"),
                 DatFileType.NotOrdered
             ],
-            new object[]
-            {
+            [
                 TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"),
                 DatFileType.NotOrdered
-            },
-        };
+            ]
+        ];
     }
 
     [Fact]
-    public void Test_ReadBinary_ThrowsArgumentNullException()
+    public void ReadBinary_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => _reader.ReadBinary(null!));
     }
 
     [Fact]
-    public void Test_ReadBinary_ThrowsBinaryCorruptedException()
+    public void ReadBinary_ThrowsBinaryCorruptedException()
     {
         Assert.Throws<BinaryCorruptedException>(() => _reader.ReadBinary(new MemoryStream()));
     }
 
     [Fact]
-    public void Test_ReadBinary_Integration()
+    public void ReadBinary_Integration()
     {
         ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"));
         ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"));
@@ -141,7 +138,7 @@ public class DatFileReaderTest
 
     [Theory]
     [MemberData(nameof(DatReadTestData))]
-    public void Test_ReadBinary(Stream stream, ExpectedDatData expectedDat)
+    public void ReadBinary(Stream stream, ExpectedDatData expectedDat)
     {
         var binary = _reader.ReadBinary(stream);
         Assert.Equal(expectedDat.Number, binary.RecordNumber);
@@ -149,12 +146,15 @@ public class DatFileReaderTest
         Assert.Equal(expectedDat.Keys.ToList(), binary.KeyTable.Select(k => k.Key).ToList());
         Assert.Equal(expectedDat.OriginalKeys.ToList(), binary.KeyTable.Select(k => k.OriginalKey).ToList());
         Assert.Equal(expectedDat.Values.ToList(), binary.ValueTable.Select(k => k.Value).ToList());
+
+        // Ensure that stream is not disposed after read operation
+        stream.Position = 1;
     }
 
     public static IEnumerable<object[]> DatReadTestData()
     {
-        return new[]
-        {
+        return
+        [
             [
                 TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Empty.dat"),
                 new ExpectedDatData
@@ -211,8 +211,7 @@ public class DatFileReaderTest
                 }
             ],
 
-            new object[]
-            {
+            [
                 new MemoryStream([
                     0x1, 0x0, 0x0, 0x0, // Header
                     0x1, 0x0, 0x0, 0x0, // Crc
@@ -230,16 +229,16 @@ public class DatFileReaderTest
                     OriginalKeys = new List<string>{"ä"},
                     Values = new List<string>{"a"}
                 }
-            },
-        };
+            ]
+        ];
     }
 
     public class ExpectedDatData
     {
         public int Number { get; init; }
-        public IList<Crc32> Checksums { get; init; }
-        public IList<string> Keys { get; init; }
-        public IList<string> OriginalKeys { get; init; }
-        public IList<string> Values { get; init; }
+        public required IList<Crc32> Checksums { get; init; }
+        public required IList<string> Keys { get; init; }
+        public required IList<string> OriginalKeys { get; init; }
+        public required IList<string> Values { get; init; }
     }
 }

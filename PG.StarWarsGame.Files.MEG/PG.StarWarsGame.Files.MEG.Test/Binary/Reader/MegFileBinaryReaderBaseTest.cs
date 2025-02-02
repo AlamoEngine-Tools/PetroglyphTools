@@ -1,136 +1,52 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
-using Moq;
-using Moq.Protected;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader;
 
-public class MegFileBinaryReaderBaseTest
+public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
 {
-    private readonly Mock<IServiceProvider> _serviceProviderMock;
-    private readonly IFileSystem _fileSystem = new MockFileSystem();
+    private protected abstract IMegFileBinaryReader CreateMegBinaryReader();
 
-    public MegFileBinaryReaderBaseTest()
+    protected abstract byte[] GetValidData();
+
+    [Fact]
+    public void ReadBinary_InvalidArgs_Throws()
     {
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(_fileSystem);
-        _serviceProviderMock = sp;
+        var reader = CreateMegBinaryReader();
+
+        Assert.Throws<ArgumentNullException>(() => reader.ReadBinary(null!));
+        Assert.Throws<ArgumentException>(() => reader.ReadBinary(new MemoryStream()));
+        Assert.Throws<ArgumentException>(() => reader.ReadBinary(new MemoryStream([])));
     }
 
     [Fact]
-    public void Test__Ctor_ThrowsNullArg()
+    public void ReadBinary_ShouldNotDisposeStream()
     {
-        Assert.Throws<ArgumentNullException>(() => new TestMegFileBinaryReader(null!));
+        var data = GetValidData();
+        var stream = new MemoryStream(data);
+        var reader = CreateMegBinaryReader();
+        reader.ReadBinary(stream);
+
+        // Ensure the stream is not disposed
+        stream.Position = 0;
     }
-
-    [Fact]
-    public void Test__ReadBinary_ThrowsArgs()
-    {
-        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
-        {
-            CallBase = true
-        };
-
-        Assert.Throws<ArgumentNullException>(() => serviceMock.Object.ReadBinary(null!));
-        Assert.Throws<ArgumentException>(() => serviceMock.Object.ReadBinary(new MemoryStream()));
-        Assert.Throws<ArgumentException>(() => serviceMock.Object.ReadBinary(new MemoryStream([])));
-    }
-
-    [Fact]
-    public void Test__ReadBinary_MethodChain()
-    {
-        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
-        {
-            CallBase = true
-        };
-
-        var fileNameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
-        var megHeader = new Mock<IMegHeader>();
-        var fileTable = new Mock<IMegFileTable>();
-
-
-        serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
-            .Returns(megHeader.Object);
-        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns(fileNameTable);
-        serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns(fileTable.Object);
-
-        serviceMock.Object.ReadBinary(new MemoryStream([0]));
-
-        serviceMock.Protected().Verify("CreateMegMetadata", Times.Once(), megHeader.Object, fileNameTable, fileTable.Object);
-        serviceMock.Protected().Verify("BuildMegHeader", Times.Once(), ItExpr.IsAny<BinaryReader>());
-        serviceMock.Protected().Verify("BuildFileTable", Times.Once(), ItExpr.IsAny<BinaryReader>(), megHeader.Object);
-        serviceMock.Protected().Verify("BuildFileNameTable", Times.Once(), ItExpr.IsAny<BinaryReader>(), megHeader.Object);
-    }
-
-
-    [Fact]
-    public void Test__ReadBinary_ThrowOnNullObjects()
-    {
-        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
-        {
-            CallBase = true
-        };
-
-        var fileNameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord> { MegFileNameTableRecordTest.CreateNameRecord("A") });
-        var megHeader = new Mock<IMegHeader>();
-        var fileTable = new Mock<IMegFileTable>();
-
-        serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
-            .Returns((IMegHeader)null!);
-        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns(fileNameTable);
-        serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns(fileTable.Object);
-
-        Assert.Throws<InvalidOperationException>(() => serviceMock.Object.ReadBinary(new MemoryStream([0])));
-
-        serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
-            .Returns(megHeader.Object);
-        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns((BinaryTable<MegFileNameTableRecord>)null!);
-        serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns(fileTable.Object);
-
-        Assert.Throws<InvalidOperationException>(() => serviceMock.Object.ReadBinary(new MemoryStream([0])));
-
-        serviceMock.Protected().Setup<IMegHeader>("BuildMegHeader", ItExpr.IsAny<BinaryReader>())
-            .Returns(megHeader.Object);
-        serviceMock.Protected().Setup<BinaryTable<MegFileNameTableRecord>>("BuildFileNameTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns(fileNameTable);
-        serviceMock.Protected().Setup<IMegFileTable>("BuildFileTable", ItExpr.IsAny<BinaryReader>(), megHeader.Object)
-            .Returns((IMegFileTable)null!);
-    }
-
-
+    
     [Theory]
     [MemberData(nameof(FileTableTestData))]
-    public void Test__ReadBinary_BuildFileNameTable(int fileNumber, byte[] data, string[] expectedValues)
+    public void ReadBinary_BuildFileNameTable(int fileNumber, byte[] data, string[] expectedValues)
     {
-        var serviceMock = new Mock<MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>>(_serviceProviderMock.Object)
-        {
-            CallBase = true
-        };
+        var reader = CreateMegBinaryReader();
 
-        var megHeader = new Mock<IMegHeader>();
-        megHeader.Setup(h => h.FileNumber).Returns(fileNumber);
+        var binaryReader = new PetroglyphBinaryReader(new MemoryStream(data), false);
 
+        var nameTable = reader.BuildFileNameTable(binaryReader, fileNumber);
 
-        var binaryReader = new BinaryReader(new MemoryStream(data));
-
-        var nameTable = serviceMock.Object.BuildFileNameTable(binaryReader, megHeader.Object);
-
-        var names = nameTable.Select<MegFileNameTableRecord, string>(source => source.FileName).ToList();
+        var names = nameTable.Select(source => source.FileName).ToList();
 
         Assert.Equal(fileNumber, nameTable.Count);
         Assert.Equal(expectedValues, names);
@@ -138,8 +54,8 @@ public class MegFileBinaryReaderBaseTest
 
     public static IEnumerable<object[]> FileTableTestData()
     {
-        return new[]
-        {
+        return
+        [
             [
                 0, new byte[]
             {
@@ -183,29 +99,12 @@ public class MegFileBinaryReaderBaseTest
             ],
 
             // This case occurs when reading .MEGs from Mike's tool, since it uses Latin1, instead of ASCII.
-            new object[] { 1, new byte[]
+            [
+                1, new byte[]
             {
                 1, 0, unchecked((byte)'ä')
-            }, new[] { "?" } }
-        };
-    }
-
-    private class TestMegFileBinaryReader(IServiceProvider services)
-        : MegFileBinaryReaderBase<IMegFileMetadata, IMegHeader, IMegFileTable>(services)
-    {
-        protected internal override IMegFileMetadata CreateMegMetadata(IMegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, IMegFileTable fileTable)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected internal override IMegHeader BuildMegHeader(BinaryReader binaryReader)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected internal override IMegFileTable BuildFileTable(BinaryReader binaryReader, IMegHeader header)
-        {
-            throw new NotImplementedException();
-        }
+            }, new[] { "?" }
+            ]
+        ];
     }
 }

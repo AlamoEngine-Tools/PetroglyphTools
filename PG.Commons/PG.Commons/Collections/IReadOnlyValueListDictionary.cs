@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AnakinRaW.CommonUtilities.Collections;
@@ -62,7 +65,7 @@ public interface IReadOnlyValueListDictionary<TKey, TValue> : IEnumerable<KeyVal
     bool ContainsKey(TKey key);
 
     /// <summary>
-    /// Get the list of values stored at the specified key.
+    /// Get a list of values stored with the specified key.
     /// </summary>
     /// <param name="key">The key to get the list of values for.</param>
     /// <returns>The list of values of the specified <paramref name="key"/>.</returns>

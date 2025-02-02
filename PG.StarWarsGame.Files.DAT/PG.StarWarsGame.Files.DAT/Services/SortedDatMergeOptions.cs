@@ -9,11 +9,11 @@ namespace PG.StarWarsGame.Files.DAT.Services;
 public enum SortedDatMergeOptions
 {
     /// <summary>
-    /// An existing key will be kept.
+    /// An existing key is kept.
     /// </summary>
     KeepExisting,
     /// <summary>
-    /// An existing key will be overwritten by the new value.
+    /// An existing key is overwritten by the new value.
     /// </summary>
     Overwrite
 }

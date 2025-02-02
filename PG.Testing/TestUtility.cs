@@ -1,24 +1,17 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Xunit;
+using System.Linq;
 
 namespace PG.Testing;
 
 public static class TestUtility
 {
     private static readonly Random RandomGenerator = new();
-        
-    public static void AssertAreBinaryEquivalent(IReadOnlyList<byte> expected, IReadOnlyList<byte> actual)
+
+    public static bool GetRandomBool()
     {
-        Assert.Equal(expected.Count, actual.Count);
-        for (var i = 0; i < expected.Count; i++)
-        {
-            Assert.Equal(expected[i], actual[i]);
-        }
+        return RandomGenerator.Next() % 2 == 0;
     }
 
     public static string GetRandomStringOfLength(int length)
@@ -48,5 +41,12 @@ public static class TestUtility
         using var ms = new MemoryStream();
         stream.CopyTo(ms);
         return ms.ToArray();
+    }
+
+    public static T GetRandom<T>(IEnumerable<T> items)
+    {
+        var list = items.ToList();
+        var r = new Random().Next(list.Count);
+        return list[r];
     }
 }

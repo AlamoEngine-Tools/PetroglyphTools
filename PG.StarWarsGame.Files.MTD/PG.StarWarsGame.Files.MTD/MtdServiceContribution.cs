@@ -8,15 +8,16 @@ using PG.StarWarsGame.Files.MTD.Services;
 namespace PG.StarWarsGame.Files.MTD;
 
 /// <summary>
-/// Provides helper methods to initialize this library.
+/// Provides initialization routines for this library.
 /// </summary>
 public static class MtdServiceContribution 
 {
+    // ReSharper disable once InconsistentNaming
     /// <summary>
-    /// Registers all required services of this library to the specified service collection.
+    /// Adds all necessary services provided by this library to the specified <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="serviceCollection">The service collection to register MTD services to.</param>
-    public static void AddMtdServices(this IServiceCollection serviceCollection)
+    /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add services to.</param>
+    public static void SupportMTD(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IMtdFileService>(sp => new MtdFileService(sp));
         serviceCollection.AddSingleton<IMtdBinaryConverter>(sp => new MtdBinaryConverter(sp));

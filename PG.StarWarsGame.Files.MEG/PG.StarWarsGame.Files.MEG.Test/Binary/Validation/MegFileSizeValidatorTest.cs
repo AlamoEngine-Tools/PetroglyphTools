@@ -1,31 +1,35 @@
 using System;
-using Moq;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
+using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
 
-public class MegFileSizeValidatorTest
+public abstract class MegFileSizeValidatorTestBase
 {
+    protected readonly MockFileSystem FileSystem = new();
+
+    private protected abstract IMegFileMetadata CreateRandomMetadata();
+
     [Fact]
-    public void Test__Validate_Null()
+    public void Validate_Null_Throws()
     {
         var validator = new MegFileSizeValidator();
         Assert.Throws<ArgumentNullException>(() => validator.Validate(null!));
     }
 
     [Fact]
-    public void Test__Validate_MetadataNull()
+    public void Validate_MetadataNull()
     {
-        var sizeInfo = new Mock<IMegBinaryValidationInformation>();
-        sizeInfo.SetupGet(s => s.FileSize).Returns(12);
-        sizeInfo.SetupGet(s => s.BytesRead).Returns(1);
-        sizeInfo.SetupGet(s => s.Metadata).Returns((IMegFileMetadata)null!);
-
         var validator = new MegFileSizeValidator();
 
-        Assert.False(validator.Validate(sizeInfo.Object));
+        Assert.False(validator.Validate(new MegBinaryValidationInformation
+        {
+            Metadata = null!,
+            BytesRead = 1,
+            FileSize = 12
+        }));
     }
 
     [Theory]
@@ -35,32 +39,18 @@ public class MegFileSizeValidatorTest
     [InlineData(0L, 1L)]
     [InlineData(1L, 0L)]
     [InlineData(2L, 1L)]
-    public void Test__Validate_NotValid(long readBytes, long size)
+    public void Validate_AlwaysInvalid(long readBytes, long size)
     {
-        var metadata = new Mock<IMegFileMetadata>();
-        var sizeInfo = new Mock<IMegBinaryValidationInformation>();
-        sizeInfo.SetupGet(s => s.FileSize).Returns(size);
-        sizeInfo.SetupGet(s => s.BytesRead).Returns(readBytes);
-        sizeInfo.SetupGet(s => s.Metadata).Returns(metadata.Object);
-
-        var validator = new MegFileSizeValidator(); 
-        
-        Assert.False(validator.Validate(sizeInfo.Object));
-    }
-
-    [Theory]
-    [InlineData(1L, 12L)]
-    [InlineData(1L, 1L)]
-    public void Test__Validate_IsValid(long readBytes, long size)
-    {
-        var metadata = new Mock<IMegFileMetadata>();
-        var sizeInfo = new Mock<IMegBinaryValidationInformation>();
-        sizeInfo.SetupGet(s => s.FileSize).Returns(size);
-        sizeInfo.SetupGet(s => s.BytesRead).Returns(readBytes);
-        sizeInfo.SetupGet(s => s.Metadata).Returns(metadata.Object);
+        var info = new MegBinaryValidationInformation
+        {
+            // Metadata should not matter, as the input data is already invalid
+            Metadata = CreateRandomMetadata(),
+            BytesRead = readBytes,
+            FileSize = size
+        };
 
         var validator = new MegFileSizeValidator();
 
-        Assert.True(validator.Validate(sizeInfo.Object));
+        Assert.False(validator.Validate(info));
     }
 }

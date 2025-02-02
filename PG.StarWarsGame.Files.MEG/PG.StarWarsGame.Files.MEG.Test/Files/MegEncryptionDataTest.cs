@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Security.Cryptography;
-
 using PG.StarWarsGame.Files.MEG.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Files;
-
 
 public class MegEncryptionDataTest
 {
@@ -19,7 +17,7 @@ public class MegEncryptionDataTest
     }
 
     [Fact]
-    public void Test_KeyHandling()
+    public void KeyHandling()
     {
         var keyIv = new byte[16];
         RandomNumberGenerator.Create().GetNonZeroBytes(keyIv);
@@ -53,7 +51,7 @@ public class MegEncryptionDataTest
     }
 
     [Fact]
-    public void Test_Ctor_InvalidKeySizes()
+    public void Ctor_InvalidKeySizes()
     {
         var invalidSize = new byte[4];
         var validSize = new byte[16];

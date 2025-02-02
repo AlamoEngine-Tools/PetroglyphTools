@@ -1,5 +1,4 @@
 using System;
-using Moq;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -8,42 +7,53 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
-public class MegDataEntryLocationReferenceTest
+public class MegDataEntryLocationReferenceTest : CommonMegTestBase
 {
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
             new MegDataEntryLocationReference(null!, MegDataEntryTest.CreateEntry("path")));
 
-        Assert.Throws<ArgumentNullException>(() =>
-            new MegDataEntryLocationReference(new Mock<IMegFile>().Object, null!));
+        FileSystem.File.Create("file.meg");
+        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1),
+            ServiceProvider);
+        Assert.Throws<ArgumentNullException>(() => new MegDataEntryLocationReference(megFile, null!));
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
-        var meg = new Mock<IMegFile>().Object;
+        FileSystem.File.Create("file.meg");
+        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1),
+            ServiceProvider);
         var entry = MegDataEntryTest.CreateEntry("path");
 
-        var reference = new MegDataEntryLocationReference(meg, entry);
+        var reference = new MegDataEntryLocationReference(megFile, entry);
 
-        Assert.Same(meg, reference.MegFile);
+        Assert.Same(megFile, reference.MegFile);
         Assert.Same(entry, reference.DataEntry);
     }
 
     [Fact]
-    public void Test_Equals_Hashcode()
+    public void Equals_Hashcode()
     {
-        var meg = new Mock<IMegFile>().Object;
+        FileSystem.File.Create("a.meg");
+        FileSystem.File.Create("b.meg");
+
+        var megFileA = new MegFile(new MegArchive([]), new MegFileInformation("a.meg", MegFileVersion.V1),
+            ServiceProvider);
+        var megFileB = new MegFile(new MegArchive([]), new MegFileInformation("b.meg", MegFileVersion.V1),
+            ServiceProvider);
+
         var entry = MegDataEntryTest.CreateEntry("path");
 
-        var reference = new MegDataEntryLocationReference(meg, entry);
+        var reference = new MegDataEntryLocationReference(megFileA, entry);
 
-        var otherEqual = new MegDataEntryLocationReference(meg, entry);
+        var otherEqual = new MegDataEntryLocationReference(megFileA, entry);
 
-        var otherNotEqualMeg = new MegDataEntryLocationReference(new Mock<IMegFile>().Object, entry);
-        var otherNotEqualEntry = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("other"));
+        var otherNotEqualMeg = new MegDataEntryLocationReference(megFileB, entry);
+        var otherNotEqualEntry = new MegDataEntryLocationReference(megFileA, MegDataEntryTest.CreateEntry("other"));
 
         Assert.Equal(reference, reference);
         Assert.Equal(reference, otherEqual);
@@ -60,16 +70,16 @@ public class MegDataEntryLocationReferenceTest
     }
 
     [Fact]
-    public void Test_Exists()
+    public void Exists()
     {
         var entry = MegDataEntryTest.CreateEntry("path");
-        var archive = new Mock<IMegArchive>();
-        archive.Setup(a => a.Contains(entry)).Returns(true);
-        var meg = new Mock<IMegFile>();
-        meg.SetupGet(m => m.Archive).Returns(archive.Object);
 
-        var locationExists = new MegDataEntryLocationReference(meg.Object, entry);
-        var locationNotExists = new MegDataEntryLocationReference(meg.Object, MegDataEntryTest.CreateEntry("other"));
+        FileSystem.File.Create("file.meg");
+        var megFile = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1),
+            ServiceProvider);
+        
+        var locationExists = new MegDataEntryLocationReference(megFile, entry);
+        var locationNotExists = new MegDataEntryLocationReference(megFile, MegDataEntryTest.CreateEntry("other"));
 
         Assert.True(locationExists.Exists);
         Assert.False(locationNotExists.Exists);

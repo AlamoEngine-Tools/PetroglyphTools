@@ -2,30 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
-using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
-
 
 public class MegDataEntryHolderBaseTest
 {
 
     [Fact]
-    public void Test_Ctor_Throw_NullArgument()
+    public void Ctor_Throw_NullArgument()
     {
         Assert.Throws<ArgumentNullException>(() => new TestArchive(null!));
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
-        var entry1 = new Mock<IMegDataEntry>().Object;
-        var entry2 = new Mock<IMegDataEntry>().Object;
+        var entry1 = MegDataEntryTest.CreateEntry("path");
+        var entry2 = MegDataEntryTest.CreateEntry("other");
         var entries = new List<IMegDataEntry>
         {
             entry1, entry2
@@ -46,27 +44,19 @@ public class MegDataEntryHolderBaseTest
     }
 
     [Fact]
-    public void Test_Ctor_UnsortedEntries_Throws()
+    public void Ctor_UnsortedEntries_Throws()
     {
-        var entry1 = new Mock<IMegDataEntry>();
-        entry1.SetupGet(e => e.Crc32).Returns(new Crc32(1));
-
-        var entry2 = new Mock<IMegDataEntry>();
-        entry2.SetupGet(e => e.Crc32).Returns(new Crc32(0));
-
-        var entries = new List<IMegDataEntry>
-        {
-            entry1.Object, entry2.Object
-        };
-
-        Assert.Throws<ArgumentException>(() => new TestArchive(entries));
+        var entry1 = MegDataEntryTest.CreateEntry("path", new Crc32(1));
+        var entry2 = MegDataEntryTest.CreateEntry("other", new Crc32(0));
+        
+        Assert.Throws<ArgumentException>(() => new TestArchive([entry1, entry2]));
     }
 
     [Fact]
-    public void Test_IndexOf_Contains()
+    public void IndexOf_Contains()
     {
-        var entry1 = new Mock<IMegDataEntry>().Object;
-        var entry2 = new Mock<IMegDataEntry>().Object;
+        var entry1 = MegDataEntryTest.CreateEntry("path");
+        var entry2 = MegDataEntryTest.CreateEntry("other");
         var entries = new List<IMegDataEntry>
         {
             entry1, entry2
@@ -74,7 +64,7 @@ public class MegDataEntryHolderBaseTest
 
         var archive = new TestArchive(entries);
 
-        var entry3 = new Mock<IMegDataEntry>().Object;
+        var entry3 = MegDataEntryTest.CreateEntry("third");
 
         Assert.Equal(0, archive.IndexOf(entry1));
         Assert.Equal(1, archive.IndexOf(entry2));
@@ -86,22 +76,17 @@ public class MegDataEntryHolderBaseTest
     }
 
     [Fact]
-    public void Test_EntriesWithCrc_LastEntryWithCrc()
+    public void EntriesWithCrc_LastEntryWithCrc()
     {
-        var entry1 = new Mock<IMegDataEntry>();
-        entry1.SetupGet(e => e.FilePath).Returns("a");
-
-        var entry2 = new Mock<IMegDataEntry>();
-        entry2.SetupGet(e => e.FilePath).Returns("b");
-
-        var entry3 = new Mock<IMegDataEntry>();
-        entry3.SetupGet(e => e.Crc32).Returns(new Crc32(1));
+        var entry1 = MegDataEntryTest.CreateEntry("a", new Crc32(0));
+        var entry2 = MegDataEntryTest.CreateEntry("b", new Crc32(0));
+        var entry3 = MegDataEntryTest.CreateEntry("c", new Crc32(1));
 
         var entries = new List<IMegDataEntry>
         {
-            entry1.Object,
-            entry2.Object,
-            entry3.Object
+            entry1,
+            entry2,
+            entry3
         };
 
         var archive = new TestArchive(entries);
@@ -146,15 +131,10 @@ public class MegDataEntryHolderBaseTest
     [InlineData("a.txt", new[] { "./a.txt", "new/../a.txt" }, new string[] { })]
     // On a real file system, this is a false positive ("new/../a.txt" should NOT be present)
     [InlineData("new/**/a.txt", new[] { "new/../a.txt", "new/././a.txt" }, new[] { "new/../a.txt", "new/././a.txt" })]
-    public void Test_FindAllEntries(string pattern, string[] files, string[] expectedMatches, bool caseInsensitive = false)
+    public void FindAllEntries(string pattern, string[] files, string[] expectedMatches, bool caseInsensitive = false)
     {
 
-        var megFiles = files.Select(f =>
-        {
-            var entry = new Mock<IMegDataEntry>();
-            entry.SetupGet(e => e.FilePath).Returns(f);
-            return entry.Object;
-        }).ToList();
+        var megFiles = files.Select(f => MegDataEntryTest.CreateEntry(f)).OfType<IMegDataEntry>().ToList();
         var meg = new TestArchive(megFiles);
         var entries = meg.FindAllEntries(pattern, caseInsensitive).Select(e => e.FilePath).ToList();
         Assert.Equal(expectedMatches, entries);
@@ -163,10 +143,10 @@ public class MegDataEntryHolderBaseTest
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Test_FindAllEntries_Throws(string pattern)
+    public void FindAllEntries_Throws(string? pattern)
     {
         var meg = new TestArchive([]);
-        Assert.ThrowsAny<ArgumentException>(() => meg.FindAllEntries(pattern, true));
+        Assert.ThrowsAny<ArgumentException>(() => meg.FindAllEntries(pattern!, true));
     }
 
     private class TestArchive(IList<IMegDataEntry> entries) : MegDataEntryHolderBase<IMegDataEntry>(entries);

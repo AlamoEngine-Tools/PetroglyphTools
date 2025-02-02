@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -52,7 +52,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
             lastCrc = keyChecksum;
         }
         
-        if (model.KeySortOder == DatFileType.OrderedByCrc32 && !isSorted)
+        if (model.KeySortOrder == DatFileType.OrderedByCrc32 && !isSorted)
             throw new ArgumentException("MasterTextModel must be sorted.", nameof(model));
 
         return new DatBinaryFile(header, new BinaryTable<IndexTableRecord>(indexRecords), new BinaryTable<ValueTableRecord>(values), new BinaryTable<KeyTableRecord>(keys));

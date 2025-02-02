@@ -3,10 +3,10 @@
 
 using System;
 using System.Buffers.Binary;
-using PG.Commons.Binary;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Utilities;
 using AnakinRaW.CommonUtilities;
+using PG.StarWarsGame.Files.Binary;
 #if NETSTANDARD2_0
 using AnakinRaW.CommonUtilities.Extensions;
 #endif
@@ -26,16 +26,17 @@ internal readonly struct MegFileNameTableRecord : IBinary
         get
         {
             var bytes = new byte[Size];
-            var bytesSpan = bytes.AsSpan();
-            
-            BinaryPrimitives.WriteUInt16LittleEndian(bytesSpan, _fileNameLength);
-            MegFileConstants.MegDataEntryPathEncoding.GetBytes(FileName.AsSpan(), bytesSpan.Slice(sizeof(ushort)));
-
+            GetBytes(bytes);
             return bytes;
         }
     }
 
     public int Size => sizeof(ushort) + _fileNameLength;
+    public void GetBytes(Span<byte> bytes)
+    {
+        BinaryPrimitives.WriteUInt16LittleEndian(bytes, _fileNameLength);
+        MegFileConstants.MegDataEntryPathEncoding.GetBytes(FileName.AsSpan(), bytes.Slice(sizeof(ushort)));
+    }
 
     public MegFileNameTableRecord(string filePath, string originalFilePath)
     {

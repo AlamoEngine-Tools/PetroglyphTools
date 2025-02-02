@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using PG.Commons.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
+using PG.StarWarsGame.Files.Services.Builder;
 
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
@@ -80,10 +80,10 @@ public interface IDatBuilder : IFileBuilder<IReadOnlyList<DatStringEntry>, DatFi
     /// </summary>
     /// <param name="key">The key to validate</param>
     /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
-    bool IsKeyValid(string key);
+    bool IsKeyValid(string? key);
 
     /// <summary>
-    /// Create a DAT model from the <see cref="IDatBuilder"/>.
+    /// Creates a DAT model from the <see cref="IDatBuilder"/>.
     /// </summary>
     /// <returns>
     /// A DAT model containing all entries of the <see cref="IDatBuilder"/>.

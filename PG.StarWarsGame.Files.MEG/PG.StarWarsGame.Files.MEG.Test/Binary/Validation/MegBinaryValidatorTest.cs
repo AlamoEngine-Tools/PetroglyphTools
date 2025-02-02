@@ -1,113 +1,85 @@
-using System;
-using Moq;
+using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation;
 
-public class MegBinaryValidatorTest
+public class MegBinaryValidatorTest : CommonMegTestBase
 {
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Validate_Composite_Valid()
     {
-        Assert.Throws<ArgumentNullException>(() => new MegBinaryValidator(null!));
-    }
-
-    
-    [Fact]
-    public void Test_Validate_Composite_Valid()
-    {
-        var fileTable = new Mock<IMegFileTable>();
-        var metadata = new Mock<IMegFileMetadata>();
-        metadata.SetupGet(m => m.FileTable).Returns(fileTable.Object);
-        var info = new Mock<IMegBinaryValidationInformation>();
-        info.SetupGet(i => i.Metadata).Returns(metadata.Object);
-
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IMegFileSizeValidator))).Returns(new ValidSizeValidator());
-        sp.Setup(s => s.GetService(typeof(IFileTableValidator))).Returns(new ValidFileTableValidator());
-        
-        var validator = new MegBinaryValidator(sp.Object);
+        var validator = new MegBinaryValidator(ServiceProvider);
 
         // true | true --> true
-        Assert.True(validator.Validate(info.Object));
+        Assert.True(validator.Validate(new MegBinaryValidationInformation
+        {
+            Metadata = new MegMetadata(default, new BinaryTable<MegFileNameTableRecord>([]), new MegFileTable([])),
+            BytesRead = 8, // Empty file size
+            FileSize = 8 // Empty file size
+        }));
     }
 
     [Fact]
-    public void Test_Validate_Composite_Invalid1()
+    public void Validate_Composite_Invalid1()
     {
-        var fileTable = new Mock<IMegFileTable>();
-        var metadata = new Mock<IMegFileMetadata>();
-        metadata.SetupGet(m => m.FileTable).Returns(fileTable.Object);
-        var info = new Mock<IMegBinaryValidationInformation>();
-        info.SetupGet(i => i.Metadata).Returns(metadata.Object);
-
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IMegFileSizeValidator))).Returns(new InvalidSizeValidator());
-        sp.Setup(s => s.GetService(typeof(IFileTableValidator))).Returns(new ValidFileTableValidator());
-
-        var validator = new MegBinaryValidator(sp.Object);
+        var validator = new MegBinaryValidator(ServiceProvider);
 
         // false | true --> false
-        Assert.False(validator.Validate(info.Object));
+        Assert.False(validator.Validate(new MegBinaryValidationInformation
+        {
+            Metadata = new MegMetadata(default, new BinaryTable<MegFileNameTableRecord>([]), new MegFileTable([])),
+            BytesRead = 0,
+            FileSize = 8 // Empty file size
+        }));
     }
 
     [Fact]
-    public void Test_Validate_Composite_Invalid2()
+    public void Validate_Composite_Invalid2()
     {
-        var fileTable = new Mock<IMegFileTable>();
-        var metadata = new Mock<IMegFileMetadata>();
-        metadata.SetupGet(m => m.FileTable).Returns(fileTable.Object);
-        var info = new Mock<IMegBinaryValidationInformation>();
-        info.SetupGet(i => i.Metadata).Returns(metadata.Object);
-
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IMegFileSizeValidator))).Returns(new ValidSizeValidator());
-        sp.Setup(s => s.GetService(typeof(IFileTableValidator))).Returns(new InvalidFileTableValidator());
-
-        var validator = new MegBinaryValidator(sp.Object);
+        var validator = new MegBinaryValidator(ServiceProvider);
 
         // true | false --> false
-        Assert.False(validator.Validate(info.Object));
+        Assert.False(validator.Validate(new MegBinaryValidationInformation
+        {
+            Metadata = new MegMetadata(
+                new MegHeader(2, 2),
+                new BinaryTable<MegFileNameTableRecord>([
+                    new MegFileNameTableRecord("a", "a"),
+                    new MegFileNameTableRecord("b", "b")
+                ]),
+                new MegFileTable([
+                    new MegFileTableRecord(new Crc32(1), 1u, 0, 8 + 40 + 6, 1),
+                    new MegFileTableRecord(new Crc32(0), 0u, 0, 8 + 40 + 6, 0),
+                ])),
+            BytesRead = 8 + 40 + 6,
+            FileSize = 8 + 40 + 6
+        }));
     }
 
     [Fact]
-    public void Test_Validate_Composite_Invalid3()
+    public void Validate_Composite_Invalid3()
     {
-        var fileTable = new Mock<IMegFileTable>();
-        var metadata = new Mock<IMegFileMetadata>();
-        metadata.SetupGet(m => m.FileTable).Returns(fileTable.Object);
-        var info = new Mock<IMegBinaryValidationInformation>();
-        info.SetupGet(i => i.Metadata).Returns(metadata.Object);
+        var validator = new MegBinaryValidator(ServiceProvider);
 
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IMegFileSizeValidator))).Returns(new InvalidSizeValidator());
-        sp.Setup(s => s.GetService(typeof(IFileTableValidator))).Returns(new InvalidFileTableValidator());
-
-        var validator = new MegBinaryValidator(sp.Object);
-
-        // false | false --> false
-        Assert.False(validator.Validate(info.Object));
-    }
-
-    private class ValidSizeValidator : IMegFileSizeValidator
-    {
-        public bool Validate(IMegBinaryValidationInformation info) => true;
-    }
-
-    private class ValidFileTableValidator : IFileTableValidator
-    {
-        public bool Validate(IMegFileTable fileTable) => true;
-    }
-
-    private class InvalidSizeValidator : IMegFileSizeValidator
-    {
-        public bool Validate(IMegBinaryValidationInformation info) => false;
-    }
-
-    private class InvalidFileTableValidator : IFileTableValidator
-    {
-        public bool Validate(IMegFileTable fileTable) => false;
+        // true | false --> false
+        Assert.False(validator.Validate(new MegBinaryValidationInformation
+        {
+            Metadata = new MegMetadata(
+                new MegHeader(2, 2),
+                new BinaryTable<MegFileNameTableRecord>([
+                    new MegFileNameTableRecord("a", "a"),
+                    new MegFileNameTableRecord("b", "b")
+                ]),
+                new MegFileTable([
+                    new MegFileTableRecord(new Crc32(1), 1u, 0, 8 + 40 + 6, 1),
+                    new MegFileTableRecord(new Crc32(0), 0u, 0, 8 + 40 + 6, 0),
+                ])),
+            BytesRead = 0,
+            FileSize = 8 + 40 + 6
+        }));
     }
 }

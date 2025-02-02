@@ -1,31 +1,27 @@
-﻿
-using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
-using System;
+﻿using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
-
 public class DefaultDataEntryPathNormalizerTest : DataEntryPathNormalizerTestBase
 {
-    protected override IMegDataEntryPathNormalizer CreateNormalizer(IServiceProvider serviceProvider)
+    protected override IMegDataEntryPathNormalizer CreateNormalizer()
     {
-        return new DefaultDataEntryPathNormalizer(serviceProvider);
+        return DefaultDataEntryPathNormalizer.Instance;
     }
 
     [Theory]
     [MemberData(nameof(ValidPathsToNormalize))]
-    public void Test_Normalize_Success(string source, string expected)
+    public void Normalize_Success(string source, string expected)
     {
         TestNormalizePathPasses(source, expected);
     }
 
-    
     public static IEnumerable<object[]> ValidPathsToNormalize()
     {
-        yield return [null, ""];
+        yield return [null!, ""];
         yield return ["", ""];
 
         yield return ["file.öäü", "FILE.ÖÄÜ"];

@@ -7,7 +7,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-/// Validates a specified <see cref="MegFileInformation"/> is compliant to the MEG specification.
+/// Validates whether a <see cref="MegFileInformation"/> is compliant to the MEG specification.
 /// </summary>
 public sealed class DefaultMegFileInformationValidator : IMegFileInformationValidator
 {
@@ -16,13 +16,6 @@ public sealed class DefaultMegFileInformationValidator : IMegFileInformationVali
     /// </summary>
     public static readonly DefaultMegFileInformationValidator Instance = new();
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DefaultMegFileInformationValidator"/> class with rules for ensuring MEG specification
-    /// compliant <see cref="MegFileInformation"/>.
-    /// </summary>
-    /// <remarks>
-    /// <see cref="MegFileInformation"/> are considered <b>not</b> to be compliant if the MEG is encrypted but the version is not V3.
-    /// </remarks>
     private DefaultMegFileInformationValidator()
     {
     }
@@ -37,14 +30,10 @@ public sealed class DefaultMegFileInformationValidator : IMegFileInformationVali
         var hasEncryptionData = infoValidationData.FileInformation.HasEncryption;
 
         if (isEncrypted && !hasEncryptionData)
-        {
             return MegFileInfoValidationResult.FromFailed("Encryption data must be provided for encrypted MEG archives.");
-        }
 
         if (!isEncrypted && hasEncryptionData)
-        {
             return MegFileInfoValidationResult.FromFailed("No encryption data must be provided for non-encrypted MEG archives.");
-        }
 
         return MegFileInfoValidationResult.Valid;
     }

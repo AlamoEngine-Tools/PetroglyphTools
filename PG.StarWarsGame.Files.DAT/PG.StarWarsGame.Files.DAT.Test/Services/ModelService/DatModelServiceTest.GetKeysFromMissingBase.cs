@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 public abstract partial class DatModelServiceTest
 {
     [Fact]
-    public void Test_GetMissingKeysFromBase_Throws()
+    public void GetMissingKeysFromBase_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => Service.GetMissingKeysFromBase(null!, CreateModel([])));
         Assert.Throws<ArgumentNullException>(() => Service.GetMissingKeysFromBase(CreateModel([]), null!));
@@ -17,7 +17,7 @@ public abstract partial class DatModelServiceTest
 
     [Theory]
     [MemberData(nameof(GetMissingKeysFromBase_TestData))]
-    public void Test_GetMissingKeysFromBase(
+    public void GetMissingKeysFromBase(
         IList<DatStringEntry> baseEntries,
         IList<DatStringEntry> compareEntries,
         ISet<string> expectedMissingKeys)

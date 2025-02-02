@@ -3,10 +3,9 @@
 
 using System;
 using System.Buffers.Binary;
-using System.Diagnostics;
 using AnakinRaW.CommonUtilities;
-using PG.Commons.Binary;
 using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.Binary;
 #if NETSTANDARD2_0
 using AnakinRaW.CommonUtilities.Extensions;
 #endif
@@ -28,38 +27,37 @@ internal readonly struct MtdBinaryFileInfo : IBinary
     public bool Alpha { get; }
 
     public int Size => 64 + sizeof(uint) * 4 + sizeof(bool);
+    
+    public void GetBytes(Span<byte> bytes)
+    {
+        var stringNameSpan = bytes.Slice(0, 64);
+
+        var nameLength = MtdFileConstants.NameEncoding.GetBytes(Name.AsSpan(), stringNameSpan);
+        var toPad = stringNameSpan.Slice(nameLength);
+        toPad.Fill(0);
+
+        var xSpan = bytes.Slice(64);
+        BinaryPrimitives.WriteUInt32LittleEndian(xSpan, X);
+
+        var ySpan = bytes.Slice(64 + sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(ySpan, Y);
+
+        var wSpan = bytes.Slice(64 + 2 * sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(wSpan, Width);
+
+        var hSpan = bytes.Slice(64 + 3 * sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(hSpan, Height);
+
+        var aSpan = bytes.Slice(64 + 4 * sizeof(uint));
+        aSpan[0] = Convert.ToByte(Alpha);
+    }
 
     public byte[] Bytes
     {
         get
         {
-            // Using an array here,
-            // a) because we need to allocate it anyway
-            // b) arrays are guaranteed to be 0-initialized (where stackalloc might not be)
             var bytesArray = new byte[Size];
-            var bytes = bytesArray.AsSpan();
-
-            var stringNameSpan = bytes.Slice(0, 63);
-            
-            MtdFileConstants.NameEncoding.GetBytes(Name.AsSpan(), stringNameSpan);
-
-            Debug.Assert(bytesArray[64] == 0);
-
-            var xSpan = bytes.Slice(64);
-            BinaryPrimitives.WriteUInt32LittleEndian(xSpan, X);
-
-            var ySpan = bytes.Slice(64 + sizeof(uint));
-            BinaryPrimitives.WriteUInt32LittleEndian(ySpan, Y);
-
-            var wSpan = bytes.Slice(64 + 2 * sizeof(uint));
-            BinaryPrimitives.WriteUInt32LittleEndian(wSpan, Width);
-
-            var hSpan = bytes.Slice(64 + 3 * sizeof(uint));
-            BinaryPrimitives.WriteUInt32LittleEndian(hSpan, Height);
-
-            var aSpan = bytes.Slice(64 + 4 * sizeof(uint));
-            aSpan[0] = Convert.ToByte(Alpha);
-
+            GetBytes(bytesArray);
             return bytesArray;
         }
     }

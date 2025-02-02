@@ -8,14 +8,14 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 public class IndexTableRecordTest
 {
     [Fact]
-    public void Test_Ctor_ThrowsArgumentException()
+    public void Ctor_ThrowsArgumentException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTableRecord(new Crc32(123), uint.MaxValue, 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => new IndexTableRecord(new Crc32(123), 0, uint.MaxValue));
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var record = new IndexTableRecord(new Crc32(1), 2,3);
         Assert.Equal(new Crc32(1), record.Crc32);
@@ -31,6 +31,13 @@ public class IndexTableRecordTest
             0x2, 0x0, 0x0, 0x0
         };
         Assert.Equal(expectedBytes, record.Bytes);
+
+        var buffer = new byte[record.Size];
+        buffer.AsSpan().Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(expectedBytes, buffer);
     }
 
     [Fact]

@@ -1,57 +1,85 @@
 ﻿using System;
-using System.IO.Abstractions;
-using AnakinRaW.CommonUtilities.Hashing;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Extensibility;
-using PG.Commons.Hashing;
+using System.IO;
+using System.Linq;
+using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
-using Testably.Abstractions.Testing;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-public class EmpireAtWarCreditsTextBuilderTest
+public class EmpireAtWarCreditsTextBuilderTest : PetroglyphStarWarsGameDatBuilder
 {
-    private readonly MockFileSystem _fileSystem = new();
+    protected override bool IsOrderedBuilder => false;
 
-    private IServiceProvider CreateServiceProvider()
+    protected override BuilderOverrideKind OverrideKind => BuilderOverrideKind.AllowDuplicate;
+
+    protected override DatBuilderBase CreateBuilder()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(_ => _fileSystem);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
-        return sc.BuildServiceProvider();
+        return new EmpireAtWarCreditsTextBuilder(ServiceProvider);
+    }
+
+    protected override (IReadOnlyList<DatStringEntry> Data, byte[] Bytes) CreateValidData()
+    {
+        var random = new Random().Next();
+
+        IReadOnlyList<DatStringEntry> model;
+        byte[] bytes;
+        if (random % 2 == 0)
+        {
+            bytes = DatTestData.CreateUnsortedBinary().Bytes; 
+            model = DatTestData.CreateUnsortedModel();
+        }
+        else
+        {
+            bytes = DatTestData.CreateSortedBinary().Bytes;
+            model = DatTestData.CreateSortedModel();
+        }
+        return (model, bytes);
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
-        var builder = new EmpireAtWarCreditsTextBuilder(CreateServiceProvider());
-        
-        Assert.Equal(BuilderOverrideKind.AllowDuplicate,builder.KeyOverwriteBehavior);
+        var builder = CreateBuilder();
+        Assert.NotNull(builder.BuilderData);
+        Assert.NotNull(builder.SortedEntries);
+        Assert.NotNull(builder.Entries);
+        Assert.Equal(BuilderOverrideKind.AllowDuplicate, builder.KeyOverwriteBehavior);
         Assert.Equal(DatFileType.NotOrdered, builder.TargetKeySortOrder);
         Assert.IsType<EmpireAtWarKeyValidator>(builder.KeyValidator);
     }
 
     [Fact]
-    public void Test_AddEntry_CorrectCrc()
+    public void IntegrationTest_Unsorted_Credits_CreateFromModelAndBuild()
     {
-        var builder = new EmpireAtWarCreditsTextBuilder(CreateServiceProvider());
+        using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
+        {
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
+            stream.CopyTo(fs);
+        }
 
-        var result = builder.AddEntry("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", "someValue");
-        Assert.Equal(new Crc32(72402613), result.AddedEntry!.Value.Crc32);
+        var creditsModel = ServiceProvider.GetRequiredService<IDatFileService>().LoadAs("Credits.dat", DatFileType.NotOrdered).Content;
 
-        result = builder.AddEntry("Tatooine", "someValue");
-        Assert.Equal(new Crc32(-256176565), result.AddedEntry!.Value.Crc32);
+        var builder = CreateBuilder();
 
-        result = builder.AddEntry("Corulag", "someValue");
-        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+        foreach (var entry in creditsModel)
+        {
+            var addedResult = builder.AddEntry(entry.Key, entry.Value);
+            Assert.True(addedResult.Added);
+            Assert.False(addedResult.WasOverwrite);
+            Assert.Equal(entry, addedResult.AddedEntry);
+        }
 
-        result = builder.AddEntry("Corulag", "someOtherValue");
-        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+        Assert.Equal(creditsModel.ToList(), builder.BuildModel().ToList());
 
-        Assert.Equal(4, builder.BuilderData.Count);
+        builder.Build(CreateFileInfo(true, DefaultFileName), false);
+
+        Assert.Equal(FileSystem.File.ReadAllBytes("Credits.dat"), FileSystem.File.ReadAllBytes(DefaultFileName));
     }
 }

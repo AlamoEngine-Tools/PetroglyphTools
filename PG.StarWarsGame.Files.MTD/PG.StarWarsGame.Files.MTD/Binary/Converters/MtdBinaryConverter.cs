@@ -5,9 +5,9 @@ using System;
 using System.Drawing;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MTD.Binary.Metadata;
 using PG.StarWarsGame.Files.MTD.Data;
 
@@ -19,6 +19,9 @@ internal class MtdBinaryConverter(IServiceProvider serviceProvider): ServiceBase
 
     public MtdBinaryFile ModelToBinary(IMegaTextureDirectory model)
     {
+        if (model == null) 
+            throw new ArgumentNullException(nameof(model));
+
         var header = new MtdHeader((uint)model.Count);
         
         var entries = model
@@ -38,6 +41,8 @@ internal class MtdBinaryConverter(IServiceProvider serviceProvider): ServiceBase
 
     public IMegaTextureDirectory BinaryToModel(MtdBinaryFile binary)
     {
+        if (binary == null) 
+            throw new ArgumentNullException(nameof(binary));
         var entries = binary.Items.Select(CreateEntryFromBinary);
         try
         {

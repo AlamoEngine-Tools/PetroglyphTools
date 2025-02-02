@@ -5,7 +5,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Validation;
 
-internal class MegBinaryValidationInformation : IMegBinaryValidationInformation
+internal sealed class MegBinaryValidationInformation
 {
     public long BytesRead { get; init; }
 

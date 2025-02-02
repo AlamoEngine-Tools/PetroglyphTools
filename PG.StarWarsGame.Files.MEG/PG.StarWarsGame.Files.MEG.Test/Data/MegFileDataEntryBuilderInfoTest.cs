@@ -1,7 +1,6 @@
 ﻿using System;
-
-using Moq;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
@@ -9,11 +8,10 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data;
 
-
-public class MegFileDataEntryBuilderInfoTest
+public class MegFileDataEntryBuilderInfoTest : CommonMegTestBase
 {
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new MegFileDataEntryBuilderInfo(null!));
     }
@@ -21,7 +19,7 @@ public class MegFileDataEntryBuilderInfoTest
     #region Ctor_LocalFile
 
     [Fact]
-    public void Test_Ctor_OriginIsLocalFile()
+    public void Ctor_OriginIsLocalFile()
     {
         var origin = new MegDataEntryOriginInfo("path");
         var info = new MegFileDataEntryBuilderInfo(origin);
@@ -33,7 +31,7 @@ public class MegFileDataEntryBuilderInfoTest
     }
 
     [Fact]
-    public void Test_Ctor_OriginIsLocalFile_OverridesProperties()
+    public void Ctor_OriginIsLocalFile_OverridesProperties()
     {
         var origin = new MegDataEntryOriginInfo("path");
         var info = new MegFileDataEntryBuilderInfo(origin, "PATH", 123, true);
@@ -47,7 +45,7 @@ public class MegFileDataEntryBuilderInfoTest
     [Theory]
     [InlineData("")]
     [InlineData("    ")]
-    public void Test_Ctor_OriginIsLocalFile_OverridesProperties_PathEmpty_Throws(string path)
+    public void Ctor_OriginIsLocalFile_OverridesProperties_PathEmpty_Throws(string path)
     {
         var origin = new MegDataEntryOriginInfo("path");
         Assert.Throws<ArgumentException>(() => new MegFileDataEntryBuilderInfo(origin, path, 123, true));
@@ -58,11 +56,12 @@ public class MegFileDataEntryBuilderInfoTest
     #region Ctor_Entry
 
     [Fact]
-    public void Test_Ctor_OriginIsEntryReference()
+    public void Ctor_OriginIsEntryReference()
     {
-        var meg = new Mock<IMegFile>();
-        var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg.Object,
-            MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
+        FileSystem.File.Create("file.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(
+            meg, MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
 
         var info = new MegFileDataEntryBuilderInfo(origin);
 
@@ -74,11 +73,12 @@ public class MegFileDataEntryBuilderInfoTest
     }
 
     [Fact]
-    public void Test_Ctor_OriginIsEntryReference_OverridesProperties()
+    public void Ctor_OriginIsEntryReference_OverridesProperties()
     {
-        var meg = new Mock<IMegFile>();
-        var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg.Object,
-            MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
+        FileSystem.File.Create("file.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(
+            meg, MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
 
         var info = new MegFileDataEntryBuilderInfo(origin, "PATH", 999, false);
 
@@ -91,11 +91,12 @@ public class MegFileDataEntryBuilderInfoTest
     [Theory]
     [InlineData("")]
     [InlineData("    ")]
-    public void Test_Ctor_OriginIsEntryReference_OverridesProperties_PathEmpty_Throws(string path)
+    public void Ctor_OriginIsEntryReference_OverridesProperties_PathEmpty_Throws(string path)
     {
-        var meg = new Mock<IMegFile>();
-        var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg.Object,
-            MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
+        FileSystem.File.Create("file.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(
+            meg, MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
         Assert.Throws<ArgumentException>(() => new MegFileDataEntryBuilderInfo(origin, path, 123, true));
     }
 
@@ -104,7 +105,7 @@ public class MegFileDataEntryBuilderInfoTest
     #region Factory_LocalFile
 
     [Fact]
-    public void Test_Factory_FromFile()
+    public void Factory_FromFile()
     {
         var info = MegFileDataEntryBuilderInfo.FromFile("path", null);
         Assert.True(info.OriginInfo.IsLocalFile);
@@ -114,7 +115,7 @@ public class MegFileDataEntryBuilderInfoTest
     }
 
     [Fact]
-    public void Test_Factory_FromFile_OverridesProperties()
+    public void Factory_FromFile_OverridesProperties()
     {
         var info = MegFileDataEntryBuilderInfo.FromFile("path", "123", 123, true);
         Assert.True(info.OriginInfo.IsLocalFile);
@@ -128,13 +129,13 @@ public class MegFileDataEntryBuilderInfoTest
     [InlineData("   ", null)]
     [InlineData("test", "")]
     [InlineData("test", "   ")]
-    public void Test_Factory_FromFile_Throws(string path, string? overridePath)
+    public void Factory_FromFile_Throws(string path, string? overridePath)
     {
         Assert.Throws<ArgumentException>(() => MegFileDataEntryBuilderInfo.FromFile(path, overridePath));
     }
 
     [Fact]
-    public void Test_Factory_FromFile_Null_Throws()
+    public void Factory_FromFile_Null_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => MegFileDataEntryBuilderInfo.FromFile(null!, "random"));
     }
@@ -144,12 +145,13 @@ public class MegFileDataEntryBuilderInfoTest
     #region Factory_Entry
 
     [Fact]
-    public void Test_Factory_OriginIsLocalFile()
+    public void Factory_OriginIsLocalFile()
     {
-        var meg = new Mock<IMegFile>();
+        FileSystem.File.Create("file.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
         var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
 
-        var info = MegFileDataEntryBuilderInfo.FromEntry(meg.Object, entry);
+        var info = MegFileDataEntryBuilderInfo.FromEntry(meg, entry);
 
         Assert.True(info.OriginInfo.IsEntryReference);
         Assert.Equal("path", info.FilePath);
@@ -159,12 +161,13 @@ public class MegFileDataEntryBuilderInfoTest
     }
 
     [Fact]
-    public void Test_Factory_OriginIsEntryReference_OverridesProperties()
+    public void Factory_OriginIsEntryReference_OverridesProperties()
     {
-        var meg = new Mock<IMegFile>();
+        FileSystem.File.Create("file.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
         var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
 
-        var info = MegFileDataEntryBuilderInfo.FromEntry(meg.Object, entry, "PATH", false);
+        var info = MegFileDataEntryBuilderInfo.FromEntry(meg, entry, "PATH", false);
 
         Assert.True(info.OriginInfo.IsEntryReference);
         Assert.Equal("PATH", info.FilePath);
@@ -176,11 +179,12 @@ public class MegFileDataEntryBuilderInfoTest
     [Theory]
     [InlineData("")]
     [InlineData("    ")]
-    public void Test_Factory_OriginIsEntryReference_OverridesProperties_PathEmpty_Throws(string path)
+    public void Factory_OriginIsEntryReference_OverridesProperties_PathEmpty_Throws(string path)
     {
-        var meg = new Mock<IMegFile>();
+        FileSystem.File.Create("file.meg");
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
         var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
-        Assert.Throws<ArgumentException>(() => MegFileDataEntryBuilderInfo.FromEntry(meg.Object, entry, path, false));
+        Assert.Throws<ArgumentException>(() => MegFileDataEntryBuilderInfo.FromEntry(meg, entry, path, false));
     }
 
     #endregion

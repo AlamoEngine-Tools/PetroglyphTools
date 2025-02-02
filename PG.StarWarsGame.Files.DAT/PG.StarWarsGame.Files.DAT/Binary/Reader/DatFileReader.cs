@@ -6,10 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AnakinRaW.CommonUtilities.Extensions;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
-using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Files;
 
@@ -24,7 +23,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
 
         try
         {
-            using var reader = new BinaryReader(byteStream);
+            using var reader = new PetroglyphBinaryReader(byteStream, true);
             var header = new DatHeader(reader.ReadUInt32());
 
             var indexTableRecords = new List<IndexTableRecord>();
@@ -43,8 +42,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
 
             for (var i = 0; i < header.RecordCount; i++)
             {
-                var bytes = valueEncoding.GetByteCountPG((int)indexTable[i].ValueLength);
-                var value = reader.ReadString(bytes, valueEncoding);
+                var value = reader.ReadString(valueEncoding, (int)indexTable[i].ValueLength);
                 valueRecords.Add(new ValueTableRecord(value));
             }
 
@@ -57,9 +55,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
 
             for (var i = 0; i < header.RecordCount; i++)
             {
-                var byteSize = normalKeyEncoding.GetByteCountPG((int)indexTable[i].KeyLength);
-
-                var originalKey = reader.ReadString(byteSize, extendedKeyEncoding);
+                var originalKey = reader.ReadString(extendedKeyEncoding, (int)indexTable[i].KeyLength);
                 var key = normalKeyEncoding.EncodeString(originalKey);
 
                 keyRecords.Add(new KeyTableRecord(key, originalKey));

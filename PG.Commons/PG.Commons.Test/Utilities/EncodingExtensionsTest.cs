@@ -9,36 +9,36 @@ namespace PG.Commons.Test.Utilities;
 public class EncodingExtensionsTest
 {
     [Fact]
-    public void Test_GetByteCountPG_NullArgs_Throws()
+    public void GetByteCountPG_NullArgs_Throws()
     {
         Encoding encoding = null!;
         Assert.Throws<ArgumentNullException>(() => encoding.GetByteCountPG(4));
     }
 
     [Fact]
-    public void Test_GetByteCountPG_NegativeCount_Throws()
+    public void GetByteCountPG_NegativeCount_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Encoding.ASCII.GetByteCountPG(-1));
     }
 
     [Theory]
     [MemberData(nameof(EncodingTestData))]
-    public void Test_GetByteCountPG(Encoding encoding, int charCount, int expectedBytesCount)
+    public void GetByteCountPG(Encoding encoding, int charCount, int expectedBytesCount)
     {
         Assert.Equal(expectedBytesCount, encoding.GetByteCountPG(charCount));
     }
 
     [Theory]
     [MemberData(nameof(NotSupportedEncodings))]
-    public void Test_GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
+    public void GetByteCountPG_NotSupportedEncodings_Throws(Encoding encoding)
     {
         Assert.Throws<NotSupportedException>(() => encoding.GetByteCountPG(4));
     }
 
     public static IEnumerable<object[]> EncodingTestData()
     {
-        return new[]
-        {
+        return
+        [
             [Encoding.Unicode, 0, 0],
             [Encoding.Unicode, 1, 2],
             [Encoding.Unicode, 2, 4],
@@ -49,24 +49,38 @@ public class EncodingExtensionsTest
             [Encoding.ASCII, 1, 1],
             [Encoding.ASCII, 2, 2],
             [Encoding.ASCII, 3, 3],
-            new object[] { Encoding.ASCII, 256, 256 },
-        };
+            [Encoding.ASCII, 256, 256],
+
+            // Latin1
+            [Encoding.GetEncoding(28591), 0, 0],
+            [Encoding.GetEncoding(28591), 1, 1],
+            [Encoding.GetEncoding(28591), 2, 2],
+            [Encoding.GetEncoding(28591), 3, 3],
+            [Encoding.GetEncoding(28591), 256, 256],
+
+#if NET
+            [Encoding.Latin1, 0, 0],
+            [Encoding.Latin1, 1, 1],
+            [Encoding.Latin1, 2, 2],
+            [Encoding.Latin1, 3, 3],
+            [Encoding.Latin1, 256, 256]
+#endif
+        ];
     }
 
     public static IEnumerable<object[]> NotSupportedEncodings()
     {
-        return new[]
-        {
+        return
+        [
             [Encoding.BigEndianUnicode],
-            [Encoding.GetEncoding(28591)], // Latin1
             [Encoding.UTF32],
             [Encoding.UTF8],
 #pragma warning disable SYSLIB0001
             [Encoding.UTF7],
 #pragma warning restore SYSLIB0001
             [new MyAsciiEncoding()],
-            new object[] { new MyUnicodeEncoding() },
-        };
+            [new MyUnicodeEncoding()]
+        ];
     }
 
     internal sealed class MyAsciiEncoding : ASCIIEncoding;

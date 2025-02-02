@@ -7,7 +7,7 @@ namespace PG.StarWarsGame.Files.MTD.Test.Binary.Metadata;
 public class MtdBinaryFileInfoTest
 {
     [Fact]
-    public void Ctor_Test__ThrowsException()
+    public void Ctor_InvalidArgs_ThrowsException()
     {
         Assert.Throws<ArgumentNullException>(() => new MtdBinaryFileInfo(null!, 1, 2, 3, 4, true));
         Assert.Throws<ArgumentException>(() => new MtdBinaryFileInfo("", 1, 2, 3, 4, true));
@@ -15,7 +15,7 @@ public class MtdBinaryFileInfoTest
     }
 
     [Fact]
-    public void Ctor_Test__ThrowsArgumentOutOfRangeException()
+    public void Ctor_ThrowsArgumentOutOfRangeException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new MtdBinaryFileInfo(new string('a', 64), 1, 2, 3, 4, true));
         Assert.Throws<ArgumentOutOfRangeException>(() => new MtdBinaryFileInfo("name", (uint)int.MaxValue + 1, 2, 3, 4, true));
@@ -25,7 +25,7 @@ public class MtdBinaryFileInfoTest
     }
 
     [Fact]
-    public void Ctor_Test__Correct()
+    public void Ctor_Correct()
     {
         var fileInfo = new MtdBinaryFileInfo("name", 1, 2, 3, 4, true);
         Assert.Equal("name", fileInfo.Name);
@@ -37,7 +37,7 @@ public class MtdBinaryFileInfoTest
     }
 
     [Fact]
-    public void Ctor_Test__Bytes_Size_FullNameUsed()
+    public void Ctor_Bytes_Size_FullNameUsed()
     {
         var fileInfo = new MtdBinaryFileInfo(new string('a', 63), 1, 2, 3, 4, true);
 
@@ -65,10 +65,17 @@ public class MtdBinaryFileInfoTest
             0x1,
         };
         Assert.Equal(bytes, fileInfo.Bytes);
+
+        Span<byte> buffer = stackalloc byte[81];
+        buffer.Fill(1);
+
+        fileInfo.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer.ToArray());
     }
 
     [Fact]
-    public void Ctor_Test__Bytes_Size()
+    public void Ctor_Bytes_Size()
     {
         var fileInfo = new MtdBinaryFileInfo("name", 1, 2, 3, 4, true);
 
@@ -100,5 +107,12 @@ public class MtdBinaryFileInfoTest
             0x1,
         };
         Assert.Equal(bytes, fileInfo.Bytes);
+
+        Span<byte> buffer = stackalloc byte[81];
+        buffer.Fill(1);
+
+        fileInfo.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer.ToArray());
     }
 }

@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.Binary;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;

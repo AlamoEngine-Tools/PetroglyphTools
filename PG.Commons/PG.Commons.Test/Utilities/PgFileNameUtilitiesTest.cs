@@ -18,7 +18,7 @@ public class PgFileNameUtilitiesTest
     [InlineData("LPT12")]
     [InlineData("COM12")]
     [InlineData("NUL.txt")] // Though it's not recommend by MS, it's actually allowed to use this name in explorer
-    public void Test_IsValidFileName_CorrectFileNames(string fileName)
+    public void IsValidFileName_CorrectFileNames(string fileName)
     {
         Assert.True(PGFileNameUtilities.IsValidFileName(fileName.AsSpan(), out var result));
         Assert.Equal(FileNameValidationResult.Valid,result);
@@ -78,7 +78,7 @@ public class PgFileNameUtilitiesTest
     [InlineData("LPT7", FileNameValidationResult.SystemReserved)]
     [InlineData("LPT8", FileNameValidationResult.SystemReserved)]
     [InlineData("LPT9", FileNameValidationResult.SystemReserved)]
-    public void Test_IsValidFileName_InvalidFileNames(string? fileName, FileNameValidationResult expectedResult)
+    public void IsValidFileName_InvalidFileNames(string? fileName, FileNameValidationResult expectedResult)
     {
         Assert.False(PGFileNameUtilities.IsValidFileName(fileName.AsSpan(), out var result));
         Assert.Equal(expectedResult, result);

@@ -22,6 +22,10 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider services) : ServiceBase(services), IConstructingMegArchiveBuilder
 {
+    private const uint MaxEntryFileSize4G = uint.MaxValue;
+
+    internal virtual uint MaxEntryFileSize => MaxEntryFileSize4G;
+
     // TODO: Test encryption cases
     public IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries)
     {
@@ -136,7 +140,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             var filePath = builderInfo.OriginInfo.FilePath;
             var fileSize = FileSystem.FileInfo.New(filePath!).Length;
 
-            if (fileSize > uint.MaxValue)
+            if (fileSize > MaxEntryFileSize)
                 MegThrowHelper.ThrowDataEntryExceeds4GigabyteException(FileSystem.Path.GetFullPath(filePath!));
 
             dataSize = (uint) fileSize;

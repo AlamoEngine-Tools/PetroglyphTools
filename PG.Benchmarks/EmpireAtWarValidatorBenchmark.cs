@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
+using Testably.Abstractions;
 
 namespace PG.Benchmarks;
 
@@ -19,9 +20,8 @@ public class EmpireAtWarValidatorBenchmark
 {
     private static readonly Random Random = new(1138);
 
-    private EmpireAtWarMegBuilderDataEntryValidator _validator;
-
-    private MegFileDataEntryBuilderInfo[] _toValidate;
+    private EmpireAtWarMegBuilderDataEntryValidator _validator = null!;
+    private MegFileDataEntryBuilderInfo[] _toValidate = null!;
 
     [Params(2000, 200_000)]
     //[Params(2000)]
@@ -39,9 +39,9 @@ public class EmpireAtWarValidatorBenchmark
         }
 
         var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(new FileSystem());
+        sc.AddSingleton<IFileSystem>(new RealFileSystem());
 
-        _validator = new EmpireAtWarMegBuilderDataEntryValidator(sc.BuildServiceProvider());
+        _validator = EmpireAtWarMegBuilderDataEntryValidator.Instance;
     }
 
     [Benchmark(Baseline = true)]

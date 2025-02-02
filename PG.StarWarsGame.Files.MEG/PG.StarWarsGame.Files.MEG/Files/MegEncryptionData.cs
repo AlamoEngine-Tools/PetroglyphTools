@@ -64,9 +64,9 @@ public sealed class MegEncryptionData : DisposableObject
     }
 
     /// <inheritdoc/>
-    protected override void DisposeManagedResources()
+    protected override void DisposeResources()
     {
-        base.DisposeManagedResources();
+        base.DisposeResources();
         if (_keyValue is not null)
         {
             Array.Clear(_keyValue, 0, _keyValue.Length);

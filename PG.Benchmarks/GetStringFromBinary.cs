@@ -21,7 +21,7 @@ public class GetStringFromBinary
 
     private readonly Encoding _encoding = Encoding.ASCII;
 
-    private BinaryReader _binaryReader;
+    private BinaryReader _binaryReader = null!;
 
     [GlobalSetup]
     public void Setup()

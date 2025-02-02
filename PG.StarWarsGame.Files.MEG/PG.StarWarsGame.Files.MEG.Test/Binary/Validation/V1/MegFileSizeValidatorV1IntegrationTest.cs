@@ -1,7 +1,7 @@
-using Moq;
 using System.IO;
-using System;
 using System.IO.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using Testably.Abstractions.Testing;
@@ -16,15 +16,15 @@ public class MegFileSizeValidatorV1IntegrationTest
 
     public MegFileSizeValidatorV1IntegrationTest()
     {
-        var fs = new MockFileSystem();
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
-
-        _binaryReader = new MegFileBinaryReaderV1(sp.Object);
+        var sc = new ServiceCollection();
+        sc.AddSingleton<IFileSystem>(new MockFileSystem());
+        PetroglyphCommons.ContributeServices(sc);
+        sc.SupportMEG();
+        _binaryReader = new MegFileBinaryReaderV1(sc.BuildServiceProvider());
     }
 
     [Fact]
-    public void Test__ValidateCore_CorrectSize()
+    public void ValidateCore_CorrectSize()
     {
         var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
         var metadata = _binaryReader.ReadBinary(data);
@@ -45,7 +45,7 @@ public class MegFileSizeValidatorV1IntegrationTest
     [InlineData(0, -1)]
     [InlineData(-1, 0)]
     [InlineData(1, 0)]
-    public void Test__ValidateCore_IncorrectSize(int offsetBytesRead, int offsetArchiveSize)
+    public void ValidateCore_IncorrectSize(int offsetBytesRead, int offsetArchiveSize)
     {
         var data = new MemoryStream(MegTestConstants.ContentMegFileV1);
         var metadata = _binaryReader.ReadBinary(data);

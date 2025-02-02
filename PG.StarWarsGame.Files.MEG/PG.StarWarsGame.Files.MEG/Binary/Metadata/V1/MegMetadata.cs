@@ -2,15 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Collections.Generic;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 
 /// <summary>
 /// Meg archive representation WITHOUT content data.
 /// </summary>
-internal class MegMetadata : BinaryBase, IMegFileMetadata
+internal class MegMetadata : BinaryFile, IMegFileMetadata
 {
     public IMegHeader Header { get; }
 
@@ -35,17 +34,15 @@ internal class MegMetadata : BinaryBase, IMegFileMetadata
         FileTable = fileTable;
     }
 
+    public override void GetBytes(Span<byte> bytes)
+    {
+        Header.GetBytes(bytes);
+        FileNameTable.GetBytes(bytes.Slice(Header.Size));
+        FileTable.GetBytes(bytes.Slice(Header.Size + FileNameTable.Size));
+    }
+
     protected override int GetSizeCore()
     {
         return Header.Size + FileNameTable.Size + FileTable.Size;
-    }
-
-    protected override byte[] ToBytesCore()
-    {
-        var bytes = new List<byte>(Size);
-        bytes.AddRange(Header.Bytes);
-        bytes.AddRange(FileNameTable.Bytes);
-        bytes.AddRange(FileTable.Bytes);
-        return bytes.ToArray();
     }
 }

@@ -2,8 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.Commons.Binary;
 using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.Binary;
+#if NETSTANDARD2_0 || NETFRAMEWORK
+using AnakinRaW.CommonUtilities.Extensions;
+#endif
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
@@ -13,7 +16,15 @@ internal readonly struct KeyTableRecord : IBinary
 
     public string OriginalKey { get; }
 
-    public byte[] Bytes => DatFileConstants.TextKeyEncoding.GetBytes(Key);
+    public byte[] Bytes
+    {
+        get
+        {
+            var bytes = new byte[Size];
+            GetBytes(bytes);
+            return bytes;
+        }
+    }
 
     public int Size => DatFileConstants.TextKeyEncoding.GetByteCountPG(Key.Length);
 
@@ -28,5 +39,10 @@ internal readonly struct KeyTableRecord : IBinary
         StringUtilities.ValidateIsAsciiOnly(key.AsSpan());
         Key = key;
         OriginalKey = originalKey;
+    }
+
+    public void GetBytes(Span<byte> bytes)
+    {
+        DatFileConstants.TextKeyEncoding.GetBytes(Key.AsSpan(), bytes);
     }
 }

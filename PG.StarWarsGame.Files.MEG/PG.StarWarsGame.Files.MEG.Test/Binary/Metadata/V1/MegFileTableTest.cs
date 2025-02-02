@@ -1,7 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using PG.Commons.Hashing;
@@ -10,7 +7,6 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
-
 
 public class MegFileTableTest : MegFileTableBaseTest
 {
@@ -35,13 +31,13 @@ public class MegFileTableTest : MegFileTableBaseTest
     }
 
     [Fact]
-    public void Ctor_Test__ThrowsArgumentNullException()
+    public void Ctor_NullArgs_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new MegFileTable(null!));
     }
 
     [Fact]
-    public void Test_Index()
+    public void Index()
     {
         var entry1 = CreateFileRecordV1(CreateFile(0, 1));
         var entry2 = CreateFileRecordV1(CreateFile(1, 2));

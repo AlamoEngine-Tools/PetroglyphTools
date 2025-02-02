@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 public class KeyTableRecordTest
 {
     [Fact]
-    public void Test_Ctor_ThrowsArgumentNullException()
+    public void Ctor_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new KeyTableRecord(null!, ""));
         Assert.Throws<ArgumentNullException>(() => new KeyTableRecord("", null!));
@@ -18,7 +18,7 @@ public class KeyTableRecordTest
     [InlineData("testöäü")]
     [InlineData("👌")]
     [InlineData("\u00A0")]
-    public void Test_Ctor_NotAscii_Throws(string input)
+    public void Ctor_NotAscii_Throws(string input)
     {
         Assert.Throws<ArgumentException>(() => new KeyTableRecord(input, input));
     }
@@ -29,12 +29,19 @@ public class KeyTableRecordTest
     [InlineData("test", "randomÖÄÜ")]
     [InlineData("test\tTAB", "randomÖÄÜ")]
     [InlineData("test\\r\\n", "randomÖÄÜ")]
-    public void Test_Ctor(string input, string original)
+    public void Ctor(string input, string original)
     {
         var record = new KeyTableRecord(input, original);
         Assert.Equal(input, record.Key);
         Assert.Equal(original, record.OriginalKey);
-        Assert.Equal(input.Length, record.Size); // Value has unicode which is two times the char length.
+        Assert.Equal(input.Length, record.Size);
         Assert.Equal(Encoding.ASCII.GetBytes(record.Key), record.Bytes);
+
+        var buffer = new byte[record.Size];
+        buffer.AsSpan().Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(Encoding.ASCII.GetBytes(record.Key), buffer);
     }
 }

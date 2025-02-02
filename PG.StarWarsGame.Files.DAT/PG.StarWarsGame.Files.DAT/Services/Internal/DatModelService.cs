@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
@@ -40,7 +40,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         var newEntries = new LinkedHashSet<DatStringEntry>(datModel, CrcBasedEqualityComparer<DatStringEntry>.Instance)
             .ToList();
         
-        if (datModel.KeySortOder == DatFileType.OrderedByCrc32)
+        if (datModel.KeySortOrder == DatFileType.OrderedByCrc32)
         {
             newEntries = Crc32Utilities.SortByCrc32(newEntries);
             return new SortedDatModel(newEntries);
@@ -82,9 +82,9 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datToMerge == null)
             throw new ArgumentNullException(nameof(datToMerge));
 
-        if (baseDatModel.KeySortOder != DatFileType.OrderedByCrc32)
+        if (baseDatModel.KeySortOrder != DatFileType.OrderedByCrc32)
             throw new ArgumentException("DAT model not sorted.", nameof(baseDatModel));
-        if (datToMerge.KeySortOder != DatFileType.OrderedByCrc32)
+        if (datToMerge.KeySortOrder != DatFileType.OrderedByCrc32)
             throw new ArgumentException("DAT model not sorted.", nameof(datToMerge));
 
         var newEntries = baseDatModel.ToList();
@@ -130,9 +130,9 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datToMerge == null)
             throw new ArgumentNullException(nameof(datToMerge));
 
-        if (baseDatModel.KeySortOder != DatFileType.NotOrdered)
+        if (baseDatModel.KeySortOrder != DatFileType.NotOrdered)
             throw new ArgumentException("DAT model not unsorted.", nameof(baseDatModel));
-        if (datToMerge.KeySortOder != DatFileType.NotOrdered)
+        if (datToMerge.KeySortOrder != DatFileType.NotOrdered)
             throw new ArgumentException("DAT model not unsorted.", nameof(datToMerge));
 
         mergedKeys = new List<MergedKeyResult>();
@@ -243,101 +243,3 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         }
     }
 }
-
-//internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(serviceProvider), IDatModelService
-//{
-//    public IDatModel MergeUnsorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys,
-//        DatMergeOptions mergeOptions = DatMergeOptions.KeepExisting)
-//    {
-//        if (baseDatModel == null) 
-//            throw new ArgumentNullException(nameof(baseDatModel));
-//        if (datToMerge == null) 
-//            throw new ArgumentNullException(nameof(datToMerge));
-
-//        if (baseDatModel.KeySortOder != datToMerge.KeySortOder)
-//            throw new NotSupportedException("Key sort order type must be equal for both DAT models.");
-
-//        if (baseDatModel.KeySortOder == DatFileType.OrderedByCrc32)
-//            return MergeSorted(baseDatModel, datToMerge, out mergedKeys, mergeOptions);
-
-//        return MergeUnsorted(baseDatModel, datToMerge, out mergedKeys, mergeOptions);
-//    }
-
-//    private IDatModel MergeUnsorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys, DatMergeOptions mergeOptions)
-//    {
-//        var newEntries = baseDatModel.ToList();
-
-
-//        var maxIteration = Math.Min(newEntries.Count, datToMerge.Count);
-//        var totalKeys = Math.Max(newEntries.Count, datToMerge.Count);
-
-//        mergedKeys = new List<MergedKeyResult>(totalKeys);
-
-//        int currentIndex;
-//        for (currentIndex = 0; currentIndex < maxIteration; currentIndex++)
-//        {
-//            var baseEntry = baseDatModel[currentIndex];
-//            var newEntry = datToMerge[currentIndex];
-
-//            if (baseEntry.Crc32 == newEntry.Crc32 && mergeOptions == DatMergeOptions.KeepExisting)
-//                continue;
-
-//            var oldEntry = newEntries[currentIndex];
-//            newEntries[currentIndex] = newEntry;
-//            mergedKeys.Add(new MergedKeyResult(newEntry, oldEntry));
-//        }
-
-
-//        // Append the remaining 
-//        if (datToMerge.Count > maxIteration)
-//        {
-//            foreach (var newEntry in datToMerge.Take(currentIndex))
-//            {
-//                newEntries.Add(newEntry);
-//                mergedKeys.Add(new MergedKeyResult(newEntry));
-//            }
-//        }
-
-//        return new DatModel(newEntries);
-
-//    }
-
-//    private IDatModel MergeSorted(IDatModel baseDatModel, IDatModel datToMerge, out ICollection<MergedKeyResult> mergedKeys, DatMergeOptions mergeOptions)
-//    {
-//        var newEntries = baseDatModel.ToList();
-//        var visitedCrc = new HashSet<Crc32>();
-
-//        mergedKeys = new List<MergedKeyResult>();
-
-//        foreach (var entryToMerge in datToMerge)
-//        {
-//            if (!visitedCrc.Add(entryToMerge.Crc32))
-//                continue;
-
-//            var lastInBase = baseDatModel.EntriesWithCrc(entryToMerge.Crc32).LastOrDefault();
-
-//            // The base DAT does not have the current CRC
-//            if (lastInBase.Equals(default))
-//            {
-//                mergedKeys.Add(new MergedKeyResult(entryToMerge));
-//                newEntries.Add(entryToMerge);
-//                continue;
-//            }
-
-
-//            if (mergeOptions == DatMergeOptions.KeepExisting)
-//                continue;
-
-
-//            var lastToMerge = datToMerge.EntriesWithCrc(entryToMerge.Crc32).Last();
-
-//            var indexToOverwrite = newEntries.IndexOf(lastInBase);
-//            Debug.Assert(indexToOverwrite >= 0);
-
-//            newEntries[indexToOverwrite] = lastToMerge;
-//            mergedKeys.Add(new MergedKeyResult(lastToMerge, lastInBase));
-//        }
-
-//        return new DatModel(Crc32Utilities.SortByCrc32(newEntries));
-//    }
-//}

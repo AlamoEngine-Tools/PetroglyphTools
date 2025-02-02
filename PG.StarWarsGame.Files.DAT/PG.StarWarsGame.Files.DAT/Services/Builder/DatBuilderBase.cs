@@ -8,12 +8,12 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
-using PG.Commons.Services.Builder;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
+using PG.StarWarsGame.Files.Services.Builder;
 
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
@@ -129,10 +129,8 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     }
 
     /// <inheritdoc />
-    public bool IsKeyValid(string key)
+    public bool IsKeyValid(string? key)
     {
-        if (key == null) 
-            throw new ArgumentNullException(nameof(key));
         return KeyValidator.Validate(key);
     }
 
@@ -152,7 +150,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     }
 
     /// <inheritdoc />
-    protected sealed override bool ValidateFileInformationCore(DatFileInformation fileInformation, IReadOnlyList<DatStringEntry> builderData,
+    protected override bool ValidateFileInformationCore(DatFileInformation fileInformation, IReadOnlyList<DatStringEntry> builderData,
         out string? failedReason)
     {
         failedReason = null;
@@ -160,9 +158,9 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     }
 
     /// <inheritdoc />
-    protected override void DisposeManagedResources()
+    protected override void DisposeResources()
     {
-        base.DisposeManagedResources();
+        base.DisposeResources();
         _entries.Clear();
     }
 }

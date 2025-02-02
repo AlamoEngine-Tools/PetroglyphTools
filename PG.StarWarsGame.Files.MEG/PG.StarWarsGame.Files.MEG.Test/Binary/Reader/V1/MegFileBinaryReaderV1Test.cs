@@ -1,51 +1,61 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
-
-using Moq;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.Binary;
+using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 
-
-public class MegFileBinaryReaderV1Test
+public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
 {
-    private readonly MegFileBinaryReaderV1 _binaryReader;
-
-    public MegFileBinaryReaderV1Test()
+    private MegFileBinaryReaderV1 CreateV1Reader()
     {
-        var fs = new MockFileSystem();
-        var sp = new Mock<IServiceProvider>();
-        sp.Setup(s => s.GetService(typeof(IFileSystem))).Returns(fs);
-        _binaryReader = new MegFileBinaryReaderV1(sp.Object);
+        return new MegFileBinaryReaderV1(ServiceProvider);
+    }
+
+    private protected override IMegFileBinaryReader CreateMegBinaryReader()
+    {
+        return CreateV1Reader();
+    }
+
+    protected override byte[] GetValidData()
+    {
+        // Empty file
+        return
+        [
+            0, 0, 0, 0,
+            0, 0, 0, 0
+        ];
     }
 
     [Fact]
-    public void Test__CreateMegMetadata()
+    public void Ctor_NullArgs_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => new MegFileBinaryReaderV1(null!));
+    }
+
+    [Fact]
+    public void CreateMegMetadata()
     {
         var header = (MegHeader)default;
-        var nameTable = new Mock<BinaryTable<MegFileNameTableRecord>>(Array.Empty<MegFileNameTableRecord>());
-        var fileTable = new Mock<MegFileTable>(Array.Empty<MegFileTableRecord>());
 
-        var metadata = _binaryReader.CreateMegMetadata(header, nameTable.Object, fileTable.Object);
+        var nameTable = new BinaryTable<MegFileNameTableRecord>([]);
+        var fileTable = new MegFileTable([]);
+
+        var metadata = CreateV1Reader().CreateMegMetadata(header, nameTable, fileTable);
 
         Assert.Equal(header, metadata.Header);
-        Assert.Equal(nameTable.Object, metadata.FileNameTable);
-        Assert.Equal(fileTable.Object, metadata.FileTable);
+        Assert.Equal(nameTable, metadata.FileNameTable);
+        Assert.Equal(fileTable, metadata.FileTable);
     }
 
     [Fact]
-    public void Test__BuildMegHeader_NotSupportedFileCount()
+    public void BuildMegHeader_NotSupportedFileCount()
     {
         var data = new byte[]
         {
@@ -53,12 +63,12 @@ public class MegFileBinaryReaderV1Test
             0, 0, 0, 0x80
         };
 
-        var reader = new BinaryReader(new MemoryStream(data));
-        Assert.Throws<NotSupportedException>(() => _binaryReader.BuildMegHeader(reader));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
+        Assert.Throws<NotSupportedException>(() => CreateV1Reader().BuildMegHeader(reader));
     }
 
     [Fact]
-    public void Test__BuildMegHeader_NotEqualFile_FileName_Count()
+    public void BuildMegHeader_NotEqualFile_FileName_Count()
     {
         var data = new byte[]
         {
@@ -66,16 +76,16 @@ public class MegFileBinaryReaderV1Test
             2, 0, 0, 0
         };
 
-        var reader = new BinaryReader(new MemoryStream(data));
-        Assert.Throws<BinaryCorruptedException>(() => _binaryReader.BuildMegHeader(reader));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
+        Assert.Throws<BinaryCorruptedException>(() => CreateV1Reader().BuildMegHeader(reader));
     }
 
     [Theory]
     [MemberData(nameof(HeaderTestData))]
-    public void Test__BuildMegHeader_Correct(byte[] data, uint numFiles, uint numNames)
+    public void BuildMegHeader_Correct(byte[] data, uint numFiles, uint numNames)
     {
-        var reader = new BinaryReader(new MemoryStream(data));
-        var header = _binaryReader.BuildMegHeader(reader);
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
+        var header = CreateV1Reader().BuildMegHeader(reader);
 
         Assert.Equal(numFiles, header.NumFiles);
         Assert.Equal(numNames, header.NumFileNames);
@@ -83,8 +93,8 @@ public class MegFileBinaryReaderV1Test
 
     public static IEnumerable<object[]> HeaderTestData()
     {
-        return new[]
-        {
+        return
+        [
             [
                 new byte[]
                 {
@@ -110,21 +120,20 @@ public class MegFileBinaryReaderV1Test
                 },
                 1u, 1u
             ],
-            new object[]
-            {
+            [
                 new byte[]
                 {
                     0xFF, 0xFF, 0xFF, 0x7F,
                     0xFF, 0xFF, 0xFF, 0x7F
                 },
                 (uint)int.MaxValue, (uint)int.MaxValue
-            },
-        };
+            ]
+        ];
     }
 
     [Theory]
     [MemberData(nameof(FileTableIntegrationTestData))]
-    public void Test__BuildFileTable_Integration(
+    public void BuildFileTable_Integration(
         uint numberEntries,
         byte[] data,
         int dataToInspect,
@@ -136,8 +145,8 @@ public class MegFileBinaryReaderV1Test
     {
         var header = new MegHeader(numberEntries, numberEntries);
 
-        var reader = new BinaryReader(new MemoryStream(data));
-        var fileTable = _binaryReader.BuildFileTable(reader, header);
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
+        var fileTable = CreateV1Reader().BuildFileTable(reader, header);
 
         Assert.Equal((int)numberEntries, fileTable.Count);
 
@@ -155,8 +164,8 @@ public class MegFileBinaryReaderV1Test
 
     public static IEnumerable<object[]> FileTableIntegrationTestData()
     {
-        return new[]
-        {
+        return
+        [
             [0u, Array.Empty<byte>(), -1, new Crc32(), 0u,0u,0u,0u],
             [
                 1u, new byte[]
@@ -180,7 +189,8 @@ public class MegFileBinaryReaderV1Test
                 1,2,3,4 // Junk
             },  0, new Crc32(1), 0u, 2u, 0x40u, 0u
             ],
-            new object[] { 2u, new byte[]
+            [
+                2u, new byte[]
             {
                 1,0,0,0, // CRC
                 0,0,0,0, // Index (FileTable)
@@ -193,24 +203,25 @@ public class MegFileBinaryReaderV1Test
                 3,0,0,0, // Size
                 0x80,0,0,0, // Offset
                 1,0,0,0  // Index (NameTable)
-            }, 1, new Crc32(2), 1u, 3u, 0x80u, 1u}
-        };
+            }, 1, new Crc32(2), 1u, 3u, 0x80u, 1u
+            ]
+        ];
     }
 
 
     [Theory]
     [MemberData(nameof(NotSupportedFileTableRecords))]
-    public void Test__BuildFileTable_NotSupported(uint numberEntries, byte[] data)
+    public void BuildFileTable_NotSupported(uint numberEntries, byte[] data)
     {
         var header = new MegHeader(numberEntries, numberEntries);
-        var reader = new BinaryReader(new MemoryStream(data));
-        Assert.Throws<NotSupportedException>(() => _binaryReader.BuildFileTable(reader, header));
+        var reader = new PetroglyphBinaryReader(new MemoryStream(data), false);
+        Assert.Throws<NotSupportedException>(() => CreateV1Reader().BuildFileTable(reader, header));
     }
 
     public static IEnumerable<object[]> NotSupportedFileTableRecords()
     {
-        return new[]
-        {
+        return
+        [
             [
                 1u, new byte[]
                 {
@@ -221,8 +232,7 @@ public class MegFileBinaryReaderV1Test
                     0, 0, 0, 0 // Index (NameTable)
                 }
             ],
-            new object[]
-            {
+            [
                 1u, new byte[]
                 {
                     1, 0, 0, 0, // CRC
@@ -231,7 +241,7 @@ public class MegFileBinaryReaderV1Test
                     0, 0, 0, 0, // Offset
                     0, 0, 0, 0x80 // Index (NameTable)
                 }
-            },
-        };
+            ]
+        ];
     }
 }

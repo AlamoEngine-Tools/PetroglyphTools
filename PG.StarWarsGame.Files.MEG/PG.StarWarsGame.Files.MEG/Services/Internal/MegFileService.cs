@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
@@ -15,14 +14,11 @@ using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using AnakinRaW.CommonUtilities;
+using PG.StarWarsGame.Files.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <inheritdoc cref="IMegFileService" />
-/// <summary>
-///  Initializes a new <see cref="MegFileService" /> class.
-/// </summary>
-/// <param name="services">The service provider for this instance.</param>
 internal sealed class MegFileService(IServiceProvider services) : ServiceBase(services), IMegFileService
 {
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
@@ -52,12 +48,9 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
+
+        metadata.WriteTo(fileStream);
         
-#if NETSTANDARD2_1_OR_GREATER || NET
-        fileStream.Write(metadata.Bytes);
-#else
-        fileStream.Write(metadata.Bytes, 0, metadata.Size);
-#endif
         long dataBytesWritten = metadata.Size;
 
         var streamFactory = Services.GetRequiredService<IMegDataStreamFactory>();
@@ -82,8 +75,8 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
         // E.g, a MEG with one entry being exactly 4GB large.
-        // The Archive itself is larger (Metadata + 4GB),
-        // however the Metadata is still valid since no each part is within the uint32 range. 
+        // In this case, the Archive itself is larger (Metadata + 4GB),
+        // but the Metadata is would still be valid since each part is within the uint32 range. 
         if (dataBytesWritten > uint.MaxValue)
             MegThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
 
@@ -139,8 +132,8 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
         // E.g, a MEG with one entry being exactly 4GB large.
-        // The Archive itself is larger (Metadata + 4GB),
-        // however the Metadata is still valid since no each part is within the uint32 range. 
+        // In this case, the Archive itself is larger (Metadata + 4GB),
+        // but the Metadata is would still be valid since each part is within the uint32 range. 
         if (actualMegSize > uint.MaxValue)
             MegThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
 

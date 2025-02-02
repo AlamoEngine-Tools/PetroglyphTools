@@ -28,5 +28,5 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     /// otherwise, the default value for the type of the <paramref name="entry"/> parameter.
     /// This parameter is passed uninitialized.</param>
     /// <returns></returns>
-    bool TryGetEntry(Crc32 crc32, [MaybeNullWhen(false)] out MegaTextureFileIndex entry);
+    bool TryGetEntry(Crc32 crc32, [NotNullWhen(true)] out MegaTextureFileIndex? entry);
 }

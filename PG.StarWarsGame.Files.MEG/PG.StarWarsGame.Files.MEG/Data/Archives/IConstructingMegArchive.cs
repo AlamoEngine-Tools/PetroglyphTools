@@ -11,18 +11,9 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 /// </summary>
 internal interface IConstructingMegArchive : IMegDataEntryHolder<VirtualMegDataEntryReference>
 {
-    /// <summary>
-    /// Gets the binary-convertible archive of this instance.
-    /// </summary>
     IMegArchive Archive { get; }
 
-    /// <summary>
-    /// Gets the MEG version of this archive.
-    /// </summary>
     MegFileVersion MegVersion { get; }
 
-    /// <summary>
-    /// Gets whether this archive will be encrypted.
-    /// </summary>
     bool Encrypted { get; }
 }

@@ -20,7 +20,7 @@ public class UnsortedDatModelServiceTest : DatModelServiceTest
 
     [Theory]
     [MemberData(nameof(MergeByIndexTestData))]
-    public void Test_MergeUnsorted_ByIndex(
+    public void MergeUnsorted_ByIndex(
         IList<DatStringEntry> baseEntries, 
         IList<DatStringEntry> mergeEntries, 
         IList<DatStringEntry> expected,
@@ -29,7 +29,7 @@ public class UnsortedDatModelServiceTest : DatModelServiceTest
         var baseModel = CreateUnsorted(baseEntries);
         var toMergeModel = CreateUnsorted(mergeEntries);
 
-        var merged = Service.MergeUnsorted(baseModel, toMergeModel, out var mergedEntries, UnsortedDatMergeOptions.ByIndex);
+        var merged = Service.MergeUnsorted(baseModel, toMergeModel, out var mergedEntries, mergeOptions: UnsortedDatMergeOptions.ByIndex);
 
         Assert.Equal(expected, merged);
         Assert.Equivalent(expectedMergedKeyResults, mergedEntries);
@@ -118,7 +118,7 @@ public class UnsortedDatModelServiceTest : DatModelServiceTest
 
     [Theory]
     [MemberData(nameof(MergeOverwriteTestData))]
-    public void Test_MergeUnsorted_Overwrite(
+    public void MergeUnsorted_Overwrite(
         IList<DatStringEntry> baseEntries,
         IList<DatStringEntry> mergeEntries,
         IList<DatStringEntry> expected,
@@ -223,7 +223,7 @@ public class UnsortedDatModelServiceTest : DatModelServiceTest
 
     [Theory]
     [MemberData(nameof(MergeAppendTestData))]
-    public void Test_MergeUnsorted_Append(
+    public void MergeUnsorted_Append(
         IList<DatStringEntry> baseEntries,
         IList<DatStringEntry> mergeEntries,
         IList<DatStringEntry> expected,

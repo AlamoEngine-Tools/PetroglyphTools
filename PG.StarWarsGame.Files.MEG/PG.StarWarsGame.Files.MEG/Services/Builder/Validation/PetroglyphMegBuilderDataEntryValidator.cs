@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.IO.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
@@ -11,22 +9,11 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// Validates a <see cref="MegFileDataEntryBuilderInfo"/> whether it is compliant to a Petroglyph game.
 /// </summary>
-public abstract class PetroglyphMegBuilderDataEntryValidator : IMegBuilderInfoValidator
+public abstract class PetroglyphMegBuilderDataEntryValidator : IMegDataEntryValidator
 {
-    /// <summary>
-    /// Gets the file system.
-    /// </summary>
-    protected IFileSystem FileSystem { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphMegBuilderDataEntryValidator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    protected PetroglyphMegBuilderDataEntryValidator(IServiceProvider serviceProvider)
+    private protected PetroglyphMegBuilderDataEntryValidator()
     {
-       FileSystem = serviceProvider.GetRequiredService<IFileSystem>();
     }
-
 
     /// <inheritdoc />
     public bool Validate(MegFileDataEntryBuilderInfo? builderInfo)

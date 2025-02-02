@@ -1,13 +1,7 @@
-// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
 using System.Collections.Generic;
-using System.IO.Abstractions;
-using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Binary;
-using PG.Commons.Extensibility;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using Testably.Abstractions.Testing;
@@ -15,7 +9,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary;
 
-public class DatBinaryConverterTest
+public class DatBinaryConverterTest : CommonDatTestBase
 {
     private readonly MockFileSystem _fileSystem = new();
     private readonly DatBinaryConverter _binaryConverter;
@@ -23,18 +17,12 @@ public class DatBinaryConverterTest
 
     public DatBinaryConverterTest()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(_fileSystem);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
-        var sp = sc.BuildServiceProvider();
-
-        _binaryConverter = new DatBinaryConverter(sp);
-        _crc32HashingService = sp.GetRequiredService<ICrc32HashingService>();
+        _binaryConverter = new DatBinaryConverter(ServiceProvider);
+        _crc32HashingService = ServiceProvider.GetRequiredService<ICrc32HashingService>();
     }
 
     [Fact]
-    public void Test_ToHolder__ValidModelCreatesValidHolder()
+    public void ToHolder_ValidModelCreatesValidHolder()
     {
         _fileSystem.Directory.CreateDirectory(@"c:\tmp\");
         var binaryModel = new DatBinaryFile(

@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 /// <summary>
 /// In-memory MEG archive whose contents may be distributed across multiple physical .MEG files.
 /// <br/>
-/// The PG games usually build such a model internally themselves in order to have a single Master MEG archive.
+/// PG games usually build such a model internally themselves in order to have a single Master MEG archive.
 /// </summary>
 /// <remarks>
 /// Use the <see cref="IVirtualMegArchiveBuilder"/> service for creating this archive.

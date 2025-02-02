@@ -55,7 +55,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     protected abstract PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer { get; }
 
     /// <inheritdoc cref="PetroDataEntryValidator"/>
-    public sealed override IMegBuilderInfoValidator DataEntryValidator => PetroDataEntryValidator;
+    public sealed override IMegDataEntryValidator DataEntryValidator => PetroDataEntryValidator;
 
 
     /// <inheritdoc cref="PetroMegFileInformationValidator"/>
@@ -94,7 +94,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     }
 
     /// <summary>
-    /// Returns a relative path from a path and the <see cref="BaseDirectory"/> of this instance.
+    /// Returns a relative path from a path and the <see cref="BaseDirectory"/> of the <see cref="PetroglyphGameMegBuilder"/>.
     /// Returns <see langword="null"/> if <paramref name="path"/> is invalid or not a part of <see cref="BaseDirectory"/>.
     /// <br/>
     /// <br/>
@@ -109,15 +109,8 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <remarks>The returned path is neither fully normalized nor validated by the rules of this instance.</remarks>
     /// <param name="path">A path to get the relative path from.</param>
     /// <returns>The relative path.</returns>
-    public string? ResolveEntryPath(string path)
+    public string? ResolveEntryPath(string? path)
     {
-        try
-        {
-            return _pathResolver.ResolvePath(path, BaseDirectory);
-        }
-        catch
-        {
-            return null;
-        }
+        return _pathResolver.ResolvePath(path, BaseDirectory);
     }
 }

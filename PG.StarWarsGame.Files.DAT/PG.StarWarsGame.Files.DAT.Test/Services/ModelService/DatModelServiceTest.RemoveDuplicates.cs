@@ -11,17 +11,17 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 public partial class DatModelServiceTest
 {
     [Fact]
-    public void Test_RemoveDuplicates_Throws()
+    public void RemoveDuplicates_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => Service.RemoveDuplicates(null!));
     }
 
     [Theory]
     [MemberData(nameof(RemoveDuplicates_TestData))]
-    public void Test_RemoveDuplicates(IList<DatStringEntry> entries, IList<DatStringEntry> expected)
+    public void RemoveDuplicates(IList<DatStringEntry> entries, IList<DatStringEntry> expected)
     {
         var model = CreateModel(entries);
-        if (model.KeySortOder == DatFileType.OrderedByCrc32)
+        if (model.KeySortOrder == DatFileType.OrderedByCrc32)
             expected = Crc32Utilities.SortByCrc32(expected);
 
         var newModel = Service.RemoveDuplicates(model);

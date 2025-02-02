@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.Validation;
 
 internal sealed class MegFileSizeValidator : IMegFileSizeValidator
 {
-    public bool Validate(IMegBinaryValidationInformation info)
+    public bool Validate(MegBinaryValidationInformation info)
     {
         if (info == null) 
             throw new ArgumentNullException(nameof(info));
@@ -19,7 +19,7 @@ internal sealed class MegFileSizeValidator : IMegFileSizeValidator
         if (info.FileSize < info.BytesRead)
             return false;
         if (info.Metadata is MegMetadata)
-            return new V1SizeValidator().Validate(info);
+            return V1SizeValidator.Validate(info);
         // TODO: Implement for other versions
         return true;
     }

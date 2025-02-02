@@ -3,6 +3,7 @@ using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.Testing;
+using Testably.Abstractions;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
@@ -10,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 public class PetroglyphRelativeDataEntryPathResolverTest
 {
     private readonly PetroglyphRelativeDataEntryPathResolver _pathResolver;
-    private readonly IFileSystem _fileSystem = new FileSystem();
+    private readonly IFileSystem _fileSystem = new RealFileSystem();
 
     public PetroglyphRelativeDataEntryPathResolverTest()
     {
@@ -26,26 +27,27 @@ public class PetroglyphRelativeDataEntryPathResolverTest
     [InlineData("test", "test")]
     [InlineData("test/", null)]
     [InlineData("test.xml", "test.xml")]
-    [InlineData("a/test", "a\\test")]
-    [InlineData("a/.test", "a\\.test")]
-    [InlineData("./a/test.xml", "a\\test.xml")]
+    [InlineData("a/test", "a/test")]
+    [InlineData("a/.test", "a/.test")]
+    [InlineData("./a/test.xml", "a/test.xml")]
     [InlineData("../test.xml", null)]
     [InlineData("./../test.xml", null)]
     [InlineData("./../corruption/test.xml", "test.xml")]
     [InlineData("./../corruption/../test.xml", null)]
     [InlineData("../corruption1/test.xml", null)]
-    [InlineData("/Games/Petroglyph/corruption/test", "test")]
-    [InlineData("/Games/Petroglyph/corruption/test/", null)]
-    [InlineData("/Games/Petroglyph/corruption1/test", null)]
-    public void Test_ResolveEntryPath_Relative(string? path, string? expectedEntryPath)
+    [InlineData("Games/Petroglyph/corruption/test", "test", true)]
+    [InlineData("Games/Petroglyph/corruption/test/", null, true)]
+    [InlineData("Games/Petroglyph/corruption1/test", null, true)]
+    public void ResolveEntryPath_Relative(string? path, string? expectedEntryPath, bool resolvePathFull = false)
     {
-        const string basePath = "/Games/Petroglyph/corruption/";
-
+        const string basePath = "Games/Petroglyph/corruption/";
 
         var normalizedExpected = expectedEntryPath is not null
             ? PathNormalizer.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifyDirectorySeparators = true })
             : expectedEntryPath;
 
+        if (resolvePathFull)
+            path = _fileSystem.Path.GetFullPath(path!);
 
         var actualEntryPath = _pathResolver.ResolvePath(path, basePath);
         Assert.Equal(normalizedExpected, actualEntryPath);

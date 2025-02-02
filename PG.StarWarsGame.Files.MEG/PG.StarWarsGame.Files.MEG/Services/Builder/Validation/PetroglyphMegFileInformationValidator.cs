@@ -3,8 +3,10 @@
 
 using System;
 using System.IO.Abstractions;
-using AnakinRaW.CommonUtilities.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
+#if NETSTANDARD2_0 || NETFRAMEWORK
+using AnakinRaW.CommonUtilities.FileSystem;
+#endif
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -13,21 +15,19 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </summary>
 public abstract class PetroglyphMegFileInformationValidator : IMegFileInformationValidator
 {
+    // The game arbitrary varies between 260 and 256, so we chose the larger value here. Mind that the value is 260 - 1,
+    // because we need to reserve one byte for the zero-terminator '\0'.
     /// <summary>
     /// The max number of characters allowed in a PG game for file paths.
     /// </summary>
-    protected const int PetroglyphMaxFilePathLength = 260;
+    protected const int PetroglyphMaxFilePathLength = 259;
 
     /// <summary>
     /// Gets the file system.
     /// </summary>
     protected IFileSystem FileSystem { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphMegFileInformationValidator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    protected PetroglyphMegFileInformationValidator(IServiceProvider serviceProvider)
+    private protected PetroglyphMegFileInformationValidator(IServiceProvider serviceProvider)
     {
         FileSystem = serviceProvider.GetRequiredService<IFileSystem>();
     }

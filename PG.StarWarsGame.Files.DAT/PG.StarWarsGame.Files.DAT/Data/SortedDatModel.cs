@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using AnakinRaW.CommonUtilities.Collections;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -14,7 +14,7 @@ internal sealed class SortedDatModel : DatModel, ISortedDatModel
 {
     private readonly IReadOnlyDictionary<Crc32, IndexRange> _crcToIndexMap;
 
-    public override DatFileType KeySortOder => DatFileType.OrderedByCrc32;
+    public override DatFileType KeySortOrder => DatFileType.OrderedByCrc32;
 
 
     public SortedDatModel(IEnumerable<DatStringEntry> entries) : base(entries)
@@ -24,7 +24,7 @@ internal sealed class SortedDatModel : DatModel, ISortedDatModel
 
     public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
     {
-        return Crc32Utilities.ItemsWithCrc(key, _crcToIndexMap!, Entries);
+        return Crc32Utilities.ItemsWithCrc(key, Entries, _crcToIndexMap);
     }
 
     public IUnsortedDatModel ToUnsortedModel()

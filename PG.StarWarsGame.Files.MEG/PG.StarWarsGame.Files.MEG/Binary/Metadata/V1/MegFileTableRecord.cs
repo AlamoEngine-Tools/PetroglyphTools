@@ -27,22 +27,12 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
     // For V1 this field is not part of the binary.
     public bool Encrypted => false;
 
-    public unsafe byte[] Bytes
+    public byte[] Bytes
     {
         get
         {
             var data = new byte[Size];
-            var dataSpan = data.AsSpan();
-            var crcArea = dataSpan.Slice(0);
-            Crc32.GetBytes(crcArea);
-            var indexArea = dataSpan.Slice(sizeof(Crc32));
-            BinaryPrimitives.WriteUInt32LittleEndian(indexArea, FileTableRecordIndex);
-            var sizeArea = dataSpan.Slice(sizeof(Crc32) + sizeof(uint));
-            BinaryPrimitives.WriteUInt32LittleEndian(sizeArea, FileSize);
-            var startArea = dataSpan.Slice(sizeof(Crc32) + sizeof(uint) + sizeof(uint));
-            BinaryPrimitives.WriteUInt32LittleEndian(startArea, FileOffset);
-            var nameArea = dataSpan.Slice(sizeof(Crc32) + sizeof(uint) + sizeof(uint) + sizeof(uint));
-            BinaryPrimitives.WriteUInt32LittleEndian(nameArea, FileNameIndex);
+            GetBytes(data);
             return data;
         }
     }
@@ -65,6 +55,20 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
         FileSize = fileSizeInBytes;
         FileOffset = fileStartOffsetInBytes;
         FileNameIndex = fileNameTableIndex;
+    }
+
+    public unsafe void GetBytes(Span<byte> bytes)
+    {
+        var crcArea = bytes.Slice(0);
+        Crc32.GetBytes(crcArea);
+        var indexArea = bytes.Slice(sizeof(Crc32));
+        BinaryPrimitives.WriteUInt32LittleEndian(indexArea, FileTableRecordIndex);
+        var sizeArea = bytes.Slice(sizeof(Crc32) + sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(sizeArea, FileSize);
+        var startArea = bytes.Slice(sizeof(Crc32) + sizeof(uint) + sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(startArea, FileOffset);
+        var nameArea = bytes.Slice(sizeof(Crc32) + sizeof(uint) + sizeof(uint) + sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(nameArea, FileNameIndex);
     }
 
     public int CompareTo(MegFileTableRecord other)

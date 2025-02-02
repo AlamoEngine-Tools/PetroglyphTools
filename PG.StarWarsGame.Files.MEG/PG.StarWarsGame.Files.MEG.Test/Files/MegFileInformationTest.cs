@@ -1,15 +1,13 @@
 ﻿using System;
-
 using PG.StarWarsGame.Files.MEG.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Files;
 
-
 public class MegFileInformationTest
 {
     [Fact]
-    public void Test_Ctor_Throws()
+    public void Ctor_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => new MegFileInformation(null!, MegFileVersion.V2));
         Assert.Throws<ArgumentException>(() => new MegFileInformation("", MegFileVersion.V2));
@@ -21,7 +19,7 @@ public class MegFileInformationTest
     [InlineData(MegFileVersion.V1)]
     [InlineData(MegFileVersion.V2)]
     [InlineData(MegFileVersion.V3)]
-    public void Test_Ctor(MegFileVersion version)
+    public void Ctor(MegFileVersion version)
     {
         var fileInfo = new MegFileInformation("path", version);
         Assert.Equal("path", fileInfo.FilePath);
@@ -31,7 +29,7 @@ public class MegFileInformationTest
     }
 
     [Fact]
-    public void Test_Ctor_Encrypted()
+    public void Ctor_Encrypted()
     {
         var encData = MegEncryptionDataTest.CreateRandomData();
         var fileInfo = new MegFileInformation("path", MegFileVersion.V3, encData);
@@ -42,7 +40,7 @@ public class MegFileInformationTest
     }
 
     [Fact]
-    public void Test_Dispose()
+    public void Dispose()
     {
         var encData = MegEncryptionDataTest.CreateRandomData();
         var fileInfo = new MegFileInformation("path", MegFileVersion.V3, encData);
@@ -51,7 +49,7 @@ public class MegFileInformationTest
     }
 
     [Fact]
-    public void Test_CopyRecord()
+    public void CopyRecord()
     {
         var encData = MegEncryptionDataTest.CreateRandomData();
         var orgKey = encData.Key;

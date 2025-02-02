@@ -7,7 +7,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder.Validation;
 
 public class EmpireAtWarKeyValidatorTest
 {
-    private readonly EmpireAtWarKeyValidator _validator = new();
+    private readonly EmpireAtWarKeyValidator _validator = EmpireAtWarKeyValidator.Instance;
 
     [Theory]
     [MemberData(nameof(ValidTestData))]
@@ -33,12 +33,16 @@ public class EmpireAtWarKeyValidatorTest
 
     public static IEnumerable<object[]> InvalidTestData()
     {
-        yield return [null];
+        yield return [null!];
         yield return [""];
         yield return ["  leadingSpace"];
         yield return ["trailingSpace  "];
         yield return ["   "];
         yield return ["ÖÄÜnonASCII"];
         yield return ["😊"];
+        for (var i = 0; i < 20; i++)
+        {
+            yield return [$"key{(char)i}key"];
+        }
     }
 }

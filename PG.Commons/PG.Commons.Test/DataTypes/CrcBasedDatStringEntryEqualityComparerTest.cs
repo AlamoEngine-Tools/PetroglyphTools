@@ -1,5 +1,5 @@
 ﻿using System;
-using PG.Commons.DataTypes;
+using PG.Commons.Data;
 using PG.Commons.Hashing;
 using Xunit;
 
@@ -66,6 +66,13 @@ public class CrcBasedEqualityComparerTest_Class : CrcBasedEqualityComparerTest<H
     {
         return new HasCrcClass(crc);
     }
+
+    [Fact]
+    public void GetHashCode_NullArgs_Throws()
+    {
+        var comparer = CrcBasedEqualityComparer<HasCrcClass>.Instance;
+        Assert.Throws<ArgumentNullException>(() => comparer.GetHashCode(null!));
+    }
 }
 
 public class CrcBasedEqualityComparerTest_Struct : CrcBasedEqualityComparerTest<HasCrcStruct>
@@ -81,17 +88,11 @@ public abstract class CrcBasedEqualityComparerTest<T> where T : IHasCrc32, IEqua
     protected abstract T CreateT(int crc);
 
     [Fact]
-    public void Test_Equals()
+    public void Equals_GetHashCode()
     {
         var comparer = CrcBasedEqualityComparer<T>.Instance;
         Assert.True(comparer.Equals(CreateT(0), CreateT(0)));
         Assert.False(comparer.Equals(CreateT(1), CreateT(2)));
-    }
-
-    [Fact]
-    public void Test_GetHashCode()
-    {
-        var comparer = CrcBasedEqualityComparer<T>.Instance;
 
         Assert.Equal(comparer.GetHashCode(CreateT(1)), comparer.GetHashCode(CreateT(1)));
         Assert.NotEqual(comparer.GetHashCode(CreateT(1)), comparer.GetHashCode(CreateT(2)));

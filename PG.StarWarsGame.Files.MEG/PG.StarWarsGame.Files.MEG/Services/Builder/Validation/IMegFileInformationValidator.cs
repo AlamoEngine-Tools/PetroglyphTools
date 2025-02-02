@@ -4,7 +4,7 @@
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-/// A validator that check an instance of a <see cref="MegBuilderFileInformationValidationData"/>
+/// A validator for MEG file information.
 /// </summary>
 public interface IMegFileInformationValidator
 {

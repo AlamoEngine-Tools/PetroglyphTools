@@ -3,13 +3,25 @@
 
 using System;
 using System.Buffers.Binary;
-using PG.Commons.Binary;
+using PG.StarWarsGame.Files.Binary;
 
 namespace PG.StarWarsGame.Files.DAT.Binary.Metadata;
 
 internal readonly struct DatHeader : IBinary
 {
     internal uint RecordCount { get; }
+
+    public byte[] Bytes
+    {
+        get
+        {
+            var data = new byte[Size];
+            GetBytes(data);
+            return data;
+        }
+    }
+
+    public int Size => sizeof(uint);
 
     internal DatHeader(uint recordCount)
     {
@@ -18,15 +30,8 @@ internal readonly struct DatHeader : IBinary
         RecordCount = recordCount;
     }
 
-    public byte[] Bytes
+    public void GetBytes(Span<byte> bytes)
     {
-        get
-        {
-            var data = new byte[Size];
-            BinaryPrimitives.WriteUInt32LittleEndian(data, RecordCount);
-            return data;
-        }
+        BinaryPrimitives.WriteUInt32LittleEndian(bytes, RecordCount);
     }
-
-    public int Size => sizeof(uint);
 }

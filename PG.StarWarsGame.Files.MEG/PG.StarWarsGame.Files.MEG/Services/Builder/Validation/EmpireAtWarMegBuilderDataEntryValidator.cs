@@ -2,39 +2,29 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.IO;
 using AnakinRaW.CommonUtilities.Extensions;
-using AnakinRaW.CommonUtilities.FileSystem;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-/// Validates a MEG data entry whether it is compliant to the Petroglyph game Empire at War. 
+/// Validates a MEG data entry whether it is compliant to a Petroglyph Star Wars game. 
 /// </summary>
-/// <remarks>
-/// This validator is a real subset of Empire at War rules. This means that it is more restrictive,
-/// disallowing certain edge-cases which would legal in the game, but are not permitted by this library.
-/// </remarks>
 public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuilderDataEntryValidator
 {
+    /// <summary>
+    /// Returns a singleton instance of the <see cref="EmpireAtWarMegBuilderDataEntryValidator"/>.
+    /// </summary>
+    public static readonly EmpireAtWarMegBuilderDataEntryValidator Instance = new();
+
     // Slashes are not allowed, cause the engine normalized them into back-slashes.
     // Whitespaces (space, tab, new line) *technically* are allowed but there are scenarios where file names are separated by spaces in XML code.
     // Since there is no space escaping implemented in the engine, file lookup would break at this point.
     // Thus, this validator is a little more sensitive.
     private static readonly char[] ForbiddenChars = ['/', ' ', '\0', '\t', '\r', '\n'];
 
-    /// <summary>
-    /// The max number of characters allowed in Empire at War game for MEG entry paths.
-    /// </summary>
-    private const int EawMaxMegFilePathLength = 259;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EmpireAtWarMegBuilderDataEntryValidator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    public EmpireAtWarMegBuilderDataEntryValidator(IServiceProvider serviceProvider) : base(serviceProvider)
+    private EmpireAtWarMegBuilderDataEntryValidator()
     {
     }
 
@@ -44,7 +34,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
         if (encrypted)
             return false;
 
-        if (entryPath.Length is 0 or > EawMaxMegFilePathLength)
+        if (entryPath.Length is 0 or > MegFileConstants.EawMaxEntryPathLength)
             return false;
 
         if (IsRootedOrStartsWithCurrent(entryPath))
@@ -57,7 +47,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
         if (entryPath.IndexOf(':') > 0 && entryPath.IndexOf('\\') != -1)
             return false;
 
-        Span<char> pathBuffer = stackalloc char[EawMaxMegFilePathLength];
+        Span<char> pathBuffer = stackalloc char[MegFileConstants.EawMaxEntryPathLength];
        
         var upperLength = entryPath.ToUpperInvariant(pathBuffer);
         var upper = pathBuffer.Slice(0, upperLength);
@@ -75,7 +65,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : PetroglyphMegBuild
         return true;
     }
 
-    private bool IsRootedOrStartsWithCurrent(ReadOnlySpan<char> path)
+    private static bool IsRootedOrStartsWithCurrent(ReadOnlySpan<char> path)
     {
         // This check is over-sensitive as @"\\" may be a valid path which can be produced by normalization, 
         // however, such a path does not make much sense. 

@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.IO;
-using PG.Commons.Binary.File;
+using PG.StarWarsGame.Files.Binary.File;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Files;
 

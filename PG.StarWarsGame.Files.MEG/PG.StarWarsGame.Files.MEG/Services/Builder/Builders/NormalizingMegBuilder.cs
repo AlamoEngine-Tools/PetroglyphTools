@@ -2,14 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
 /// A <see cref="IMegBuilder"/> which normalizes and encodes entry paths.
-/// However, entry path will not be resolved nor validated whether the final encoded path contains illegal file characters (such as '?').
+/// However, entry paths will not be resolved nor validated whether their final encoded path contains illegal file characters.
 /// <br/>
 /// Duplicate entries get overwritten.
 /// </summary>
@@ -28,13 +27,13 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// <remarks>
     /// This builder normalizes entry paths by the following rules:
     /// <code>
-    /// - Upper case all characters using the invariant culture.
+    /// - Upper case all characters using the invariant culture (even on Linux systems).
     /// - Replace path separators ('/' or '\') to the current system's default separator, which is '\' on Windows and '/' on Linux/macOS.
     /// </code>
     /// <br/>
     /// Note: Path operators ("./" or "../") will <b>not</b> get resolved.
     /// </remarks>
-    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer { get; }
+    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => DefaultDataEntryPathNormalizer.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NormalizingMegBuilder"/> class.
@@ -43,6 +42,5 @@ public sealed class NormalizingMegBuilder : MegBuilderBase
     /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public NormalizingMegBuilder(IServiceProvider services) : base(services)
     {
-        DataEntryPathNormalizer = services.GetRequiredService<DefaultDataEntryPathNormalizer>();
     }
 }

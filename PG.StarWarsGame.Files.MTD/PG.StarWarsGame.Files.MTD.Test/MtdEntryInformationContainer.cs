@@ -7,7 +7,7 @@ namespace PG.StarWarsGame.Files.MTD.Test;
 
 public class MtdEntryInformationContainer
 {
-    public string ExpectedName { get; init; }
+    public required string ExpectedName { get; init; }
 
     public Rectangle ExpectedArea { get; init; }
 

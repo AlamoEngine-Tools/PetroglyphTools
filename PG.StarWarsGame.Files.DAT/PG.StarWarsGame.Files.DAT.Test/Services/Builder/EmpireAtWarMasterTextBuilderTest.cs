@@ -1,68 +1,47 @@
-﻿using System;
-using System.IO.Abstractions;
-using AnakinRaW.CommonUtilities.Hashing;
-using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Extensibility;
-using PG.Commons.Hashing;
+﻿using System.Collections.Generic;
+using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-public class EmpireAtWarMasterTextBuilderTest
+public class EmpireAtWarMasterTextBuilderTest_Overriding : EmpireAtWarMasterTextBuilderTestBase
 {
-    private readonly MockFileSystem _fileSystem = new();
+    protected override BuilderOverrideKind OverrideKind => BuilderOverrideKind.Overwrite;
+}
 
-    private IServiceProvider CreateServiceProvider()
+public class EmpireAtWarMasterTextBuilderTest_NotOverriding : EmpireAtWarMasterTextBuilderTestBase
+{
+    protected override BuilderOverrideKind OverrideKind => BuilderOverrideKind.NoOverwrite;
+}
+
+public abstract class EmpireAtWarMasterTextBuilderTestBase : PetroglyphStarWarsGameDatBuilder
+{
+    protected override bool IsOrderedBuilder => true;
+
+    protected override DatBuilderBase CreateBuilder()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(_ => _fileSystem);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
-        return sc.BuildServiceProvider();
+        return new EmpireAtWarMasterTextBuilder(OverrideKind == BuilderOverrideKind.Overwrite, ServiceProvider);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void Test_Ctor(bool overwrite)
+    protected override (IReadOnlyList<DatStringEntry> Data, byte[] Bytes) CreateValidData()
     {
-        var builder = new EmpireAtWarMasterTextBuilder(overwrite, CreateServiceProvider());
+        var bytes = DatTestData.CreateSortedBinary().Bytes;
+        var model = DatTestData.CreateSortedModel();
+        return (model, bytes);
+    }
 
-        Assert.Equal(overwrite ? BuilderOverrideKind.Overwrite : BuilderOverrideKind.NoOverwrite, builder.KeyOverwriteBehavior);
+    [Fact]
+    public void Ctor()
+    {
+        var builder = CreateBuilder();
+        Assert.NotNull(builder.BuilderData);
+        Assert.NotNull(builder.SortedEntries);
+        Assert.NotNull(builder.Entries);
+        Assert.Equal(OverrideKind, builder.KeyOverwriteBehavior);
         Assert.Equal(DatFileType.OrderedByCrc32, builder.TargetKeySortOrder);
         Assert.IsType<EmpireAtWarKeyValidator>(builder.KeyValidator);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void Test_AddEntry_CorrectCrc(bool overwrite)
-    {
-        var builder = new EmpireAtWarMasterTextBuilder(overwrite, CreateServiceProvider());
-
-        var result = builder.AddEntry("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", "someValue");
-        Assert.Equal(new Crc32(72402613), result.AddedEntry!.Value.Crc32);
-
-        result = builder.AddEntry("Tatooine", "someValue");
-        Assert.Equal(new Crc32(-256176565), result.AddedEntry!.Value.Crc32);
-
-        result = builder.AddEntry("Corulag", "someValue");
-        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
-
-        var dupResult = builder.AddEntry("Corulag", "someOtherValue");
-        if (overwrite)
-        {
-            Assert.True(dupResult.Added);
-            Assert.Equal("someOtherValue", dupResult.AddedEntry.Value.Value);
-            Assert.Equal("someValue", dupResult.OverwrittenEntry!.Value.Value);
-        }
-        else
-        {
-            Assert.False(dupResult.Added);
-        }
     }
 }

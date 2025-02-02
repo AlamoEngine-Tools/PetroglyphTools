@@ -2,23 +2,25 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Attributes;
-using PG.Commons.Extensibility;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
-using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG;
 
-/// <inheritdoc />
-[Order(1000)]
-public class MegServiceContribution : IServiceContribution
+/// <summary>
+/// Provides initialization routines for this library.
+/// </summary>
+public static class MegServiceContribution
 {
-    /// <inheritdoc />
-    public void ContributeServices(IServiceCollection serviceCollection)
+    // ReSharper disable once InconsistentNaming
+    /// <summary>
+    /// Adds all necessary services provided by this library to the specified <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add services to.</param>
+    public static void SupportMEG(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IMegFileService>(sp => new MegFileService(sp));
         serviceCollection.AddSingleton<IMegFileExtractor>(sp => new MegFileExtractor(sp));
@@ -28,10 +30,6 @@ public class MegServiceContribution : IServiceContribution
         serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(_ => new VirtualMegArchiveBuilder());
 
         serviceCollection.AddSingleton(sp => new EmpireAtWarMegFileInformationValidator(sp));
-        serviceCollection.AddSingleton(sp => new EmpireAtWarMegBuilderDataEntryValidator(sp));
-        serviceCollection.AddSingleton(sp => new EmpireAtWarMegDataEntryPathNormalizer(sp));
-
-        serviceCollection.AddSingleton(sp => new DefaultDataEntryPathNormalizer(sp));
 
         serviceCollection.AddSingleton<IDataEntryPathResolver>(sp => new PetroglyphRelativeDataEntryPathResolver(sp));
 

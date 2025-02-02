@@ -9,7 +9,6 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-
 public class DefaultMegFileInformationValidatorTest
 {
     [Theory]

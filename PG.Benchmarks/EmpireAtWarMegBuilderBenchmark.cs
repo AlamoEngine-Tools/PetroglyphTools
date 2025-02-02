@@ -6,7 +6,8 @@ using AnakinRaW.CommonUtilities.Hashing;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons.Extensibility;
+using PG.Commons;
+using PG.StarWarsGame.Files.MEG;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using Testably.Abstractions.Testing;
 
@@ -43,7 +44,8 @@ public class EmpireAtWarMegBuilderBenchmark
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(fs);
         sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
+        sc.SupportMEG();
+        PetroglyphCommons.ContributeServices(sc);
         _builder = new EmpireAtWarMegBuilder("C:/test", sc.BuildServiceProvider());
     }
 

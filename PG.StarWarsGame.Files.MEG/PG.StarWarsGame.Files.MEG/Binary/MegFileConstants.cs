@@ -14,6 +14,11 @@ public class MegFileConstants
     internal const uint MegFileUnencryptedFlag = 0xFFFFFFFF;
     internal const uint MegFileEncryptedFlag = 0x8FFFFFFF;
 
+    /// <summary>
+    /// The max number of characters allowed in Empire at War game for MEG entry paths.
+    /// </summary>
+    public const int EawMaxEntryPathLength = 259;
+
     // However, the specification does not state which encoding is required but instead relies on the number of characters of a string.
     // Implicitly, a 1:1 ratio for bytes - # chars is required though, which limits the possible encodings to a single-byte encoding,
     // such as ASCII, ISO 8859, Windows 1252, etc.

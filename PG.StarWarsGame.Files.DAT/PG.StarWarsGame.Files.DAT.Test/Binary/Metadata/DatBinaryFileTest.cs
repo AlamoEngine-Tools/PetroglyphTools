@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using PG.Commons.Binary;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using Xunit;
 
@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Binary.Metadata;
 public class DatBinaryFileTest
 {
     [Fact]
-    public void Test_Ctor_ThrowsArgumentNullException()
+    public void Ctor_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new DatBinaryFile(default, null!, new BinaryTable<ValueTableRecord>([]), new BinaryTable<KeyTableRecord>([])));
         Assert.Throws<ArgumentNullException>(() => new DatBinaryFile(default, new BinaryTable<IndexTableRecord>([]), null!, new BinaryTable<KeyTableRecord>([])));
@@ -18,7 +18,7 @@ public class DatBinaryFileTest
     }
 
     [Fact]
-    public void Test_Ctor_Empty()
+    public void Ctor_Empty()
     {
         DatHeader header = default;
         var index = new BinaryTable<IndexTableRecord>([]);
@@ -33,10 +33,17 @@ public class DatBinaryFileTest
         Assert.Same(values, dat.ValueTable);
         Assert.Equal(4, dat.Size);
         Assert.Equal(BitConverter.GetBytes(dat.RecordNumber), dat.Bytes);
+
+        var buffer = new byte[dat.Size];
+        buffer.AsSpan().Fill(1);
+
+        dat.GetBytes(buffer);
+
+        Assert.Equal([0, 0, 0, 0], buffer);
     }
 
     [Fact]
-    public void Test_Ctor()
+    public void Ctor()
     {
         var header = new DatHeader(2);
         var index = new BinaryTable<IndexTableRecord>(new List<IndexTableRecord>
@@ -70,5 +77,12 @@ public class DatBinaryFileTest
         bytes.AddRange(keys.Bytes);
 
         Assert.Equal(bytes, dat.Bytes);
+
+        var buffer = new byte[dat.Size];
+        buffer.AsSpan().Fill(1);
+
+        dat.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer);
     }
 }

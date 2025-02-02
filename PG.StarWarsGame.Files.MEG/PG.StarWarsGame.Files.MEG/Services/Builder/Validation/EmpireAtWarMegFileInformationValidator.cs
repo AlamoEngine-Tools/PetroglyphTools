@@ -2,22 +2,20 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using AnakinRaW.CommonUtilities.FileSystem;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Files;
+#if NETSTANDARD2_0
+using AnakinRaW.CommonUtilities.FileSystem;
+#endif
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-///  Validates a MEG file information whether it is compliant to the Petroglyph game Empire at War. 
+///  Validates a MEG file information whether it is compliant to a Petroglyph Star Wars game. 
 /// </summary>
 public sealed class EmpireAtWarMegFileInformationValidator : PetroglyphMegFileInformationValidator
-{
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EmpireAtWarMegFileInformationValidator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
-    public EmpireAtWarMegFileInformationValidator(IServiceProvider serviceProvider) : base(serviceProvider)
+{ 
+    internal EmpireAtWarMegFileInformationValidator(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
 

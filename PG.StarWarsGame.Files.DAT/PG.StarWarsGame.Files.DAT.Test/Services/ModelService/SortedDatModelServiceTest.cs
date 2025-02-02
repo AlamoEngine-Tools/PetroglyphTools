@@ -23,7 +23,7 @@ public class SortedDatModelServiceTest : DatModelServiceTest
 
     [Theory]
     [MemberData(nameof(MergeKeepExistingTestData))]
-    public void Test_MergeSorted_KeepExisting(
+    public void MergeSorted_KeepExisting(
         IList<DatStringEntry> baseEntries,
         IList<DatStringEntry> mergeEntries,
         IList<DatStringEntry> expected,
@@ -102,7 +102,7 @@ public class SortedDatModelServiceTest : DatModelServiceTest
 
     [Theory]
     [MemberData(nameof(MergeOverwriteTestData))]
-    public void Test_MergeSorted_Overwrite(
+    public void MergeSorted_Overwrite(
         IList<DatStringEntry> baseEntries,
         IList<DatStringEntry> mergeEntries,
         IList<DatStringEntry> expected,

@@ -1,269 +1,237 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
+using System.IO;
 using System.Linq;
-using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using PG.Commons.Extensibility;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
-using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
+using PG.StarWarsGame.Files.DAT.Test.Services.Builder.Validation;
+using PG.StarWarsGame.Files.Test.Services.Builder;
 using PG.Testing;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
 
-public abstract class DatBuilderBaseTest
+public abstract class PetroglyphStarWarsGameDatBuilder : DatBuilderBaseTest
 {
-    protected readonly MockFileSystem FileSystem = new();
-    protected readonly Mock<IDatFileService> DatFileService = new();
+    protected override bool FileInfoIsAlwaysValid => false;
 
-    protected readonly TestKeyValidator KeyValidator = new();
-
-    protected abstract Mock<DatBuilderBase> CreateBuilder(BuilderOverrideKind overrideKind);
-    
-    protected IServiceProvider CreateServiceProvider()
+    protected override DatFileInformation CreateFileInfo(bool valid, string path)
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(FileSystem);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        sc.CollectPgServiceContributions();
-       
-        sc.AddSingleton(_ => DatFileService.Object);
-        return sc.BuildServiceProvider();
+        return new DatFileInformation
+        {
+            FilePath = valid ? path : "FileÖÄÜ.dat"
+        };
+    }
+}
+
+public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, IReadOnlyList<DatStringEntry>, DatFileInformation>
+{
+    protected override string DefaultFileName => "textfile.dat";
+
+    protected abstract bool IsOrderedBuilder { get; }
+
+    protected abstract BuilderOverrideKind OverrideKind { get; }
+
+    protected override bool FileInfoIsAlwaysValid => true;
+
+    protected override DatFileInformation CreateFileInfo(bool valid, string path)
+    {
+        return new DatFileInformation
+        {
+            FilePath = valid ? path : string.Empty
+        };
     }
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_Ctor(BuilderOverrideKind overrideKind)
+    protected override void AddDataToBuilder(IReadOnlyList<DatStringEntry> data, DatBuilderBase builder)
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(FileSystem);
-        var builderMock = new Mock<DatBuilderBase>(overrideKind, CreateServiceProvider()) { CallBase = true };
-
-        var builder = builderMock.Object;
-
-        Assert.NotNull(builder.KeyValidator);
-        Assert.NotNull(builder.BuilderData);
-        Assert.NotNull(builder.SortedEntries);
-        Assert.NotNull(builder.Entries);
-        Assert.Equal(overrideKind, builder.KeyOverwriteBehavior);
+        foreach (var entry in data)
+            builder.AddEntry(entry.Key, entry.Value);
     }
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_IsKeyValid(BuilderOverrideKind overrideKind)
+    protected override void SetupServices(ServiceCollection serviceCollection)
     {
-        var builder = CreateBuilder(overrideKind);
+        base.SetupServices(serviceCollection);
+        serviceCollection.SupportDAT();
+    }
 
-        Assert.Throws<ArgumentNullException>(() => builder.Object.IsKeyValid(null!));
-        Assert.True(builder.Object.IsKeyValid("key"));
-        Assert.False(builder.Object.IsKeyValid("INVALID"));
+    [Fact]
+    public void IsKeyValid()
+    {
+        var builder = CreateBuilder();
+        Assert.True(builder.IsKeyValid(TestUtility.GetRandomStringOfLength(12)));
+        Assert.False(builder.IsKeyValid((string)TestUtility.GetRandom(EmpireAtWarKeyValidatorTest.InvalidTestData())[0]));
     }
 
     #region Clear/Remove/Dispose
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_Clear(BuilderOverrideKind overrideKind)
+    [Fact]
+    public void Clear()
     {
-        var builder = CreateBuilder(overrideKind);
+        var builder = CreateBuilder();
 
-        var entries = builder.Object.BuilderData;
+        var entries = builder.BuilderData;
         Assert.Empty(entries);
 
-        builder.Object.AddEntry("key", "value");
+        builder.AddEntry("key", "value");
 
-        Assert.Single(builder.Object.BuilderData);
+        Assert.Single(builder.BuilderData);
 
-        builder.Object.Clear();
+        builder.Clear();
 
-        Assert.Empty(builder.Object.BuilderData);
+        Assert.Empty(builder.BuilderData);
     }
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_Remove(BuilderOverrideKind overrideKind)
+    [Fact]
+    public void Remove_RemoveAll()
     {
-        var builder = CreateBuilder(overrideKind);
+        var builder = CreateBuilder();
 
-        var keyEntry = builder.Object.AddEntry("key", "value");
-        var key1Entry = builder.Object.AddEntry("key1", "other");
+        var keyEntry = builder.AddEntry("key", "value");
+        var key1Entry = builder.AddEntry("key1", "other");
 
-        Assert.Equal(2, builder.Object.BuilderData.Count);
+        Assert.Equal(2, builder.BuilderData.Count);
 
-        Assert.False(builder.Object.Remove(default));
-        Assert.False(builder.Object.RemoveAllKeys("key3"));
+        Assert.False(builder.Remove(default));
+        Assert.False(builder.RemoveAllKeys("key3"));
 
-        Assert.Equal(2, builder.Object.BuilderData.Count);
+        Assert.Equal(2, builder.BuilderData.Count);
 
-        Assert.True(builder.Object.Remove(new DatStringEntry("key1", key1Entry.AddedEntry!.Value.Crc32, "other")));
+        Assert.True(builder.Remove(new DatStringEntry("key1", key1Entry.AddedEntry!.Value.Crc32, "other")));
 
-        Assert.Equal([
-                new("key", keyEntry.AddedEntry!.Value.Crc32, "value")
-            ],
-            builder.Object.BuilderData.ToList());
+        Assert.Equal(
+            [new("key", keyEntry.AddedEntry!.Value.Crc32, "value")],
+            builder.BuilderData.ToList());
 
-        if (overrideKind == BuilderOverrideKind.AllowDuplicate)
+        if (OverrideKind == BuilderOverrideKind.AllowDuplicate)
         {
-            builder.Object.AddEntry("key", "otherKeyValue2");
-            builder.Object.AddEntry("key", "otherKeyValue3");
-            Assert.Equal(3, builder.Object.BuilderData.Count);
-
-            Assert.True(builder.Object.Remove(new DatStringEntry("key", keyEntry.AddedEntry!.Value.Crc32, "otherKeyValue2")));
-
-            Assert.Equal(2, builder.Object.BuilderData.Count);
+            builder.AddEntry("key", "otherKeyValue2");
+            builder.AddEntry("key", "otherKeyValue3");
+           
+            Assert.Equal(3, builder.BuilderData.Count);
+            Assert.True(builder.Remove(new DatStringEntry("key", keyEntry.AddedEntry!.Value.Crc32, "otherKeyValue2")));
+            Assert.Equal(2, builder.BuilderData.Count);
         }
 
-
-        Assert.True(builder.Object.RemoveAllKeys("key"));
-
-        Assert.Empty(builder.Object.BuilderData);
+        Assert.True(builder.RemoveAllKeys("key"));
+        Assert.Empty(builder.BuilderData);
     }
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_Dispose_ThrowsOnAddingMethods(BuilderOverrideKind overrideKind)
+    [Fact]
+    public void Dispose_ThrowsOnAddingMethods()
     {
-        var builder = CreateBuilder(overrideKind);
+        var builder = CreateBuilder();
 
-        builder.Object.Dispose();
+        builder.Dispose();
 
-        Assert.Empty(builder.Object.BuilderData);
+        Assert.Empty(builder.BuilderData);
 
-        Assert.Throws<ObjectDisposedException>(() => builder.Object.AddEntry("key", "value"));
-        
-        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Object.Entries);
-        ExceptionUtilities.AssertDoesNotThrowException(builder.Object.Clear);
-        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Object.Remove(new DatStringEntry()));
-        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Object.RemoveAllKeys("key"));
+        Assert.Throws<ObjectDisposedException>(() => builder.AddEntry("key", "value"));
 
-        ExceptionUtilities.AssertDoesNotThrowException(builder.Object.Dispose);
+        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Entries);
+        ExceptionUtilities.AssertDoesNotThrowException(builder.Clear);
+        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Remove(new DatStringEntry()));
+        ExceptionUtilities.AssertDoesNotThrowException(() => builder.RemoveAllKeys("key"));
+
+        ExceptionUtilities.AssertDoesNotThrowException(builder.Dispose);
     }
 
     #endregion
 
     #region AddEntry
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_AddEntry_Throws(BuilderOverrideKind overrideKind)
+    [Fact]
+    public void AddEntry_Throws()
     {
-        var builder = CreateBuilder(overrideKind);
-
-        Assert.Throws<ArgumentNullException>(() => builder.Object.AddEntry(null!, "value"));
-        Assert.Throws<ArgumentNullException>(() => builder.Object.AddEntry("key", null!));
+        var builder = CreateBuilder();
+        Assert.Throws<ArgumentNullException>(() => builder.AddEntry(null!, "value"));
+        Assert.Throws<ArgumentNullException>(() => builder.AddEntry("key", null!));
     }
 
     [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_AddEntry_EmptyString(BuilderOverrideKind overrideKind)
+    [InlineData("key")]
+    [InlineData("key_with-unusual.but All0w3d:Chars")]
+    public void AddEntry_SingleEntry(string key)
     {
-        var builder = CreateBuilder(overrideKind);
+        var builder = CreateBuilder();
 
-        var result = builder.Object.AddEntry("", "value");
+        var result = builder.AddEntry(key, "value");
 
         Assert.True(result.Added);
         Assert.False(result.WasOverwrite);
         Assert.Equal(AddEntryState.Added, result.Status);
-        Assert.Single(builder.Object.BuilderData);
-        Assert.Equal("value", builder.Object.BuilderData.First().Value);
-    }
-
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_AddEntry(BuilderOverrideKind overrideKind)
-    {
-        var builder = CreateBuilder(overrideKind);
-
-        var result = builder.Object.AddEntry("key", "value");
-
-        Assert.True(result.Added);
-        Assert.False(result.WasOverwrite);
-        Assert.Equal(AddEntryState.Added, result.Status);
-        Assert.Single(builder.Object.BuilderData);
-        Assert.Equal("value", builder.Object.BuilderData.First().Value);
+        Assert.Single(builder.BuilderData);
+        Assert.Equal("value", builder.BuilderData.First().Value);
     }
 
     [Fact]
-    public void Test_AddEntry_DoNotAllowDuplicates()
+    public void AddEntry_DoNotAllowDuplicates()
     {
-        var builder = CreateBuilder(BuilderOverrideKind.NoOverwrite);
+        if (OverrideKind != BuilderOverrideKind.NoOverwrite)
+            return;
+        var builder = CreateBuilder();
 
-        builder.Object.AddEntry("key", "value");
-        var result = builder.Object.AddEntry("key", "value1");
+        builder.AddEntry("key", "value");
+        var result = builder.AddEntry("key", "value1");
 
         Assert.False(result.Added);
         Assert.Equal(AddEntryState.NotAddedDuplicate, result.Status);
-        Assert.Single(builder.Object.BuilderData);
-        Assert.Equal("value", builder.Object.BuilderData.First().Value);
+        Assert.Single(builder.BuilderData);
+        Assert.Equal("value", builder.BuilderData.First().Value);
     }
 
     [Fact]
-    public void Test_AddEntry_OverwriteDuplicates()
+    public void AddEntry_OverwriteDuplicates()
     {
-        var builder = CreateBuilder(BuilderOverrideKind.Overwrite);
+        if (OverrideKind != BuilderOverrideKind.Overwrite)
+            return;
 
-        builder.Object.AddEntry("key", "value");
-        builder.Object.AddEntry("1", "distract");
-        var result = builder.Object.AddEntry("key", "value1");
+        var builder = CreateBuilder();
+
+        builder.AddEntry("key", "value");
+        builder.AddEntry("1", "distract");
+        var result = builder.AddEntry("key", "value1");
 
         Assert.True(result.Added);
         Assert.True(result.WasOverwrite);
         Assert.Equal("value", result.OverwrittenEntry.Value.Value);
         Assert.Equal(AddEntryState.AddedDuplicate, result.Status);
-        Assert.Equal(2, builder.Object.BuilderData.Count);
-        Assert.Equal("value1", builder.Object.BuilderData.First(x => x.Crc32 == result.AddedEntry.Value.Crc32).Value);
+        Assert.Equal(2, builder.BuilderData.Count);
+        Assert.Equal("value1", builder.BuilderData.First(x => x.Crc32 == result.AddedEntry.Value.Crc32).Value);
     }
 
     [Fact]
-    public void Test_AddEntry_AllowDuplicates()
+    public void AddEntry_AllowDuplicates()
     {
-        var builder = CreateBuilder(BuilderOverrideKind.AllowDuplicate);
+        if (OverrideKind != BuilderOverrideKind.AllowDuplicate)
+            return;
 
-        builder.Object.AddEntry("key", "value");
-        builder.Object.AddEntry("other", "other");
-        var result = builder.Object.AddEntry("key", "value1");
+        var builder = CreateBuilder();
+
+        builder.AddEntry("key", "value");
+        builder.AddEntry("other", "other");
+        var result = builder.AddEntry("key", "value1");
 
         Assert.True(result.Added);
         Assert.False(result.WasOverwrite);
         Assert.Null(result.OverwrittenEntry);
         Assert.Equal(AddEntryState.AddedDuplicate, result.Status);
-        Assert.Equal(3, builder.Object.BuilderData.Count);
+        Assert.Equal(3, builder.BuilderData.Count);
 
-        Assert.Equal("value", builder.Object.BuilderData.First(e => e.Key == "key").Value);
-        Assert.Equal("value1", builder.Object.BuilderData.Last(e => e.Key == "key").Value);
+        Assert.Equal("value", builder.BuilderData.First(e => e.Key == "key").Value);
+        Assert.Equal("value1", builder.BuilderData.Last(e => e.Key == "key").Value);
     }
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_AddEntry_PerformsEncoding(BuilderOverrideKind overrideKind)
-    {
-        var builder = CreateBuilder(overrideKind);
 
-        var result = builder.Object.AddEntry("keyÖÄÜ", "value");
+    [Fact]
+    public void AddEntry_PerformsEncoding()
+    {
+        var builder = CreateBuilder();
+
+        var result = builder.AddEntry("keyÖÄÜ", "value");
 
         Assert.True(result.Added);
 
@@ -272,15 +240,12 @@ public abstract class DatBuilderBaseTest
     }
 
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_AddEntry_InvalidKey(BuilderOverrideKind overrideKind)
+    [Fact]
+    public void AddEntry_InvalidKey()
     {
-        var builder = CreateBuilder(overrideKind);
+        var builder = CreateBuilder();
 
-        var result = builder.Object.AddEntry("INVALID", "value");
+        var result = builder.AddEntry("INVALID\tKey", "value");
 
         Assert.False(result.Added);
         Assert.Equal(AddEntryState.InvalidKey, result.Status);
@@ -288,61 +253,71 @@ public abstract class DatBuilderBaseTest
 
     #endregion
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_BuildModel(BuilderOverrideKind overrideKind)
+    [Fact]
+    public void AddEntry_CorrectCrc()
     {
-        var builder = CreateBuilder(overrideKind);
+        var builder = CreateBuilder();
 
-        builder.Object.AddEntry("key1", "value");
-        builder.Object.AddEntry("key2", "value");
-        builder.Object.AddEntry("key3", "value");
+        var result = builder.AddEntry("TEXT_GUI_DIALOG_TOOLTIP_IDC_MAIN_MENU_SINGLE_PLAYER_GAMES", "someValue");
+        Assert.Equal(new Crc32(72402613), result.AddedEntry!.Value.Crc32);
 
-        var model = builder.Object.BuildModel();
-        Assert.Equal(builder.Object.TargetKeySortOrder, model.KeySortOder);
+        result = builder.AddEntry("Tatooine", "someValue");
+        Assert.Equal(new Crc32(-256176565), result.AddedEntry!.Value.Crc32);
+
+        result = builder.AddEntry("Corulag", "someValue");
+        Assert.Equal(new Crc32(539193933), result.AddedEntry!.Value.Crc32);
+    }
+
+    [Fact]
+    public void BuildModel()
+    {
+        var builder = CreateBuilder();
+
+        builder.AddEntry("key1", "value");
+        builder.AddEntry("key2", "value");
+        builder.AddEntry("key3", "value");
+
+        var model = builder.BuildModel();
+        Assert.Equal(builder.TargetKeySortOrder, model.KeySortOrder);
         Assert.Equal(3, model.Count);
         Assert.Equal(["key1", "key2", "key3"], model.Keys);
     }
 
-    [Theory]
-    [InlineData(BuilderOverrideKind.NoOverwrite)]
-    [InlineData(BuilderOverrideKind.Overwrite)]
-    [InlineData(BuilderOverrideKind.AllowDuplicate)]
-    public void Test_Build(BuilderOverrideKind overrideKind)
+    [Fact]
+    public void IntegrationTest_Sorted_MasterText_CreateFromModelAndBuild()
     {
-        var builder = CreateBuilder(overrideKind);
-
-        DatFileService.Setup(s => s.CreateDatFile(It.IsAny<FileSystemStream>(), It.IsAny<IEnumerable<DatStringEntry>>(),
-            builder.Object.TargetKeySortOrder))
-            .Callback((FileSystemStream fs, IEnumerable<DatStringEntry> _, DatFileType _) =>
-            {
-                fs.WriteByte(1);
-                fs.WriteByte(2);
-                fs.WriteByte(3);
-            });
-
-        builder.Object.Build(new DatFileInformation
+        using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
         {
-            FilePath = "test.dat"
-        }, false);
-
-        Assert.Equal([1,2,3], FileSystem.File.ReadAllBytes("test.dat"));
-    }
-
-    protected class TestKeyValidator : IDatKeyValidator
-    {
-        public bool Validate(string key)
-        {
-            return Validate(key.AsSpan());
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
+            stream.CopyTo(fs);
         }
 
-        public bool Validate(ReadOnlySpan<char> key)
+        var masterTextModel = ServiceProvider.GetRequiredService<IDatFileService>().LoadAs("MasterTextFile.dat",
+            IsOrderedBuilder ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered).Content;
+
+        var builder = CreateBuilder();
+
+        foreach (var entry in masterTextModel) 
+            builder.AddEntry(entry.Key, entry.Value);
+
+        // For some reason the original FoC MasterTextFile has a duplicate key 'TEXT_END_OF_DATA'
+        if (OverrideKind == BuilderOverrideKind.AllowDuplicate) 
+            Assert.Equal(masterTextModel.ToList(), builder.BuildModel().ToList());
+        else
         {
-            if (key.Equals("INVALID".AsSpan(), StringComparison.Ordinal))
-                return false;
-            return true;
+            var dupFreeModel = ServiceProvider.GetRequiredService<IDatModelService>().RemoveDuplicates(masterTextModel);
+            Assert.Equal(dupFreeModel.ToList(), builder.BuildModel().ToList());
+        }
+
+        builder.Build(CreateFileInfo(true, DefaultFileName), false);
+
+        if (OverrideKind == BuilderOverrideKind.AllowDuplicate)
+            Assert.Equal(FileSystem.File.ReadAllBytes("MasterTextFile.dat"), FileSystem.File.ReadAllBytes(DefaultFileName));
+        else
+        {
+            var actualBytes = FileSystem.File.ReadAllBytes(DefaultFileName);
+            Assert.NotEmpty(actualBytes);
+            Assert.NotEqual(FileSystem.File.ReadAllBytes("MasterTextFile.dat"), actualBytes);
         }
     }
 }

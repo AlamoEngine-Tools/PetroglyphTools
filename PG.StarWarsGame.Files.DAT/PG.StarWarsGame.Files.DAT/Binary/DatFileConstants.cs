@@ -6,12 +6,12 @@ using System.Text;
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
 /// <summary>
-///     Simple class wrapper around global defaults used for all DAT file definitions.
+///     Defines global constants of the Petroglyph DAT file format.
 /// </summary>
 public static class DatFileConstants
 {
     /// <summary>
-    ///     The text key encoding. <br /><b>WARNING: The text keys may never be null-terminated!</b>
+    ///     Returns the text key encoding, which is ASCII.
     /// </summary>
     public static readonly Encoding TextKeyEncoding = Encoding.ASCII;
 
@@ -21,7 +21,7 @@ public static class DatFileConstants
     internal static readonly Encoding TextKeyEncoding_Latin1 = Encoding.GetEncoding(28591);
 
     /// <summary>
-    ///     the value key encoding.
+    ///     Returns the text value encoding, which is 16bit UTF Little Endian.
     /// </summary>
     public static readonly Encoding TextValueEncoding = Encoding.Unicode;
 }

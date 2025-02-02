@@ -8,9 +8,9 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-/// Contains information in order to validate a <see cref="MegFileInformation"/>.
+/// Contains information that allows validation of a <see cref="MegFileInformation"/>.
 /// </summary>
-public class MegBuilderFileInformationValidationData
+public sealed class MegBuilderFileInformationValidationData
 {
     internal MegBuilderFileInformationValidationData(
         MegFileInformation fileInformation, 

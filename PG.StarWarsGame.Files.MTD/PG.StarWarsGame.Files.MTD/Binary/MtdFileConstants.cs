@@ -15,12 +15,6 @@ public static class MtdFileConstants
     /// </summary>
     public static readonly Encoding NameEncoding = Encoding.ASCII;
 
-
-    // This encoding *only* gets used for reading binary DAT files to maintain compatibility if some arbitrary tool does not use 7-bit ASCII.
-    // This way we can preserve the original key.
-    internal static readonly Encoding NameEncoding_Latin1 = Encoding.GetEncoding(28591);
-
-
     /// <summary>
     /// The maximum allowed length of a file name for MTD entries.
     /// </summary>

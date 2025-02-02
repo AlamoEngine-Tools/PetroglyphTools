@@ -19,17 +19,17 @@ public abstract class ServiceBase : DisposableObject
     /// The logger of this service.<br/>
     /// May be of type <see cref="NullLogger"/> if no <see cref="ILoggerFactory"/> has been provided.
     /// </summary>
-    protected internal ILogger Logger { get; }
+    protected internal readonly ILogger Logger;
 
     /// <summary>
     /// The file system implementation to be used.
     /// </summary>
-    protected internal IFileSystem FileSystem { get; }
+    protected internal readonly IFileSystem FileSystem;
 
     /// <summary>
     /// The service provider.
     /// </summary>
-    protected internal IServiceProvider Services { get; }
+    protected internal readonly IServiceProvider Services;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ServiceBase"/> class.

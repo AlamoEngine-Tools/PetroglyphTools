@@ -1,45 +1,43 @@
 <Project>
-    <PropertyGroup>
-        <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
-        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-        <EnableDynamicPlatformResolution>true</EnableDynamicPlatformResolution>
-        <GitVersionBaseDirectory>$(MSBuildThisFileDirectory)</GitVersionBaseDirectory>
-        <PackageOutputPath>$(RepoRootPath)bin\Packages\$(Configuration)\</PackageOutputPath>
-    </PropertyGroup>
-    <PropertyGroup>
-        <Authors>Alamo Engine Tools and Contributors</Authors>
-        <Copyright>Copyright © 2023 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
-        <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
+	<PropertyGroup>
+		<RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+		<EnableDynamicPlatformResolution>true</EnableDynamicPlatformResolution>
+		<GitVersionBaseDirectory>$(MSBuildThisFileDirectory)</GitVersionBaseDirectory>
+		<PackageOutputPath>$(RepoRootPath)bin\Packages\$(Configuration)\</PackageOutputPath>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Authors>Alamo Engine Tools and Contributors</Authors>
+		<Copyright>Copyright © 2025 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
+		<PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
 		<LicenseFile>$(MSBuildThisFileDirectory)LICENSE</LicenseFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <Company>Alamo Engine Tools</Company>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-	    <PackageIcon>aet.png</PackageIcon>
-    
-</PropertyGroup>
-    <PropertyGroup>
-        <LangVersion>latest</LangVersion>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
-            <PrivateAssets>all</PrivateAssets>
-            <Version>3.7.112</Version>
-        </PackageReference>
-        <PackageReference Include="SauceControl.InheritDoc" Version="2.0.2" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
-    </ItemGroup>
-
+		<RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Company>Alamo Engine Tools</Company>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>aet.png</PackageIcon>
+	</PropertyGroup>
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
 	<ItemGroup Condition="'$(IsPackable)' == 'true'">
 		<None Include="$(LicenseFile)" Pack="true" PackagePath=""/>
 		<None Include="$(MSBuildThisFileDirectory)aet.png" Pack="true" PackagePath=""/>
+		<None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
+			<PrivateAssets>all</PrivateAssets>
+			<Version>3.7.115</Version>
+		</PackageReference>
+		<PackageReference Include="SauceControl.InheritDoc" Version="2.0.2" PrivateAssets="all"/>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 	</ItemGroup>
 </Project>

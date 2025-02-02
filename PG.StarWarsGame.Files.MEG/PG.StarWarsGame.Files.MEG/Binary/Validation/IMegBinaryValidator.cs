@@ -5,5 +5,5 @@ namespace PG.StarWarsGame.Files.MEG.Binary.Validation;
 
 internal interface IMegBinaryValidator
 {
-    bool Validate(IMegBinaryValidationInformation info);
+    bool Validate(MegBinaryValidationInformation info);
 }

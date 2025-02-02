@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using Xunit;
 
@@ -7,14 +6,14 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
 public class EmpireAtWarMegDataEntryPathNormalizerTest : PetroglyphDataEntryPathNormalizerTestBase
 {
-    protected override PetroglyphDataEntryPathNormalizer CreatePGNormalizer(IServiceProvider serviceProvider)
+    protected override PetroglyphDataEntryPathNormalizer CreatePGNormalizer()
     {
-        return new EmpireAtWarMegDataEntryPathNormalizer(serviceProvider);
+        return EmpireAtWarMegDataEntryPathNormalizer.Instance;
     }
 
     [Theory]
     [MemberData(nameof(ValidPathsToNormalize))]
-    public void Test_Normalize_Success(string source, string expected)
+    public void Normalize_Success(string source, string expected)
     {
         TestNormalizePathPasses(source, expected);
     }

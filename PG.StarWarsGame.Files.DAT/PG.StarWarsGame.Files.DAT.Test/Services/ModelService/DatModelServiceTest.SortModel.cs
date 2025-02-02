@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Moq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
@@ -12,25 +11,22 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 public abstract partial class DatModelServiceTest
 {
     [Fact]
-    public void Test_SortModel_Throws()
+    public void SortModel_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => Service.SortModel(null!));
     }
 
     [Theory]
     [MemberData(nameof(GetUnsortedEntriesTestData))]
-    public void Test_SortModel(IList<DatStringEntry> entries, IList<DatStringEntry> expectedList)
+    public void SortModel(IList<DatStringEntry> entries, IList<DatStringEntry> expectedList)
     {
         var model = CreateModel(entries);
         var sorted = Service.SortModel(model);
-        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOder);
+        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOrder);
         Assert.Equal(expectedList, sorted.ToList());
 
-
-        var modelMock = new Mock<IDatModel>();
-        modelMock.Setup(m => m.GetEnumerator()).Returns(entries.GetEnumerator());
-        var sortedMock = Service.SortModel(modelMock.Object);
-        Assert.Equal(DatFileType.OrderedByCrc32, sortedMock.KeySortOder);
+        var sortedMock = Service.SortModel(new UnsortedDatModel(entries));
+        Assert.Equal(DatFileType.OrderedByCrc32, sortedMock.KeySortOrder);
         Assert.Equal(expectedList, sortedMock.ToList());
     }
 

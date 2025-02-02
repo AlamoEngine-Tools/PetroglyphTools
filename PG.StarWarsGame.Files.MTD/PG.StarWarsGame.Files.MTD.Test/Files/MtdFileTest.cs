@@ -1,6 +1,4 @@
-﻿using Moq;
-using System;
-using System.IO.Abstractions;
+﻿using System;
 using PG.StarWarsGame.Files.MTD.Data;
 using PG.StarWarsGame.Files.MTD.Files;
 using Testably.Abstractions.Testing;
@@ -8,16 +6,8 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MTD.Test.Files;
 
-public class MtdFileTest
+public class MtdFileTest : CommonMtdTestBase
 {
-    private readonly Mock<IServiceProvider> _serviceProvider = new();
-    private readonly MockFileSystem _fileSystem = new();
-
-    public MtdFileTest()
-    {
-        _serviceProvider.Setup(sp => sp.GetService(typeof(IFileSystem))).Returns(_fileSystem);
-    }
-
     [Fact]
     public void Ctor_ThrowsArgumentNullException()
     {
@@ -26,11 +16,11 @@ public class MtdFileTest
             FilePath = "test.mtd",
             IsInsideMeg = false
         };
-        var model = new Mock<IMegaTextureDirectory>();
+        var model = new MegaTextureDirectory([]);
 
-        Assert.Throws<ArgumentNullException>(() => new MtdFile(null!, param, _serviceProvider.Object));
-        Assert.Throws<ArgumentNullException>(() => new MtdFile(model.Object, null!, _serviceProvider.Object));
-        Assert.Throws<ArgumentNullException>(() => new MtdFile(model.Object, param, null!));
+        Assert.Throws<ArgumentNullException>(() => new MtdFile(null!, param, ServiceProvider));
+        Assert.Throws<ArgumentNullException>(() => new MtdFile(model, null!, ServiceProvider));
+        Assert.Throws<ArgumentNullException>(() => new MtdFile(model, param, null!));
     }
 
     [Fact]
@@ -42,14 +32,14 @@ public class MtdFileTest
             FilePath = name,
             IsInsideMeg = false,
         };
-        var model = new Mock<IMegaTextureDirectory>().Object;
+        var model = new MegaTextureDirectory([]);
 
-        _fileSystem.Initialize().WithFile("test.mtd");
+        FileSystem.Initialize().WithFile("test.mtd");
 
-        var mtdFile = new MtdFile(model, param, _serviceProvider.Object);
+        var mtdFile = new MtdFile(model, param, ServiceProvider);
 
         Assert.Same(model, mtdFile.Content); 
-        Assert.Equal(_fileSystem.Path.GetFullPath(name), mtdFile.FileInformation.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath(name), mtdFile.FileInformation.FilePath);
     }
 
     [Fact]
@@ -61,11 +51,11 @@ public class MtdFileTest
             FilePath = name,
             IsInsideMeg = true,
         };
-        var model = new Mock<IMegaTextureDirectory>().Object;
+        var model = new MegaTextureDirectory([]);
 
-        _fileSystem.Initialize().WithFile("test.mtd");
+        FileSystem.Initialize().WithFile("test.mtd");
 
-        var mtdFile = new MtdFile(model, param, _serviceProvider.Object);
+        var mtdFile = new MtdFile(model, param, ServiceProvider);
 
         Assert.Same(model, mtdFile.Content);
         Assert.Equal(name, mtdFile.FileInformation.FilePath);

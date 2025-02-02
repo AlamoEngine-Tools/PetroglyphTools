@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using PG.Commons.Binary;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;

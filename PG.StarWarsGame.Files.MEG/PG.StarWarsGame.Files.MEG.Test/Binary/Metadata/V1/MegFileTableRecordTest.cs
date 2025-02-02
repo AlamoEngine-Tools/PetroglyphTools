@@ -1,7 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
-
-using System;
+﻿using System;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
@@ -12,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata.V1;
 public class MegFileTableRecordTest
 {
     [Fact]
-    public void Ctor_Test__ThrowsArgumentOutOfRangeException()
+    public void Ctor_InvalidArgs_ThrowsArgumentOutOfRangeException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new MegFileTableRecord(
                 new Crc32(0),
@@ -30,7 +27,7 @@ public class MegFileTableRecordTest
     }
 
     [Fact]
-    public void Ctor_Test__Correct()
+    public void Ctor()
     {
         var record = new MegFileTableRecord(new Crc32(0), 1, 2, 3, 4);
         Assert.Equal(0, (int)record.Crc32);
@@ -41,7 +38,7 @@ public class MegFileTableRecordTest
     }
 
     [Fact]
-    public void Ctor_Test__Compare()
+    public void Comparison()
     {
         var r0 = new MegFileTableRecord(new Crc32(0), 1, 1, 1, 1);
         var r1 = new MegFileTableRecord(new Crc32(1), 0, 0, 0, 0);
@@ -51,8 +48,10 @@ public class MegFileTableRecordTest
         Assert.True(r1 > r0);
         Assert.False(r1 < r0);
 
+#pragma warning disable CS1718
         Assert.True(r1 <= r1);
         Assert.True(r1 >= r1);
+#pragma warning restore CS1718
 
         Assert.Equal(0, r0.CompareTo(r0));
         Assert.Equal(-1, r0.CompareTo(r1));
@@ -65,7 +64,7 @@ public class MegFileTableRecordTest
     }
 
     [Fact]
-    public void Ctor_Test__Bytes()
+    public void Bytes()
     {
         var record = new MegFileTableRecord(new Crc32(1), 2, 3, 4, 5);
 
@@ -78,5 +77,27 @@ public class MegFileTableRecordTest
             0x5, 0x0, 0x0, 0x0,
         };
         Assert.Equal(bytes, record.Bytes);
+    }   
+    
+    [Fact]
+    public void GetBytes()
+    {
+        var record = new MegFileTableRecord(new Crc32(1), 2, 3, 4, 5);
+
+        var bytes = new byte[]
+        {
+            0x1, 0x0, 0x0, 0x0,
+            0x2, 0x0, 0x0, 0x0,
+            0x3, 0x0, 0x0, 0x0,
+            0x4, 0x0, 0x0, 0x0,
+            0x5, 0x0, 0x0, 0x0,
+        };
+
+        Span<byte> buffer = new byte[record.Size];
+        buffer.Fill(1);
+
+        record.GetBytes(buffer);
+
+        Assert.Equal(bytes, buffer.Slice(0, record.Size).ToArray());
     }
 }

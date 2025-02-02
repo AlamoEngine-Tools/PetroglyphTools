@@ -158,9 +158,9 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     }
 
     /// <inheritdoc />
-    protected override void DisposeManagedResources()
+    protected override void DisposeResources()
     {
-        base.DisposeManagedResources();
+        base.DisposeResources();
         _entries.Clear();
     }
 }

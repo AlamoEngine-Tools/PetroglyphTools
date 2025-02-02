@@ -122,9 +122,9 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
     }
 
     /// <inheritdoc />
-    protected sealed override void DisposeManagedResources()
+    protected override void DisposeResources()
     {
-        base.DisposeManagedResources();
+        base.DisposeResources();
         _internalFileInformation?.Dispose();
         _internalFileInformation = null!;
         if (Content is IDisposable disposableContent)

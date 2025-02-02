@@ -3,6 +3,7 @@ using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.Testing;
+using Testably.Abstractions;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
@@ -10,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 public class PetroglyphRelativeDataEntryPathResolverTest
 {
     private readonly PetroglyphRelativeDataEntryPathResolver _pathResolver;
-    private readonly IFileSystem _fileSystem = new FileSystem();
+    private readonly IFileSystem _fileSystem = new RealFileSystem();
 
     public PetroglyphRelativeDataEntryPathResolverTest()
     {

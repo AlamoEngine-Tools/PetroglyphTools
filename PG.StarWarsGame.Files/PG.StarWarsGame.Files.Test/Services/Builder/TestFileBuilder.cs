@@ -28,10 +28,10 @@ public class TestFileBuilder(IServiceProvider services) : FileBuilderBase<byte[]
         return fileInformation.IsValid;
     }
 
-    protected override void DisposeManagedResources()
+    protected override void DisposeResources()
     {
-        base.DisposeManagedResources();
-        if (string.IsNullOrEmpty(FileWritten)) 
+        base.DisposeResources();
+        if (string.IsNullOrEmpty(FileWritten))
             Assert.False(FileSystem.File.Exists(FileWritten));
     }
 }

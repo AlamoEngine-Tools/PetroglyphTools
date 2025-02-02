@@ -180,9 +180,9 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     }
 
     /// <inheritdoc/>
-    protected override void DisposeManagedResources()
+    protected override void DisposeResources()
     {
-        base.DisposeManagedResources();
+        base.DisposeResources();
         _dataEntries.Clear();
     }
     

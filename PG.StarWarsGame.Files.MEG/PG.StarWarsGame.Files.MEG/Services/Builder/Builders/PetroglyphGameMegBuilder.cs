@@ -94,7 +94,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     }
 
     /// <summary>
-    /// Returns a relative path from a path and the <see cref="BaseDirectory"/> of this instance.
+    /// Returns a relative path from a path and the <see cref="BaseDirectory"/> of the <see cref="PetroglyphGameMegBuilder"/>.
     /// Returns <see langword="null"/> if <paramref name="path"/> is invalid or not a part of <see cref="BaseDirectory"/>.
     /// <br/>
     /// <br/>

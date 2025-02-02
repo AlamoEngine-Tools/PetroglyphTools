@@ -20,6 +20,7 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     private static readonly PathNormalizeOptions DefaultNormalizeOptions = new()
     {
         UnifyDirectorySeparators = true,
+        TreatBackslashAsSeparator = true,
         UnifyCase = UnifyCasingKind.UpperCaseForce
     };
 

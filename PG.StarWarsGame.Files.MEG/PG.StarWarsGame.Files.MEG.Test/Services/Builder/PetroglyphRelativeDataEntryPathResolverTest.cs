@@ -27,9 +27,9 @@ public class PetroglyphRelativeDataEntryPathResolverTest
     [InlineData("test", "test")]
     [InlineData("test/", null)]
     [InlineData("test.xml", "test.xml")]
-    [InlineData("a/test", "a\\test")]
-    [InlineData("a/.test", "a\\.test")]
-    [InlineData("./a/test.xml", "a\\test.xml")]
+    [InlineData("a/test", "a/test")]
+    [InlineData("a/.test", "a/.test")]
+    [InlineData("./a/test.xml", "a/test.xml")]
     [InlineData("../test.xml", null)]
     [InlineData("./../test.xml", null)]
     [InlineData("./../corruption/test.xml", "test.xml")]
@@ -41,7 +41,6 @@ public class PetroglyphRelativeDataEntryPathResolverTest
     public void ResolveEntryPath_Relative(string? path, string? expectedEntryPath, bool resolvePathFull = false)
     {
         const string basePath = "Games/Petroglyph/corruption/";
-
 
         var normalizedExpected = expectedEntryPath is not null
             ? PathNormalizer.Normalize(expectedEntryPath, new PathNormalizeOptions { UnifyDirectorySeparators = true })

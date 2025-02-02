@@ -1,3 +1,6 @@
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+
 using PG.StarWarsGame.Files.Xml.Commons.Xml.Tags.Engine.FoC;
 
 namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
@@ -59,8 +62,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public IncomeRedistributionXmlTagDescriptor IncomeRedistribution { get; } =
             new IncomeRedistributionXmlTagDescriptor();
 
-        public CreditCapPerPlanetXmlTagDescriptor CreditCapPerPlanet { get; } =
-            new CreditCapPerPlanetXmlTagDescriptor();
+        public CreditCapPerPlanetXmlTagDescriptor CreditCapPerPlanet { get; } = new CreditCapPerPlanetXmlTagDescriptor();
 
         public FiscalCycleTimeInSecsXmlTagDescriptor FiscalCycleTimeInSecs { get; } =
             new FiscalCycleTimeInSecsXmlTagDescriptor();
@@ -68,8 +70,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public MediumCoinStackSizeXmlTagDescriptor MediumCoinStackSize { get; } =
             new MediumCoinStackSizeXmlTagDescriptor();
 
-        public LargeCoinStackSizeXmlTagDescriptor LargeCoinStackSize { get; } =
-            new LargeCoinStackSizeXmlTagDescriptor();
+        public LargeCoinStackSizeXmlTagDescriptor LargeCoinStackSize { get; } = new LargeCoinStackSizeXmlTagDescriptor();
 
         public BlackMarketIncomeMultMinXmlTagDescriptor BlackMarketIncomeMultMin { get; } =
             new BlackMarketIncomeMultMinXmlTagDescriptor();
@@ -122,8 +123,8 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new GMCZoomedPullbackPlanetRadiusFractionXmlTagDescriptor();
 
         public GMCZoomedPositionOffsetPlanetRadiusFractionsXmlTagDescriptor
-            GMCZoomedPositionOffsetPlanetRadiusFractions { get; } =
-            new GMCZoomedPositionOffsetPlanetRadiusFractionsXmlTagDescriptor();
+            GMCZoomedPositionOffsetPlanetRadiusFractions
+        { get; } = new GMCZoomedPositionOffsetPlanetRadiusFractionsXmlTagDescriptor();
 
         public GMCZoomTimeXmlTagDescriptor GMCZoomTime { get; } = new GMCZoomTimeXmlTagDescriptor();
         public GMCBattleZoomTimeXmlTagDescriptor GMCBattleZoomTime { get; } = new GMCBattleZoomTimeXmlTagDescriptor();
@@ -229,8 +230,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public AIUsesFogOfWarSpaceXmlTagDescriptor AIUsesFogOfWarSpace { get; } =
             new AIUsesFogOfWarSpaceXmlTagDescriptor();
 
-        public AIUsesFogOfWarLandXmlTagDescriptor AIUsesFogOfWarLand { get; } =
-            new AIUsesFogOfWarLandXmlTagDescriptor();
+        public AIUsesFogOfWarLandXmlTagDescriptor AIUsesFogOfWarLand { get; } = new AIUsesFogOfWarLandXmlTagDescriptor();
 
         public SetupPhaseEnabledXmlTagDescriptor SetupPhaseEnabled { get; } = new SetupPhaseEnabledXmlTagDescriptor();
 
@@ -324,8 +324,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public RandomStoryEmpireDestroyXmlTagDescriptor RandomStoryEmpireDestroy { get; } =
             new RandomStoryEmpireDestroyXmlTagDescriptor();
 
-        public RandomStoryRewardsXmlTagDescriptor RandomStoryRewards { get; } =
-            new RandomStoryRewardsXmlTagDescriptor();
+        public RandomStoryRewardsXmlTagDescriptor RandomStoryRewards { get; } = new RandomStoryRewardsXmlTagDescriptor();
 
         public RandomStoryRewardRebelBuildableXmlTagDescriptor RandomStoryRewardRebelBuildable { get; } =
             new RandomStoryRewardRebelBuildableXmlTagDescriptor();
@@ -373,37 +372,36 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new HardPointTargetReticleEnemyScreenSizeXmlTagDescriptor();
 
         public HardPointTargetReticleFriendlyScreenSizeXmlTagDescriptor
-            HardPointTargetReticleFriendlyScreenSize { get; } =
-            new HardPointTargetReticleFriendlyScreenSizeXmlTagDescriptor();
+            HardPointTargetReticleFriendlyScreenSize
+        { get; } = new HardPointTargetReticleFriendlyScreenSizeXmlTagDescriptor();
 
         public HardPointTargetReticleEnemyTextureXmlTagDescriptor HardPointTargetReticleEnemyTexture { get; } =
             new HardPointTargetReticleEnemyTextureXmlTagDescriptor();
 
         public HardPointTargetReticleEnemyTrackedTextureXmlTagDescriptor
-            HardPointTargetReticleEnemyTrackedTexture { get; } =
-            new HardPointTargetReticleEnemyTrackedTextureXmlTagDescriptor();
+            HardPointTargetReticleEnemyTrackedTexture
+        { get; } = new HardPointTargetReticleEnemyTrackedTextureXmlTagDescriptor();
 
         public HardPointTargetReticleFriendlyTextureXmlTagDescriptor HardPointTargetReticleFriendlyTexture { get; } =
             new HardPointTargetReticleFriendlyTextureXmlTagDescriptor();
 
         public HardPointTargetReticleFriendlyTrackedTextureXmlTagDescriptor
-            HardPointTargetReticleFriendlyTrackedTexture { get; } =
-            new HardPointTargetReticleFriendlyTrackedTextureXmlTagDescriptor();
+            HardPointTargetReticleFriendlyTrackedTexture
+        { get; } = new HardPointTargetReticleFriendlyTrackedTextureXmlTagDescriptor();
 
         public HardPointTargetReticleFriendlyRepairingTextureXmlTagDescriptor
-            HardPointTargetReticleFriendlyRepairingTexture { get; } =
-            new HardPointTargetReticleFriendlyRepairingTextureXmlTagDescriptor();
+            HardPointTargetReticleFriendlyRepairingTexture
+        { get; } = new HardPointTargetReticleFriendlyRepairingTextureXmlTagDescriptor();
 
         public HardPointTargetReticleFriendlyDisabledTextureXmlTagDescriptor
-            HardPointTargetReticleFriendlyDisabledTexture { get; } =
-            new HardPointTargetReticleFriendlyDisabledTextureXmlTagDescriptor();
+            HardPointTargetReticleFriendlyDisabledTexture
+        { get; } = new HardPointTargetReticleFriendlyDisabledTextureXmlTagDescriptor();
 
         public HardPointTargetReticleFriendlyDisabledTrackedTextureXmlTagDescriptor
-            HardPointTargetReticleFriendlyDisabledTrackedTexture { get; } =
-            new HardPointTargetReticleFriendlyDisabledTrackedTextureXmlTagDescriptor();
+            HardPointTargetReticleFriendlyDisabledTrackedTexture
+        { get; } = new HardPointTargetReticleFriendlyDisabledTrackedTextureXmlTagDescriptor();
 
-        public DebugHotKeyLoadMapXmlTagDescriptor DebugHotKeyLoadMap { get; } =
-            new DebugHotKeyLoadMapXmlTagDescriptor();
+        public DebugHotKeyLoadMapXmlTagDescriptor DebugHotKeyLoadMap { get; } = new DebugHotKeyLoadMapXmlTagDescriptor();
 
         public DebugHotKeyLoadMapScriptXmlTagDescriptor DebugHotKeyLoadMapScript { get; } =
             new DebugHotKeyLoadMapScriptXmlTagDescriptor();
@@ -468,8 +466,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public SpaceReinforceFOWColorXmlTagDescriptor SpaceReinforceFOWColor { get; } =
             new SpaceReinforceFOWColorXmlTagDescriptor();
 
-        public SetupPhaseFOWColorXmlTagDescriptor SetupPhaseFOWColor { get; } =
-            new SetupPhaseFOWColorXmlTagDescriptor();
+        public SetupPhaseFOWColorXmlTagDescriptor SetupPhaseFOWColor { get; } = new SetupPhaseFOWColorXmlTagDescriptor();
 
         public SetupPhaseInvalidDragColorXmlTagDescriptor SetupPhaseInvalidDragColor { get; } =
             new SetupPhaseInvalidDragColorXmlTagDescriptor();
@@ -504,11 +501,12 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
 
         public LandFOWRegrowTimeXmlTagDescriptor LandFOWRegrowTime { get; } = new LandFOWRegrowTimeXmlTagDescriptor();
 
-        public SpaceFOWRegrowTimeXmlTagDescriptor SpaceFOWRegrowTime { get; } =
-            new SpaceFOWRegrowTimeXmlTagDescriptor();
+        public SpaceFOWRegrowTimeXmlTagDescriptor SpaceFOWRegrowTime { get; } = new SpaceFOWRegrowTimeXmlTagDescriptor();
 
-        public SpaceReinforceFeedbackOnlyWhileDraggingXmlTagDescriptor SpaceReinforceFeedbackOnlyWhileDragging { get; }
-            = new SpaceReinforceFeedbackOnlyWhileDraggingXmlTagDescriptor();
+        public SpaceReinforceFeedbackOnlyWhileDraggingXmlTagDescriptor SpaceReinforceFeedbackOnlyWhileDragging
+        {
+            get;
+        } = new SpaceReinforceFeedbackOnlyWhileDraggingXmlTagDescriptor();
 
         public WaterRenderTargetResolutionXmlTagDescriptor WaterRenderTargetResolution { get; } =
             new WaterRenderTargetResolutionXmlTagDescriptor();
@@ -547,26 +545,26 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new SpacePathfindFrameDelayDeltaXmlTagDescriptor();
 
         public SpacePathFailureDistanceCutoffCoefficientXmlTagDescriptor
-            SpacePathFailureDistanceCutoffCoefficient { get; } =
-            new SpacePathFailureDistanceCutoffCoefficientXmlTagDescriptor();
+            SpacePathFailureDistanceCutoffCoefficient
+        { get; } = new SpacePathFailureDistanceCutoffCoefficientXmlTagDescriptor();
 
         public SpacePathFailureMaxExpansionsCoefficientXmlTagDescriptor
-            SpacePathFailureMaxExpansionsCoefficient { get; } =
-            new SpacePathFailureMaxExpansionsCoefficientXmlTagDescriptor();
+            SpacePathFailureMaxExpansionsCoefficient
+        { get; } = new SpacePathFailureMaxExpansionsCoefficientXmlTagDescriptor();
 
         public SpacePathFailureRotationExpansionIncrementXmlTagDescriptor
-            SpacePathFailureRotationExpansionIncrement { get; } =
-            new SpacePathFailureRotationExpansionIncrementXmlTagDescriptor();
+            SpacePathFailureRotationExpansionIncrement
+        { get; } = new SpacePathFailureRotationExpansionIncrementXmlTagDescriptor();
 
         public SpacePathFailureForwardExpansionIncrementXmlTagDescriptor
-            SpacePathFailureForwardExpansionIncrement { get; } =
-            new SpacePathFailureForwardExpansionIncrementXmlTagDescriptor();
+            SpacePathFailureForwardExpansionIncrement
+        { get; } = new SpacePathFailureForwardExpansionIncrementXmlTagDescriptor();
 
         public SpacePathingTriesXmlTagDescriptor SpacePathingTries { get; } = new SpacePathingTriesXmlTagDescriptor();
 
         public SpaceStaticObstacleAvoidanceBonusDistanceXmlTagDescriptor
-            SpaceStaticObstacleAvoidanceBonusDistance { get; } =
-            new SpaceStaticObstacleAvoidanceBonusDistanceXmlTagDescriptor();
+            SpaceStaticObstacleAvoidanceBonusDistance
+        { get; } = new SpaceStaticObstacleAvoidanceBonusDistanceXmlTagDescriptor();
 
         public MinObstacleCostSpaceXmlTagDescriptor MinObstacleCostSpace { get; } =
             new MinObstacleCostSpaceXmlTagDescriptor();
@@ -668,11 +666,9 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public EvilSideNameXmlTagDescriptor EvilSideName { get; } = new EvilSideNameXmlTagDescriptor();
         public CorruptSideNameXmlTagDescriptor CorruptSideName { get; } = new CorruptSideNameXmlTagDescriptor();
 
-        public GoodSideLeaderNameXmlTagDescriptor GoodSideLeaderName { get; } =
-            new GoodSideLeaderNameXmlTagDescriptor();
+        public GoodSideLeaderNameXmlTagDescriptor GoodSideLeaderName { get; } = new GoodSideLeaderNameXmlTagDescriptor();
 
-        public EvilSideLeaderNameXmlTagDescriptor EvilSideLeaderName { get; } =
-            new EvilSideLeaderNameXmlTagDescriptor();
+        public EvilSideLeaderNameXmlTagDescriptor EvilSideLeaderName { get; } = new EvilSideLeaderNameXmlTagDescriptor();
 
         public CorruptSideLeaderNameXmlTagDescriptor CorruptSideLeaderName { get; } =
             new CorruptSideLeaderNameXmlTagDescriptor();
@@ -701,8 +697,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public EncyclopediaMinDisplayTimeXmlTagDescriptor EncyclopediaMinDisplayTime { get; } =
             new EncyclopediaMinDisplayTimeXmlTagDescriptor();
 
-        public MinAccuracyForIconXmlTagDescriptor MinAccuracyForIcon { get; } =
-            new MinAccuracyForIconXmlTagDescriptor();
+        public MinAccuracyForIconXmlTagDescriptor MinAccuracyForIcon { get; } = new MinAccuracyForIconXmlTagDescriptor();
 
         public MinSightRangeForIconXmlTagDescriptor MinSightRangeForIcon { get; } =
             new MinSightRangeForIconXmlTagDescriptor();
@@ -716,8 +711,10 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public GUITacticalCountdownTimersScreenYXmlTagDescriptor GUITacticalCountdownTimersScreenY { get; } =
             new GUITacticalCountdownTimersScreenYXmlTagDescriptor();
 
-        public GUITacticalCountdownTimersScreenSpacingXmlTagDescriptor GUITacticalCountdownTimersScreenSpacing { get; }
-            = new GUITacticalCountdownTimersScreenSpacingXmlTagDescriptor();
+        public GUITacticalCountdownTimersScreenSpacingXmlTagDescriptor GUITacticalCountdownTimersScreenSpacing
+        {
+            get;
+        } = new GUITacticalCountdownTimersScreenSpacingXmlTagDescriptor();
 
         public GUIStrategicCountdownTimersScreenXXmlTagDescriptor GUIStrategicCountdownTimersScreenX { get; } =
             new GUIStrategicCountdownTimersScreenXXmlTagDescriptor();
@@ -726,8 +723,8 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new GUIStrategicCountdownTimersScreenYXmlTagDescriptor();
 
         public GUIStrategicCountdownTimersScreenSpacingXmlTagDescriptor
-            GUIStrategicCountdownTimersScreenSpacing { get; } =
-            new GUIStrategicCountdownTimersScreenSpacingXmlTagDescriptor();
+            GUIStrategicCountdownTimersScreenSpacing
+        { get; } = new GUIStrategicCountdownTimersScreenSpacingXmlTagDescriptor();
 
         public BeaconPlaceDelayXmlTagDescriptor BeaconPlaceDelay { get; } = new BeaconPlaceDelayXmlTagDescriptor();
 
@@ -803,8 +800,8 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new ShouldSkipLandFormupXmlTagDescriptor();
 
         public ShouldInfantryTeamsSplitAcrossFormationsXmlTagDescriptor
-            ShouldInfantryTeamsSplitAcrossFormations { get; } =
-            new ShouldInfantryTeamsSplitAcrossFormationsXmlTagDescriptor();
+            ShouldInfantryTeamsSplitAcrossFormations
+        { get; } = new ShouldInfantryTeamsSplitAcrossFormationsXmlTagDescriptor();
 
         public VehicleFormationRecruitmentDistanceXmlTagDescriptor VehicleFormationRecruitmentDistance { get; } =
             new VehicleFormationRecruitmentDistanceXmlTagDescriptor();
@@ -849,8 +846,8 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new ApproximationForwardDistanceXmlTagDescriptor();
 
         public MinimumStoppedVsStoppedOverlapCoefficientXmlTagDescriptor
-            MinimumStoppedVsStoppedOverlapCoefficient { get; } =
-            new MinimumStoppedVsStoppedOverlapCoefficientXmlTagDescriptor();
+            MinimumStoppedVsStoppedOverlapCoefficient
+        { get; } = new MinimumStoppedVsStoppedOverlapCoefficientXmlTagDescriptor();
 
         public MovingVsMovingLookAheadTimeXmlTagDescriptor MovingVsMovingLookAheadTime { get; } =
             new MovingVsMovingLookAheadTimeXmlTagDescriptor();
@@ -1012,8 +1009,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public SpaceIdlePathCullCoefficientXmlTagDescriptor SpaceIdlePathCullCoefficient { get; } =
             new SpaceIdlePathCullCoefficientXmlTagDescriptor();
 
-        public IdleMovementFramesXmlTagDescriptor IdleMovementFrames { get; } =
-            new IdleMovementFramesXmlTagDescriptor();
+        public IdleMovementFramesXmlTagDescriptor IdleMovementFrames { get; } = new IdleMovementFramesXmlTagDescriptor();
 
         public GripperCombatGridSnapDistanceXmlTagDescriptor GripperCombatGridSnapDistance { get; } =
             new GripperCombatGridSnapDistanceXmlTagDescriptor();
@@ -1045,11 +1041,9 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public DisplayBinkMovieFramesXmlTagDescriptor DisplayBinkMovieFrames { get; } =
             new DisplayBinkMovieFramesXmlTagDescriptor();
 
-        public MinSkirmishCreditsXmlTagDescriptor MinSkirmishCredits { get; } =
-            new MinSkirmishCreditsXmlTagDescriptor();
+        public MinSkirmishCreditsXmlTagDescriptor MinSkirmishCredits { get; } = new MinSkirmishCreditsXmlTagDescriptor();
 
-        public MaxSkirmishCreditsXmlTagDescriptor MaxSkirmishCredits { get; } =
-            new MaxSkirmishCreditsXmlTagDescriptor();
+        public MaxSkirmishCreditsXmlTagDescriptor MaxSkirmishCredits { get; } = new MaxSkirmishCreditsXmlTagDescriptor();
 
         public TacticalBuildTimeMultiplierXmlTagDescriptor TacticalBuildTimeMultiplier { get; } =
             new TacticalBuildTimeMultiplierXmlTagDescriptor();
@@ -1101,8 +1095,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public WinMessageColorXmlTagDescriptor WinMessageColor { get; } = new WinMessageColorXmlTagDescriptor();
         public LoseMessageColorXmlTagDescriptor LoseMessageColor { get; } = new LoseMessageColorXmlTagDescriptor();
 
-        public WinLoseMessageFontXmlTagDescriptor WinLoseMessageFont { get; } =
-            new WinLoseMessageFontXmlTagDescriptor();
+        public WinLoseMessageFontXmlTagDescriptor WinLoseMessageFont { get; } = new WinLoseMessageFontXmlTagDescriptor();
 
         public WinLoseMessageFontSizeXmlTagDescriptor WinLoseMessageFontSize { get; } =
             new WinLoseMessageFontSizeXmlTagDescriptor();
@@ -1190,8 +1183,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public MpDefaultAllowAutoResolveXmlTagDescriptor MPDefaultAllowAutoResolve { get; } =
             new MpDefaultAllowAutoResolveXmlTagDescriptor();
 
-        public MpDefaultGameTimerXmlTagDescriptor MPDefaultGameTimer { get; } =
-            new MpDefaultGameTimerXmlTagDescriptor();
+        public MpDefaultGameTimerXmlTagDescriptor MPDefaultGameTimer { get; } = new MpDefaultGameTimerXmlTagDescriptor();
 
         public MpDefaultWinConditionXmlTagDescriptor MPDefaultWinCondition { get; } =
             new MpDefaultWinConditionXmlTagDescriptor();
@@ -1224,8 +1216,8 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new MpDefaultSpaceTacticalWinConditionXmlTagDescriptor();
 
         public MultiplayerLosingTeamBonusCreditPercentageXmlTagDescriptor
-            MultiplayerLosingTeamBonusCreditPercentage { get; } =
-            new MultiplayerLosingTeamBonusCreditPercentageXmlTagDescriptor();
+            MultiplayerLosingTeamBonusCreditPercentage
+        { get; } = new MultiplayerLosingTeamBonusCreditPercentageXmlTagDescriptor();
 
         public MaxBuildQueueXmlTagDescriptor MaxBuildQueue { get; } = new MaxBuildQueueXmlTagDescriptor();
 
@@ -1267,8 +1259,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public UnderConstructionDamageMultiplierXmlTagDescriptor UnderConstructionDamageMultiplier { get; } =
             new UnderConstructionDamageMultiplierXmlTagDescriptor();
 
-        public SkirmishBuyCreditsXmlTagDescriptor SkirmishBuyCredits { get; } =
-            new SkirmishBuyCreditsXmlTagDescriptor();
+        public SkirmishBuyCreditsXmlTagDescriptor SkirmishBuyCredits { get; } = new SkirmishBuyCreditsXmlTagDescriptor();
 
         public SkirmishReinforcementDelayFramesXmlTagDescriptor SkirmishReinforcementDelayFrames { get; } =
             new SkirmishReinforcementDelayFramesXmlTagDescriptor();
@@ -1306,8 +1297,8 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new BaseShieldVulnerabilityModifierXmlTagDescriptor();
 
         public HardpointRechargeCutoffForOpportunityFireXmlTagDescriptor
-            HardpointRechargeCutoffForOpportunityFire { get; } =
-            new HardpointRechargeCutoffForOpportunityFireXmlTagDescriptor();
+            HardpointRechargeCutoffForOpportunityFire
+        { get; } = new HardpointRechargeCutoffForOpportunityFireXmlTagDescriptor();
 
         public BattleLoadPlanetViewportXmlTagDescriptor BattleLoadPlanetViewport { get; } =
             new BattleLoadPlanetViewportXmlTagDescriptor();
@@ -1367,8 +1358,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
 
         public HealthBarScaleXmlTagDescriptor HealthBarScale { get; } = new HealthBarScaleXmlTagDescriptor();
 
-        public LandHealthBarScaleXmlTagDescriptor LandHealthBarScale { get; } =
-            new LandHealthBarScaleXmlTagDescriptor();
+        public LandHealthBarScaleXmlTagDescriptor LandHealthBarScale { get; } = new LandHealthBarScaleXmlTagDescriptor();
 
         public MinHealthBarScaleXmlTagDescriptor MinHealthBarScale { get; } = new MinHealthBarScaleXmlTagDescriptor();
         public CreditsSpacingXmlTagDescriptor CreditsSpacing { get; } = new CreditsSpacingXmlTagDescriptor();
@@ -1378,8 +1368,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public CreditsRowsXmlTagDescriptor CreditsRows { get; } = new CreditsRowsXmlTagDescriptor();
         public CreditsTopColorXmlTagDescriptor CreditsTopColor { get; } = new CreditsTopColorXmlTagDescriptor();
 
-        public CreditsBottomColorXmlTagDescriptor CreditsBottomColor { get; } =
-            new CreditsBottomColorXmlTagDescriptor();
+        public CreditsBottomColorXmlTagDescriptor CreditsBottomColor { get; } = new CreditsBottomColorXmlTagDescriptor();
 
         public CreditsHeaderTopColorXmlTagDescriptor CreditsHeaderTopColor { get; } =
             new CreditsHeaderTopColorXmlTagDescriptor();
@@ -1391,8 +1380,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public CreditsLogo1NameXmlTagDescriptor CreditsLogo1Name { get; } = new CreditsLogo1NameXmlTagDescriptor();
         public CreditsLogo1WidthXmlTagDescriptor CreditsLogo1Width { get; } = new CreditsLogo1WidthXmlTagDescriptor();
 
-        public CreditsLogo1HeightXmlTagDescriptor CreditsLogo1Height { get; } =
-            new CreditsLogo1HeightXmlTagDescriptor();
+        public CreditsLogo1HeightXmlTagDescriptor CreditsLogo1Height { get; } = new CreditsLogo1HeightXmlTagDescriptor();
 
         public CreditsLogo1YOffsetXmlTagDescriptor CreditsLogo1YOffset { get; } =
             new CreditsLogo1YOffsetXmlTagDescriptor();
@@ -1400,8 +1388,7 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public CreditsLogo2NameXmlTagDescriptor CreditsLogo2Name { get; } = new CreditsLogo2NameXmlTagDescriptor();
         public CreditsLogo2WidthXmlTagDescriptor CreditsLogo2Width { get; } = new CreditsLogo2WidthXmlTagDescriptor();
 
-        public CreditsLogo2HeightXmlTagDescriptor CreditsLogo2Height { get; } =
-            new CreditsLogo2HeightXmlTagDescriptor();
+        public CreditsLogo2HeightXmlTagDescriptor CreditsLogo2Height { get; } = new CreditsLogo2HeightXmlTagDescriptor();
 
         public CreditsLogo2YOffsetXmlTagDescriptor CreditsLogo2YOffset { get; } =
             new CreditsLogo2YOffsetXmlTagDescriptor();
@@ -1409,16 +1396,14 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
         public CreditsLogo3NameXmlTagDescriptor CreditsLogo3Name { get; } = new CreditsLogo3NameXmlTagDescriptor();
         public CreditsLogo3WidthXmlTagDescriptor CreditsLogo3Width { get; } = new CreditsLogo3WidthXmlTagDescriptor();
 
-        public CreditsLogo3HeightXmlTagDescriptor CreditsLogo3Height { get; } =
-            new CreditsLogo3HeightXmlTagDescriptor();
+        public CreditsLogo3HeightXmlTagDescriptor CreditsLogo3Height { get; } = new CreditsLogo3HeightXmlTagDescriptor();
 
         public CreditsLogo3YOffsetXmlTagDescriptor CreditsLogo3YOffset { get; } =
             new CreditsLogo3YOffsetXmlTagDescriptor();
 
         public TractorBeamWidthXmlTagDescriptor TractorBeamWidth { get; } = new TractorBeamWidthXmlTagDescriptor();
 
-        public TractorBeamTextureXmlTagDescriptor TractorBeamTexture { get; } =
-            new TractorBeamTextureXmlTagDescriptor();
+        public TractorBeamTextureXmlTagDescriptor TractorBeamTexture { get; } = new TractorBeamTextureXmlTagDescriptor();
 
         public TractorBeamFramesXmlTagDescriptor TractorBeamFrames { get; } = new TractorBeamFramesXmlTagDescriptor();
         public TractorBeamColorXmlTagDescriptor TractorBeamColor { get; } = new TractorBeamColorXmlTagDescriptor();
@@ -1431,14 +1416,15 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new TeamHealthbarOffsetXmlTagDescriptor();
 
         public ObjectVisualStatusParticleAttachBoneNamesXmlTagDescriptor
-            ObjectVisualStatusParticleAttachBoneNames { get; } =
-            new ObjectVisualStatusParticleAttachBoneNamesXmlTagDescriptor();
+            ObjectVisualStatusParticleAttachBoneNames
+        { get; } = new ObjectVisualStatusParticleAttachBoneNamesXmlTagDescriptor();
 
-        public MessageOfTheDayURLXmlTagDescriptor MessageOfTheDayURL { get; } =
-            new MessageOfTheDayURLXmlTagDescriptor();
+        public MessageOfTheDayURLXmlTagDescriptor MessageOfTheDayURL { get; } = new MessageOfTheDayURLXmlTagDescriptor();
 
-        public ControlPointDominationVictoryTimeInSecsXmlTagDescriptor ControlPointDominationVictoryTimeInSecs { get; }
-            = new ControlPointDominationVictoryTimeInSecsXmlTagDescriptor();
+        public ControlPointDominationVictoryTimeInSecsXmlTagDescriptor ControlPointDominationVictoryTimeInSecs
+        {
+            get;
+        } = new ControlPointDominationVictoryTimeInSecsXmlTagDescriptor();
 
         public CameraFXManagerLetterboxHeightXmlTagDescriptor CameraFXManagerLetterboxHeight { get; } =
             new CameraFXManagerLetterboxHeightXmlTagDescriptor();
@@ -1515,8 +1501,8 @@ namespace PG.StarWarsGame.Files.Xml.Commons.Xml.Files.Engine.FoC
             new SpaceCaptureAllowedCountdownSecondsXmlTagDescriptor();
 
         public SpaceReinforcementCollisionCheckDistanceXmlTagDescriptor
-            SpaceReinforcementCollisionCheckDistance { get; } =
-            new SpaceReinforcementCollisionCheckDistanceXmlTagDescriptor();
+            SpaceReinforcementCollisionCheckDistance
+        { get; } = new SpaceReinforcementCollisionCheckDistanceXmlTagDescriptor();
 
         public HealthBarSpacingXmlTagDescriptor HealthBarSpacing { get; } = new HealthBarSpacingXmlTagDescriptor();
 

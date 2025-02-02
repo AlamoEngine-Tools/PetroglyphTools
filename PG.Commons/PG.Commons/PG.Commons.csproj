@@ -1,18 +1,35 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<PackageVersion>1.0.0</PackageVersion>
+		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Product>PG.Commons</Product>
 		<Title>PG.Commons</Title>
-		<PackageId>PG.Commons</PackageId>
+		<Description>Provides fundamental classes and interfaces for working with Petroglyph's Star Wars Empire At War game engine.</Description>
+		<PackageId>AlamoEngineTools.PG.Commons</PackageId>
+		<PackageTags>alamo,petroglyph,glyphx</PackageTags>
+		<NeutralLanguage>en</NeutralLanguage>
 	</PropertyGroup>
 	<PropertyGroup>
-		<AssemblyVersion>1.0.0.0</AssemblyVersion>
-		<InformationalVersion>1.0.0-alpha.1</InformationalVersion>
-		<FileVersion>1.0.0.0</FileVersion>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<InheritDocEnabled>true</InheritDocEnabled>
+	</PropertyGroup>
+	<PropertyGroup>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
+		<PackageReference Condition="$(TargetFramework) == 'netstandard2.0'" Include="Nullable" Version="1.3.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="AnakinRaW.CommonUtilities" Version="12.0.91" />
+		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="12.0.91" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
+		<PackageReference Include="System.IO.Hashing" Version="9.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Condition="$(TargetFramework) == 'netstandard2.0'" Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
 	</ItemGroup>
 </Project>

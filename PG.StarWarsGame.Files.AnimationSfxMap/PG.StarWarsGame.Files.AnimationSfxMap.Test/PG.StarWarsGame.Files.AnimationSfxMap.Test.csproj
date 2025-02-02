@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Title>PG.StarWarsGame.Files.AnimationSfxMap.Test</Title>
+    <PackageId>PG.StarWarsGame.Files.AnimationSfxMap.Test</PackageId>
+    <Authors>Alamo Engine Tools and Contributors</Authors>
+    <Copyright>Copyright © 2021 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Company>Alamo Engine Tools</Company>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Product>PG.StarWarsGame.Files.AnimationSfxMap.Test 1.0.0-alpha.1</Product>
+    <InformationalVersion>1.0.0-alpha.1</InformationalVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.IO.Abstractions" Version="19.2.4" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PG.StarWarsGame.Files.AnimationSfxMap\PG.StarWarsGame.Files.AnimationSfxMap.csproj" />
+  </ItemGroup>  
+  <ItemGroup>    
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+</Project>

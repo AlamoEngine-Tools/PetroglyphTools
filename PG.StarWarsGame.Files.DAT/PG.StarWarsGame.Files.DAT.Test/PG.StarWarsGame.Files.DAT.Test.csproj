@@ -1,30 +1,56 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="coverlet.msbuild" Version="6.0.0">
+	  <None Remove="Resources\Files\creditstext_english.dat" />
+	  <None Remove="Resources\Files\Empty.DAT" />
+	  <None Remove="Resources\Files\EmptyKeyWithValue.dat" />
+	  <None Remove="Resources\Files\Index_WithDuplicates.DAT" />
+	  <None Remove="Resources\Files\mastertextfile_english.dat" />
+	  <None Remove="Resources\Files\SingleEmptyEntry.dat" />
+	  <None Remove="Resources\Files\SingleEntry.DAT" />
+	  <None Remove="Resources\Files\Sorted_TwoEntries.DAT" />
+	  <None Remove="Resources\Files\Sorted_TwoEntriesDuplicate.DAT" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Files\creditstext_english.dat" />
+	  <EmbeddedResource Include="Resources\Files\Index_WithDuplicates.dat" />
+	  <EmbeddedResource Include="Resources\Files\mastertextfile_english.dat" />
+	  <EmbeddedResource Include="Resources\Files\Sorted_TwoEntriesDuplicate.dat" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Files\Empty.dat" />
+	  <EmbeddedResource Include="Resources\Files\EmptyKeyWithValue.dat" />
+	  <EmbeddedResource Include="Resources\Files\SingleEmptyEntry.dat" />
+	  <EmbeddedResource Include="Resources\Files\SingleEntry.dat" />
+	  <EmbeddedResource Include="Resources\Files\Sorted_TwoEntries.dat" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="coverlet.msbuild" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-		<PackageReference Include="coverlet.collector" Version="6.0.0">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
-		<PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.29" />
+		<PackageReference Include="Testably.Abstractions.Testing" Version="4.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
+		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.Test\PG.StarWarsGame.Files.Test.csproj" />
+		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
 	</ItemGroup>
 </Project>

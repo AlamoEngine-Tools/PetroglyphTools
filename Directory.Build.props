@@ -8,13 +8,15 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<Authors>Alamo Engine Tools and Contributors</Authors>
-		<Copyright>Copyright © 2023 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2025 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
 		<PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
-		<PackageLicenseUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools/blob/master/LICENSE</PackageLicenseUrl>
+		<LicenseFile>$(MSBuildThisFileDirectory)LICENSE</LicenseFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Company>Alamo Engine Tools</Company>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>aet.png</PackageIcon>
 	</PropertyGroup>
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
@@ -22,12 +24,20 @@
 		<Nullable>enable</Nullable>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 	</PropertyGroup>
+	<ItemGroup Condition="'$(IsPackable)' == 'true'">
+		<None Include="$(LicenseFile)" Pack="true" PackagePath=""/>
+		<None Include="$(MSBuildThisFileDirectory)aet.png" Pack="true" PackagePath=""/>
+		<None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
+	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="SauceControl.InheritDoc" Version="1.3.0" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+		<PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
+			<PrivateAssets>all</PrivateAssets>
+			<Version>3.7.115</Version>
+		</PackageReference>
+		<PackageReference Include="SauceControl.InheritDoc" Version="2.0.2" PrivateAssets="all"/>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
 </Project>

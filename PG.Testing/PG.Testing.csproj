@@ -11,7 +11,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
 		<PackageReference Include="xunit" Version="2.9.3" />
 		<PackageReference Include="Testably.Abstractions.Testing" Version="4.0.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />

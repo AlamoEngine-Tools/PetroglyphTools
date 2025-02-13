@@ -17,7 +17,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
@@ -26,7 +26,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Testably.Abstractions.Testing" Version="4.0.0" />
-		<PackageReference Include="System.IO.Hashing" Version="9.0.1" />
+		<PackageReference Include="System.IO.Hashing" Version="9.0.2" />
 		<PackageReference Include="xunit" Version="2.9.3" />
 	</ItemGroup>
 	<ItemGroup>

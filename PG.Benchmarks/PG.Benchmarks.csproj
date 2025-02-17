@@ -20,7 +20,7 @@
 	<ItemGroup>
 	  <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
 	  <PackageReference Include="System.Buffers" Version="4.6.0" />
 	  <PackageReference Include="Testably.Abstractions.Testing" Version="4.0.0" />
 	</ItemGroup>

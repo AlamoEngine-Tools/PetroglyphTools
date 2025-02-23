@@ -3,6 +3,8 @@
 		<IsPackable>false</IsPackable>
 		<TargetFrameworks>net8.0</TargetFrameworks>
 		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net48</TargetFrameworks>
+		<PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MTD.Test</PackageId>
+		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Resources\Files\MT_COMMANDBAR.MTD" />

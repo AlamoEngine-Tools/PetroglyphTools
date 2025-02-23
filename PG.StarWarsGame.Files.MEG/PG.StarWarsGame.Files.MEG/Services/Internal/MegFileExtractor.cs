@@ -35,7 +35,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
             if (string.IsNullOrEmpty(fileName))
                 throw new InvalidOperationException("Empty file names are not allowed!");
 
-            return Path.GetFullPath(Path.Combine(absoluteRootPath, fileName));
+            return FileSystem.Path.GetFullPath(FileSystem.Path.Combine(absoluteRootPath, fileName));
         }
 
         if (FileSystem.Path.IsPathRooted(entryPath))
@@ -44,7 +44,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
             return FileSystem.Path.GetFullPath(entryPath);
         }
 
-        return Path.GetFullPath(Path.Combine(absoluteRootPath, dataEntry.FilePath));
+        return FileSystem.Path.GetFullPath(FileSystem.Path.Combine(absoluteRootPath, dataEntry.FilePath));
     }
 
     /// <inheritdoc/>

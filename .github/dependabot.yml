@@ -5,7 +5,24 @@
 
 version: 2
 updates:
-  - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
+    target-branch: "develop"
+
+
+  - package-ecosystem: "nuget"
+    directory: "/" 
+    schedule:
+      interval: "daily"
+    target-branch: "develop"
+    open-pull-requests-limit: 1
+    groups:
+      all-deps:
+        patterns:
+          - "*"

@@ -26,7 +26,7 @@ internal sealed class PetroglyphRelativeDataEntryPathResolver(IServiceProvider s
         if (pathSpan.Length == 0)
             return null;
 
-        if (_fileSystem.Path.HasTrailingDirectorySeparator(pathSpan!))
+        if (_fileSystem.Path.HasTrailingDirectorySeparator(pathSpan))
             return null;
 
         var relativePath = _fileSystem.Path.GetRelativePathEx(fullBase, pathSpan.ToString());

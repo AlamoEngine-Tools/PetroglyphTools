@@ -107,7 +107,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <code>"../xml/file.xml" --> null</code>
     /// </summary>
     /// <remarks>The returned path is neither fully normalized nor validated by the rules of this instance.</remarks>
-    /// <param name="path">A path to get the relative path from.</param>
+    /// <param name="path">The path to get the relative path from.</param>
     /// <returns>The relative path.</returns>
     public string? ResolveEntryPath(string? path)
     {

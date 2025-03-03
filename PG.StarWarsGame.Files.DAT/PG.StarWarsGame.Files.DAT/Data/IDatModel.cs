@@ -72,17 +72,17 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     bool ContainsKey(Crc32 key);
 
     /// <summary>
-    /// Gets a list of data entries with the matching CRC32 checksum or an empty list, if the CRC32 checksum is not found.
+    /// Gets a list of entries with the matching CRC32 checksum or an empty list, if the CRC32 checksum is not found.
     /// </summary>
     /// <param name="key">The key to match.</param>
-    /// <returns>List of matching data entries.</returns>
+    /// <returns>List of matching entries.</returns>
     ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);
 
     /// <summary>
-    /// Gets a list of data entries with the matching key or an empty list, if the key is not found.
+    /// Gets a list of entries with the matching key or an empty list, if the key is not found.
     /// </summary>
     /// <param name="key">The key to match.</param>
-    /// <returns>List of matching data entries.</returns>
+    /// <returns>List of matching entries.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
     ReadOnlyFrugalList<DatStringEntry> EntriesWithKey(string key);
 

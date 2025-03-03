@@ -26,7 +26,7 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     /// <param name="crc">The CRC to match.</param>
     /// <returns>The last entry in the <see cref="IMegaTextureDirectory"/> with the specified checksum.</returns>
     /// <exception cref="KeyNotFoundException"><paramref name="crc"/> is not found in the <see cref="IMegaTextureDirectory"/>.</exception>
-    MegaTextureFileIndex? LastEntryWithCrc(Crc32 crc);
+    MegaTextureFileIndex LastEntryWithCrc(Crc32 crc);
 
     /// <summary>
     /// Gets the last entry associated with the specified checksum.

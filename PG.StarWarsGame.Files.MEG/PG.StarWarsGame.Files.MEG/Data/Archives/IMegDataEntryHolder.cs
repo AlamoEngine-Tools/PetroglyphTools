@@ -42,7 +42,7 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// <param name="crc">The CRC to match.</param>
     /// <returns>The first entry in the <see cref="IMegDataEntryHolder{T}"/> with the specified checksum.</returns>
     /// <exception cref="KeyNotFoundException"><paramref name="crc"/> is not found in the <see cref="IMegDataEntryHolder{T}"/>.</exception>
-    T? FirstEntryWithCrc(Crc32 crc);
+    T FirstEntryWithCrc(Crc32 crc);
 
     /// <summary>
     /// Tries to find any <typeparamref name="T"/> by matching the specified search pattern.

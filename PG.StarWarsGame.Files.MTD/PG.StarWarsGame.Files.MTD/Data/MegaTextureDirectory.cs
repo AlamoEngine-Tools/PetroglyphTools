@@ -27,9 +27,9 @@ internal class MegaTextureDirectory : IMegaTextureDirectory
         return _filesIndices.ContainsKey(crc32);
     }
 
-    public MegaTextureFileIndex? LastEntryWithCrc(Crc32 crc)
+    public MegaTextureFileIndex LastEntryWithCrc(Crc32 crc)
     {
-        return _filesIndices.TryGetLastValue(crc, out var entry) ? entry : null;
+        return _filesIndices.GetLastValue(crc);
     }
 
     public bool TryGetEntry(Crc32 crc32, out MegaTextureFileIndex entry)

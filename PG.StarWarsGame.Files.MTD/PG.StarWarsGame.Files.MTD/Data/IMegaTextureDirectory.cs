@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.MTD.Data;
@@ -20,7 +21,15 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     bool Contains(Crc32 crc32);
 
     /// <summary>
-    /// Gets the entry associated with the specified checksum.
+    /// Get the last data entry with the matching CRC32 checksum.
+    /// </summary>
+    /// <param name="crc">The CRC to match.</param>
+    /// <returns>The last entry in the <see cref="IMegaTextureDirectory"/> with the specified checksum.</returns>
+    /// <exception cref="KeyNotFoundException"><paramref name="crc"/> is not found in the <see cref="IMegaTextureDirectory"/>.</exception>
+    MegaTextureFileIndex? LastEntryWithCrc(Crc32 crc);
+
+    /// <summary>
+    /// Gets the last entry associated with the specified checksum.
     /// </summary>
     /// <param name="crc32">The checksum of the entry to get.</param>
     /// <param name="entry">
@@ -29,4 +38,11 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     /// This parameter is passed uninitialized.</param>
     /// <returns></returns>
     bool TryGetEntry(Crc32 crc32, [NotNullWhen(true)] out MegaTextureFileIndex? entry);
+
+    /// <summary>
+    /// Gets a list of data entries with the matching CRC32 checksum or an empty list, if the CRC32 checksum is not found. 
+    /// </summary>
+    /// <param name="crc">The CRC to match.</param>
+    /// <returns>List of matching data entries. </returns>
+    ReadOnlyFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc);
 }

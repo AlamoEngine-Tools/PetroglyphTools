@@ -30,17 +30,18 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     int IndexOf(T entry);
 
     /// <summary>
-    /// Gets a list of data entries with the matching CRC32 checksum. 
+    /// Gets a list of data entries with the matching CRC32 checksum or an empty list, if the CRC32 checksum is not found.
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
     /// <returns>List of matching data entries. </returns>
     ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc);
 
     /// <summary>
-    /// Get the last data entry with the matching CRC32 checksum or <see langword="null"/> if the no entry is found.
+    /// Get the first data entry with the matching CRC32 checksum.
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
-    /// <returns><see langword="null"/> if no entry is found; otherwise the last entry in the <see cref="IMegDataEntryHolder{T}"/>.</returns>
+    /// <returns>The first entry in the <see cref="IMegDataEntryHolder{T}"/> with the specified checksum.</returns>
+    /// <exception cref="KeyNotFoundException"><paramref name="crc"/> is not found in the <see cref="IMegDataEntryHolder{T}"/>.</exception>
     T? FirstEntryWithCrc(Crc32 crc);
 
     /// <summary>

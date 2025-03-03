@@ -10,13 +10,26 @@ namespace PG.StarWarsGame.Files.MTD.Test.Data;
 public class MegaTextureDirectoryTest
 {
     [Fact]
-    public void Ctor_Duplicates_Throws()
+    public void DuplicatesEntriesSupport()
     {
-        Assert.Throws<DuplicateMtdEntryException>(() => new MegaTextureDirectory(new List<MegaTextureFileIndex>
+        var mtd = new MegaTextureDirectory(new List<MegaTextureFileIndex>
         {
             new("abc", new Crc32(123), Rectangle.Empty, true),
             new("def", new Crc32(123), new Rectangle(1, 2, 3, 4), false),
-        }));
+        });
+
+        Assert.Equal(2, mtd.Count);
+        var entries = mtd.EntriesWithCrc(new Crc32(123));
+        Assert.Equal(2, entries.Count);
+        Assert.Equal("abc", entries[0].FileName);
+        Assert.Equal("def", entries[1].FileName);
+
+        Assert.True(mtd.Contains(new Crc32(123)));
+
+        Assert.True(mtd.TryGetEntry(new Crc32(123), out var last));
+        Assert.Equal("def", last.FileName);
+
+        Assert.Equal("def", mtd.LastEntryWithCrc(new Crc32(123))!.FileName);
     }
 
     [Fact]
@@ -64,7 +77,7 @@ public class MegaTextureDirectoryTest
     }
 
     [Fact]
-    public void TryGet()
+    public void TryGetEntry()
     {
         var entry1 = new MegaTextureFileIndex("entry1", new Crc32(123), Rectangle.Empty, true);
         var entry2 = new MegaTextureFileIndex("entry2", new Crc32(456), Rectangle.Empty, true);
@@ -83,5 +96,22 @@ public class MegaTextureDirectoryTest
 
         Assert.False(mtd.TryGetEntry(new Crc32(789), out actual));
         Assert.Null(actual);
+    }
+
+    [Fact]
+    public void EntriesWithCrc()
+    {
+        var entry1 = new MegaTextureFileIndex("entry1", new Crc32(123), Rectangle.Empty, true);
+        var entry2 = new MegaTextureFileIndex("entry2", new Crc32(456), Rectangle.Empty, true);
+
+        var entryList = new List<MegaTextureFileIndex> { entry1, entry2 };
+
+        var mtd = new MegaTextureDirectory(entryList);
+
+        Assert.Empty(mtd.EntriesWithCrc(new Crc32(0)));
+        var e1 = Assert.Single(mtd.EntriesWithCrc(new Crc32(123)));
+        Assert.Equal(entry1, e1);
+        var e2 = Assert.Single(mtd.EntriesWithCrc(new Crc32(456)));
+        Assert.Equal(entry2, e2);
     }
 }

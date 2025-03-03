@@ -25,7 +25,7 @@ public class MtdBinaryConverterTest : CommonMtdTestBase
     }
 
     [Fact]
-    public void BinaryToModel_DuplicateEntriesByName_ThrowsBinaryCorruptedException()
+    public void BinaryToModel_DuplicateEntriesByName()
     {
         var header = new MtdHeader(2);
         var entries = new List<MtdBinaryFileInfo>
@@ -33,7 +33,10 @@ public class MtdBinaryConverterTest : CommonMtdTestBase
             new("name", 1, 2, 3, 4, true),
             new("name", 4, 3, 2, 1, false)
         };
-        Assert.Throws<BinaryCorruptedException>(() => _binaryConverter.BinaryToModel(new MtdBinaryFile(header, new BinaryTable<MtdBinaryFileInfo>(entries))));
+
+        var model = _binaryConverter.BinaryToModel(new MtdBinaryFile(header,
+            new BinaryTable<MtdBinaryFileInfo>(entries)));
+        Assert.Equal(2, model.Count);
     }
 
     [Fact]

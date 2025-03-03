@@ -44,14 +44,7 @@ internal class MtdBinaryConverter(IServiceProvider serviceProvider): ServiceBase
         if (binary == null) 
             throw new ArgumentNullException(nameof(binary));
         var entries = binary.Items.Select(CreateEntryFromBinary);
-        try
-        {
-            return new MegaTextureDirectory(entries);
-        }
-        catch (DuplicateMtdEntryException e)
-        {
-            throw new BinaryCorruptedException(e.Message, e);
-        }
+        return new MegaTextureDirectory(entries);
     }
 
     private MegaTextureFileIndex CreateEntryFromBinary(MtdBinaryFileInfo x)

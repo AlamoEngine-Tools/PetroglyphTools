@@ -3,26 +3,23 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using AnakinRaW.CommonUtilities.Collections;
+using PG.Commons.Collections;
 using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.MTD.Data;
 
 internal class MegaTextureDirectory : IMegaTextureDirectory
 {
-    private readonly Dictionary<Crc32, MegaTextureFileIndex> _filesIndices;
+    private readonly ValueListDictionary<Crc32, MegaTextureFileIndex> _filesIndices;
 
     public int Count => _filesIndices.Count;
 
     public MegaTextureDirectory(IEnumerable<MegaTextureFileIndex> indices)
     {
-        _filesIndices = new Dictionary<Crc32, MegaTextureFileIndex>();
-
-        foreach (var fileIndex in indices)
-        {
-            if (_filesIndices.ContainsKey(fileIndex.Crc32))
-                throw new DuplicateMtdEntryException("MTD files must not have entries with the same name CRC32 value.");
-            _filesIndices[fileIndex.Crc32] = fileIndex;
-        }
+        _filesIndices = new ValueListDictionary<Crc32, MegaTextureFileIndex>();
+        foreach (var fileIndex in indices) 
+            _filesIndices.Add(fileIndex.Crc32, fileIndex);
     }
 
     public bool Contains(Crc32 crc32)
@@ -30,9 +27,20 @@ internal class MegaTextureDirectory : IMegaTextureDirectory
         return _filesIndices.ContainsKey(crc32);
     }
 
+    public MegaTextureFileIndex? LastEntryWithCrc(Crc32 crc)
+    {
+        return _filesIndices.TryGetLastValue(crc, out var entry) ? entry : null;
+    }
+
     public bool TryGetEntry(Crc32 crc32, out MegaTextureFileIndex entry)
     {
-        return _filesIndices.TryGetValue(crc32, out entry);
+        return _filesIndices.TryGetLastValue(crc32, out entry);
+    }
+
+    public ReadOnlyFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc)
+    {
+        _filesIndices.TryGetValues(crc, out var list);
+        return list;
     }
 
     public IEnumerator<MegaTextureFileIndex> GetEnumerator()

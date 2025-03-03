@@ -91,4 +91,17 @@ public class MtdFileServiceTest : CommonMtdTestBase
             expected.AsserEquals(actual);
         }
     }
+
+    [Fact]
+    public void MTD_FileWithCollision()
+    {
+        var testStream = new TestMegDataStream("MT_COMMANDBAR.MTD", MtdTestData.MtdWithKnownCollision());
+        var fileWithCollision = _mtdFileService.Load(testStream);
+
+        var expectedCrc = new Crc32(3596410486);
+
+        Assert.Equal(2, fileWithCollision.Content.Count);
+        Assert.True(fileWithCollision.Content.Contains(expectedCrc));
+        Assert.Equal(2, fileWithCollision.Content.EntriesWithCrc(expectedCrc).Count);
+    }
 }

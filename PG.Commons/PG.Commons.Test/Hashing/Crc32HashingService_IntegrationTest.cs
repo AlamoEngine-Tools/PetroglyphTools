@@ -95,4 +95,13 @@ public class Crc32HashingService_IntegrationTest : CommonTestBase
         crc2 = _crc32HashingService.GetCrc32Upper("ü".AsSpan(), Encoding.Unicode);
         Assert.NotEqual(crc1, crc2);
     }
+
+    [Fact]
+    public void GetChecksum_Collision()
+    {
+        // The following entries cause a collision in the CRC32 checksum
+        var crc1 = _crc32HashingService.GetCrc32("I_BUTTON_YZU_WARLORD.TGA", Encoding.ASCII);
+        var crc2 = _crc32HashingService.GetCrc32("I_BUTTON_AUREK_STARFIGHTER_THREE.TGA", Encoding.ASCII);
+        Assert.Equal(crc1, crc2);
+    }
 }

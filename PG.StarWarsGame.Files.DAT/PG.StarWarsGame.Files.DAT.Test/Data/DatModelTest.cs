@@ -62,6 +62,8 @@ public abstract class DatModelTest
 
         var model = CreateModel(entries);
 
+        Assert.Throws<ArgumentNullException>(() => model.ContainsKey(null!));
+
         Assert.True(model.ContainsKey("1"));
         Assert.True(model.ContainsKey(new Crc32(1)));
 
@@ -83,6 +85,8 @@ public abstract class DatModelTest
 
         var model = CreateModel(entries);
 
+        Assert.Throws<ArgumentNullException>(() => model.GetValue(null!));
+
         Assert.Equal("value1", model.GetValue("1"));
         model.TryGetValue("1", out var value);
         Assert.Equal("value1", value);
@@ -90,7 +94,6 @@ public abstract class DatModelTest
         Assert.Equal("value1", model.GetValue(new Crc32(1)));
         model.TryGetValue(new Crc32(1), out value);
         Assert.Equal("value1", value);
-
 
         Assert.Throws<KeyNotFoundException>(() => model.GetValue("11"));
         model.TryGetValue("11", out value);
@@ -121,6 +124,8 @@ public abstract class DatModelTest
 
         var noEntries = model.EntriesWithKey("11");
         Assert.Equal([], noEntries.ToList());
+
+        Assert.Throws<ArgumentNullException>(() => model.EntriesWithKey(null!));
     }
 
     [Fact]
@@ -143,5 +148,6 @@ public abstract class DatModelTest
         Assert.Equal(new DatStringEntry("1", new Crc32(1), "value1"), value);
 
         Assert.Throws<KeyNotFoundException>(() => model.FirstEntryWithKey("99"));
+        Assert.Throws<ArgumentNullException>(() => model.FirstEntryWithKey(null!));
     }
 }

@@ -121,6 +121,16 @@ public class ValueListDictionary<TKey, TValue> : IValueListDictionary<TKey, TVal
     }
 
     /// <inheritdoc />
+    public void Clear()
+    {
+        _insertionTrackingList.Clear();
+        _singleValueDictionary.Clear();
+        foreach (var list in _multiValueDictionary.Values) 
+            list.Clear();
+        _multiValueDictionary.Clear();
+    }
+
+    /// <inheritdoc />
     public TValue GetLastValue(TKey key)
     {
         if (_singleValueDictionary.TryGetValue(key, out var value))

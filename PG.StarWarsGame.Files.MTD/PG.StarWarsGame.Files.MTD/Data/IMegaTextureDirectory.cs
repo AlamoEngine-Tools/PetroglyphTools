@@ -36,13 +36,13 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     /// When this method returns, the entry associated with the specified key, if the key is found;
     /// otherwise, the default value for the type of the <paramref name="entry"/> parameter.
     /// This parameter is passed uninitialized.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the <see cref="IMegaTextureDirectory"/> contains an element with the specified checksum; otherwise, <see langword="false"/>.</returns>
     bool TryGetEntry(Crc32 crc32, [NotNullWhen(true)] out MegaTextureFileIndex? entry);
 
     /// <summary>
     /// Gets a list of data entries with the matching CRC32 checksum or an empty list, if the CRC32 checksum is not found. 
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
-    /// <returns>List of matching data entries. </returns>
+    /// <returns>List of matching data entries.</returns>
     ReadOnlyFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc);
 }

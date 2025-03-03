@@ -76,7 +76,7 @@ public class MegDataEntryHolderBaseTest
     }
 
     [Fact]
-    public void EntriesWithCrc_LastEntryWithCrc()
+    public void EntriesWithCrc_FirstEntryWithCrc()
     {
         var entry1 = MegDataEntryTest.CreateEntry("a", new Crc32(0));
         var entry2 = MegDataEntryTest.CreateEntry("b", new Crc32(0));
@@ -105,8 +105,7 @@ public class MegDataEntryHolderBaseTest
         var first = archive.FirstEntryWithCrc(new Crc32(0));
         Assert.Equal("a", first!.FilePath);
 
-        var firstButNone = archive.FirstEntryWithCrc(new Crc32(-1));
-        Assert.Null(firstButNone);
+        Assert.Throws<KeyNotFoundException>(() => archive.FirstEntryWithCrc(new Crc32(-1)));
     }
 
     [Theory]

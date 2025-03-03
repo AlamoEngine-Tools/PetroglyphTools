@@ -433,4 +433,23 @@ public class ValueListDictionaryTests
         Assert.Equal(0, values[0]);
         Assert.Equal(largeCount - 1, values[values.Count - 1]); // Last value check
     }
+
+    [Fact]
+    public void Clear()
+    {
+        var dictionary = new ValueListDictionary<string, int>();
+        dictionary.Clear();
+        Assert.Equal(0, dictionary.Count);
+
+        dictionary.Add("a", 1);
+        dictionary.Add("a", 2);
+        dictionary.Add("c", 2);
+
+        Assert.Equal(3, dictionary.Count);
+        
+        dictionary.Clear();
+        Assert.Equal(0, dictionary.Count);
+        Assert.False(dictionary.TryGetValues("a", out _));
+        Assert.False(dictionary.TryGetValues("c", out _));
+    }
 }

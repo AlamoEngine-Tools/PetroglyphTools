@@ -17,4 +17,9 @@ public interface IValueListDictionary<TKey, TValue> : IReadOnlyValueListDictiona
     /// <param name="value">The object to use as the value of the element to add.</param>
     /// <returns><see langword="true"/> if values of the same <paramref name="key"/> already existed; otherwise, <see langword="false"/>.</returns>
     bool Add(TKey key, TValue value);
+
+    /// <summary>
+    /// Removes all keys and values from the <see cref="IValueListDictionary{TKey,TValue}"/>.
+    /// </summary>
+    void Clear();
 }

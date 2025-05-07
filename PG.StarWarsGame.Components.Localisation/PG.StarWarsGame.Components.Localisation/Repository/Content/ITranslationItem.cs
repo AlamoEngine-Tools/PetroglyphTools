@@ -8,7 +8,7 @@ public interface ITranslationItem
     /// <summary>
     ///     ID
     /// </summary>
-    ITranslationItemId ItemId { get; }
+    ITranslationItemId? ItemId { get; }
 
     /// <summary>
     ///     The acutal translation content.

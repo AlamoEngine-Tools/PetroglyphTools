@@ -1,7 +1,6 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Extensibility;
@@ -33,9 +32,9 @@ public class XmlExportHandlerTest
     {
         var repository = new InMemoryOrderedTranslationRepository();
         Assert.Empty(repository.Content);
-        const string testExportEmpty = "./test_export_empty";
-        const string testExportEmptyFile = "EMPTY_EXPORT";
-        var strategy = new XmlOutputStrategy(_fileSystem.DirectoryInfo.New(testExportEmpty), testExportEmptyFile);
+        const string exportBase = "./test_export_empty";
+        const string exportBaseFile = "EMPTY_EXPORT";
+        var strategy = new XmlOutputStrategy(_fileSystem.DirectoryInfo.New(exportBase), exportBaseFile);
         _handler.Export(strategy, repository);
         var info = _fileSystem.FileInfo.New(strategy.FilePath);
         Assert.False(info.Exists);
@@ -47,9 +46,9 @@ public class XmlExportHandlerTest
         var repository = new InMemoryOrderedTranslationRepository();
         repository.AddLanguage(new EnglishAlamoLanguageDefinition());
         repository.AddLanguage(new GermanAlamoLanguageDefinition());
-        const string testExportEmpty = "./test_export_languages_only";
-        const string testExportEmptyFile = "EMPTY_LANGUAGES";
-        var strategy = new XmlOutputStrategy(_fileSystem.DirectoryInfo.New(testExportEmpty), testExportEmptyFile);
+        const string exportBase = "./test_export_languages_only";
+        const string exportBaseFile = "EMPTY_LANGUAGES";
+        var strategy = new XmlOutputStrategy(_fileSystem.DirectoryInfo.New(exportBase), exportBaseFile);
         _handler.Export(strategy, repository);
         var info = _fileSystem.FileInfo.New(strategy.FilePath);
         Assert.False(info.Exists);
@@ -66,9 +65,9 @@ public class XmlExportHandlerTest
                 Key = "TEST_00",
                 Value = "English translation for TEST_00"
             }));
-        const string testExportEmpty = "./test_export_languages_only";
-        const string testExportEmptyFile = "EMPTY_LANGUAGES";
-        var strategy = new XmlOutputStrategy(_fileSystem.DirectoryInfo.New(testExportEmpty), testExportEmptyFile);
+        const string exportBase = "./test_single_entry";
+        const string exportBaseFile = "VALID_FILE";
+        var strategy = new XmlOutputStrategy(_fileSystem.DirectoryInfo.New(exportBase), exportBaseFile);
         _handler.Export(strategy, repository);
         var info = _fileSystem.FileInfo.New(strategy.FilePath);
         Assert.True(info.Exists);

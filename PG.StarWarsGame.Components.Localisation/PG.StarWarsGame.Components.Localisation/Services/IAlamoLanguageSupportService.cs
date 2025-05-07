@@ -46,4 +46,10 @@ public interface IAlamoLanguageSupportService
     /// </summary>
     /// <returns></returns>
     IDictionary<string, IAlamoLanguageDefinition> CreateLanguageIdentifierMapping();
+
+    /// <summary>
+    ///     Collects all registered languages.
+    /// </summary>
+    /// <returns></returns>
+    ISet<IAlamoLanguageDefinition> GetRegisteredLanguages();
 }

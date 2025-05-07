@@ -61,11 +61,16 @@ public class AlamoLanguageSupportService : ServiceBase, IAlamoLanguageSupportSer
     /// <inheritdoc />
     public IDictionary<string, IAlamoLanguageDefinition> CreateLanguageIdentifierMapping()
     {
-        return AppDomain.CurrentDomain.GetAssemblies()
+        return GetRegisteredLanguages().ToDictionary(d => d.LanguageIdentifier, d => d);
+    }
+
+    /// <inheritdoc />
+    public ISet<IAlamoLanguageDefinition> GetRegisteredLanguages()
+    {
+        return new HashSet<IAlamoLanguageDefinition>(AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assemblyTypes => assemblyTypes.GetTypes())
             .Where(assemblyType => typeof(IAlamoLanguageDefinition).IsAssignableFrom(assemblyType) &&
                                    assemblyType is { IsClass: true, IsAbstract: false })
-            .Select<Type, IAlamoLanguageDefinition>(t => (IAlamoLanguageDefinition)Activator.CreateInstance(t))
-            .ToDictionary(d => d.LanguageIdentifier, d => d);
+            .Select<Type, IAlamoLanguageDefinition>(t => (IAlamoLanguageDefinition)Activator.CreateInstance(t)));
     }
 }

@@ -6,7 +6,7 @@ using PG.Commons.Exceptions;
 namespace PG.Commons.Data;
 
 /// <inheritdoc />
-public abstract record IdBase : IId
+public abstract class IdBase : IId
 {
     /// <summary>
     ///     The ID components.
@@ -35,6 +35,19 @@ public abstract record IdBase : IId
 
     /// <inheritdoc />
     public int Arity => GetConfiguredArity();
+
+    /// <inheritdoc />
+    public int CompareTo(object other)
+    {
+        if (other == null || GetType() != other.GetType()) throw new ArgumentException("Object must be of type IdBase");
+        return CompareTo(other as IdBase);
+    }
+
+    /// <inheritdoc />
+    public int CompareTo(IId? other)
+    {
+        return other == null ? 1 : GetHashCode().CompareTo(other.GetHashCode());
+    }
 
     /// <inheritdoc />
     public override string ToString()

@@ -6,7 +6,7 @@ namespace PG.StarWarsGame.Components.Localisation.Repository.Content;
 public class OrderedTranslationItem : TranslationItemBase
 {
     /// <inheritdoc />
-    protected OrderedTranslationItem(OrderedTranslationItemId itemId, TranslationItemContent content) : base(itemId,
+    protected OrderedTranslationItem(OrderedTranslationItemId? itemId, TranslationItemContent content) : base(itemId,
         content)
     {
     }
@@ -17,7 +17,7 @@ public class OrderedTranslationItem : TranslationItemBase
     /// <param name="itemId"></param>
     /// <param name="content"></param>
     /// <returns></returns>
-    public static OrderedTranslationItem Of(OrderedTranslationItemId itemId, TranslationItemContent content)
+    public static OrderedTranslationItem Of(OrderedTranslationItemId? itemId, TranslationItemContent content)
     {
         return new OrderedTranslationItem(itemId, content);
     }

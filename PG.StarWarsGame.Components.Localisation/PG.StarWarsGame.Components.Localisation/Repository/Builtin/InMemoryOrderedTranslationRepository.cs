@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -18,6 +19,12 @@ public class InMemoryOrderedTranslationRepository : ITranslationRepository
     private IDictionary<IAlamoLanguageDefinition, IDictionary<OrderedTranslationItemId, ITranslationItem>>
         Repository { get; } =
         new Dictionary<IAlamoLanguageDefinition, IDictionary<OrderedTranslationItemId, ITranslationItem>>();
+
+    /// <summary>
+    ///     Indexer
+    /// </summary>
+    /// <param name="alamoLanguageDefinition"></param>
+    public IEnumerable this[IAlamoLanguageDefinition alamoLanguageDefinition] => Content[alamoLanguageDefinition];
 
     /// <inheritdoc />
     public IReadOnlyDictionary<IAlamoLanguageDefinition, ICollection<ITranslationItem>> Content => ToContent();

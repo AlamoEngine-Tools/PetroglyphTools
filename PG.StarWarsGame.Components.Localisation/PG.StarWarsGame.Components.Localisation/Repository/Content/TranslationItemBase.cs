@@ -8,7 +8,7 @@ public abstract class TranslationItemBase : ITranslationItem
     /// </summary>
     /// <param name="itemId"></param>
     /// <param name="content"></param>
-    protected TranslationItemBase(ITranslationItemId itemId, TranslationItemContent content)
+    protected TranslationItemBase(ITranslationItemId? itemId, TranslationItemContent content)
     {
         ItemId = itemId;
         Content = content;
@@ -18,7 +18,7 @@ public abstract class TranslationItemBase : ITranslationItem
     public ITranslationItemContent Content { get; set; }
 
     /// <inheritdoc />
-    public ITranslationItemId ItemId { get; }
+    public ITranslationItemId? ItemId { get; }
 
     /// <inheritdoc />
     public override string ToString()

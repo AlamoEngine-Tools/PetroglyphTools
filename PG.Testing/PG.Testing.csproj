@@ -17,6 +17,7 @@
 		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+  	<PackageReference Include="System.Collections.Immutable" Version="9.0.8" />
 		<ProjectCapability Remove="TestContainer" />
 	</ItemGroup>
 </Project>

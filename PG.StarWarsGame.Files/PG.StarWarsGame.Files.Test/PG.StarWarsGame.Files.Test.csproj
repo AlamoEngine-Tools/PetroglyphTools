@@ -32,6 +32,7 @@
 		<PackageReference Include="Testably.Abstractions.Testing" Version="4.3.2" />
 	</ItemGroup>
 	<ItemGroup>
+  	<PackageReference Include="System.Collections.Immutable" Version="9.0.8" />
 	  <ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
 	  <ProjectReference Include="..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.csproj" />
 	</ItemGroup>

@@ -15,7 +15,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,11 +25,12 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Testably.Abstractions.Testing" Version="4.3.2" />
+		<PackageReference Include="Testably.Abstractions.Testing" Version="4.3.8" />
 		<PackageReference Include="System.IO.Hashing" Version="9.0.8" />
 		<PackageReference Include="xunit" Version="2.9.3" />
 	</ItemGroup>
 	<ItemGroup>
+  	<PackageReference Include="System.Collections.Immutable" Version="9.0.9" />
 		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
 		<ProjectReference Include="..\PG.Commons\PG.Commons.csproj" />
 	</ItemGroup>

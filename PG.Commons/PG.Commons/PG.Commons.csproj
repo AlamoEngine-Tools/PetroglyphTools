@@ -27,7 +27,7 @@
 		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="12.3.8" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
-		<PackageReference Include="System.IO.Hashing" Version="9.0.8" />
+		<PackageReference Include="System.IO.Hashing" Version="10.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="$(TargetFramework) == 'netstandard2.0'" Include="Microsoft.Bcl.HashCode" Version="6.0.0" />

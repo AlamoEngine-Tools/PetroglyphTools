@@ -10,8 +10,9 @@ using System.Runtime.InteropServices;
 namespace PG.Benchmarks;
 
 [ExcludeFromCodeCoverage]
-[SimpleJob(RuntimeMoniker.Net481)]
-[SimpleJob(RuntimeMoniker.Net80)]
+[ShortRunJob(RuntimeMoniker.Net481)]
+[ShortRunJob(RuntimeMoniker.Net80)]
+[ShortRunJob(RuntimeMoniker.Net10_0)]
 [MemoryDiagnoser]
 public class EncodeString
 {

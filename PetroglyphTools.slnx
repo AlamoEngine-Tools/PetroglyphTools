@@ -1,0 +1,20 @@
+<Solution>
+  <Project Path="PG.Benchmarks/PG.Benchmarks.csproj" />
+  <Project Path="PG.Commons/PG.Commons.Test/PG.Commons.Test.csproj" />
+  <Project Path="PG.Commons/PG.Commons/PG.Commons.csproj" />
+  <Project Path="PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.Test/PG.StarWarsGame.Files.DAT.Test.csproj" />
+  <Project Path="PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT/PG.StarWarsGame.Files.DAT.csproj" />
+  <Project Path="PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.Test/PG.StarWarsGame.Files.MEG.Test.csproj" />
+  <Project Path="PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG/PG.StarWarsGame.Files.MEG.csproj" />
+  <Project Path="PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.Test/PG.StarWarsGame.Files.MTD.Test.csproj" />
+  <Project Path="PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD/PG.StarWarsGame.Files.MTD.csproj" />
+  <Project Path="PG.StarWarsGame.Files.Xml/PG.StarWarsGame.Files.Xml.Test/PG.StarWarsGame.Files.Xml.Test.csproj">
+    <Build Project="false" />
+  </Project>
+  <Project Path="PG.StarWarsGame.Files.Xml/PG.StarWarsGame.Files.Xml/PG.StarWarsGame.Files.Xml.csproj">
+    <Build Project="false" />
+  </Project>
+  <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files.Test/PG.StarWarsGame.Files.Test.csproj" />
+  <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files/PG.StarWarsGame.Files.csproj" />
+  <Project Path="PG.Testing/PG.Testing.csproj" />
+</Solution>

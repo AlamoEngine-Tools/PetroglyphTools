@@ -35,7 +35,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
       - name: Build
-        run: dotnet build -c Release PetroglyphTools.sln
+        run: dotnet build -c Release PetroglyphTools.slnx
       
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4

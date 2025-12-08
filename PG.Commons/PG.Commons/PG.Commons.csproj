@@ -23,8 +23,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="AnakinRaW.CommonUtilities" Version="12.3.8" />
-		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="12.3.8" />
+		<PackageReference Include="AnakinRaW.CommonUtilities" Version="12.3.9" />
+		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="12.3.9" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
 		<PackageReference Include="System.IO.Hashing" Version="10.0.0" />

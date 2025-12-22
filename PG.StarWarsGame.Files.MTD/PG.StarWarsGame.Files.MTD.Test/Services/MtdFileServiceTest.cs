@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using AET.Testing;
+using AET.Testing.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
@@ -74,8 +76,8 @@ public class MtdFileServiceTest : CommonMtdTestBase
     [Fact]
     public void Load_FocMtd()
     {
-        var focFile = TestUtility.GetEmbeddedResource(GetType(), "Files.MT_COMMANDBAR.MTD");
-        ExceptionUtilities.AssertDoesNotThrowException(() => _mtdFileService.Load(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
+        var focFile = TestingHelpers.GetEmbeddedResource(GetType(), "Files.MT_COMMANDBAR.MTD");
+        Assert.DoesNotThrowException(() => _mtdFileService.Load(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
     }
 
     private void CompareFileWithExpected(IList<MtdEntryInformationContainer> expectedFiles, IMtdFile mtdFile)

@@ -1,12 +1,14 @@
-﻿using System;
-using System.IO;
+﻿using AET.Testing.Attributes;
+using AET.Testing.Extensions;
 using PG.Testing;
+using System;
+using System.IO;
 using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.Test;
 
-public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : CommonTestBase
+public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : PGTestBase
     where TModel : class
     where TFileInfo : PetroglyphFileInformation
     where THolder : PetroglyphFileHolder<TModel, TFileInfo>
@@ -181,7 +183,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : Com
         if (!typeof(TFileInfo).IsAssignableFrom(typeof(PetroglyphMegPackableFileInformation)))
             return;
 
-        ExceptionUtilities.AssertDoesNotThrowException(() => CreateFileHolder(model, CreateFileInfo("notFound", true)));
+        Assert.DoesNotThrowException(() => CreateFileHolder(model, CreateFileInfo("notFound", true)));
     }
 
     [Fact]

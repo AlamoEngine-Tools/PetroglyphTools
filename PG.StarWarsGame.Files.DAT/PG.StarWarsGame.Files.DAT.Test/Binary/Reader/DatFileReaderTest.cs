@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AET.Testing;
+using AET.Testing.Extensions;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Files;
-using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Reader;
 
-public class DatFileReaderTest : CommonTestBase
+public class DatFileReaderTest : TestBaseWithFileSystem
 {
     private readonly DatFileReader _reader;
 
@@ -83,35 +84,35 @@ public class DatFileReaderTest : CommonTestBase
                 DatFileType.NotOrdered
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.EmptyKeyWithValue.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.EmptyKeyWithValue.dat"),
                 DatFileType.OrderedByCrc32
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.SingleEmptyEntry.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.SingleEmptyEntry.dat"),
                 DatFileType.OrderedByCrc32
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.SingleEntry.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.SingleEntry.dat"),
                 DatFileType.OrderedByCrc32
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntries.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntries.dat"),
                 DatFileType.OrderedByCrc32
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntriesDuplicate.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntriesDuplicate.dat"),
                 DatFileType.OrderedByCrc32
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"),
                 DatFileType.OrderedByCrc32
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Index_WithDuplicates.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Index_WithDuplicates.dat"),
                 DatFileType.NotOrdered
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"),
                 DatFileType.NotOrdered
             ]
         ];
@@ -132,8 +133,8 @@ public class DatFileReaderTest : CommonTestBase
     [Fact]
     public void ReadBinary_Integration()
     {
-        ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"));
-        ExceptionUtilities.AssertDoesNotThrowException(() => TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"));
+        Assert.DoesNotThrowException(() => TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"));
+        Assert.DoesNotThrowException(() => TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"));
     }
 
     [Theory]
@@ -156,7 +157,7 @@ public class DatFileReaderTest : CommonTestBase
         return
         [
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Empty.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Empty.dat"),
                 new ExpectedDatData
                 {
                     Number = 0,
@@ -167,7 +168,7 @@ public class DatFileReaderTest : CommonTestBase
                 }
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.EmptyKeyWithValue.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.EmptyKeyWithValue.dat"),
                 new ExpectedDatData
                 {
                     Number = 1,
@@ -178,7 +179,7 @@ public class DatFileReaderTest : CommonTestBase
                 }
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Index_WithDuplicates.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Index_WithDuplicates.dat"),
                 new ExpectedDatData
                 {
                     Number = 5,
@@ -189,7 +190,7 @@ public class DatFileReaderTest : CommonTestBase
                 }
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntries.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntries.dat"),
                 new ExpectedDatData
                 {
                     Number = 2,
@@ -200,7 +201,7 @@ public class DatFileReaderTest : CommonTestBase
                 }
             ],
             [
-                TestUtility.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntriesDuplicate.dat"),
+                TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntriesDuplicate.dat"),
                 new ExpectedDatData
                 {
                     Number = 2,

@@ -3,9 +3,9 @@ using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MEG.Test;
 
-public abstract class CommonMegTestBase : CommonTestBase
+public abstract class CommonMegTestBase : PGTestBase
 {
-    protected override void SetupServices(ServiceCollection serviceCollection)
+    protected override void SetupServices(IServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);
         serviceCollection.SupportMEG();

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AET.Testing.Extensions;
 using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
-using PG.Testing;
 using Xunit;
 
 namespace PG.Commons.Test.Utilities;
@@ -18,7 +18,7 @@ public class Crc32UtilitiesTest
     public void EnsureSortedByCrc32(params int[] checksums)
     {
         var list = checksums.Select(checksum => new CrcHolder(checksum)).Cast<IHasCrc32>().ToList();
-        ExceptionUtilities.AssertDoesNotThrowException(() => Crc32Utilities.EnsureSortedByCrc32(list));
+        Assert.DoesNotThrowException(() => Crc32Utilities.EnsureSortedByCrc32(list));
     }
 
     [Fact]

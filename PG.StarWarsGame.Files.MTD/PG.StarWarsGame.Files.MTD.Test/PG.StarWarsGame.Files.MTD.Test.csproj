@@ -1,18 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<IsPackable>false</IsPackable>
 		<TargetFrameworks>net10.0</TargetFrameworks>
 		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net481</TargetFrameworks>
 		<PackageId>AlamoEngineTools.PG.StarWarsGame.Files.MTD.Test</PackageId>
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="Resources\Files\MT_COMMANDBAR.MTD" />
-	</ItemGroup>
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestable>true</IsTestable>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Files\MT_COMMANDBAR.MTD" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.1"/>
+		<PackageReference Include="xunit.v3.mtp-v2" Version="3.2.1" />
+		<PackageReference Include="Microsoft.Testing.Platform" Version="2.0.2" />
 		<PackageReference Include="coverlet.msbuild" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,9 +25,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-		<PackageReference Include="xunit" Version="2.9.3" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
@@ -32,10 +33,9 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Testably.Abstractions.Testing" Version="5.0.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
+		<!--<ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />-->
 		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.MTD\PG.StarWarsGame.Files.MTD.csproj" />
 	</ItemGroup>

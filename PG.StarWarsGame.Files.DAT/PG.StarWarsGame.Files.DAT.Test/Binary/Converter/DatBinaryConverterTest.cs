@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AET.Testing;
 using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
@@ -9,11 +7,14 @@ using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.Testing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Converter;
 
-public class DatBinaryConverterTest : CommonTestBase
+public class DatBinaryConverterTest : PGTestBase
 {
     private readonly DatBinaryConverter _converter;
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using AET.Testing.Extensions;
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons;
@@ -15,7 +16,6 @@ using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
-using PG.Testing;
 using PG.Testing.Hashing;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -172,7 +172,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             if (entry.OriginInfo.IsLocalFile)
             {
                 FileSystem.Initialize().WithFile(entry.OriginInfo.FilePath)
-                    .Which(m => m.HasStringContent(TestUtility.GetRandomStringOfLength((int)entry.Size)));
+                    .Which(m => m.HasStringContent(Random.String((int)entry.Size)));
             }
         }
         

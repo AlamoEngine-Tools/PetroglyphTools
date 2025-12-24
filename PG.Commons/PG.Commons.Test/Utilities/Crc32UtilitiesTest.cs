@@ -80,8 +80,8 @@ public class Crc32UtilitiesTest
     [Fact]
     public void ListToCrcIndexRangeTable_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ListToCrcIndexRangeTable<IHasCrc32>(null!));
-        Assert.Throws<ArgumentException>(() => Crc32Utilities.ListToCrcIndexRangeTable(new List<CrcHolder>
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ListToCrcRangeTable<IHasCrc32>(null!));
+        Assert.Throws<ArgumentException>(() => Crc32Utilities.ListToCrcRangeTable(new List<CrcHolder>
         {
             new(1), 
             new(0)
@@ -89,13 +89,13 @@ public class Crc32UtilitiesTest
     }
 
 
-    public static IEnumerable<object[]> SortedTestDataForIndexTable()
+    public static IEnumerable<object[]> SortedTestDataForRangeTable()
     {
         return
         [
             [
                 new[] { 1, 1, 2, 3, 3, 4 },
-                new Dictionary<int, (int, int)> { { 1, (0, 2) }, { 2, (2, 1) }, { 3, (3, 2) }, { 4, (5, 1) } }
+                new Dictionary<int, (int, int)> { { 1, (0, 2) }, { 2, (2, 3) }, { 3, (3, 5) }, { 4, (5, 6) } }
             ],
             [
                 new int[] { },
@@ -103,27 +103,27 @@ public class Crc32UtilitiesTest
             ],
             [
                 new[] { 1, 2, 3, 3 },
-                new Dictionary<int, (int, int)> { { 1, (0, 1) }, { 2, (1, 1) }, { 3, (2, 2) } }
+                new Dictionary<int, (int, int)> { { 1, (0, 1) }, { 2, (1, 2) }, { 3, (2, 4) } }
             ],
             [
                 // (uint)-1 is larger than 1
                 new[] { 1, -1 },
-                new Dictionary<int, (int, int)> { { 1, (0, 1) }, { -1, (1, 1) } }
+                new Dictionary<int, (int, int)> { { 1, (0, 1) }, { -1, (1, 2) } }
             ]
         ];
     }
 
     [Theory]
-    [MemberData(nameof(SortedTestDataForIndexTable))]
-    public void ListToCrcIndexRangeTable(int[] inputData, Dictionary<int, (int, int)> expectedData)
+    [MemberData(nameof(SortedTestDataForRangeTable))]
+    public void ListToCrcRangeTable(int[] inputData, Dictionary<int, (int, int)> expectedData)
     {
         var list = inputData.Select(d => new CrcHolder(d)).ToList();
-        var expectedTransformed = new Dictionary<Crc32, IndexRange>();
+        var expectedTransformed = new Dictionary<Crc32, Range>();
 
         foreach (var tuple in expectedData)
-            expectedTransformed[new Crc32(tuple.Key)] = new IndexRange(tuple.Value.Item1, tuple.Value.Item2);
+            expectedTransformed[new Crc32(tuple.Key)] = new Range(tuple.Value.Item1, tuple.Value.Item2);
 
-        var result = Crc32Utilities.ListToCrcIndexRangeTable(list);
+        var result = Crc32Utilities.ListToCrcRangeTable(list);
 
         Assert.Equal(expectedTransformed, result);
     }
@@ -131,7 +131,7 @@ public class Crc32UtilitiesTest
     [Fact]
     public void ItemsWithCrc_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc<CrcHolder>(default, null!, new Dictionary<Crc32, IndexRange>()));
+        Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc<CrcHolder>(default, null!, new Dictionary<Crc32, Range>()));
         Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, new List<CrcHolder>(), null!));
     }
 
@@ -141,7 +141,7 @@ public class Crc32UtilitiesTest
     {
         var list = data.Select(d => new CrcHolderWithIdentity(d.Id, d.Crc)).ToList();
 
-        var map = Crc32Utilities.ListToCrcIndexRangeTable(list);
+        var map = Crc32Utilities.ListToCrcRangeTable(list);
 
         foreach (var queryData in queries)
         {

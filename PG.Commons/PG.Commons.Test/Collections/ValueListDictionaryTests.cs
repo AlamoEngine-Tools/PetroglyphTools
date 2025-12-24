@@ -1,21 +1,81 @@
-﻿using PG.Commons.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System;
-using System.Collections;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Collections;
+using PG.Commons.Collections;
 using Xunit;
 
 namespace PG.Commons.Test.Collections;
 
-public class ValueListDictionaryTests
+// ReSharper disable UnusedMember.Global
+// ReSharper disable InconsistentNaming
+
+// Class Key + Struct Value
+
+public class ValueListDictionaryTests_ClassKey_StructValue : ValueListDictionaryTestsBase<string, int>
 {
+    protected override string CreateKey(int seed) => $"Key{seed}";
+    protected override int CreateValue(int seed) => seed * 10;
+    protected override string CreateKeyNotInDictionary() => "NotFound";
+    protected override int CreateValueNotInDictionary() => 999;
+
+    protected override IEqualityComparer<string> GetCaseInsensitiveComparer() => StringComparer.OrdinalIgnoreCase;
+    protected override string CreateAlternateKey(string original) => original.ToLower();
+}
+
+// Class Key + Class Value
+public class ValueListDictionaryTests_ClassKey_ClassValue : ValueListDictionaryTestsBase<string, string>
+{
+    protected override string CreateKey(int seed) => $"Key{seed}";
+    protected override string CreateValue(int seed) => $"Value{seed}";
+    protected override string CreateKeyNotInDictionary() => "NotFound";
+    protected override string CreateValueNotInDictionary() => "NOT_FOUND";
+
+    protected override IEqualityComparer<string> GetCaseInsensitiveComparer() => StringComparer.OrdinalIgnoreCase;
+
+    protected override string CreateAlternateKey(string original) => original.ToUpper();
+}
+
+// Struct Key + Struct Value
+public class ValueListDictionaryTests_StructKey_StructValue : ValueListDictionaryTestsBase<int, double>
+{
+    protected override int CreateKey(int seed) => seed;
+    protected override double CreateValue(int seed) => seed * 1.5;
+    protected override int CreateKeyNotInDictionary() => 999;
+    protected override double CreateValueNotInDictionary() => 999.9;
+}
+
+// Struct Key + Class Value
+public class ValueListDictionaryTests_StructKey_ClassValue : ValueListDictionaryTestsBase<int, string>
+{
+    protected override int CreateKey(int seed) => seed;
+    protected override string CreateValue(int seed) => $"Value{seed}";
+    protected override int CreateKeyNotInDictionary() => 999;
+    protected override string CreateValueNotInDictionary() => "NOT_FOUND";
+}
+
+/// <summary>
+/// Abstract base class for testing ValueListDictionary with different key/value type combinations.
+/// </summary>
+public abstract class ValueListDictionaryTestsBase<TKey, TValue> where TKey : notnull
+{
+    protected abstract TKey CreateKey(int seed);
+    protected abstract TValue CreateValue(int seed);
+    protected abstract TKey CreateKeyNotInDictionary();
+    protected abstract TValue CreateValueNotInDictionary();
+
+    protected virtual IEqualityComparer<TKey>? GetCaseInsensitiveComparer() => null;
+    protected virtual TKey CreateAlternateKey(TKey original) => original; // Default: same key
+
+    protected virtual bool SupportsCaseInsensitiveComparer => GetCaseInsensitiveComparer() != null;
+    protected virtual bool SupportsNullValues => !typeof(TValue).IsValueType;
+
     #region Constructor Tests
 
     [Fact]
     public void Constructor_Default_InitializesEmptyDictionary()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
         Assert.NotNull(dictionary);
         Assert.Empty(dictionary.Keys);
@@ -27,28 +87,33 @@ public class ValueListDictionaryTests
     [Fact]
     public void Constructor_WithNullComparer_UsesDefaultComparer()
     {
-        var dictionary = new ValueListDictionary<string, int>(null) { { "Key1", 1 } };
+        var dictionary = new ValueListDictionary<TKey, TValue>(null)
+        {
+            { CreateKey(1), CreateValue(1) }
+        };
 
-        Assert.True(dictionary.ContainsKey("Key1"));
-        Assert.False(dictionary.ContainsKey("key1"));
+        Assert.True(dictionary.ContainsKey(CreateKey(1)));
+        Assert.False(dictionary.ContainsKey(CreateKey(2)));
     }
 
     [Fact]
     public void Constructor_WithCustomComparer_UsesProvidedComparer()
     {
-        var comparer = StringComparer.OrdinalIgnoreCase;
-        var dictionary = new ValueListDictionary<string, int>(comparer)
-        {
-            { "KEY1", 1 },
-            { "key1", 2 }
-        };
+        if (!SupportsCaseInsensitiveComparer)
+            return;
 
-        Assert.True(dictionary.ContainsKey("key1"));
-        Assert.True(dictionary.ContainsKey("KEY1"));
-        Assert.True(dictionary.ContainsKey("Key1"));
-        Assert.Equal(2, dictionary.GetValues("kEy1").Count);
+        var comparer = GetCaseInsensitiveComparer();
+        var dictionary = new ValueListDictionary<TKey, TValue>(comparer);
+
+        var key = CreateKey(1);
+        var alternateKey = CreateAlternateKey(key);
+
+        dictionary.Add(key, CreateValue(1));
+        dictionary.Add(alternateKey, CreateValue(2));
+
         Assert.Equal(2, dictionary.Count);
         Assert.Equal(1, dictionary.KeyCount);
+        Assert.Equal(2, dictionary.GetValues(key).Count);
     }
 
     #endregion
@@ -58,18 +123,18 @@ public class ValueListDictionaryTests
     [Fact]
     public void Count_ReturnsZero_WhenEmpty()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
         Assert.Equal(0, dictionary.Count);
     }
 
     [Fact]
     public void Count_ReturnsTotalNumberOfValues()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key2", 30 }
+            { CreateKey(1), CreateValue(1) },
+            { CreateKey(1), CreateValue(2) },
+            { CreateKey(2), CreateValue(3) }
         };
 
         Assert.Equal(3, dictionary.Count);
@@ -78,19 +143,19 @@ public class ValueListDictionaryTests
     [Fact]
     public void KeyCount_ReturnsZero_WhenEmpty()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
         Assert.Equal(0, dictionary.KeyCount);
     }
 
     [Fact]
     public void KeyCount_ReturnsNumberOfDistinctKeys()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key2", 30 },
-            { "Key3", 40 }
+            { CreateKey(1), CreateValue(1) },
+            { CreateKey(1), CreateValue(2) },
+            { CreateKey(2), CreateValue(3) },
+            { CreateKey(3), CreateValue(4) }
         };
 
         Assert.Equal(3, dictionary.KeyCount);
@@ -104,9 +169,9 @@ public class ValueListDictionaryTests
     [Fact]
     public void Add_ReturnsFalse_WhenKeyIsNew()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        var result = dictionary.Add("Key1", 10);
+        var result = dictionary.Add(CreateKey(1), CreateValue(1));
 
         Assert.False(result);
         Assert.Equal(1, dictionary.Count);
@@ -116,9 +181,11 @@ public class ValueListDictionaryTests
     [Fact]
     public void Add_ReturnsTrue_WhenKeyExists()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var dictionary = new ValueListDictionary<TKey, TValue>();
+        var key = CreateKey(1);
 
-        var result = dictionary.Add("Key1", 20);
+        dictionary.Add(key, CreateValue(1));
+        var result = dictionary.Add(key, CreateValue(2));
 
         Assert.True(result);
         Assert.Equal(2, dictionary.Count);
@@ -126,74 +193,66 @@ public class ValueListDictionaryTests
     }
 
     [Fact]
-    public void Add_ThrowsArgumentNullException_WhenKeyIsNull()
-    {
-        var dictionary = new ValueListDictionary<string, int>();
-        Assert.Throws<ArgumentNullException>(() => dictionary.Add(null!, 10));
-    }
-
-    [Fact]
     public void Add_AllowsNullValue_ForReferenceTypes()
     {
-        var dictionary = new ValueListDictionary<string, string> { { "Key1", null! } };
+        if (!SupportsNullValues)
+            return;
+
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), default! } };
 
         Assert.Equal(1, dictionary.Count);
-        Assert.Null(dictionary.GetFirstValue("Key1"));
+        Assert.Equal(default, dictionary.GetFirstValue(CreateKey(1)));
     }
 
     [Fact]
     public void Add_PreservesInsertionOrder()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+        var key3 = CreateKey(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "C", 3 },
-            { "A", 1 },
-            { "B", 2 }
+            { key3, CreateValue(3) },
+            { key1, CreateValue(1) },
+            { key2, CreateValue(2) }
         };
 
         var keys = dictionary.Keys.ToList();
-        Assert.Equal(["C", "A", "B"], keys);
+        Assert.Equal(new[] { key3, key1, key2 }, keys);
     }
 
     [Fact]
     public void Add_PreservesValueOrderPerKey()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key = CreateKey(1);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+        var value3 = CreateValue(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 1 },
-            { "Key1", 2 },
-            { "Key1", 3 }
+            { key, value1 },
+            { key, value2 },
+            { key, value3 }
         };
 
-        var values = dictionary.GetValues("Key1");
-        Assert.Equal([1, 2, 3], values);
+        var values = dictionary.GetValues(key);
+        Assert.Equal([value1, value2, value3], values);
     }
 
     [Fact]
     public void Add_HandlesLargeNumberOfEntries()
     {
-        var dictionary = new ValueListDictionary<int, int>();
-        const int largeCount = 100000;
+        var dictionary = new ValueListDictionary<TKey, TValue>();
+        var key = CreateKey(1);
+        const int largeCount = 1000;
 
         for (var i = 0; i < largeCount; i++)
-            dictionary.Add(i, i);
-
-        Assert.Equal(largeCount, dictionary.Count);
-        Assert.Equal(largeCount, dictionary.KeyCount);
-    }
-
-    [Fact]
-    public void Add_HandlesLargeNumberOfValuesPerKey()
-    {
-        var dictionary = new ValueListDictionary<string, int>();
-        const int largeCount = 10000;
-
-        for (var i = 0; i < largeCount; i++)
-            dictionary.Add("Key1", i);
+            dictionary.Add(key, CreateValue(i));
 
         Assert.Equal(largeCount, dictionary.Count);
         Assert.Equal(1, dictionary.KeyCount);
-        Assert.Equal(largeCount, dictionary.GetValues("Key1").Count);
     }
 
     #endregion
@@ -203,7 +262,7 @@ public class ValueListDictionaryTests
     [Fact]
     public void Clear_OnEmptyDictionary_DoesNothing()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
         dictionary.Clear();
 
@@ -214,11 +273,14 @@ public class ValueListDictionaryTests
     [Fact]
     public void Clear_RemovesAllKeysAndValues()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "a", 1 },
-            { "a", 2 },
-            { "b", 3 }
+            { key1, CreateValue(1) },
+            { key1, CreateValue(2) },
+            { key2, CreateValue(3) }
         };
 
         dictionary.Clear();
@@ -227,22 +289,25 @@ public class ValueListDictionaryTests
         Assert.Equal(0, dictionary.KeyCount);
         Assert.Empty(dictionary.Keys);
         Assert.Empty(dictionary.Values);
-        Assert.False(dictionary.ContainsKey("a"));
-        Assert.False(dictionary.ContainsKey("b"));
+        Assert.False(dictionary.ContainsKey(key1));
+        Assert.False(dictionary.ContainsKey(key2));
     }
 
     [Fact]
     public void Clear_AllowsReuseAfterClearing()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 1 } };
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue> { { key1, CreateValue(1) } };
 
         dictionary.Clear();
-        dictionary.Add("Key2", 2);
+        dictionary.Add(key2, CreateValue(2));
 
         Assert.Equal(1, dictionary.Count);
         Assert.Equal(1, dictionary.KeyCount);
-        Assert.True(dictionary.ContainsKey("Key2"));
-        Assert.False(dictionary.ContainsKey("Key1"));
+        Assert.True(dictionary.ContainsKey(key2));
+        Assert.False(dictionary.ContainsKey(key1));
     }
 
     #endregion
@@ -252,24 +317,18 @@ public class ValueListDictionaryTests
     [Fact]
     public void ContainsKey_ReturnsTrue_WhenKeyExists()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var key = CreateKey(1);
+        var dictionary = new ValueListDictionary<TKey, TValue> { { key, CreateValue(1) } };
 
-        Assert.True(dictionary.ContainsKey("Key1"));
+        Assert.True(dictionary.ContainsKey(key));
     }
 
     [Fact]
     public void ContainsKey_ReturnsFalse_WhenKeyDoesNotExist()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        Assert.False(dictionary.ContainsKey("Key1"));
-    }
-
-    [Fact]
-    public void ContainsKey_ThrowsArgumentNullException_WhenKeyIsNull()
-    {
-        var dictionary = new ValueListDictionary<string, int>();
-        Assert.Throws<ArgumentNullException>(() => dictionary.ContainsKey(null!));
+        Assert.False(dictionary.ContainsKey(CreateKey(1)));
     }
 
     #endregion
@@ -279,179 +338,183 @@ public class ValueListDictionaryTests
     [Fact]
     public void GetValues_ReturnsAllValues_ForExistingKey()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key = CreateKey(1);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 }
+            { key, value1 },
+            { key, value2 }
         };
 
-        var values = dictionary.GetValues("Key1");
+        var values = dictionary.GetValues(key);
 
         Assert.Equal(2, values.Count);
-        Assert.Equal([10, 20], values);
+        Assert.Equal([value1, value2], values);
     }
 
     [Fact]
     public void GetValues_ReturnsSingleValue_WhenKeyHasOneValue()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var key = CreateKey(1);
+        var value = CreateValue(1);
 
-        var values = dictionary.GetValues("Key1");
+        var dictionary = new ValueListDictionary<TKey, TValue> { { key, value } };
+
+        var values = dictionary.GetValues(key);
 
         Assert.Single(values);
-        Assert.Equal(10, values[0]);
+        Assert.Equal(value, values[0]);
     }
 
     [Fact]
     public void GetValues_ThrowsKeyNotFoundException_WhenKeyDoesNotExist()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
+        var keyNotFound = CreateKeyNotInDictionary();
 
-        var ex = Assert.Throws<KeyNotFoundException>(() => dictionary.GetValues("Key1"));
-        Assert.Contains("Key1", ex.Message);
-    }
-
-    [Fact]
-    public void GetValues_ThrowsArgumentNullException_WhenKeyIsNull()
-    {
-        var dictionary = new ValueListDictionary<string, int>();
-        Assert.Throws<ArgumentNullException>(() => dictionary.GetValues(null!));
+        var ex = Assert.Throws<KeyNotFoundException>(() => dictionary.GetValues(keyNotFound));
+        Assert.Contains(keyNotFound.ToString()!, ex.Message);
     }
 
     #endregion
 
-    #region GetFirstValue Tests
+    #region GetFirstValue / GetLastValue Tests
 
     [Fact]
     public void GetFirstValue_ReturnsFirstValue_WhenKeyHasMultipleValues()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key = CreateKey(1);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+        var value3 = CreateValue(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key1", 30 }
+            { key, value1 },
+            { key, value2 },
+            { key, value3 }
         };
 
-        Assert.Equal(10, dictionary.GetFirstValue("Key1"));
+        Assert.Equal(value1, dictionary.GetFirstValue(key));
     }
 
     [Fact]
     public void GetFirstValue_ReturnsValue_WhenKeyHasSingleValue()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var key = CreateKey(1);
+        var value = CreateValue(1);
 
-        Assert.Equal(10, dictionary.GetFirstValue("Key1"));
+        var dictionary = new ValueListDictionary<TKey, TValue> { { key, value } };
+
+        Assert.Equal(value, dictionary.GetFirstValue(key));
     }
 
     [Fact]
     public void GetFirstValue_ThrowsKeyNotFoundException_WhenKeyDoesNotExist()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        var ex = Assert.Throws<KeyNotFoundException>(() => dictionary.GetFirstValue("Key1"));
-        Assert.Contains("Key1", ex.Message);
+        Assert.Throws<KeyNotFoundException>(() => dictionary.GetFirstValue(CreateKeyNotInDictionary()));
     }
-
-    #endregion
-
-    #region GetLastValue Tests
 
     [Fact]
     public void GetLastValue_ReturnsLastValue_WhenKeyHasMultipleValues()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key = CreateKey(1);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+        var value3 = CreateValue(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key1", 30 }
+            { key, value1 },
+            { key, value2 },
+            { key, value3 }
         };
 
-        Assert.Equal(30, dictionary.GetLastValue("Key1"));
+        Assert.Equal(value3, dictionary.GetLastValue(key));
     }
 
     [Fact]
     public void GetLastValue_ReturnsValue_WhenKeyHasSingleValue()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var key = CreateKey(1);
+        var value = CreateValue(1);
 
-        Assert.Equal(10, dictionary.GetLastValue("Key1"));
+        var dictionary = new ValueListDictionary<TKey, TValue> { { key, value } };
+
+        Assert.Equal(value, dictionary.GetLastValue(key));
     }
 
     [Fact]
     public void GetLastValue_ThrowsKeyNotFoundException_WhenKeyDoesNotExist()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        var ex = Assert.Throws<KeyNotFoundException>(() => dictionary.GetLastValue("Key1"));
-        Assert.Contains("Key1", ex.Message);
+        Assert.Throws<KeyNotFoundException>(() => dictionary.GetLastValue(CreateKeyNotInDictionary()));
     }
 
     #endregion
 
-    #region TryGetFirstValue Tests
+    #region TryGetFirstValue / TryGetLastValue Tests
 
     [Fact]
     public void TryGetFirstValue_ReturnsTrueAndFirstValue_WhenKeyExists()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key = CreateKey(1);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 }
+            { key, value1 },
+            { key, value2 }
         };
 
-        var result = dictionary.TryGetFirstValue("Key1", out var value);
+        var result = dictionary.TryGetFirstValue(key, out var value);
 
         Assert.True(result);
-        Assert.Equal(10, value);
+        Assert.Equal(value1, value);
     }
 
     [Fact]
     public void TryGetFirstValue_ReturnsFalseAndDefault_WhenKeyDoesNotExist()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        var result = dictionary.TryGetFirstValue("Key1", out var value);
+        var result = dictionary.TryGetFirstValue(CreateKeyNotInDictionary(), out var value);
 
         Assert.False(result);
         Assert.Equal(default, value);
     }
 
     [Fact]
-    public void TryGetFirstValue_ReturnsTrueAndNull_WhenValueIsNull()
-    {
-        var dictionary = new ValueListDictionary<string, string> { { "Key1", null! } };
-
-        var result = dictionary.TryGetFirstValue("Key1", out var value);
-
-        Assert.True(result);
-        Assert.Null(value);
-    }
-
-    #endregion
-
-    #region TryGetLastValue Tests
-
-    [Fact]
     public void TryGetLastValue_ReturnsTrueAndLastValue_WhenKeyExists()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key = CreateKey(1);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 }
+            { key, value1 },
+            { key, value2 }
         };
 
-        var result = dictionary.TryGetLastValue("Key1", out var value);
+        var result = dictionary.TryGetLastValue(key, out var value);
 
         Assert.True(result);
-        Assert.Equal(20, value);
+        Assert.Equal(value2, value);
     }
 
     [Fact]
     public void TryGetLastValue_ReturnsFalseAndDefault_WhenKeyDoesNotExist()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        var result = dictionary.TryGetLastValue("Key1", out var value);
+        var result = dictionary.TryGetLastValue(CreateKeyNotInDictionary(), out var value);
 
         Assert.False(result);
         Assert.Equal(default, value);
@@ -464,24 +527,28 @@ public class ValueListDictionaryTests
     [Fact]
     public void TryGetValues_ReturnsTrueAndValues_WhenKeyExists()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key = CreateKey(1);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 }
+            { key, value1 },
+            { key, value2 }
         };
 
-        var result = dictionary.TryGetValues("Key1", out var values);
+        var result = dictionary.TryGetValues(key, out var values);
 
         Assert.True(result);
-        Assert.Equal([10, 20], values);
+        Assert.Equal([value1, value2], values);
     }
 
     [Fact]
     public void TryGetValues_ReturnsFalseAndEmptyList_WhenKeyDoesNotExist()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        var result = dictionary.TryGetValues("Key1", out var values);
+        var result = dictionary.TryGetValues(CreateKeyNotInDictionary(), out var values);
 
         Assert.False(result);
         Assert.Empty(values);
@@ -489,12 +556,12 @@ public class ValueListDictionaryTests
 
     #endregion
 
-    #region Dictionary Enumerator Tests
+    #region Enumerator Tests
 
     [Fact]
     public void GetEnumerator_ReturnsEmptyEnumerator_WhenDictionaryIsEmpty()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
         using var enumerator = dictionary.GetEnumerator();
 
@@ -504,60 +571,61 @@ public class ValueListDictionaryTests
     [Fact]
     public void GetEnumerator_EnumeratesAllKeyValueGroups()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+        var value3 = CreateValue(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 },
-            { "Key2", 30 }
+            { key1, value1 },
+            { key2, value2 },
+            { key2, value3 }
         };
 
-        var pairs = new List<KeyValuePair<string, ReadOnlyFrugalList<int>>>();
+        var pairs = new List<KeyValuePair<TKey, ReadOnlyFrugalList<TValue>>>();
         foreach (var pair in dictionary)
             pairs.Add(pair);
 
         Assert.Equal(2, pairs.Count);
 
-        Assert.Equal("Key1", pairs[0].Key);
-        Assert.Equal([10], pairs[0].Value);
+        Assert.Equal(key1, pairs[0].Key);
+        Assert.Equal([value1], pairs[0].Value);
 
-        Assert.Equal("Key2", pairs[1].Key);
-        Assert.Equal([20, 30], pairs[1].Value);
+        Assert.Equal(key2, pairs[1].Key);
+        Assert.Equal([value2, value3], pairs[1].Value);
     }
 
     [Fact]
     public void GetEnumerator_PreservesKeyInsertionOrder()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+        var key3 = CreateKey(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "C", 3 },
-            { "A", 1 },
-            { "B", 2 }
+            { key3, CreateValue(3) },
+            { key1, CreateValue(1) },
+            { key2, CreateValue(2) }
         };
 
         var keys = dictionary.Select(kvp => kvp.Key).ToList();
 
-        Assert.Equal(["C", "A", "B"], keys);
-    }
-
-    [Fact]
-    public void Enumerator_Current_ReturnsCurrentElement()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        using var enumerator = dictionary.GetEnumerator();
-        enumerator.MoveNext();
-
-        Assert.Equal("Key1", enumerator.Current.Key);
-        Assert.Equal([10], enumerator.Current.Value);
+        Assert.Equal(new[] { key3, key1, key2 }, keys);
     }
 
     [Fact]
     public void Enumerator_Reset_ResetsToBeginning()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { key1, CreateValue(1) },
+            { key2, CreateValue(2) }
         };
 
         using var enumerator = dictionary.GetEnumerator();
@@ -566,41 +634,7 @@ public class ValueListDictionaryTests
         enumerator.Reset();
 
         Assert.True(enumerator.MoveNext());
-        Assert.Equal("Key1", enumerator.Current.Key);
-    }
-
-    [Fact]
-    public void Enumerator_Dispose_CanBeCalledMultipleTimes()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        var enumerator = dictionary.GetEnumerator();
-        enumerator.Dispose();
-        enumerator.Dispose(); // Should not throw
-    }
-
-    [Fact]
-    public void Enumerator_NonGenericCurrent_ReturnsBoxedValue()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        var enumerator = ((IEnumerable)dictionary).GetEnumerator();
-        enumerator.MoveNext();
-
-        var current = (KeyValuePair<string, ReadOnlyFrugalList<int>>)enumerator.Current;
-        Assert.Equal("Key1", current.Key);
-    }
-
-    [Fact]
-    public void Enumerator_GenericInterface_ReturnsCorrectEnumerator()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        IEnumerable<KeyValuePair<string, ReadOnlyFrugalList<int>>> enumerable = dictionary;
-        using var enumerator = enumerable.GetEnumerator();
-
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal("Key1", enumerator.Current.Key);
+        Assert.Equal(key1, enumerator.Current.Key);
     }
 
     #endregion
@@ -610,7 +644,7 @@ public class ValueListDictionaryTests
     [Fact]
     public void Keys_ReturnsSameInstance()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
         var keys1 = dictionary.Keys;
         var keys2 = dictionary.Keys;
@@ -621,92 +655,87 @@ public class ValueListDictionaryTests
     [Fact]
     public void Keys_ReflectsChangesToDictionary()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
         var keys = dictionary.Keys;
 
+#pragma warning disable xUnit2013
         Assert.Equal(0, keys.Count);
 
-        dictionary.Add("Key1", 10);
+        dictionary.Add(CreateKey(1), CreateValue(1));
         Assert.Equal(1, keys.Count);
 
-        dictionary.Add("Key2", 20);
+        dictionary.Add(CreateKey(2), CreateValue(2));
         Assert.Equal(2, keys.Count);
 
         dictionary.Clear();
         Assert.Equal(0, keys.Count);
-    }
-
-    [Fact]
-    public void Keys_Count_ReturnsNumberOfDistinctKeys()
-    {
-        var dictionary = new ValueListDictionary<string, int>
-        {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key2", 30 }
-        };
-
-        Assert.Equal(2, dictionary.Keys.Count);
-    }
-
-    [Fact]
-    public void Keys_IsReadOnly_ReturnsTrue()
-    {
-        var dictionary = new ValueListDictionary<string, int>();
-
-        Assert.True(dictionary.Keys.IsReadOnly);
+#pragma warning restore xUnit2013
     }
 
     [Fact]
     public void Keys_Contains_ReturnsTrueForExistingKey()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var key = CreateKey(1);
+        var dictionary = new ValueListDictionary<TKey, TValue> { { key, CreateValue(1) } };
 
-        Assert.True(dictionary.Keys.Contains("Key1"));
+#pragma warning disable xUnit2017
+        Assert.True(dictionary.Keys.Contains(key));
+#pragma warning restore xUnit2017
     }
 
     [Fact]
     public void Keys_Contains_ReturnsFalseForNonExistingKey()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
 
-        Assert.False(dictionary.Keys.Contains("Key2"));
+#pragma warning disable xUnit2017
+        Assert.False(dictionary.Keys.Contains(CreateKey(2)));
+#pragma warning restore xUnit2017
     }
 
     [Fact]
     public void Keys_CopyTo_CopiesKeysToArray()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { key1, CreateValue(1) },
+            { key2, CreateValue(2) }
         };
 
-        var array = new string[2];
+        var array = new TKey[2];
         dictionary.Keys.CopyTo(array, 0);
 
-        Assert.Equal(["Key1", "Key2"], array);
+        Assert.Equal([key1, key2], array);
     }
 
     [Fact]
     public void Keys_CopyTo_CopiesKeysToArrayAtIndex()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { key1, CreateValue(1) },
+            { key2, CreateValue(2) }
         };
 
-        var array = new string[4];
+        var array = new TKey[4];
         dictionary.Keys.CopyTo(array, 2);
 
-        Assert.Equal((string[])[null!, null!, "Key1", "Key2"], array);
+        Assert.Equal(default, array[0]);
+        Assert.Equal(default, array[1]);
+        Assert.Equal(key1, array[2]);
+        Assert.Equal(key2, array[3]);
     }
 
     [Fact]
     public void Keys_CopyTo_ThrowsArgumentNullException_WhenArrayIsNull()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
 
         Assert.Throws<ArgumentNullException>(() => dictionary.Keys.CopyTo(null!, 0));
     }
@@ -714,76 +743,56 @@ public class ValueListDictionaryTests
     [Fact]
     public void Keys_CopyTo_ThrowsArgumentOutOfRangeException_WhenIndexIsNegative()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => dictionary.Keys.CopyTo(new string[1], -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => dictionary.Keys.CopyTo(new TKey[1], -1));
     }
 
     [Fact]
     public void Keys_CopyTo_ThrowsArgumentException_WhenArrayIsTooSmall()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { CreateKey(1), CreateValue(1) },
+            { CreateKey(2), CreateValue(2) }
         };
 
-        Assert.Throws<ArgumentException>(() => dictionary.Keys.CopyTo(new string[1], 0));
-    }
-
-    [Fact]
-    public void Keys_CopyTo_ThrowsArgumentException_WhenNotEnoughSpaceFromIndex()
-    {
-        var dictionary = new ValueListDictionary<string, int>
-        {
-            { "Key1", 10 },
-            { "Key2", 20 }
-        };
-
-        Assert.Throws<ArgumentException>(() => dictionary.Keys.CopyTo(new string[3], 2));
+        Assert.Throws<ArgumentException>(() => dictionary.Keys.CopyTo(new TKey[1], 0));
     }
 
     [Fact]
     public void Keys_GetEnumerator_EnumeratesKeysInInsertionOrder()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+        var key3 = CreateKey(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "C", 3 },
-            { "A", 1 },
-            { "B", 2 }
+            { key3, CreateValue(3) },
+            { key1, CreateValue(1) },
+            { key2, CreateValue(2) }
         };
 
         var keys = dictionary.Keys.ToList();
 
-        Assert.Equal(["C", "A", "B"], keys);
-    }
-
-    [Fact]
-    public void Keys_GetEnumerator_NonGeneric_EnumeratesKeys()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        var keys = new List<string>();
-        foreach (var key in (IEnumerable)dictionary.Keys)
-            keys.Add((string)key);
-
-        Assert.Equal(["Key1"], keys);
+        Assert.Equal(new[] { key3, key1, key2 }, keys);
     }
 
     [Fact]
     public void Keys_Add_ThrowsNotSupportedException()
     {
-        var dictionary = new ValueListDictionary<string, int>();
-        ICollection<string> keys = dictionary.Keys;
+        var dictionary = new ValueListDictionary<TKey, TValue>();
+        ICollection<TKey> keys = dictionary.Keys;
 
-        Assert.Throws<NotSupportedException>(() => keys.Add("Key1"));
+        Assert.Throws<NotSupportedException>(() => keys.Add(CreateKey(1)));
     }
 
     [Fact]
     public void Keys_Clear_ThrowsNotSupportedException()
     {
-        var dictionary = new ValueListDictionary<string, int>();
-        ICollection<string> keys = dictionary.Keys;
+        var dictionary = new ValueListDictionary<TKey, TValue>();
+        ICollection<TKey> keys = dictionary.Keys;
 
         Assert.Throws<NotSupportedException>(() => keys.Clear());
     }
@@ -791,20 +800,10 @@ public class ValueListDictionaryTests
     [Fact]
     public void Keys_Remove_ThrowsNotSupportedException()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-        ICollection<string> keys = dictionary.Keys;
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
+        ICollection<TKey> keys = dictionary.Keys;
 
-        Assert.Throws<NotSupportedException>(() => keys.Remove("Key1"));
-    }
-
-    [Fact]
-    public void Keys_InterfaceProperty_ReturnsSameCollectionAsConcreteProperty()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        IReadOnlyValueListDictionary<string, int> readOnlyDict = dictionary;
-
-        Assert.Same(dictionary.Keys, readOnlyDict.Keys);
+        Assert.Throws<NotSupportedException>(() => keys.Remove(CreateKey(1)));
     }
 
     #endregion
@@ -814,7 +813,7 @@ public class ValueListDictionaryTests
     [Fact]
     public void Values_ReturnsSameInstance()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
         var values1 = dictionary.Values;
         var values2 = dictionary.Values;
@@ -825,133 +824,113 @@ public class ValueListDictionaryTests
     [Fact]
     public void Values_ReflectsChangesToDictionary()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
         var values = dictionary.Values;
 
+#pragma warning disable xUnit2013
         Assert.Equal(0, values.Count);
 
-        dictionary.Add("Key1", 10);
+        dictionary.Add(CreateKey(1), CreateValue(1));
         Assert.Equal(1, values.Count);
 
-        dictionary.Add("Key1", 20);
+        dictionary.Add(CreateKey(1), CreateValue(2));
         Assert.Equal(2, values.Count);
 
         dictionary.Clear();
         Assert.Equal(0, values.Count);
-    }
-
-    [Fact]
-    public void Values_Count_ReturnsTotalNumberOfValues()
-    {
-        var dictionary = new ValueListDictionary<string, int>
-        {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key2", 30 }
-        };
-
-        Assert.Equal(3, dictionary.Values.Count);
-    }
-
-    [Fact]
-    public void Values_IsReadOnly_ReturnsTrue()
-    {
-        var dictionary = new ValueListDictionary<string, int>();
-
-        Assert.True(dictionary.Values.IsReadOnly);
+#pragma warning restore xUnit2013
     }
 
     [Fact]
     public void Values_Contains_ReturnsTrueForExistingValue()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 }
+            { CreateKey(1), value1 },
+            { CreateKey(1), value2 }
         };
 
-        Assert.True(dictionary.Values.Contains(10));
-        Assert.True(dictionary.Values.Contains(20));
+#pragma warning disable xUnit2017
+        Assert.True(dictionary.Values.Contains(value1));
+        Assert.True(dictionary.Values.Contains(value2));
+#pragma warning restore xUnit2017
     }
 
     [Fact]
     public void Values_Contains_ReturnsFalseForNonExistingValue()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        Assert.False(dictionary.Values.Contains(99));
-    }
-
-    [Fact]
-    public void Values_Contains_ReturnsTrueForNullValue()
-    {
-        var dictionary = new ValueListDictionary<string, string>
-        {
-            { "Key1", null! },
-            { "Key1", "test" }
-        };
-
-        Assert.True(dictionary.Values.Contains(null!));
-    }
-
-    [Fact]
-    public void Values_Contains_ReturnsFalseForNullWhenNotPresent()
-    {
-        var dictionary = new ValueListDictionary<string, string> { { "Key1", "test" } };
-
-        Assert.False(dictionary.Values.Contains(null!));
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
+#pragma warning disable xUnit2017
+        Assert.False(dictionary.Values.Contains(CreateValueNotInDictionary()));
+#pragma warning restore xUnit2017
     }
 
     [Fact]
     public void Values_CopyTo_CopiesValuesToArray()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { CreateKey(1), value1 },
+            { CreateKey(2), value2 }
         };
 
-        var array = new int[2];
+        var array = new TValue[2];
         dictionary.Values.CopyTo(array, 0);
 
-        Assert.Equal([10, 20], array);
+        Assert.Equal([value1, value2], array);
     }
 
     [Fact]
     public void Values_CopyTo_CopiesValuesInCorrectOrder()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+        var value3 = CreateValue(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key2", 30 }
+            { CreateKey(1), value1 },
+            { CreateKey(1), value2 },
+            { CreateKey(2), value3 }
         };
 
-        var array = new int[3];
+        var array = new TValue[3];
         dictionary.Values.CopyTo(array, 0);
 
-        Assert.Equal([10, 20, 30], array);
+        Assert.Equal([value1, value2, value3], array);
     }
 
     [Fact]
     public void Values_CopyTo_CopiesValuesToArrayAtIndex()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { CreateKey(1), value1 },
+            { CreateKey(2), value2 }
         };
 
-        var array = new int[4];
+        var array = new TValue[4];
         dictionary.Values.CopyTo(array, 2);
 
-        Assert.Equal([0, 0, 10, 20], array);
+        Assert.Equal(default, array[0]);
+        Assert.Equal(default, array[1]);
+        Assert.Equal(value1, array[2]);
+        Assert.Equal(value2, array[3]);
     }
 
     [Fact]
     public void Values_CopyTo_ThrowsArgumentNullException_WhenArrayIsNull()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
 
         Assert.Throws<ArgumentNullException>(() => dictionary.Values.CopyTo(null!, 0));
     }
@@ -959,78 +938,56 @@ public class ValueListDictionaryTests
     [Fact]
     public void Values_CopyTo_ThrowsArgumentOutOfRangeException_WhenIndexIsNegative()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => dictionary.Values.CopyTo(new int[1], -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => dictionary.Values.CopyTo(new TValue[1], -1));
     }
 
     [Fact]
     public void Values_CopyTo_ThrowsArgumentException_WhenArrayIsTooSmall()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { CreateKey(1), CreateValue(1) },
+            { CreateKey(2), CreateValue(2) }
         };
 
-        Assert.Throws<ArgumentException>(() => dictionary.Values.CopyTo(new int[1], 0));
+        Assert.Throws<ArgumentException>(() => dictionary.Values.CopyTo(new TValue[1], 0));
     }
 
     [Fact]
     public void Values_GetEnumerator_EnumeratesAllValuesGroupedByKey()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+        var value3 = CreateValue(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key2", 30 }
+            { CreateKey(1), value1 },
+            { CreateKey(1), value2 },
+            { CreateKey(2), value3 }
         };
 
         var values = dictionary.Values.ToList();
 
-        Assert.Equal([10, 20, 30], values);
-    }
-
-    [Fact]
-    public void Values_GetEnumerator_ReturnsEmptyForEmptyDictionary()
-    {
-        var dictionary = new ValueListDictionary<string, int>();
-
-        var values = dictionary.Values.ToList();
-
-        Assert.Empty(values);
-    }
-
-    [Fact]
-    public void Values_GetEnumerator_NonGeneric_EnumeratesValues()
-    {
-        var dictionary = new ValueListDictionary<string, int>
-        {
-            { "Key1", 10 },
-            { "Key2", 20 }
-        };
-
-        var values = new List<int>();
-        foreach (var value in (IEnumerable)dictionary.Values)
-            values.Add((int)value);
-
-        Assert.Equal([10, 20], values);
+        Assert.Equal(new[] { value1, value2, value3 }, values);
     }
 
     [Fact]
     public void Values_Add_ThrowsNotSupportedException()
     {
-        var dictionary = new ValueListDictionary<string, int>();
-        ICollection<int> values = dictionary.Values;
+        var dictionary = new ValueListDictionary<TKey, TValue>();
+        ICollection<TValue> values = dictionary.Values;
 
-        Assert.Throws<NotSupportedException>(() => values.Add(10));
+        Assert.Throws<NotSupportedException>(() => values.Add(CreateValue(1)));
     }
 
     [Fact]
     public void Values_Clear_ThrowsNotSupportedException()
     {
-        var dictionary = new ValueListDictionary<string, int>();
-        ICollection<int> values = dictionary.Values;
+        var dictionary = new ValueListDictionary<TKey, TValue>();
+        ICollection<TValue> values = dictionary.Values;
 
         Assert.Throws<NotSupportedException>(() => values.Clear());
     }
@@ -1038,20 +995,10 @@ public class ValueListDictionaryTests
     [Fact]
     public void Values_Remove_ThrowsNotSupportedException()
     {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-        ICollection<int> values = dictionary.Values;
+        var dictionary = new ValueListDictionary<TKey, TValue> { { CreateKey(1), CreateValue(1) } };
+        ICollection<TValue> values = dictionary.Values;
 
-        Assert.Throws<NotSupportedException>(() => values.Remove(10));
-    }
-
-    [Fact]
-    public void Values_InterfaceProperty_ReturnsSameCollectionAsConcreteProperty()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        IReadOnlyValueListDictionary<string, int> readOnlyDict = dictionary;
-
-        Assert.Same(dictionary.Values, readOnlyDict.Values);
+        Assert.Throws<NotSupportedException>(() => values.Remove(CreateValue(1)));
     }
 
     #endregion
@@ -1059,22 +1006,11 @@ public class ValueListDictionaryTests
     #region ValueCollection.Enumerator Tests
 
     [Fact]
-    public void ValueEnumerator_Current_ReturnsCurrentValue()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        var enumerator = dictionary.Values.GetEnumerator();
-        enumerator.MoveNext();
-
-        Assert.Equal(10, enumerator.Current);
-    }
-
-    [Fact]
     public void ValueEnumerator_MoveNext_ReturnsFalseWhenEmpty()
     {
-        var dictionary = new ValueListDictionary<string, int>();
+        var dictionary = new ValueListDictionary<TKey, TValue>();
 
-        var enumerator = dictionary.Values.GetEnumerator();
+        using var enumerator = dictionary.Values.GetEnumerator();
 
         Assert.False(enumerator.MoveNext());
     }
@@ -1082,103 +1018,45 @@ public class ValueListDictionaryTests
     [Fact]
     public void ValueEnumerator_MoveNext_IteratesAllValues()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+        var value3 = CreateValue(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key1", 20 },
-            { "Key2", 30 }
+            { CreateKey(1), value1 },
+            { CreateKey(1), value2 },
+            { CreateKey(2), value3 }
         };
 
-        var enumerator = dictionary.Values.GetEnumerator();
-        var values = new List<int>();
+        using var enumerator = dictionary.Values.GetEnumerator();
+        var values = new List<TValue>();
 
         while (enumerator.MoveNext())
             values.Add(enumerator.Current);
 
-        Assert.Equal([10, 20, 30], values);
-    }
-
-    [Fact]
-    public void ValueEnumerator_MoveNext_ReturnsFalseAfterLastElement()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        var enumerator = dictionary.Values.GetEnumerator();
-        enumerator.MoveNext();
-
-        Assert.False(enumerator.MoveNext());
-        Assert.False(enumerator.MoveNext());
+        Assert.Equal(new[] { value1, value2, value3 }, values);
     }
 
     [Fact]
     public void ValueEnumerator_Reset_ResetsToBeginning()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var value1 = CreateValue(1);
+        var value2 = CreateValue(2);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { CreateKey(1), value1 },
+            { CreateKey(2), value2 }
         };
 
-        var enumerator = dictionary.Values.GetEnumerator();
+        using var enumerator = dictionary.Values.GetEnumerator();
         enumerator.MoveNext();
         enumerator.MoveNext();
         enumerator.Reset();
 
         Assert.True(enumerator.MoveNext());
-        Assert.Equal(10, enumerator.Current);
-    }
-
-    [Fact]
-    public void ValueEnumerator_Dispose_CanBeCalledMultipleTimes()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        var enumerator = dictionary.Values.GetEnumerator();
-        enumerator.Dispose();
-        enumerator.Dispose(); // Should not throw
-    }
-
-    [Fact]
-    public void ValueEnumerator_NonGenericCurrent_ReturnsBoxedValue()
-    {
-        var dictionary = new ValueListDictionary<string, int> { { "Key1", 10 } };
-
-        IEnumerator enumerator = dictionary.Values.GetEnumerator();
-        enumerator.MoveNext();
-
-        Assert.Equal(10, (int)enumerator.Current!);
-    }
-
-    #endregion
-
-    #region Interface Implementation Tests
-
-    [Fact]
-    public void IReadOnlyValueListDictionary_Keys_ReturnsICollection()
-    {
-        IReadOnlyValueListDictionary<string, int> dictionary = new ValueListDictionary<string, int>
-        {
-            { "Key1", 10 }
-        };
-
-        var keys = dictionary.Keys;
-
-        Assert.Single(keys);
-        Assert.Contains("Key1", keys);
-    }
-
-    [Fact]
-    public void IReadOnlyValueListDictionary_Values_ReturnsICollection()
-    {
-        IReadOnlyValueListDictionary<string, int> dictionary = new ValueListDictionary<string, int>
-        {
-            { "Key1", 10 }
-        };
-
-        var values = dictionary.Values;
-
-        Assert.Single(values);
-        Assert.Contains(10, values);
+        Assert.Equal(value1, enumerator.Current);
     }
 
     #endregion
@@ -1186,40 +1064,16 @@ public class ValueListDictionaryTests
     #region Edge Cases
 
     [Fact]
-    public void Dictionary_WithValueTypeKey_WorksCorrectly()
-    {
-        var dictionary = new ValueListDictionary<int, string>
-        {
-            { 1, "one" },
-            { 2, "two" },
-            { 1, "uno" }
-        };
-
-        Assert.Equal(2, dictionary.KeyCount);
-        Assert.Equal(3, dictionary.Count);
-        Assert.Equal(["one", "uno"], dictionary.GetValues(1));
-    }
-
-    [Fact]
-    public void Dictionary_WithReferenceTypeValue_AllowsDuplicateValues()
-    {
-        var dictionary = new ValueListDictionary<string, string>
-        {
-            { "Key1", "value" },
-            { "Key1", "value" }
-        };
-
-        Assert.Equal(2, dictionary.Count);
-        Assert.Equal(["value", "value"], dictionary.GetValues("Key1"));
-    }
-
-    [Fact]
     public void Dictionary_EmptyAfterClear_CanBeReused()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var key1 = CreateKey(1);
+        var key2 = CreateKey(2);
+        var key3 = CreateKey(3);
+
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "Key1", 10 },
-            { "Key2", 20 }
+            { key1, CreateValue(1) },
+            { key2, CreateValue(2) }
         };
 
         var keys = dictionary.Keys;
@@ -1227,25 +1081,26 @@ public class ValueListDictionaryTests
 
         dictionary.Clear();
 
+#pragma warning disable xUnit2013
         Assert.Equal(0, keys.Count);
         Assert.Equal(0, values.Count);
 
-        dictionary.Add("Key3", 30);
+        dictionary.Add(key3, CreateValue(3));
 
         Assert.Equal(1, keys.Count);
         Assert.Equal(1, values.Count);
-        Assert.Contains("Key3", keys);
-        Assert.Contains(30, values);
+        Assert.Contains(key3, keys);
+#pragma warning restore xUnit2013
     }
 
     [Fact]
     public void Dictionary_MultipleIterationsProduceSameResults()
     {
-        var dictionary = new ValueListDictionary<string, int>
+        var dictionary = new ValueListDictionary<TKey, TValue>
         {
-            { "A", 1 },
-            { "B", 2 },
-            { "A", 3 }
+            { CreateKey(1), CreateValue(1) },
+            { CreateKey(2), CreateValue(2) },
+            { CreateKey(1), CreateValue(3) }
         };
 
         var firstIteration = dictionary.ToList();

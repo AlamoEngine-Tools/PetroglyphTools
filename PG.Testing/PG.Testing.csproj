@@ -7,7 +7,7 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>	
 	<ItemGroup>
-		<PackageReference Include="AlamoEngineTools.Testing" Version="4.1.64-gafce1c0c15" />
+		<PackageReference Include="AlamoEngineTools.Testing" Version="4.1.69-ga5b3776a68" />
 		<PackageReference Include="Testably.Abstractions.Testing" Version="5.0.1" />
 	</ItemGroup>
 	<ItemGroup>

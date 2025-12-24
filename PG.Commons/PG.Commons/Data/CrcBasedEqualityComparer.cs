@@ -17,18 +17,19 @@ public sealed class CrcBasedEqualityComparer<T> : IEqualityComparer<T> where T :
     /// </summary>
     public static readonly CrcBasedEqualityComparer<T> Instance = new();
 
-
     /// <inheritdoc />
-    public bool Equals(T x, T y)
+    public bool Equals(T? x, T? y)
     {
+        if (ReferenceEquals(x, y))
+            return true;
+        if (x is null || y is null)
+            return false;
         return x.Crc32.Equals(y.Crc32);
     }
 
     /// <inheritdoc />
     public int GetHashCode(T obj)
     {
-        if (obj is null)
-            throw new ArgumentNullException(nameof(obj));
-        return obj.Crc32.GetHashCode();
+        return obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.Crc32.GetHashCode();
     }
 }

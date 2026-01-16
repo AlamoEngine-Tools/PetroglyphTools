@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using AET.Testing.Attributes;
+using AnakinRaW.CommonUtilities.Testing.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;

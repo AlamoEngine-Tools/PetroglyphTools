@@ -1,6 +1,6 @@
 ﻿using System.IO.Abstractions;
-using AET.Testing.Attributes;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
+using AnakinRaW.CommonUtilities.Testing.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using Testably.Abstractions;

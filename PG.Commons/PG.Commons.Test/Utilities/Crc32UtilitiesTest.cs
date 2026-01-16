@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AET.Testing.Extensions;
-using PG.Commons.Data;
+﻿using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
 using Xunit;
 
 namespace PG.Commons.Test.Utilities;
@@ -133,6 +133,34 @@ public class Crc32UtilitiesTest
     {
         Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc<CrcHolder>(default, null!, new Dictionary<Crc32, Range>()));
         Assert.Throws<ArgumentNullException>(() => Crc32Utilities.ItemsWithCrc(default, new List<CrcHolder>(), null!));
+    }
+
+    [Fact]
+    public void ItemsWithCrc_EmptyRange()
+    {
+        var map = new Dictionary<Crc32, Range> { {new Crc32(1), new Range(0, 0)}, }; 
+        var entries = new List<CrcHolder> { new(1), };
+        var items = Crc32Utilities.ItemsWithCrc(new Crc32(1), entries, map);
+        Assert.Empty(items);
+    }
+
+    [Fact]
+    public void ItemsWithCrc_UnsortedMap()
+    {
+        var map = new Dictionary<Crc32, Range>
+        {
+            { new Crc32(2), new Range(1, 2) },
+            { new Crc32(1), new Range(0, 1) },
+        };
+        var entries = new List<CrcHolder>
+        {
+            new(1), 
+            new(2), 
+        };
+        var item1 = Crc32Utilities.ItemsWithCrc(new Crc32(1), entries, map);
+        var item2 = Crc32Utilities.ItemsWithCrc(new Crc32(2), entries, map);
+        Assert.Equal(new Crc32(1), item1.First().Crc32);
+        Assert.Equal(new Crc32(2), item2.First().Crc32);
     }
 
     [Theory]

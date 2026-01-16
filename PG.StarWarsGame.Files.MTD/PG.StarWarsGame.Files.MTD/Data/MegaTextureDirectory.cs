@@ -4,20 +4,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using AnakinRaW.CommonUtilities.Collections;
-using PG.Commons.Collections;
 using PG.Commons.Hashing;
 
 namespace PG.StarWarsGame.Files.MTD.Data;
 
 internal class MegaTextureDirectory : IMegaTextureDirectory
 {
-    private readonly ValueListDictionary<Crc32, MegaTextureFileIndex> _filesIndices;
+    private readonly FrugalValueListDictionary<Crc32, MegaTextureFileIndex> _filesIndices;
 
-    public int Count => _filesIndices.Count;
+    public int Count => _filesIndices.ValueCount;
 
     public MegaTextureDirectory(IEnumerable<MegaTextureFileIndex> indices)
     {
-        _filesIndices = new ValueListDictionary<Crc32, MegaTextureFileIndex>();
+        _filesIndices = new FrugalValueListDictionary<Crc32, MegaTextureFileIndex>();
         foreach (var fileIndex in indices) 
             _filesIndices.Add(fileIndex.Crc32, fileIndex);
     }
@@ -34,10 +33,10 @@ internal class MegaTextureDirectory : IMegaTextureDirectory
 
     public bool TryGetEntry(Crc32 crc32, out MegaTextureFileIndex entry)
     {
-        return _filesIndices.TryGetLastValue(crc32, out entry);
+        return _filesIndices.TryGetLastValue(crc32, out entry!);
     }
 
-    public ReadOnlyFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc)
+    public ImmutableFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc)
     {
         _filesIndices.TryGetValues(crc, out var list);
         return list;

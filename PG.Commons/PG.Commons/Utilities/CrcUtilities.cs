@@ -73,7 +73,7 @@ public static class Crc32Utilities
     /// <param name="indexMap">The CRC-to-range table of <paramref name="items"/>.</param>
     /// <returns>A readonly-list containing all items matching <paramref name="crc"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="indexMap"/> or <paramref name="items"/> is <see langword="null"/>.</exception>
-    public static ReadOnlyFrugalList<T> ItemsWithCrc<T>(
+    public static ImmutableFrugalList<T> ItemsWithCrc<T>(
         Crc32 crc,
         IList<T> items,
         IReadOnlyDictionary<Crc32, Range> indexMap) where T : IHasCrc32
@@ -84,20 +84,25 @@ public static class Crc32Utilities
             throw new ArgumentNullException(nameof(items));
 
         if (items.Count == 0 || !indexMap.TryGetValue(crc, out var range))
-            return ReadOnlyFrugalList<T>.Empty;
+            return ImmutableFrugalList<T>.Empty;
 
         var start = range.Start.Value;
         var end = range.End.Value;
         var length = end - start;
 
-        if (length == 1)
-            return new ReadOnlyFrugalList<T>(items[start]);
+        switch (length)
+        {
+            case 0:
+                return ImmutableFrugalList<T>.Empty;
+            case 1:
+                return ImmutableFrugalList.Single(items[start]);
+        }
 
         var list = new List<T>(length);
         for (var i = start; i < end; i++)
             list.Add(items[i]);
 
-        return new ReadOnlyFrugalList<T>(list);
+        return ImmutableFrugalList.Create(list);
     }
 
     /// <summary>

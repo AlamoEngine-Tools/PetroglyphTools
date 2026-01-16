@@ -22,7 +22,7 @@ internal sealed class SortedDatModel : DatModel, ISortedDatModel
         _crcToIndexMap = Crc32Utilities.ListToCrcRangeTable(Entries);
     }
 
-    public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
+    public override ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
     {
         return Crc32Utilities.ItemsWithCrc(key, Entries, _crcToIndexMap);
     }

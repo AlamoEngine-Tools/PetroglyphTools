@@ -74,7 +74,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     }
 
     /// <inheritdoc />
-    public ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc)
+    public ImmutableFrugalList<T> EntriesWithCrc(Crc32 crc)
     {
         return Crc32Utilities.ItemsWithCrc(crc, Entries, _crcToIndexMap);
     }
@@ -87,14 +87,14 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     }
 
     /// <inheritdoc />
-    public ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive)
+    public ImmutableFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive)
     {
         ThrowHelper.ThrowIfNullOrEmpty(searchPattern);
 
         Debug.Assert(_fileNames.Count == Entries.Count);
 
         if (Entries.Count == 0)
-            return ReadOnlyFrugalList<T>.Empty;
+            return ImmutableFrugalList<T>.Empty;
 
         var glob = Glob.Parse(searchPattern,
             new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = caseInsensitive } });
@@ -107,7 +107,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
                 foundMatches.Add(Entries[i]);
         }
 
-        return foundMatches.AsReadOnly();
+        return foundMatches.ToImmutableList();
     }
 
     /// <inheritdoc />

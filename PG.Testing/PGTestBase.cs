@@ -7,10 +7,6 @@ namespace PG.Testing;
 
 public abstract class PGTestBase : TestBaseWithFileSystem
 {
-    protected PGTestBase()
-    {
-    }
-
     protected override void SetupServices(IServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Extensions;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -11,8 +12,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
-using PG.StarWarsGame.Files.Test.Services.Builder;
-using PG.Testing;
+using PG.StarWarsGame.Files.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -31,7 +31,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
     protected override string DefaultFileName => "test.meg";
 
-    protected override void SetupServices(ServiceCollection serviceCollection)
+    protected override void SetupServices(IServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);
         serviceCollection.SupportMEG();
@@ -160,11 +160,11 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Throws<ObjectDisposedException>(() =>
             builder.Build(new MegFileInformation("a.meg", MegFileVersion.V1), false));
 
-        ExceptionUtilities.AssertDoesNotThrowException(() => builder.DataEntries);
-        ExceptionUtilities.AssertDoesNotThrowException(builder.Clear);
-        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Remove(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
+        Assert.DoesNotThrow(() => builder.DataEntries);
+        Assert.DoesNotThrow(builder.Clear);
+        Assert.DoesNotThrow(() => builder.Remove(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
 
-        ExceptionUtilities.AssertDoesNotThrowException(builder.Dispose);
+        Assert.DoesNotThrow(builder.Dispose);
     }
 
     #region AddFile

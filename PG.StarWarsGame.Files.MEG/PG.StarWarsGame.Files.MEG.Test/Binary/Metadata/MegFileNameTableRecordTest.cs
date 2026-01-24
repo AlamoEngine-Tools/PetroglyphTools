@@ -1,6 +1,6 @@
 ﻿using System;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
@@ -34,7 +34,7 @@ public class MegFileNameTableRecordTest
     public void Ctor_OriginalPath()
     {
         const string expectedOrgPath = "someUnusualStringÜöä😅";
-        var record = ExceptionUtilities.AssertDoesNotThrowException(() => new MegFileNameTableRecord("path", expectedOrgPath));
+        var record = Assert.DoesNotThrow(() => new MegFileNameTableRecord("path", expectedOrgPath));
         Assert.Equal("path", record.FileName);
         Assert.Equal(expectedOrgPath, record.OriginalFilePath);
     }

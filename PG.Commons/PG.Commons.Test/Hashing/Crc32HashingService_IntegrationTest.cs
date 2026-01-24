@@ -1,22 +1,36 @@
 ﻿using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text;
+using AnakinRaW.CommonUtilities.Hashing;
+using AnakinRaW.CommonUtilities.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
-using PG.Testing;
+using Testably.Abstractions;
 using Xunit;
 
 namespace PG.Commons.Test.Hashing;
 
-public class Crc32HashingService_IntegrationTest : CommonTestBase
+public sealed class Crc32HashingService_IntegrationTest : TestBaseWithFileSystem
 {
 
     private readonly Crc32HashingService _crc32HashingService;
 
     public Crc32HashingService_IntegrationTest()
     {
-        var sc = new ServiceCollection();
         _crc32HashingService = new Crc32HashingService(ServiceProvider);
+    }
+
+    protected override IFileSystem CreateFileSystem()
+    {
+        return new RealFileSystem();
+    }
+
+    protected override void SetupServices(IServiceCollection serviceCollection)
+    {
+        base.SetupServices(serviceCollection);
+        serviceCollection.AddSingleton<IHashingService>(sp => new HashingService(sp));
+        serviceCollection.AddSingleton<IHashAlgorithmProvider>(new Crc32HashingProvider());
     }
 
 

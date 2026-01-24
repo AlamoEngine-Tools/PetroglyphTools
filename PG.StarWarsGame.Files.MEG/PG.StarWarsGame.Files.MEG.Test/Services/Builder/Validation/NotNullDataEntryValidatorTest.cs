@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
-using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
@@ -34,7 +34,7 @@ public class NotNullDataEntryValidatorTest
     {
         var random = new Random();
         Assert.False(_validator.Validate(ReadOnlySpan<char>.Empty, random.Next() % 2 == 0, random.Next() % 2 == 0 ? (uint)random.Next() : null));
-        Assert.True(_validator.Validate(TestUtility.GetRandomStringOfLength(12).AsSpan(), random.Next() % 2 == 0, random.Next() % 2 == 0 ? (uint)random.Next() : null));
+        Assert.True(_validator.Validate(Random.String(12).AsSpan(), random.Next() % 2 == 0, random.Next() % 2 == 0 ? (uint)random.Next() : null));
     }
 
     public static IEnumerable<object[]> ValidTestData()

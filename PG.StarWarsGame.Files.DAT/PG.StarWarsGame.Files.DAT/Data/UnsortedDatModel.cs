@@ -13,10 +13,10 @@ internal sealed class UnsortedDatModel(IEnumerable<DatStringEntry> entries) : Da
 {
     public override DatFileType KeySortOrder => DatFileType.NotOrdered;
 
-    public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
+    public override ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
     {
         if (!ContainsKey(key))
-            return ReadOnlyFrugalList<DatStringEntry>.Empty;
+            return ImmutableFrugalList<DatStringEntry>.Empty;
 
         var list = new FrugalList<DatStringEntry>();
         foreach (var entry in Entries)
@@ -24,7 +24,7 @@ internal sealed class UnsortedDatModel(IEnumerable<DatStringEntry> entries) : Da
             if (entry.Crc32 == key)
                 list.Add(entry);
         }
-        return list.AsReadOnly();
+        return list.ToImmutableList();
     }
 
     public ISortedDatModel ToSortedModel()

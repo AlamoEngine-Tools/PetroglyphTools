@@ -1,8 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>			
+		<TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net481</TargetFrameworks>
+	</PropertyGroup>
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<TargetFrameworks>net10.0</TargetFrameworks>
-		<TargetFrameworks Condition="!$([MSBuild]::IsOsUnixLike())">$(TargetFrameworks);net481</TargetFrameworks>
+		<IsTestable>true</IsTestable>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Resources\Files\creditstext_english.dat" />
@@ -29,14 +33,14 @@
 	  <EmbeddedResource Include="Resources\Files\Sorted_TwoEntries.dat" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+		<PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
+		<PackageReference Include="Microsoft.Testing.Platform" Version="2.0.2" />
 		<PackageReference Include="coverlet.msbuild" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-		<PackageReference Include="xunit" Version="2.9.3" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
@@ -45,12 +49,9 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Testably.Abstractions.Testing" Version="5.0.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\PG.Commons\PG.Commons.Test\PG.Commons.Test.csproj" />
-		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.Test\PG.StarWarsGame.Files.Test.csproj" />
-		<ProjectReference Include="..\..\PG.Testing\PG.Testing.csproj" />
+		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.Testing\PG.StarWarsGame.Files.Testing.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
 	</ItemGroup>
 </Project>

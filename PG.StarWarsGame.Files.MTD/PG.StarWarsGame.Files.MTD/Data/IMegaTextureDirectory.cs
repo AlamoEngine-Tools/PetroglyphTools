@@ -44,5 +44,5 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
     /// <returns>List of matching data entries.</returns>
-    ReadOnlyFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc);
+    ImmutableFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc);
 }

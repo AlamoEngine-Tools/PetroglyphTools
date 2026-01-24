@@ -16,7 +16,7 @@ internal sealed class MegBinaryValidator(IServiceProvider serviceProvider) : IMe
         // We cannot add a validator that checks whether the string file name matches the CRC32,
         // because that would cause incompatibility with MIKE's tool as he allows non-ASCII chars while we do not.
         // This of course makes Mike's meg technically invalid, be we should allow situation.
-        // Tool's are free to handle this on their own.
+        // Tools are free to handle this on their own.
 
         return _sizeValidator.Validate(info) && _fileTableValidator.Validate(info.Metadata.FileTable);
     }

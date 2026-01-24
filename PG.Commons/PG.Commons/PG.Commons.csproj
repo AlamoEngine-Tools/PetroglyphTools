@@ -19,8 +19,8 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="AnakinRaW.CommonUtilities" Version="13.0.3-g989307af40" />
-		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="13.0.3-g989307af40" />
+		<PackageReference Include="AnakinRaW.CommonUtilities" Version="13.0.11-g5b055fb6c0" />
+		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="13.0.11-g5b055fb6c0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
 		<PackageReference Include="System.IO.Hashing" Version="10.0.2" />

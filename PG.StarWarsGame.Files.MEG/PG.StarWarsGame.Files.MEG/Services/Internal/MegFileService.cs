@@ -23,7 +23,11 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 {
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
-    public void CreateMegArchive(FileSystemStream fileStream, MegFileVersion fileVersion, MegEncryptionData? encryptionData, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
+    public void CreateMegArchive(
+        FileSystemStream fileStream, 
+        MegFileVersion fileVersion, 
+        MegEncryptionData? encryptionData, 
+        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
     {
         if (fileStream == null)
             throw new ArgumentNullException(nameof(fileStream));
@@ -79,7 +83,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         // but the Metadata is would still be valid since each part is within the uint32 range. 
         if (dataBytesWritten > uint.MaxValue)
             MegThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
-
+        
         Debug.Assert(dataBytesWritten == fileStream.Position);
     }
 
@@ -133,7 +137,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
         // E.g, a MEG with one entry being exactly 4GB large.
         // In this case, the Archive itself is larger (Metadata + 4GB),
-        // but the Metadata is would still be valid since each part is within the uint32 range. 
+        // but the Metadata would still be valid since each part is within the uint32 range. 
         if (actualMegSize > uint.MaxValue)
             MegThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
 
@@ -147,7 +151,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         });
 
         if (!validationResult)
-            throw new BinaryCorruptedException($"Unable to read .MEG archive");
+            throw new BinaryCorruptedException("Unable to read .MEG archive");
 
         return megMetadata;
     }

@@ -160,11 +160,11 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Throws<ObjectDisposedException>(() =>
             builder.Build(new MegFileInformation("a.meg", MegFileVersion.V1), false));
 
-        Assert.DoesNotThrowException(() => builder.DataEntries);
-        Assert.DoesNotThrowException(builder.Clear);
-        Assert.DoesNotThrowException(() => builder.Remove(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
+        Assert.DoesNotThrow(() => builder.DataEntries);
+        Assert.DoesNotThrow(builder.Clear);
+        Assert.DoesNotThrow(() => builder.Remove(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
 
-        Assert.DoesNotThrowException(builder.Dispose);
+        Assert.DoesNotThrow(builder.Dispose);
     }
 
     #region AddFile

@@ -133,8 +133,8 @@ public class DatFileReaderTest : TestBaseWithFileSystem
     [Fact]
     public void ReadBinary_Integration()
     {
-        Assert.DoesNotThrowException(() => TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"));
-        Assert.DoesNotThrowException(() => TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"));
+        Assert.DoesNotThrow(() => TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"));
+        Assert.DoesNotThrow(() => TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"));
     }
 
     [Theory]

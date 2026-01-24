@@ -18,7 +18,7 @@ public class Crc32UtilitiesTest
     public void EnsureSortedByCrc32(params int[] checksums)
     {
         var list = checksums.Select(checksum => new CrcHolder(checksum)).Cast<IHasCrc32>().ToList();
-        Assert.DoesNotThrowException(() => Crc32Utilities.EnsureSortedByCrc32(list));
+        Assert.DoesNotThrow(() => Crc32Utilities.EnsureSortedByCrc32(list));
     }
 
     [Fact]

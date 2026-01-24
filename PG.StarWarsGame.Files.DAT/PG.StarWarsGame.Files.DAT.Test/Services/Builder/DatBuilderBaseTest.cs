@@ -119,12 +119,12 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
 
         Assert.Throws<ObjectDisposedException>(() => builder.AddEntry("key", "value"));
 
-        Assert.DoesNotThrowException(() => builder.Entries);
-        Assert.DoesNotThrowException(builder.Clear);
-        Assert.DoesNotThrowException(() => builder.Remove(new DatStringEntry()));
-        Assert.DoesNotThrowException(() => builder.RemoveAllKeys("key"));
+        Assert.DoesNotThrow(() => builder.Entries);
+        Assert.DoesNotThrow(builder.Clear);
+        Assert.DoesNotThrow(() => builder.Remove(new DatStringEntry()));
+        Assert.DoesNotThrow(() => builder.RemoveAllKeys("key"));
 
-        Assert.DoesNotThrowException(builder.Dispose);
+        Assert.DoesNotThrow(builder.Dispose);
     }
 
     #endregion

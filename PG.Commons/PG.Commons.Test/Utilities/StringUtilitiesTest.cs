@@ -73,7 +73,7 @@ public class StringUtilitiesTest
     [InlineData("\0\t\u007F\r\n")]
     public void ValidateIsAsciiOnly(string data)
     {
-        Assert.DoesNotThrowException(() => StringUtilities.ValidateIsAsciiOnly(data.AsSpan()));
+        Assert.DoesNotThrow(() => StringUtilities.ValidateIsAsciiOnly(data.AsSpan()));
     }
 
     public static IEnumerable<object[]> TestData_GetByteSize()

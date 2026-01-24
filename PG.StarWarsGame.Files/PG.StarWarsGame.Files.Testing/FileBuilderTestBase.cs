@@ -27,7 +27,7 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : PGTestB
         var builder = CreateBuilder();
         builder.Dispose();
         Assert.Throws<ObjectDisposedException>(() => builder.Build(CreateFileInfo(true, DefaultFileName), false));
-        Assert.DoesNotThrowException(builder.Dispose);
+        Assert.DoesNotThrow(builder.Dispose);
     }
 
     [Fact]

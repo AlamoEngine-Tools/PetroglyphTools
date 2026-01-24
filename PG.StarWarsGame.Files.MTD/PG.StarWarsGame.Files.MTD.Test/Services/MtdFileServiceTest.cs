@@ -77,7 +77,7 @@ public class MtdFileServiceTest : CommonMtdTestBase
     public void Load_FocMtd()
     {
         var focFile = TestingHelpers.GetEmbeddedResource(GetType(), "Files.MT_COMMANDBAR.MTD");
-        Assert.DoesNotThrowException(() => _mtdFileService.Load(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
+        Assert.DoesNotThrow(() => _mtdFileService.Load(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
     }
 
     private void CompareFileWithExpected(IList<MtdEntryInformationContainer> expectedFiles, IMtdFile mtdFile)

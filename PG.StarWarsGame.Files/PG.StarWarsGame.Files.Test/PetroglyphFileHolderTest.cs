@@ -183,7 +183,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : PGT
         if (!typeof(TFileInfo).IsAssignableFrom(typeof(PetroglyphMegPackableFileInformation)))
             return;
 
-        Assert.DoesNotThrowException(() => CreateFileHolder(model, CreateFileInfo("notFound", true)));
+        Assert.DoesNotThrow(() => CreateFileHolder(model, CreateFileInfo("notFound", true)));
     }
 
     [Fact]

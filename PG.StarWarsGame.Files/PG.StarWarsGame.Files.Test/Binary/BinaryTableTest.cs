@@ -87,7 +87,7 @@ public abstract class BinaryTableTest<T> where T : IBinary
         Assert.Equal(2, table.Count);
         Assert.Equal(entry1, table[0]);
         Assert.Equal(entry2, table[1]);
-        Assert.Throws<ArgumentOutOfRangeException>(() => table[2]);
+        Assert.Throws<IndexOutOfRangeException>(() => table[2]);
     }
 
     [Fact]

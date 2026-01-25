@@ -1,7 +1,6 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PG.StarWarsGame.Files.MEG;
@@ -15,7 +14,7 @@ internal static class MegThrowHelper
         if (filePath is not null)
             message += $" File: '{filePath}'";
 
-        throw new NotSupportedException(message);
+        throw new MegDataSizeException(message);
     }
 
     [DoesNotReturn]
@@ -24,6 +23,6 @@ internal static class MegThrowHelper
         var message = "MEG files larger than 4GB are not supported.";
         if (filePath is not null)
             message += $" File: '{filePath}'";
-        throw new NotSupportedException(message);
+        throw new MegSizeException(message);
     }
 }

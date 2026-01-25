@@ -3,7 +3,6 @@ using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
-using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using Testably.Abstractions.Testing;
 using Xunit;
 

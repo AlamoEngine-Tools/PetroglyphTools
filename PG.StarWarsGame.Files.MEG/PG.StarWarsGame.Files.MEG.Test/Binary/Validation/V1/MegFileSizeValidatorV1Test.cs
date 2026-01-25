@@ -4,7 +4,6 @@ using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
-using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 using Xunit;
 

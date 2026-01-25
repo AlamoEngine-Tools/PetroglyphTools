@@ -3,16 +3,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
+using PG.StarWarsGame.Files.MEG.Binary.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
-internal class MegFileBinaryReaderV1(IServiceProvider services) : MegFileBinaryReaderBase<MegMetadata, MegHeader, MegFileTable>(services)
+internal class MegFileBinaryReaderV1(IServiceProvider services) 
+    : MegFileBinaryReaderBase<MegMetadata, MegHeader, MegFileTable, MegFileTableRecord>(services)
 {
+    protected override IMegBinaryValidator<MegMetadata> Validator { get; } = new V1MegValidator(services);
+
     protected internal override MegMetadata CreateMegMetadata(MegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, MegFileTable fileTable)
     {
         return new MegMetadata(header, fileNameTable, fileTable);
@@ -38,19 +41,14 @@ internal class MegFileBinaryReaderV1(IServiceProvider services) : MegFileBinaryR
         return new MegHeader(numFileNames, numFiles);
     }
 
-    protected internal override MegFileTable BuildFileTable(PetroglyphBinaryReader binaryReader, MegHeader header)
+    protected override MegFileTableRecord BuildFileDescriptor(PetroglyphBinaryReader binaryReader)
     {
-        var fileNumber = header.FileNumber;
-        var megFileContentTableRecords = new List<MegFileTableRecord>(fileNumber);
+        throw new NotImplementedException();
+    }
 
-        for (var i = 0; i < fileNumber; i++)
-        {
-            var record = BuildFileTableRecord(binaryReader);
-            Debug.Assert(record.FileTableRecordIndex == i);
-            megFileContentTableRecords.Add(record);
-        }
-
-        return new MegFileTable(megFileContentTableRecords);
+    protected override MegFileTable CreateMegFileTable(IReadOnlyList<MegFileTableRecord> fileDescriptors)
+    {
+        throw new NotImplementedException();
     }
 
     private static MegFileTableRecord BuildFileTableRecord(PetroglyphBinaryReader binaryReader)

@@ -55,6 +55,15 @@ public class DefaultMegFileInformationValidatorTest
     {
         yield return
         [
+            CreateData(null!,
+                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
+        ];
+        yield return
+        [
+            CreateData(new MegFileInformation("path", MegFileVersion.V1), null!)
+        ];
+        yield return
+        [
             CreateData(new MegFileInformation("path", MegFileVersion.V1),
                 [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];

@@ -17,23 +17,23 @@ public static class Crc32Utilities
 {
     /// <summary>
     /// Converts a list of elements, already sorted by CRC32, into a table where the key is the <see cref="Crc32"/> checksum
-    /// of <typeparamref name="T"/> and the value is an <see cref="IndexRange"/> indicating
+    /// of <typeparamref name="T"/> and the value is a <see cref="Range"/> indicating
     /// a range of indexes of <paramref name="items"/> which share the same checksum.
     /// </summary>
     /// <typeparam name="T">The actual type of the date entry.</typeparam>
     /// <param name="items">CRC32 sorted list of elements.</param>
-    /// <returns>The CRC-to-index-range table.</returns>
+    /// <returns>The CRC-to-range table.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException"><paramref name="items"/> is not sorted.</exception>
     /// <example>
-    /// The given input list [1,2,2,2,3] returns the following dictionary: {{1, (0, 1)}, {2, (1, 3)}, {3, (4, 1)}}
+    /// The given input list [1,2,2,2,3] returns the following dictionary: {{1, 0..1}, {2, 1..4}, {3, 4..5}}
     /// </example>
-    public static IReadOnlyDictionary<Crc32, IndexRange> ListToCrcIndexRangeTable<T>(IList<T> items) where T : IHasCrc32
+    public static IReadOnlyDictionary<Crc32, Range> ListToCrcRangeTable<T>(IList<T> items) where T : IHasCrc32
     {
         if (items == null)
             throw new ArgumentNullException(nameof(items));
 
-        var dict = new Dictionary<Crc32, IndexRange>();
+        var dict = new Dictionary<Crc32, Range>();
 
         var lastCrc = default(Crc32);
         var currentRangeStart = 0;
@@ -55,7 +55,7 @@ public static class Crc32Utilities
                 currentRangeLength = 1;
             }
 
-            dict[currentCrc] = new IndexRange(currentRangeStart, currentRangeLength);
+            dict[currentCrc] = new Range(currentRangeStart, currentRangeStart + currentRangeLength);
             lastCrc = currentCrc;
         }
         return dict;
@@ -70,32 +70,39 @@ public static class Crc32Utilities
     /// </remarks>
     /// <param name="crc">The CRC32 checksum to search for in the specified list.</param>
     /// <param name="items">The sorted list to search.</param>
-    /// <param name="indexMap">The CRC-to-index-range table of <paramref name="items"/>.</param>
+    /// <param name="indexMap">The CRC-to-range table of <paramref name="items"/>.</param>
     /// <returns>A readonly-list containing all items matching <paramref name="crc"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="indexMap"/> or <paramref name="items"/> is <see langword="null"/>.</exception>
-    public static ReadOnlyFrugalList<T> ItemsWithCrc<T>(
-        Crc32 crc, 
+    public static ImmutableFrugalList<T> ItemsWithCrc<T>(
+        Crc32 crc,
         IList<T> items,
-        IReadOnlyDictionary<Crc32, IndexRange> indexMap) where T : IHasCrc32
+        IReadOnlyDictionary<Crc32, Range> indexMap) where T : IHasCrc32
     {
-        if (indexMap is null) 
+        if (indexMap is null)
             throw new ArgumentNullException(nameof(indexMap));
         if (items is null)
             throw new ArgumentNullException(nameof(items));
 
-        if (items.Count == 0 || !indexMap.TryGetValue(crc, out var indexRange))
-            return ReadOnlyFrugalList<T>.Empty;
+        if (items.Count == 0 || !indexMap.TryGetValue(crc, out var range))
+            return ImmutableFrugalList<T>.Empty;
 
-        var length = indexRange.Length;
+        var start = range.Start.Value;
+        var end = range.End.Value;
+        var length = end - start;
 
-        if (length == 1)
-            return new ReadOnlyFrugalList<T>(items[indexRange.Start]);
+        switch (length)
+        {
+            case 0:
+                return ImmutableFrugalList<T>.Empty;
+            case 1:
+                return ImmutableFrugalList.Single(items[start]);
+        }
 
         var list = new List<T>(length);
-        for (var i = indexRange.Start; i < indexRange.Start + length; i++)
+        for (var i = start; i < end; i++)
             list.Add(items[i]);
 
-        return new ReadOnlyFrugalList<T>(list);
+        return ImmutableFrugalList.Create(list);
     }
 
     /// <summary>

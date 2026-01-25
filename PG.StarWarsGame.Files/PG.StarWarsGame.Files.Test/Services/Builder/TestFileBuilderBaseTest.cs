@@ -1,4 +1,6 @@
-﻿namespace PG.StarWarsGame.Files.Test.Services.Builder;
+﻿using PG.StarWarsGame.Files.Testing;
+
+namespace PG.StarWarsGame.Files.Test.Services.Builder;
 
 public class TestFileBuilderBaseTest : FileBuilderTestBase<TestFileBuilder, byte[], TestFileInfo>
 {

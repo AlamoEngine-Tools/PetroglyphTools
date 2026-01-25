@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.IO.Abstractions;
+﻿using AnakinRaW.CommonUtilities.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Files;
-using PG.Testing;
+using System;
+using System.IO;
+using System.IO.Abstractions;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -31,7 +31,7 @@ public class MegVersionIdentifierTest
     [Fact]
     public void GetMegFileVersion_ThrowsArg()
     {
-        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new NonSeekableStream(), out _));
+        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MegTestConstants.NonSeekableStream(), out _));
     }
 
     [Fact]
@@ -223,7 +223,7 @@ public class MegVersionIdentifierTest
     [Fact]
     public void GetMegFileVersion_V2_2Files()
     {
-        var data = TestUtility.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v2_2_files_data.meg");
+        var data = TestingHelpers.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v2_2_files_data.meg");
         var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(data, out var encrypted);
 
         Assert.Equal(MegFileVersion.V2, version);
@@ -339,7 +339,7 @@ public class MegVersionIdentifierTest
     [Fact]
     public void GetMegFileVersion_V3_2Files()
     {
-        var data = TestUtility.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v3n_2_files_data.meg");
+        var data = TestingHelpers.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v3n_2_files_data.meg");
         var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(data, out var encrypted);
 
         Assert.Equal(MegFileVersion.V3, version);
@@ -386,20 +386,5 @@ public class MegVersionIdentifierTest
 
         Assert.Equal(MegFileVersion.V3, version);
         Assert.True(encrypted);
-    }
-
-
-    private class NonSeekableStream : Stream
-    {
-        public override void Flush() => throw new NotImplementedException();
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
-        public override void SetLength(long value) => throw new NotImplementedException();
-        public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
-        public override bool CanRead => true;
-        public override bool CanSeek => false;
-        public override bool CanWrite => true;
-        public override long Length => 1;
-        public override long Position { get; set; }
     }
 }

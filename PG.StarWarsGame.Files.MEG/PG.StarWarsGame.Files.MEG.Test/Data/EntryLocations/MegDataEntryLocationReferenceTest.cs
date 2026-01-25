@@ -61,6 +61,7 @@ public class MegDataEntryLocationReferenceTest : CommonMegTestBase
 
         Assert.False(reference.Equals(null));
         Assert.NotEqual((object?)null, reference);
+        Assert.True(reference.Equals(reference));
         Assert.NotEqual(reference, new object());
         Assert.NotEqual(reference, otherNotEqualMeg);
         Assert.NotEqual(reference, otherNotEqualEntry);

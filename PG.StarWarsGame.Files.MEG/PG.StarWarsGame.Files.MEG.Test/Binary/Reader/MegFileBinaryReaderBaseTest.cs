@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
+using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader;
@@ -22,6 +23,7 @@ public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
         Assert.Throws<ArgumentNullException>(() => reader.ReadBinary(null!));
         Assert.Throws<ArgumentException>(() => reader.ReadBinary(new MemoryStream()));
         Assert.Throws<ArgumentException>(() => reader.ReadBinary(new MemoryStream([])));
+        Assert.Throws<NotSupportedException>(() => reader.ReadBinary(new MegTestConstants.NonSeekableStream()));
     }
 
     [Fact]
@@ -102,9 +104,68 @@ public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
             [
                 1, new byte[]
             {
-                1, 0, unchecked((byte)'ä')
+                1, 0, unchecked((byte)'ï¿½')
             }, new[] { "?" }
             ]
         ];
+    }
+
+    [Fact]
+    public void BuildFileTable_UnsortedCrc_ThrowsBinaryCorruptedException()
+    {
+        var data = new byte[]
+        {
+            5, 0, 0, 0, // 5 > 3
+            0, 0, 0, 0,
+            10, 0, 0, 0,
+            100, 0, 0, 0,
+            0, 0, 0, 0,
+            
+            3, 0, 0, 0, // Unsorted
+            1, 0, 0, 0,
+            20, 0, 0, 0,
+            110, 0, 0, 0,
+            1, 0, 0, 0
+        };
+
+        var header = new MegHeader(2, 2);
+        var binaryReader = new PetroglyphBinaryReader(new MemoryStream(data), false);
+        
+        var exception = Assert.Throws<BinaryCorruptedException>(() => 
+        {
+            var megReader = (dynamic)CreateMegBinaryReader();
+            megReader.BuildFileTable(binaryReader, header);
+        });
+        Assert.Contains("not sorted", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildFileTable_IndexMismatch_ThrowsBinaryCorruptedException()
+    {
+        var data = new byte[]
+        {
+            1, 0, 0, 0,
+            0, 0, 0, 0,
+            10, 0, 0, 0,
+            100, 0, 0, 0,
+            0, 0, 0, 0,
+            
+            2, 0, 0, 0,
+            5, 0, 0, 0, // Should be 1
+            20, 0, 0, 0,
+            110, 0, 0, 0,
+            1, 0, 0, 0
+        };
+
+        var header = new MegHeader(2, 2);
+        var binaryReader = new PetroglyphBinaryReader(new MemoryStream(data), false);
+        
+        var exception = Assert.Throws<BinaryCorruptedException>(() => 
+        {
+            var megReader = (dynamic)CreateMegBinaryReader();
+            megReader.BuildFileTable(binaryReader, header);
+        });
+        Assert.Contains("index", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("does not match", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 }

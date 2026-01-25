@@ -9,7 +9,6 @@ using System.Diagnostics;
 using AnakinRaW.CommonUtilities;
 using AnakinRaW.CommonUtilities.Collections;
 using DotNet.Globbing;
-using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -26,7 +25,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
 
     private readonly ReadOnlyCollection<string> _fileNames;
 
-    private readonly IReadOnlyDictionary<Crc32, IndexRange> _crcToIndexMap;
+    private readonly IReadOnlyDictionary<Crc32, Range> _crcToIndexMap;
 
     /// <inheritdoc />
     public T this[int index] => Entries[index];
@@ -59,7 +58,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
 
         Entries = new ReadOnlyCollection<T>(copyList);
         _fileNames = new ReadOnlyCollection<string>(fileNames);
-        _crcToIndexMap = Crc32Utilities.ListToCrcIndexRangeTable(Entries);
+        _crcToIndexMap = Crc32Utilities.ListToCrcRangeTable(Entries);
     }
 
     /// <inheritdoc />
@@ -75,7 +74,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     }
 
     /// <inheritdoc />
-    public ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc)
+    public ImmutableFrugalList<T> EntriesWithCrc(Crc32 crc)
     {
         return Crc32Utilities.ItemsWithCrc(crc, Entries, _crcToIndexMap);
     }
@@ -88,14 +87,14 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     }
 
     /// <inheritdoc />
-    public ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive)
+    public ImmutableFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive)
     {
         ThrowHelper.ThrowIfNullOrEmpty(searchPattern);
 
         Debug.Assert(_fileNames.Count == Entries.Count);
 
         if (Entries.Count == 0)
-            return ReadOnlyFrugalList<T>.Empty;
+            return ImmutableFrugalList<T>.Empty;
 
         var glob = Glob.Parse(searchPattern,
             new GlobOptions { Evaluation = new EvaluationOptions { CaseInsensitive = caseInsensitive } });
@@ -108,7 +107,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
                 foundMatches.Add(Entries[i]);
         }
 
-        return foundMatches.AsReadOnly();
+        return foundMatches.ToImmutableList();
     }
 
     /// <inheritdoc />

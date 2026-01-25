@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-using AnakinRaW.CommonUtilities.Hashing;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using PG.Commons;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -15,42 +13,34 @@ using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
-using PG.Testing;
 using PG.Testing.Hashing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Construction;
 
-public abstract class ConstructingMegArchiveBuilderBaseTest
+public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
 {
-    protected readonly IServiceProvider ServiceProvider;
-    protected readonly MockFileSystem FileSystem = new();
-    
+    protected virtual uint ExpectedMaxEntryFileSize => uint.MaxValue;
+
     private protected abstract ConstructingMegArchiveBuilderBase CreateService();
 
     protected abstract int GetExpectedHeaderSize();
 
     protected abstract MegFileVersion GetExpectedFileVersion();
 
-    protected ConstructingMegArchiveBuilderBaseTest()
+    protected override void SetupServices(IServiceCollection serviceCollection)
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(FileSystem);
-        sc.AddSingleton<IHashingService>(sp => new HashingService(sp));
-        PetroglyphCommons.ContributeServices(sc);
-        sc.SupportMEG();
+        base.SetupServices(serviceCollection);
+        serviceCollection.AddSingleton<ICrc32HashingService>(_ => new ParseIntCrc32HashingService());
 
-        sc.AddSingleton<ICrc32HashingService>(_ => new ParseIntCrc32HashingService());
-
-        ServiceProvider = sc.BuildServiceProvider();
     }
 
     [Fact]
     public void MaxEntryFileSize_Is4GB()
     {
         var builder = CreateService();
-        Assert.Equal(uint.MaxValue, builder.MaxEntryFileSize);
+        Assert.Equal(ExpectedMaxEntryFileSize, builder.MaxEntryFileSize);
     }
 
     [Fact]
@@ -83,7 +73,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
         };
-        Assert.Throws<NotSupportedException>(() => service.BuildConstructingMegArchive(builderEntries));
+        Assert.Throws<MegDataSizeException>(() => service.BuildConstructingMegArchive(builderEntries));
     }
 
     [Fact]
@@ -172,7 +162,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest
             if (entry.OriginInfo.IsLocalFile)
             {
                 FileSystem.Initialize().WithFile(entry.OriginInfo.FilePath)
-                    .Which(m => m.HasStringContent(TestUtility.GetRandomStringOfLength((int)entry.Size)));
+                    .Which(m => m.HasStringContent(Random.String((int)entry.Size)));
             }
         }
         

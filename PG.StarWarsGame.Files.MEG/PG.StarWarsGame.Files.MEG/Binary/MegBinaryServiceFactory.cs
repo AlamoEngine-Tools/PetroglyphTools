@@ -16,7 +16,7 @@ internal class MegBinaryServiceFactory(IServiceProvider serviceProvider) : IMegB
         if (megVersion == MegFileVersion.V1)
             return new MegFileBinaryReaderV1(_serviceProvider);
 
-        throw new NotImplementedException();
+        throw new NotImplementedException("MEGs other than V1 are currently not supported.");
     }
 
     public IMegBinaryConverter GetConverter(MegFileVersion megVersion)
@@ -24,7 +24,7 @@ internal class MegBinaryServiceFactory(IServiceProvider serviceProvider) : IMegB
         if (megVersion == MegFileVersion.V1)
             return new MegBinaryConverterV1(_serviceProvider);
 
-        throw new NotImplementedException();
+        throw new NotImplementedException("MEGs other than V1 are currently not supported.");
     }
 
     public IConstructingMegArchiveBuilder GetConstructionBuilder(MegFileVersion megVersion)
@@ -32,6 +32,6 @@ internal class MegBinaryServiceFactory(IServiceProvider serviceProvider) : IMegB
         if (megVersion == MegFileVersion.V1)
             return new ConstructingMegArchiveBuilderV1(_serviceProvider);
 
-        throw new NotImplementedException();
+        throw new NotImplementedException("MEGs other than V1 are currently not supported.");
     }
 }

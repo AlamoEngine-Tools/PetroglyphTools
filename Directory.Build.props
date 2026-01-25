@@ -8,7 +8,7 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<Authors>Alamo Engine Tools and Contributors</Authors>
-		<Copyright>Copyright © 2025 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2026 Alamo Engine Tools and contributors. All rights reserved.</Copyright>
 		<PackageProjectUrl>https://github.com/AlamoEngine-Tools/PetroglyphTools</PackageProjectUrl>
 		<LicenseFile>$(MSBuildThisFileDirectory)LICENSE</LicenseFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -35,7 +35,7 @@
 			<Version>3.9.50</Version>
 		</PackageReference>
 		<PackageReference Include="SauceControl.InheritDoc" Version="2.0.2" PrivateAssets="all"/>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>

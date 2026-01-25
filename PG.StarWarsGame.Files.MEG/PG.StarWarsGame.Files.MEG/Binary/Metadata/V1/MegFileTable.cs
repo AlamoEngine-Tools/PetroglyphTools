@@ -5,4 +5,5 @@ using System.Collections.Generic;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 
-internal class MegFileTable(IList<MegFileTableRecord> megFileContentTableRecords) : MegFileTableBase<MegFileTableRecord>(megFileContentTableRecords);
+internal class MegFileTable(IList<MegFileTableRecord> megFileContentTableRecords) 
+    : MegFileTableBase<MegFileTableRecord>(megFileContentTableRecords);

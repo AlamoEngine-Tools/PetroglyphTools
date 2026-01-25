@@ -92,7 +92,7 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
 
     protected abstract TMegFileDescriptor BuildFileDescriptor(PetroglyphBinaryReader binaryReader);
 
-    protected abstract TMegFileTable CreateMegFileTable(IReadOnlyList<TMegFileDescriptor> fileDescriptors);
+    protected abstract TMegFileTable CreateMegFileTable(IList<TMegFileDescriptor> fileDescriptors);
 
     public virtual BinaryTable<MegFileNameTableRecord> BuildFileNameTable(PetroglyphBinaryReader binaryReader, int fileNumber)
     {

@@ -43,16 +43,6 @@ internal class MegFileBinaryReaderV1(IServiceProvider services)
 
     protected override MegFileTableRecord BuildFileDescriptor(PetroglyphBinaryReader binaryReader)
     {
-        throw new NotImplementedException();
-    }
-
-    protected override MegFileTable CreateMegFileTable(IReadOnlyList<MegFileTableRecord> fileDescriptors)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static MegFileTableRecord BuildFileTableRecord(PetroglyphBinaryReader binaryReader)
-    {
         var crc32 = new Crc32(binaryReader.ReadUInt32());
         var fileTableRecordIndex = binaryReader.ReadUInt32();
 
@@ -78,5 +68,10 @@ internal class MegFileBinaryReaderV1(IServiceProvider services)
             fileSizeInBytes,
             fileStartOffsetInBytes,
             fileNameTableIndex);
+    }
+
+    protected override MegFileTable CreateMegFileTable(IList<MegFileTableRecord> fileDescriptors)
+    {
+        return new MegFileTable(fileDescriptors);
     }
 }

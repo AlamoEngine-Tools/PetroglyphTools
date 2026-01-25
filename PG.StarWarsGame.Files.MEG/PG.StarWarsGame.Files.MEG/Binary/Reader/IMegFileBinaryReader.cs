@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal interface IMegFileBinaryReader : IBinaryFileReader<IMegFileMetadata>, IDisposable
 {
-    public BinaryTable<MegFileNameTableRecord> BuildFileNameTable(
+    BinaryTable<MegFileNameTableRecord> BuildFileNameTable(
         PetroglyphBinaryReader binaryReader, 
         int fileNumber);
 }

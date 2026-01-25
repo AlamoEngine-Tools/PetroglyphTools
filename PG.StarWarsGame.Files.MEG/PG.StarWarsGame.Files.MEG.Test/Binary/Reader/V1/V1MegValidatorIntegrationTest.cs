@@ -52,23 +52,8 @@ public class V1MegValidatorIntegrationTest : CommonMegTestBase
         var megData = new byte[MegTestConstants.ContentMegFileV1.Length];
         Array.Copy(MegTestConstants.ContentMegFileV1, megData, megData.Length);
 
-        // MEG structure: Header(8) + FileNameTable(66) + FileTable(40) + FileData
-        // File table starts at offset 66 (after header and file name table)
-        // Each file table record is 20 bytes: CRC32(4) + Index(4) + FileSize(4) + Offset(4) + NameIndex(4)
-        // First file record starts at offset 66
-        // FileSize field is at offset 66 + 8 = 74
-        
-        // Original: File1.Size=377, File2.Size=5453, Total=5830
-        // Change File1.Size from 377 to 500 (increase by 123)
-        // This makes the sum of file sizes = 500 + 5453 = 5953
-        // Expected archive size = 106 (metadata) + 5953 = 6059
-        // Actual archive size = 106 + 5830 = 5936
-        // Validator will detect: expectedArchiveSize (6059) != actualFileSize (5936)
-        
         const int fileSizeOffset = 74;
-
-        // 500(dec) = 1F4(hex) in little-endian
-        megData[fileSizeOffset] = 0xF4; 
+        megData[fileSizeOffset] = 0xF4;
         megData[fileSizeOffset + 1] = 0x01;
         megData[fileSizeOffset + 2] = 0x00;
         megData[fileSizeOffset + 3] = 0x00;
@@ -81,21 +66,8 @@ public class V1MegValidatorIntegrationTest : CommonMegTestBase
         var megData = new byte[MegTestConstants.ContentMegFileV1.Length];
         Array.Copy(MegTestConstants.ContentMegFileV1, megData, megData.Length);
 
-        // MEG structure: metadata ends at offset 106, file data follows
-        // File1: offset=106, size=377
-        // File2: offset=483, size=5453
-        // Total file size should be: 106 + 377 + 5453 = 5936
-        
-        // Reduce File2.Size from 5453 to 5353 (reduce by 100)
-        // This makes sum of file sizes = 377 + 5353 = 5730
-        // Expected archive size = 106 + 5730 = 5836
-        // Actual archive size = 5936
-        // Validator will detect: expectedArchiveSize (5836) != actualFileSize (5936)
-        
-        const int file2SizeOffset = 94; // Second file record at offset 86, FileSize at +8
-
-        // 5353(dec) = 14E9(hex) in little-endian
-        megData[file2SizeOffset] = 0xE9; 
+        const int file2SizeOffset = 94;
+        megData[file2SizeOffset] = 0xE9;
         megData[file2SizeOffset + 1] = 0x14;
         megData[file2SizeOffset + 2] = 0x00;
         megData[file2SizeOffset + 3] = 0x00;

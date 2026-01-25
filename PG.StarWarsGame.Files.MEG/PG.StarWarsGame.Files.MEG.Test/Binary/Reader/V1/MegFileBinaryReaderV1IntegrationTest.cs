@@ -1,25 +1,33 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
+using System.Text;
 using AnakinRaW.CommonUtilities.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 
-public class MegFileBinaryReaderV1IntegrationTest
+public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
 {
+    // ReSharper disable InconsistentNaming
+    private const uint OneAndHalfGB = 1536u * 1024 * 1024;
+    private const uint OneGB = 1024u * 1024 * 1024;
+    private const long TwoGB = 2L * 1024 * 1024 * 1024;
+    private const uint ThreeGB = 3u * 1024 * 1024 * 1024;
+    private const long FiveGB = 5L * 1024 * 1024 * 1024;
+    // ReSharper restore InconsistentNaming
+
     private readonly MegFileBinaryReaderV1 _binaryReader;
-    private readonly MockFileSystem _fileSystem = new();
+    private readonly ICrc32HashingService _crc32HashingService;
 
     public MegFileBinaryReaderV1IntegrationTest()
     {
-        var sc = new ServiceCollection();
-        sc.AddSingleton<IFileSystem>(_fileSystem);
-        sc.SupportMEG();
-        _binaryReader = new MegFileBinaryReaderV1(sc.BuildServiceProvider());
+        _binaryReader = new MegFileBinaryReaderV1(ServiceProvider);
+        _crc32HashingService = ServiceProvider.GetRequiredService<ICrc32HashingService>();
     }
 
     [Fact]
@@ -89,5 +97,92 @@ public class MegFileBinaryReaderV1IntegrationTest
         Assert.Equal("DATA\\XML\\CAMPAIGNFILES.XML", megMetadata.FileNameTable[0].OriginalFilePath);
         Assert.Equal("DATA\\XML\\GAMEOBJECTFILES.XML", megMetadata.FileNameTable[1].FileName);
         Assert.Equal("DATA\\XML\\GAMEOBJECTFILES.XML", megMetadata.FileNameTable[1].OriginalFilePath);
+    }
+
+    public static IEnumerable<object[]> MegFilesBetween2GBAnd4GB()
+    {
+        yield return [new[] { ("FILE1.DAT", (long)OneAndHalfGB), ("FILE2.DAT", OneGB) }];
+        yield return [new[] { ("LARGEFILE.DAT", (long)ThreeGB) }];
+    }
+
+    [Theory]
+    [MemberData(nameof(MegFilesBetween2GBAnd4GB))]
+    public void ReadBinary_MegFileBetween2GBAnd4GB_Succeeds((string fileName, long fileSize)[] files)
+    {
+        var entries = files.Select(f => new MegFileEntry(
+            f.fileName,
+            f.fileSize,
+            _crc32HashingService.GetCrc32(f.fileName, Encoding.ASCII)
+        )).ToArray();
+
+        var megData = CreateMeg(entries);
+        var fakeLength = megData.Length + files.Sum(f => f.fileSize);
+        using var stream = new LargeMegMemoryStream(megData, fakeLength);
+
+        var megMetadata = _binaryReader.ReadBinary(stream);
+        Assert.Equal(files.Length, megMetadata.FileTable.Count);
+        Assert.Equal(files.Length, megMetadata.Header.FileNumber);
+    }
+
+    public static IEnumerable<object[]> MegFilesGreaterThan4GB()
+    {
+        yield return [new[] { ("FILE1.DAT", (long)ThreeGB), ("FILE2.DAT", TwoGB) }];
+        yield return [new[] { ("LARGEFILE.DAT", FiveGB) }];
+    }
+
+    [Theory]
+    [MemberData(nameof(MegFilesGreaterThan4GB))]
+    public void ReadBinary_MegFileGreaterThan4GB_ThrowsMegSizeException((string fileName, long fileSize)[] files)
+    {
+        var entries = files.Select(f => new MegFileEntry(
+            f.fileName,
+            f.fileSize,
+            _crc32HashingService.GetCrc32(f.fileName, Encoding.ASCII)
+        )).ToArray();
+
+        var megData = CreateMeg(entries);
+        var fakeLength = megData.Length + files.Sum(f => f.fileSize);
+        using var stream = new LargeMegMemoryStream(megData, fakeLength);
+
+        var exception = Assert.Throws<MegSizeException>(() => _binaryReader.ReadBinary(stream));
+        Assert.Contains("4GB", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+    
+    private static byte[] CreateMeg(params MegFileEntry[] files)
+    {
+        var numFiles = (uint)files.Length;
+        
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms);
+        
+        writer.Write(numFiles);
+        writer.Write(numFiles);
+        
+        foreach (var file in files)
+        {
+            writer.Write((ushort)file.FileName.Length);
+            writer.Write(Encoding.ASCII.GetBytes(file.FileName));
+        }
+        
+        var metadataEndOffset = (uint)ms.Position + 20 * numFiles;
+        
+        var currentOffset = metadataEndOffset;
+        for (uint i = 0; i < files.Length; i++)
+        {
+            writer.Write((uint)files[i].Crc);
+            writer.Write(i);
+            writer.Write((uint)files[i].FileSize);
+            writer.Write(currentOffset);
+            writer.Write(i);
+            currentOffset += (uint)files[i].FileSize;
+        }
+        return ms.ToArray();
+    }
+
+    private readonly record struct MegFileEntry(string FileName, long FileSize, Crc32 Crc);
+
+    private class LargeMegMemoryStream(byte[] data, long fakeLength) : MemoryStream(data, false)
+    {
+        public override long Length => fakeLength;
     }
 }

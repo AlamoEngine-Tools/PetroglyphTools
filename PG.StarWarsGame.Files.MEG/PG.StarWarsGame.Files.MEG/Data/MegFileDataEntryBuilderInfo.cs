@@ -69,6 +69,10 @@ public sealed class MegFileDataEntryBuilderInfo
     /// <exception cref="ArgumentNullException"><paramref name="megFile"/> or <see paramref="dataEntry"/> is <see langword="null"/>.</exception>
     public static MegFileDataEntryBuilderInfo FromEntry(IMegFile megFile, MegDataEntry dataEntry, string? overrideFilePath = null, bool? overrideEncrypted = null)
     {
+        if (megFile == null) 
+            throw new ArgumentNullException(nameof(megFile));
+        if (dataEntry == null) 
+            throw new ArgumentNullException(nameof(dataEntry));
         return new MegFileDataEntryBuilderInfo(
             new MegDataEntryOriginInfo(new MegDataEntryLocationReference(megFile, dataEntry)), overrideFilePath, null, overrideEncrypted);
     }
@@ -80,9 +84,11 @@ public sealed class MegFileDataEntryBuilderInfo
     /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used; otherwise the current file path will be used.</param>
     /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used; otherwise the current encryption state path will be used.</param>
     /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty or contains only whitespace.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="dataEntryReference"/> or <see paramref="dataEntry"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="dataEntryReference"/> is <see langword="null"/>.</exception>
     public static MegFileDataEntryBuilderInfo FromEntryReference(MegDataEntryLocationReference dataEntryReference, string? overrideFilePath = null, bool? overrideEncrypted = null)
     {
+        if (dataEntryReference == null) 
+            throw new ArgumentNullException(nameof(dataEntryReference));
         return new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(dataEntryReference), overrideFilePath, null, overrideEncrypted);
     }
 
@@ -97,6 +103,8 @@ public sealed class MegFileDataEntryBuilderInfo
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
     public static MegFileDataEntryBuilderInfo FromFile(string filePath, string? filePathInMeg, uint? size = null, bool encrypt = false)
     {
+        if (filePath == null) 
+            throw new ArgumentNullException(nameof(filePath));
         return new MegFileDataEntryBuilderInfo(
             new MegDataEntryOriginInfo(filePath), filePathInMeg, size, encrypt);
     }

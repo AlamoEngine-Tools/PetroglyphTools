@@ -61,6 +61,8 @@ public class MegFileDataStreamTest
 
         stream.Dispose();
         Assert.Throws<ObjectDisposedException>(() => ms.Position);
+        Assert.Throws<ObjectDisposedException>(() => ms.Position = 123);
+        Assert.Throws<ObjectDisposedException>(() => ms.Seek(1, SeekOrigin.Begin));
         Assert.Throws<ObjectDisposedException>(() => stream.Read([], 0, 0));
 
         // Double Dispose should not throw

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using Xunit;
 
@@ -47,10 +48,12 @@ public abstract class MegFileTableBaseTest
         using var enumerator = table.GetEnumerator();
         enumerator.MoveNext();
         Assert.Equal(table[0], enumerator.Current);
+        Assert.Equal(table[0], ((IEnumerator)enumerator).Current);
 
         enumerator.Reset();
 
         enumerator.MoveNext();
         Assert.Equal(table[0], enumerator.Current);
+        Assert.Equal(table[0], ((IEnumerator)enumerator).Current);
     }
 }

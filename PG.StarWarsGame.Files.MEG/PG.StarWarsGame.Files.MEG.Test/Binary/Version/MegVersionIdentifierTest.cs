@@ -31,7 +31,7 @@ public class MegVersionIdentifierTest
     [Fact]
     public void GetMegFileVersion_ThrowsArg()
     {
-        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new NonSeekableStream(), out _));
+        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MegTestConstants.NonSeekableStream(), out _));
     }
 
     [Fact]
@@ -386,20 +386,5 @@ public class MegVersionIdentifierTest
 
         Assert.Equal(MegFileVersion.V3, version);
         Assert.True(encrypted);
-    }
-
-
-    private class NonSeekableStream : Stream
-    {
-        public override void Flush() => throw new NotImplementedException();
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
-        public override void SetLength(long value) => throw new NotImplementedException();
-        public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
-        public override bool CanRead => true;
-        public override bool CanSeek => false;
-        public override bool CanWrite => true;
-        public override long Length => 1;
-        public override long Position { get; set; }
     }
 }

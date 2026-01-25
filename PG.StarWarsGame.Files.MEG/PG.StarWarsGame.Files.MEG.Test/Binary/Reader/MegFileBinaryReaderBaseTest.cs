@@ -23,6 +23,7 @@ public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
         Assert.Throws<ArgumentNullException>(() => reader.ReadBinary(null!));
         Assert.Throws<ArgumentException>(() => reader.ReadBinary(new MemoryStream()));
         Assert.Throws<ArgumentException>(() => reader.ReadBinary(new MemoryStream([])));
+        Assert.Throws<NotSupportedException>(() => reader.ReadBinary(new MegTestConstants.NonSeekableStream()));
     }
 
     [Fact]

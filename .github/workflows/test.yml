@@ -26,4 +26,4 @@ jobs:
       with:
         dotnet-version: 10.0.x
     - name: Build & Test in Release Mode
-      run: dotnet test --configuration Release --report-github
+      run: dotnet test --configuration Release

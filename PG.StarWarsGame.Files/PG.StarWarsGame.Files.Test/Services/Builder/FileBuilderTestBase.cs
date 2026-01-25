@@ -1,14 +1,13 @@
-﻿using PG.StarWarsGame.Files.Services.Builder;
-using PG.Testing;
-using System;
+﻿using System;
 using System.IO;
-using AnakinRaW.CommonUtilities.Testing.Extensions;
+using PG.StarWarsGame.Files.Services.Builder;
+using PG.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace PG.StarWarsGame.Files.Testing;
+namespace PG.StarWarsGame.Files.Test.Services.Builder;
 
-public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : PGTestBase
+public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : CommonTestBase
     where TBuilder : IFileBuilder<TModel, TFileInfo>
     where TModel : notnull 
     where TFileInfo : PetroglyphFileInformation
@@ -27,7 +26,7 @@ public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : PGTestB
         var builder = CreateBuilder();
         builder.Dispose();
         Assert.Throws<ObjectDisposedException>(() => builder.Build(CreateFileInfo(true, DefaultFileName), false));
-        Assert.DoesNotThrow(builder.Dispose);
+        ExceptionUtilities.AssertDoesNotThrowException(builder.Dispose);
     }
 
     [Fact]

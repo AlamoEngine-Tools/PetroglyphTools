@@ -93,7 +93,6 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
 
     public static IEnumerable<object[]> HeaderTestData()
     {
-        // Format: data, numFiles, numNames
         return
         [
             [
@@ -227,7 +226,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
                 1u, new byte[]
                 {
                     1, 0, 0, 0, // CRC
-                    0, 0, 0, 0x80, // Index (FileTable) > int.MaxValue
+                    0, 0, 0, 0x80, // Index (FileTable)
                     0, 0, 0, 0, // Size
                     0, 0, 0, 0, // Offset
                     0, 0, 0, 0 // Index (NameTable)
@@ -240,10 +239,9 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
                     0, 0, 0, 0, // Index (FileTable)
                     2, 0, 0, 0, // Size
                     0, 0, 0, 0, // Offset
-                    0, 0, 0, 0x80 // Index (NameTable) > int.MaxValue
+                    0, 0, 0, 0x80 // Index (NameTable)
                 }
             ]
         ];
     }
-
 }

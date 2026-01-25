@@ -1,11 +1,11 @@
-﻿using AnakinRaW.CommonUtilities.Testing;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using PG.Testing;
 
 namespace PG.StarWarsGame.Files.DAT.Test;
 
-public class CommonDatTestBase : TestBaseWithFileSystem
+public class CommonDatTestBase : CommonTestBase
 {
-    protected override void SetupServices(IServiceCollection serviceCollection)
+    protected override void SetupServices(ServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);
         serviceCollection.SupportDAT();

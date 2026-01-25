@@ -1,4 +1,7 @@
-﻿using AnakinRaW.CommonUtilities.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
@@ -6,14 +9,11 @@ using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.Testing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Converter;
 
-public class DatBinaryConverterTest : PGTestBase
+public class DatBinaryConverterTest : CommonTestBase
 {
     private readonly DatBinaryConverter _converter;
 
@@ -214,7 +214,7 @@ public class DatBinaryConverterTest : PGTestBase
     {
         public override DatFileType KeySortOrder => DatFileType.OrderedByCrc32;
 
-        public override ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
+        public override ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
         {
             throw new NotImplementedException();
         }

@@ -16,8 +16,7 @@ internal sealed class ConstructingMegArchive : MegDataEntryHolderBase<VirtualMeg
 
     public bool Encrypted { get; }
 
-    internal ConstructingMegArchive(IList<VirtualMegDataEntryReference> virtualEntries, MegFileVersion megVersion, bool encrypted) 
-        : base(virtualEntries)
+    internal ConstructingMegArchive(IList<VirtualMegDataEntryReference> virtualEntries, MegFileVersion megVersion, bool encrypted) : base(virtualEntries)
     {
         var dataEntries = Entries.Select(f => f.DataEntry).ToList();
         Archive = new MegArchive(dataEntries);

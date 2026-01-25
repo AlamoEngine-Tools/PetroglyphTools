@@ -1,13 +1,13 @@
-﻿using PG.StarWarsGame.Files.DAT.Data;
+﻿using System;
+using System.Collections.Generic;
+using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.Testing;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
-public abstract partial class DatModelServiceTest : PGTestBase
+public abstract partial class DatModelServiceTest : CommonTestBase
 {
     private protected readonly DatModelService Service;
 

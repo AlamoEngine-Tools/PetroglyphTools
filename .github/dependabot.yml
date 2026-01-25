@@ -8,7 +8,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       actions-deps:
         patterns:
@@ -19,7 +19,7 @@ updates:
   - package-ecosystem: "nuget"
     directory: "/" 
     schedule:
-      interval: "weekly"
+      interval: "daily"
     target-branch: "develop"
     open-pull-requests-limit: 1
     groups:

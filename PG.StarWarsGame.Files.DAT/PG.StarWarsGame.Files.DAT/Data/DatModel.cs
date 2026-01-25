@@ -94,12 +94,12 @@ internal abstract class DatModel : IDatModel
         return _firstCrcKeyValueDictionary.ContainsKey(key);
     }
 
-    public abstract ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);
+    public abstract ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);
 
-    public ImmutableFrugalList<DatStringEntry> EntriesWithKey(string key)
+    public ReadOnlyFrugalList<DatStringEntry> EntriesWithKey(string key)
     {
         if (!_firstKeyValueDictionary.ContainsKey(key))
-            return ImmutableFrugalList<DatStringEntry>.Empty;
+            return ReadOnlyFrugalList<DatStringEntry>.Empty;
 
         var crc = Entries.First(e => e.Key.Equals(key)).Crc32;
         return EntriesWithCrc(crc);

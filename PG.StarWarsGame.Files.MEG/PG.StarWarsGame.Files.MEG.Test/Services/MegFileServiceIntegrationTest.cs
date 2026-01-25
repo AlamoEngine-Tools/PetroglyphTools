@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -5,12 +10,7 @@ using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Abstractions;
-using System.Linq;
-using AnakinRaW.CommonUtilities.Testing;
+using PG.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -216,7 +216,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         const string megResource = "Files.v1_empty.meg";
 
         FileSystem.Initialize().WithFile(megFileName)
-            .Which(m => m.HasBytesContent(TestingHelpers.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
+            .Which(m => m.HasBytesContent(TestUtility.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
 
         var expectedData = new ExpectedMegTestData
         {
@@ -238,7 +238,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         const string megResource = "Files.v1_2_files_with_extended_ascii_name.meg";
 
         FileSystem.Initialize().WithFile(megFileName)
-            .Which(m => m.HasBytesContent(TestingHelpers.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
+            .Which(m => m.HasBytesContent(TestUtility.GetEmbeddedResourceAsByteArray(GetType(), megResource)));
 
         var expectedData = new ExpectedMegTestData
         {
@@ -279,7 +279,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
 
     private void WriteMegFromResources(string resourceName, string fileName)
     {
-        using var rs = TestingHelpers.GetEmbeddedResource(GetType(), resourceName);
+        using var rs = TestUtility.GetEmbeddedResource(GetType(), resourceName);
         using var fs = FileSystem.File.OpenWrite(fileName);
         rs.CopyTo(fs);
     }

@@ -168,13 +168,13 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     }
 
     /// <inheritdoc />
-    protected sealed override bool ValidateFileInformationCore(
-        MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> builderData, out string? failedReason)
+    protected sealed override bool ValidateFileInformationCore(MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> builderData,
+        out string? failedReason)
     {
         if (builderData.Any(e => e.Encrypted))
             throw new NotImplementedException("Encryption is currently not supported.");
 
-        var validation = MegFileInformationValidator.Validate(new MegBuilderFileInformationValidationData(fileInformation, DataEntries));
+        var validation = MegFileInformationValidator.Validate(new(fileInformation, DataEntries));
         failedReason = validation.ToString();
         return validation.IsValid;
     }

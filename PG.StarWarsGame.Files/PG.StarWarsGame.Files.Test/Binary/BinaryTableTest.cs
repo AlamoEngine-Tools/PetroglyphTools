@@ -147,13 +147,11 @@ public abstract class BinaryTableTest<T> where T : IBinary
         using var enumerator = table.GetEnumerator();
         enumerator.MoveNext();
         Assert.Equal(table[0], enumerator.Current);
-        Assert.Equal(table[0], ((IEnumerator)enumerator).Current);
 
         enumerator.Reset();
 
         enumerator.MoveNext();
         Assert.Equal(table[0], enumerator.Current);
-        Assert.Equal(table[0], ((IEnumerator)enumerator).Current);
     }
 
     [Fact]

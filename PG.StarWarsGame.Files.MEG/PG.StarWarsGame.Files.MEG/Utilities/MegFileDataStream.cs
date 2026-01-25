@@ -31,7 +31,7 @@ public sealed class MegFileDataStream : Stream, IMegFileDataStream
     /// <inheritdoc />
     public override long Position
     {
-        get => _baseStream is null ? throw new ObjectDisposedException(null) : _currentPos;
+        get => _currentPos;
         set
         {
             if (_baseStream is null)

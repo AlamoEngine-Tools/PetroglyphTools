@@ -1,31 +1,24 @@
-﻿using AnakinRaW.CommonUtilities.Testing;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.Testing;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
-public class DatFileServiceTest : PGTestBase
+public class DatFileServiceTest : CommonDatTestBase
 {
     private readonly DatFileService _service;
 
     public DatFileServiceTest()
     {
         _service = new DatFileService(ServiceProvider);
-    }
-
-    protected override void SetupServices(IServiceCollection serviceCollection)
-    {
-        base.SetupServices(serviceCollection);
-        serviceCollection.SupportDAT();
     }
 
     [Fact]
@@ -69,12 +62,12 @@ public class DatFileServiceTest : PGTestBase
     {
         using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
             stream.CopyTo(fs);
         }
         using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
         }
 
@@ -140,7 +133,7 @@ public class DatFileServiceTest : PGTestBase
         FileSystem.Initialize();
         using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
             stream.CopyTo(fs);
         }
 
@@ -175,7 +168,7 @@ public class DatFileServiceTest : PGTestBase
         FileSystem.Initialize();
         using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
         }
 
@@ -196,7 +189,7 @@ public class DatFileServiceTest : PGTestBase
         FileSystem.Initialize();
         using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
         }
 
@@ -218,7 +211,7 @@ public class DatFileServiceTest : PGTestBase
         FileSystem.Initialize();
         using (var fs = FileSystem.FileStream.New("Empty.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Empty.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Empty.dat");
             stream.CopyTo(fs);
         }
 
@@ -235,7 +228,7 @@ public class DatFileServiceTest : PGTestBase
         FileSystem.Initialize();
         using (var fs = FileSystem.FileStream.New("EmptyKeyWithValue.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.EmptyKeyWithValue.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.EmptyKeyWithValue.dat");
             stream.CopyTo(fs);
         }
 
@@ -254,7 +247,7 @@ public class DatFileServiceTest : PGTestBase
         FileSystem.Initialize();
         using (var fs = FileSystem.FileStream.New("Sorted_TwoEntriesDuplicate.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Sorted_TwoEntriesDuplicate.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Sorted_TwoEntriesDuplicate.dat");
             stream.CopyTo(fs);
         }
 
@@ -274,7 +267,7 @@ public class DatFileServiceTest : PGTestBase
         FileSystem.Initialize();
         using (var fs = FileSystem.FileStream.New("Index_WithDuplicates.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Index_WithDuplicates.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.Index_WithDuplicates.dat");
             stream.CopyTo(fs);
         }
 

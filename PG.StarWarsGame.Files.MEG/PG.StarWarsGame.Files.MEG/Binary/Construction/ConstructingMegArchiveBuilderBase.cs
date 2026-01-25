@@ -23,11 +23,8 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider services) : ServiceBase(services), IConstructingMegArchiveBuilder
 {
     private const uint MaxEntryFileSize4G = uint.MaxValue;
-    private const long MaxMegFileSizeLong = long.MaxValue;
 
     internal virtual uint MaxEntryFileSize => MaxEntryFileSize4G;
-
-    internal virtual long MaxMegFileSize => MaxMegFileSizeLong;
 
     // TODO: Test encryption cases
     public IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries)
@@ -37,7 +34,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         
         var binaryInformation = GetBinaryInformation(builderEntries);
 
-        var currentOffset = (uint)binaryInformation.MetadataSize;
+        var currentOffset = Convert.ToUInt32(binaryInformation.MetadataSize);
 
         var entries = new List<VirtualMegDataEntryReference>();
 
@@ -84,7 +81,6 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
 
         var megEncoding = MegFileConstants.MegDataEntryPathEncoding;
 
-        var totalBinarySize = 0u;
         foreach (var builderInfo in builderEntries)
         {
             if (builderInfo.Encrypted)
@@ -93,8 +89,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             fileNameTableSize += MegFileNameTableRecord.GetRecordSize(builderInfo.FilePath);
             fileTableSize += GetFileDescriptorSize(builderInfo.Encrypted);
 
-            var itemInfo = CreateEntryBinaryInformation(builderInfo, megEncoding, checksumService);
-            totalBinarySize += itemInfo.Sizes.BinarySize;
+            var itemInfo = CreateBinaryInformation(builderInfo, megEncoding, checksumService);
             entryInfoList.Add(itemInfo);
         }
 
@@ -102,16 +97,10 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         metadataSize += GetActualFileNameTableSize(fileNameTableSize, encryptMeg);
         metadataSize += fileTableSize;
 
-        if (metadataSize + totalBinarySize > MaxMegFileSize)
-            throw new NotSupportedException("TODO: Real error message");
-
         return new MegFileBinaryInformation(metadataSize, FileVersion, encryptMeg, entryInfoList);
     }
 
-    private MegDataEntryBinaryInformation CreateEntryBinaryInformation(
-        MegFileDataEntryBuilderInfo builderInfo, 
-        Encoding encoding, 
-        ICrc32HashingService crc32HashingService)
+    private MegDataEntryBinaryInformation CreateBinaryInformation(MegFileDataEntryBuilderInfo builderInfo, Encoding encoding, ICrc32HashingService crc32HashingService)
     {
         var originalFilePath = builderInfo.FilePath;
 

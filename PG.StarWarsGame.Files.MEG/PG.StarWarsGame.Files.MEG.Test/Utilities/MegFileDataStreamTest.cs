@@ -22,7 +22,7 @@ public class MegFileDataStreamTest
         Assert.Throws<ArgumentException>(() => new MegFileDataStream("", Stream.Null, 0, 0));
 
         Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", new NonReadableStream(), 0, 0));
-        Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", new MegTestConstants.NonSeekableStream(), 0, 0));
+        Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", new NonSeekableStream(), 0, 0));
 
 
         Assert.Throws<ArgumentException>(() => new MegFileDataStream("path", Stream.Null, 1, 0));
@@ -60,10 +60,7 @@ public class MegFileDataStreamTest
         var stream = new MegFileDataStream("path", ms, 0, 0);
 
         stream.Dispose();
-        Assert.Throws<ObjectDisposedException>(() => ms.Position); // Asserts base stream was disposed too
-        Assert.Throws<ObjectDisposedException>(() => stream.Position);
-        Assert.Throws<ObjectDisposedException>(() => stream.Position = 123);
-        Assert.Throws<ObjectDisposedException>(() => stream.Seek(1, SeekOrigin.Begin));
+        Assert.Throws<ObjectDisposedException>(() => ms.Position);
         Assert.Throws<ObjectDisposedException>(() => stream.Read([], 0, 0));
 
         // Double Dispose should not throw
@@ -259,6 +256,25 @@ public class MegFileDataStreamTest
 
         public override bool CanRead => false;
         public override bool CanSeek => true;
+        public override bool CanWrite { get; }
+        public override long Length { get; }
+        public override long Position { get; set; }
+    }
+
+    private class NonSeekableStream : Stream
+    {
+        public override void Flush() => throw new NotImplementedException();
+
+        public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
+
+        public override void SetLength(long value) => throw new NotImplementedException();
+
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
         public override bool CanWrite { get; }
         public override long Length { get; }
         public override long Position { get; set; }

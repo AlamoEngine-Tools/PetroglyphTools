@@ -2,7 +2,7 @@
 using System;
 using PG.Commons.Utilities;
 using System.Collections.Generic;
-using AnakinRaW.CommonUtilities.Testing.Extensions;
+using PG.Testing;
 using Xunit;
 
 namespace PG.Commons.Test.Utilities;
@@ -73,7 +73,7 @@ public class StringUtilitiesTest
     [InlineData("\0\t\u007F\r\n")]
     public void ValidateIsAsciiOnly(string data)
     {
-        Assert.DoesNotThrow(() => StringUtilities.ValidateIsAsciiOnly(data.AsSpan()));
+        ExceptionUtilities.AssertDoesNotThrowException(() => StringUtilities.ValidateIsAsciiOnly(data.AsSpan()));
     }
 
     public static IEnumerable<object[]> TestData_GetByteSize()

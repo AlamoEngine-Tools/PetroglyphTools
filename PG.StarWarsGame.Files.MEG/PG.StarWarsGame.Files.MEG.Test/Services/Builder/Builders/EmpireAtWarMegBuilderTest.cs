@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AnakinRaW.CommonUtilities.Testing.Extensions;
 using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -13,6 +12,7 @@ using PG.StarWarsGame.Files.MEG.Services.Builder;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Files;
+using PG.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -28,7 +28,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 
     protected override Type ExpectedDataEntryPathNormalizerType => typeof(EmpireAtWarMegDataEntryPathNormalizer);
 
-    protected override void SetupServices(IServiceCollection serviceCollection)
+    protected override void SetupServices(ServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);
         serviceCollection.SupportMEG();
@@ -60,7 +60,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 
     protected override string GetFailingEntryPath()
     {
-        return Random.Item(["test\0test", new string('a', 300)]);
+        return TestUtility.GetRandom(["test\0test", new string('a', 300)]);
     }
 
     protected override (IReadOnlyCollection<MegFileDataEntryBuilderInfo> Data, byte[] Bytes) CreateValidData()

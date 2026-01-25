@@ -34,7 +34,7 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
     /// <returns>List of matching data entries. </returns>
-    ImmutableFrugalList<T> EntriesWithCrc(Crc32 crc);
+    ReadOnlyFrugalList<T> EntriesWithCrc(Crc32 crc);
 
     /// <summary>
     /// Get the first data entry with the matching CRC32 checksum.
@@ -62,5 +62,5 @@ public interface IMegDataEntryHolder<T> : IReadOnlyList<T> where T : IMegDataEnt
     /// <returns>A list with all entries matching the specified pattern.</returns>
     /// <exception cref="ArgumentException"><paramref name="searchPattern"/> is empty.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="searchPattern"/> is <see langword="null"/>.</exception>
-    ImmutableFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive);
+    ReadOnlyFrugalList<T> FindAllEntries(string searchPattern, bool caseInsensitive);
 }

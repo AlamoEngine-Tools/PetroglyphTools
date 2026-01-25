@@ -8,7 +8,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
 
-public class MegDataEntryOriginInfoTest : PGTestBase
+public class MegDataEntryOriginInfoTest : CommonTestBase
 {
     [Fact]
     public void Ctor_InvalidArgs_Throws()

@@ -1,107 +1,54 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
 using AnakinRaW.CommonUtilities.Extensions;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.StarWarsGame.Files.MEG.Binary.Validation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using PG.Commons.Hashing;
-using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFileTable, TMegFileDescriptor>(IServiceProvider services) :
+internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFileTable>(IServiceProvider services) :
     ServiceBase(services),
     IMegFileBinaryReader
     where TMegMetadata : IMegFileMetadata
     where TMegHeader : IMegHeader
     where TMegFileTable : IMegFileTable
-    where TMegFileDescriptor : IMegFileDescriptor
 {
-    protected abstract IMegBinaryValidator<TMegMetadata> Validator { get; }
-
     public IMegFileMetadata ReadBinary(Stream byteStream)
     {
         if (byteStream == null)
             throw new ArgumentNullException(nameof(byteStream));
         if (byteStream.Length == 0)
             throw new ArgumentException("MEG data stream must not be empty.");
-        // There is no reason to validate the archive's size if we cannot access the whole stream size. 
-        // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
-        if (!byteStream.CanSeek)
-            throw new NotSupportedException("Non-seekable streams are not supported.");
 
-        var startPosition = byteStream.Position;
         using var binaryReader = new PetroglyphBinaryReader(byteStream, true);
 
         var header = BuildMegHeader(binaryReader) ?? throw new InvalidOperationException("MEG header must not be null.");
         var fileNameTable = BuildFileNameTable(binaryReader, header.FileNumber) ?? throw new InvalidOperationException("MEG file name table must not be null.");
-        var fileTable = BuildFileTable(binaryReader, header) ?? throw new InvalidOperationException("MEG file table must not be null.");
-        var endPosition = byteStream.Position;
+        var fileTable = BuildFileTable(binaryReader, header) ?? throw new InvalidOperationException("MEG file table must not be null."); ;
 
-        var metadata = CreateMegMetadata(header, fileNameTable, fileTable);
-        
-        var metadataSize = endPosition - startPosition;
-        var actualMegSize = byteStream.Length - startPosition;
-
-        // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
-        // E.g, a MEG with one entry being exactly 4GB large.
-        // In this case, the Archive itself is larger (Metadata + 4GB),
-        // but the Metadata would still be valid since each part is within the uint32 range. 
-        if (actualMegSize > uint.MaxValue)
-            MegThrowHelper.ThrowMegExceeds4GigabyteException(byteStream.TryGetFilePath());
-
-        if (metadataSize <= 0 || actualMegSize <= 0)
-            throw new BinaryCorruptedException("A MEG file cannot be empty (0 bytes).");
-
-        if (actualMegSize < metadataSize)
-            throw new BinaryCorruptedException("Reading the ");
-
-        Validator.Validate(metadata, metadataSize, actualMegSize);
-
-        return metadata;
+        return CreateMegMetadata(header, fileNameTable, fileTable);
     }
 
     protected internal abstract TMegMetadata CreateMegMetadata(TMegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, TMegFileTable fileTable);
 
     protected internal abstract TMegHeader BuildMegHeader(PetroglyphBinaryReader binaryReader);
 
-    protected internal TMegFileTable BuildFileTable(PetroglyphBinaryReader binaryReader, TMegHeader header)
-    {
-        var fileNumber = header.FileNumber;
-        var fileDescriptors = new List<TMegFileDescriptor>(fileNumber);
-
-        var lastCrc = new Crc32(0);
-        for (var i = 0; i < fileNumber; i++)
-        {
-            var record = BuildFileDescriptor(binaryReader);
-            if (record.Index != i)
-                throw new BinaryCorruptedException("The index of the file table record does not match the actual iteration index.");
-            if (record.Crc32 < lastCrc)
-                throw new BinaryCorruptedException("The file table is not sorted by CRC values.");
-            lastCrc = record.Crc32;
-            fileDescriptors.Add(record);
-        }
-
-        return CreateMegFileTable(fileDescriptors);
-    }
-
-    protected abstract TMegFileDescriptor BuildFileDescriptor(PetroglyphBinaryReader binaryReader);
-
-    protected abstract TMegFileTable CreateMegFileTable(IList<TMegFileDescriptor> fileDescriptors);
+    protected internal abstract TMegFileTable BuildFileTable(PetroglyphBinaryReader binaryReader, TMegHeader header);
 
     public virtual BinaryTable<MegFileNameTableRecord> BuildFileNameTable(PetroglyphBinaryReader binaryReader, int fileNumber)
     {
         var fileNameTable = new List<MegFileNameTableRecord>();
+        
+        var normalEncoding = MegFileConstants.MegDataEntryPathEncoding;
 
         // NB: We use Latin1 encoding here, so that we can stay compatible with Mike.NL's tools. 
         var extendedEncoding = MegFileConstants.ExtendedMegEntryPathEncoding;
-        var normalEncoding = MegFileConstants.MegDataEntryPathEncoding;
-        
+
         for (uint i = 0; i < fileNumber; i++)
         {
             var fileNameLength = binaryReader.ReadUInt16();

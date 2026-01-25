@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace PG.StarWarsGame.Files.Binary;
@@ -36,7 +37,7 @@ public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
     {
         if (items is null)
             throw new ArgumentNullException(nameof(items));
-        Items = [..items];
+        Items = items.ToList();
     }
 
     /// <inheritdoc />

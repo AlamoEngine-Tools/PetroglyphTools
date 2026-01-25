@@ -8,8 +8,6 @@ namespace PG.StarWarsGame.Files.MEG.Test.Binary.Construction;
 
 public class ConstructingMegArchiveBuilderV1Test : ConstructingMegArchiveBuilderBaseTest
 {
-    protected override uint ExpectedMaxEntryFileSize => int.MaxValue;
-
     private protected override ConstructingMegArchiveBuilderBase CreateService()
     {
         return new ConstructingMegArchiveBuilderV1(ServiceProvider);

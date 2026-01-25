@@ -1,27 +1,10 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.IO;
-
 namespace PG.StarWarsGame.Files.MEG.Test;
 
 internal static class MegTestConstants
 {
-    internal class NonSeekableStream : Stream
-    {
-        public override void Flush() => throw new NotImplementedException();
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
-        public override void SetLength(long value) => throw new NotImplementedException();
-        public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
-        public override bool CanRead => true;
-        public override bool CanSeek => false;
-        public override bool CanWrite => true;
-        public override long Length => 1;
-        public override long Position { get; set; }
-    }
-
     internal static byte[] GameObjectFilesContent = [
         60, 63, 120, 109, 108, 32, 118, 101, 114, 115, 105, 111, 110, 61, 34, 49, 46, 48, 34, 32, 63, 62, 13,
         10, 13, 10, 60, 71, 97, 109, 101, 95, 79, 98, 106, 101, 99, 116, 95, 70, 105, 108, 101, 115, 62, 13, 10, 13, 10,

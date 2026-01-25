@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AnakinRaW.CommonUtilities.Testing;
-using AnakinRaW.CommonUtilities.Testing.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
@@ -11,10 +9,24 @@ using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Test.Services.Builder.Validation;
-using PG.StarWarsGame.Files.Testing;
+using PG.StarWarsGame.Files.Test.Services.Builder;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
+
+public abstract class PetroglyphStarWarsGameDatBuilder : DatBuilderBaseTest
+{
+    protected override bool FileInfoIsAlwaysValid => false;
+
+    protected override DatFileInformation CreateFileInfo(bool valid, string path)
+    {
+        return new DatFileInformation
+        {
+            FilePath = valid ? path : "FileÖÄÜ.dat"
+        };
+    }
+}
 
 public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, IReadOnlyList<DatStringEntry>, DatFileInformation>
 {
@@ -40,7 +52,7 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
             builder.AddEntry(entry.Key, entry.Value);
     }
 
-    protected override void SetupServices(IServiceCollection serviceCollection)
+    protected override void SetupServices(ServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);
         serviceCollection.SupportDAT();
@@ -50,8 +62,8 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
     public void IsKeyValid()
     {
         var builder = CreateBuilder();
-        Assert.True(builder.IsKeyValid(Random.String(12)));
-        Assert.False(builder.IsKeyValid((string)Random.Item(EmpireAtWarKeyValidatorTest.InvalidTestData())[0]));
+        Assert.True(builder.IsKeyValid(TestUtility.GetRandomStringOfLength(12)));
+        Assert.False(builder.IsKeyValid((string)TestUtility.GetRandom(EmpireAtWarKeyValidatorTest.InvalidTestData())[0]));
     }
 
     #region Clear/Remove/Dispose
@@ -119,12 +131,12 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
 
         Assert.Throws<ObjectDisposedException>(() => builder.AddEntry("key", "value"));
 
-        Assert.DoesNotThrow(() => builder.Entries);
-        Assert.DoesNotThrow(builder.Clear);
-        Assert.DoesNotThrow(() => builder.Remove(new DatStringEntry()));
-        Assert.DoesNotThrow(() => builder.RemoveAllKeys("key"));
+        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Entries);
+        ExceptionUtilities.AssertDoesNotThrowException(builder.Clear);
+        ExceptionUtilities.AssertDoesNotThrowException(() => builder.Remove(new DatStringEntry()));
+        ExceptionUtilities.AssertDoesNotThrowException(() => builder.RemoveAllKeys("key"));
 
-        Assert.DoesNotThrow(builder.Dispose);
+        ExceptionUtilities.AssertDoesNotThrowException(builder.Dispose);
     }
 
     #endregion
@@ -276,7 +288,7 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
     {
         using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
+            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
             stream.CopyTo(fs);
         }
 

@@ -1,16 +1,15 @@
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
-using PG.Testing;
-using System.Collections.Generic;
 using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary;
 
-public class DatBinaryConverterTest : PGTestBase
+public class DatBinaryConverterTest : CommonDatTestBase
 {
     private readonly MockFileSystem _fileSystem = new();
     private readonly DatBinaryConverter _binaryConverter;

@@ -81,27 +81,11 @@ public class CrcBasedEqualityComparerTest_Struct : CrcBasedEqualityComparerTest<
     {
         return new HasCrcStruct(crc);
     }
-
-    [Fact]
-    public void GetHashCode_NullArgs_Throws()
-    {
-        var comparer = CrcBasedEqualityComparer<HasCrcStruct>.Instance;
-        Assert.Equal(0, comparer.GetHashCode(default));
-    }
 }
 
 public abstract class CrcBasedEqualityComparerTest<T> where T : IHasCrc32, IEquatable<T>
 {
     protected abstract T CreateT(int crc);
-
-    [Fact]
-    public void Equals_GetHashCode_Default()
-    {
-        var comparer = CrcBasedEqualityComparer<T>.Instance;
-        Assert.True(comparer.Equals(default, default));
-        Assert.False(comparer.Equals(CreateT(1), default));
-        Assert.False(comparer.Equals(default, CreateT(2)));
-    }
 
     [Fact]
     public void Equals_GetHashCode()

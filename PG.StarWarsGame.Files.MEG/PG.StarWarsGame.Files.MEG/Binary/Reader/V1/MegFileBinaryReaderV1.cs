@@ -3,19 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
-using PG.StarWarsGame.Files.MEG.Binary.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
-internal class MegFileBinaryReaderV1(IServiceProvider services) 
-    : MegFileBinaryReaderBase<MegMetadata, MegHeader, MegFileTable, MegFileTableRecord>(services)
+internal class MegFileBinaryReaderV1(IServiceProvider services) : MegFileBinaryReaderBase<MegMetadata, MegHeader, MegFileTable>(services)
 {
-    protected override IMegBinaryValidator<MegMetadata> Validator { get; } = new V1MegValidator(services);
-
     protected internal override MegMetadata CreateMegMetadata(MegHeader header, BinaryTable<MegFileNameTableRecord> fileNameTable, MegFileTable fileTable)
     {
         return new MegMetadata(header, fileNameTable, fileTable);
@@ -41,7 +38,22 @@ internal class MegFileBinaryReaderV1(IServiceProvider services)
         return new MegHeader(numFileNames, numFiles);
     }
 
-    protected override MegFileTableRecord BuildFileDescriptor(PetroglyphBinaryReader binaryReader)
+    protected internal override MegFileTable BuildFileTable(PetroglyphBinaryReader binaryReader, MegHeader header)
+    {
+        var fileNumber = header.FileNumber;
+        var megFileContentTableRecords = new List<MegFileTableRecord>(fileNumber);
+
+        for (var i = 0; i < fileNumber; i++)
+        {
+            var record = BuildFileTableRecord(binaryReader);
+            Debug.Assert(record.FileTableRecordIndex == i);
+            megFileContentTableRecords.Add(record);
+        }
+
+        return new MegFileTable(megFileContentTableRecords);
+    }
+
+    private static MegFileTableRecord BuildFileTableRecord(PetroglyphBinaryReader binaryReader)
     {
         var crc32 = new Crc32(binaryReader.ReadUInt32());
         var fileTableRecordIndex = binaryReader.ReadUInt32();
@@ -68,10 +80,5 @@ internal class MegFileBinaryReaderV1(IServiceProvider services)
             fileSizeInBytes,
             fileStartOffsetInBytes,
             fileNameTableIndex);
-    }
-
-    protected override MegFileTable CreateMegFileTable(IList<MegFileTableRecord> fileDescriptors)
-    {
-        return new MegFileTable(fileDescriptors);
     }
 }

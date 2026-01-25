@@ -10,10 +10,6 @@ internal sealed class ConstructingMegArchiveBuilderV1(IServiceProvider services)
 {
     protected override MegFileVersion FileVersion => MegFileVersion.V1;
 
-    internal override uint MaxEntryFileSize => int.MaxValue;
-
-    internal override long MaxMegFileSize => int.MaxValue;
-
     protected override int GetFileDescriptorSize(bool entryGetsEncrypted)
     {
         return Metadata.V1.MegFileTableRecord.SizeValue;

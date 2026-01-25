@@ -3,9 +3,9 @@ using PG.Testing;
 
 namespace PG.StarWarsGame.Files.MTD.Test;
 
-public class CommonMtdTestBase : PGTestBase
+public class CommonMtdTestBase : CommonTestBase
 {
-    protected override void SetupServices(IServiceCollection serviceCollection)
+    protected override void SetupServices(ServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);
         serviceCollection.SupportMTD();

@@ -9,7 +9,7 @@ using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Test.Binary.Metadata;
 using Xunit;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation.V1;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 
 public class V1MegValidatorTest : CommonMegTestBase
 {

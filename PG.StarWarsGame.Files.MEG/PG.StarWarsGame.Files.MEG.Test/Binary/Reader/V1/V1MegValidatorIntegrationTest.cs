@@ -5,7 +5,7 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using Xunit;
 
-namespace PG.StarWarsGame.Files.MEG.Test.Binary.Validation.V1;
+namespace PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 
 public class V1MegValidatorIntegrationTest : CommonMegTestBase
 {

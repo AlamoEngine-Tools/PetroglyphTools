@@ -93,6 +93,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
 
     public static IEnumerable<object[]> HeaderTestData()
     {
+        // Format: data, numFiles, numNames
         return
         [
             [

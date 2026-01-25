@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG;
@@ -16,14 +15,13 @@ public sealed class FileNotInMegException : Exception
     private readonly string _megFile;
 
     /// <inheritdoc/>
-    [ExcludeFromCodeCoverage]
-    public override string Message => $"The file \"{_file}\" is not contained in the MEG archive \"{_megFile}\"";
+    public override string Message => field ??= $"The file \"{_file}\" is not contained in the MEG archive \"{_megFile}\"";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FileNotInMegException"/> class with a location reference which does not exist.
     /// </summary>
     /// <param name="locationReference">The non-existing data entry location.</param>
-    public FileNotInMegException(MegDataEntryLocationReference locationReference)
+    internal FileNotInMegException(MegDataEntryLocationReference locationReference)
     {
         _file = locationReference.DataEntry.FilePath;
         _megFile = locationReference.MegFile.FilePath;

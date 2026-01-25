@@ -47,6 +47,7 @@ public interface IMegFileService
     /// <param name="filePath">The MEG file path.</param>
     /// <returns>The MEG file's metadata.</returns>
     /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
+    /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported file size.</exception>
     /// <exception cref="BinaryCorruptedException"><paramref name="filePath"/> is not a MEG archive.</exception>
     /// <exception cref="FileNotFoundException"><paramref name="filePath"/> is not found.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
@@ -59,8 +60,15 @@ public interface IMegFileService
     /// </summary>
     /// <param name="stream">The MEG file path.</param>
     /// <returns>The MEG file's metadata.</returns>
-    /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
-    /// <exception cref="NotSupportedException"><paramref name="stream"/> is not readable or seekable.</exception>
+    /// <exception cref="NotSupportedException">
+    /// <para>
+    /// This library does not support the specified MEG archive.
+    /// </para>
+    /// <para>
+    /// <paramref name="stream"/> is not readable or seekable.
+    /// </para>
+    /// </exception>
+    /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported file size.</exception>
     /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not a MEG archive.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>

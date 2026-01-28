@@ -18,6 +18,8 @@ public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
     protected override PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer =>
         EmpireAtWarMegDataEntryPathNormalizer.Instance;
 
+    internal override uint MaxEntrySize => int.MaxValue;
+
     /// <summary>
     /// Validates data entries to be compliant to Empire at War
     /// Also, data entries with rooted paths or path operates (".", "..") are not allowed.

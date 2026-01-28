@@ -1,11 +1,6 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO.Abstractions;
-using System.Linq;
 using AnakinRaW.CommonUtilities;
 using AnakinRaW.CommonUtilities.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +13,11 @@ using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.Services.Builder;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO.Abstractions;
+using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -29,7 +29,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     private readonly Dictionary<Crc32, MegFileDataEntryBuilderInfo> _dataEntries = new();
     private readonly ICrc32HashingService _hashingService;
 
-    internal virtual uint MaxFileSize => uint.MaxValue;
+    internal virtual uint MaxEntrySize => uint.MaxValue;
 
     /// <inheritdoc />
     public sealed override IReadOnlyCollection<MegFileDataEntryBuilderInfo> BuilderData => DataEntries;
@@ -96,10 +96,10 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
             return AddDataEntryToBuilderResult.FromFileNotFound(fileInfo.FullName);
 
         long? fileSize = AutomaticallyAddFileSizes ? fileInfo.Length : null;
-        if (fileSize > MaxFileSize)
+        if (fileSize > MaxEntrySize)
         {
             return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.EntryFileTooLarge,
-                $"Source file '{fileInfo.FullName}' is larger than 4GB.");
+                $"Source file '{fileInfo.FullName}' is larger than the maximum allowed byte size ({MaxEntrySize} bytes).");
         }
 
         return AddBuilderInfo(
@@ -128,6 +128,12 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
 
         if (!entryReference.Exists)
             return AddDataEntryToBuilderResult.FromEntryNotFound(entryReference);
+
+        if (entryReference.DataEntry.Location.Size > MaxEntrySize)
+        {
+            return AddDataEntryToBuilderResult.EntryNotAdded(AddDataEntryToBuilderState.EntryFileTooLarge,
+                $"Source file '{entryReference.DataEntry}' is larger than the maximum allowed byte size ({MaxEntrySize} bytes).");
+        }
 
         return AddBuilderInfo(
             entryPath.AsSpan(), 
@@ -158,6 +164,14 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     public void Clear()
     {
         _dataEntries.Clear();
+    }
+
+    /// <inheritdoc/>
+    public void BuildMany(Func<int, MegFileInformation> fileInfoFactory, bool overwrite)
+    {
+        Build(fileInfoFactory(1), overwrite);
+        
+        throw new NotImplementedException();
     }
 
     /// <inheritdoc />

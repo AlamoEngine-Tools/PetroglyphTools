@@ -97,4 +97,31 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// Removes all builder information from the <see cref="IMegBuilder"/>.
     /// </summary>
     void Clear();
+
+    /// <summary>
+    /// Builds one or many MEG files using the provided factory method to generate file information
+    /// and optionally overwriting existing files.
+    /// </summary>
+    /// <param name="fileInfoFactory">
+    /// A factory method that generates <see cref="MegFileInformation"/> instances for each MEG file to be built.
+    /// The integer parameter represents the <b>one-based</b> index of the MEG file being created.
+    /// </param>
+    /// <param name="overwrite">
+    /// A boolean value indicating whether to overwrite existing MEG files if they already exist.
+    /// </param>
+    /// <exception cref="ArgumentNullException"><paramref name="fileInfoFactory"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException"><paramref name="fileInfoFactory"/> produced an invalid <see cref="MegFileInformation"/>.</exception>
+    void BuildMany(Func<int, MegFileInformation> fileInfoFactory, bool overwrite);
+
+    /// <summary>
+    /// Determines the minimum number of MEG files that must be created for the specified collection of data entry builder information
+    /// due to the size constraints of MEG files the builder produces.
+    /// </summary>
+    /// <remarks>
+    /// The method will return at least value <value>1</value>.
+    /// </remarks>
+    /// <returns>
+    /// The minimum number of MEG files required to accommodate the provided data entries.
+    /// </returns>
+    int GetMinCreatableMegFiles();
 }

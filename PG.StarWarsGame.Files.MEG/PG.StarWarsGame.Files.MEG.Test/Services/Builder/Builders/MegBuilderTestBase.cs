@@ -64,7 +64,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Equal(ExpectedDataEntryPathNormalizerType, builder.DataEntryPathNormalizer?.GetType());
         Assert.Equal(ExpectedOverwritesDuplicates, builder.OverwritesDuplicateEntries);
         Assert.Equal(ExpectedAutomaticallyAddFileSizes, builder.AutomaticallyAddFileSizes);
-        Assert.Equal(uint.MaxValue, builder.MaxFileSize);
+        Assert.Equal(uint.MaxValue, builder.MaxEntrySize);
     }
 
     [Fact]
@@ -493,7 +493,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
     private class MaxFileSizeMegBuilder(uint maxFileSize, bool addFileSize, IServiceProvider services) : MegBuilderBase(services)
     {
-        internal override uint MaxFileSize => maxFileSize;
+        internal override uint MaxEntrySize => maxFileSize;
 
         public override bool AutomaticallyAddFileSizes => addFileSize;
     }

@@ -32,7 +32,7 @@ public sealed class MegFileDataEntryBuilderInfo
     /// <summary>
     /// Gets the size of the data entry or <see langword="null"/> if no size was specified.
     /// </summary>
-    public uint? Size { get; private set; }
+    public uint? Size { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class with a data entry origin info and optional override parameters.

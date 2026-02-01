@@ -214,7 +214,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         else
             Assert.Null(entry.Size);
 
-        Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), entry.OriginInfo.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), entry.OriginInfo.FileInfo);
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.Single(builder.DataEntries);
             Assert.Null(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.False(resultSecondAdd.WasOverwrite);
-            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FilePath);
+            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FileInfo);
         }
         else
         {
@@ -298,8 +298,8 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.NotNull(resultSecondAdd.AddedBuilderInfo);
             Assert.NotNull(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.True(resultSecondAdd.WasOverwrite);
-            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), resultSecondAdd.OverwrittenBuilderInfo.OriginInfo.FilePath);
-            Assert.Equal(FileSystem.Path.GetFullPath(otherFileToAdd), resultSecondAdd.AddedBuilderInfo.OriginInfo.FilePath);
+            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), resultSecondAdd.OverwrittenBuilderInfo.OriginInfo.FileInfo);
+            Assert.Equal(FileSystem.Path.GetFullPath(otherFileToAdd), resultSecondAdd.AddedBuilderInfo.OriginInfo.FileInfo);
 
             //Assert that duplicate check was based on encoded(thus also normalized) file path, cause the original inputs have different values.
 
@@ -447,7 +447,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.Single(builder.DataEntries);
             Assert.Null(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.False(resultSecondAdd.WasOverwrite);
-            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FilePath);
+            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FileInfo);
         }
         else
         {

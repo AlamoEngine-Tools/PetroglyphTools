@@ -14,7 +14,7 @@ internal static class MegThrowHelper
         if (filePath is not null)
             message += $" File: '{filePath}'";
 
-        throw new MegDataSizeException(message);
+        throw new MegEntrySizeException(message);
     }
 
     [DoesNotReturn]

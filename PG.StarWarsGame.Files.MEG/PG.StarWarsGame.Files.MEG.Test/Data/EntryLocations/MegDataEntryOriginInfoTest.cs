@@ -25,7 +25,7 @@ public class MegDataEntryOriginInfoTest : PGTestBase
     {
         var originInfo = new MegDataEntryOriginInfo("path");
 
-        Assert.Equal("path", originInfo.FilePath);
+        Assert.Equal("path", originInfo.FileInfo);
         Assert.Null(originInfo.MegFileLocation);
 
         Assert.True(originInfo.IsLocalFile);
@@ -44,7 +44,7 @@ public class MegDataEntryOriginInfoTest : PGTestBase
         var originInfo = new MegDataEntryOriginInfo(location);
 
         Assert.Equal(location, originInfo.MegFileLocation);
-        Assert.Null(originInfo.FilePath);
+        Assert.Null(originInfo.FileInfo);
 
         Assert.True(originInfo.IsEntryReference);
         Assert.False(originInfo.IsLocalFile);

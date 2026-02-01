@@ -29,11 +29,6 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <inheritdoc/>
     public override bool OverwritesDuplicateEntries => true;
 
-    /// <remarks>This builder automatically determines file sizes for local file-based entries.</remarks>
-    /// <inheritdoc/>
-    public override bool AutomaticallyAddFileSizes => true;
-
-
     /// <inheritdoc />
     public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => PetroglyphPathNormalizer;
 
@@ -54,18 +49,11 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// </remarks>
     protected abstract PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer { get; }
 
-    /// <inheritdoc cref="PetroDataEntryValidator"/>
-    public sealed override IMegDataEntryValidator DataEntryValidator => PetroDataEntryValidator;
-
+    /// <inheritdoc/>
+    public abstract override IMegDataEntryValidator DataEntryValidator { get; }
 
     /// <inheritdoc cref="PetroMegFileInformationValidator"/>
     public sealed override IMegFileInformationValidator MegFileInformationValidator => PetroMegFileInformationValidator;
-
-    /// <summary>
-    /// Validates data entries to be compliant to a Petroglyph game.
-    /// Also, data entries with rooted paths or path operates (".", "..") are not allowed.
-    /// </summary>
-    protected abstract PetroglyphMegBuilderDataEntryValidator PetroDataEntryValidator { get; }
 
     /// <summary>
     /// Validates file information to be compliant to a Petroglyph game
@@ -106,9 +94,9 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <code>"/NOTgamePath/xml/file.xml" --> null</code>
     /// <code>"../xml/file.xml" --> null</code>
     /// </summary>
-    /// <remarks>The returned path is neither fully normalized nor validated by the rules of this instance.</remarks>
+    /// <remarks>The returned path is neither fully normalized nor validated by the rules of the <see cref="PetroglyphGameMegBuilder"/>.</remarks>
     /// <param name="path">The path to get the relative path from.</param>
-    /// <returns>The relative path.</returns>
+    /// <returns>The resolved, relative entry path.</returns>
     public string? ResolveEntryPath(string? path)
     {
         return _pathResolver.ResolvePath(path, BaseDirectory);

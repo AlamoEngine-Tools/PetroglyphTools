@@ -73,7 +73,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
         };
-        Assert.Throws<MegDataSizeException>(() => service.BuildConstructingMegArchive(builderEntries));
+        Assert.Throws<MegEntrySizeException>(() => service.BuildConstructingMegArchive(builderEntries));
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
 
             if (entry.OriginInfo.IsLocalFile)
             {
-                FileSystem.Initialize().WithFile(entry.OriginInfo.FilePath)
+                FileSystem.Initialize().WithFile(entry.OriginInfo.FileInfo)
                     .Which(m => m.HasStringContent(Random.String((int)entry.Size)));
             }
         }

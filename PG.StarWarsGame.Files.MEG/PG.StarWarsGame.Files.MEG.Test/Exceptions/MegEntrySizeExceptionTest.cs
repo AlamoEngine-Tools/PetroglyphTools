@@ -3,12 +3,12 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Exceptions;
 
-public class MegDataSizeExceptionTest : CommonMegTestBase
+public class MegEntrySizeExceptionTest : CommonMegTestBase
 {
     [Fact]
     public void Ctor()
     {
-        var e = new MegDataSizeException("message");
+        var e = new MegEntrySizeException("message");
         Assert.Exception(e, message: "message");
     }
 }

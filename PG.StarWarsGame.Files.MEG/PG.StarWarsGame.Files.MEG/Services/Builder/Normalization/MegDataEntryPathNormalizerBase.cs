@@ -26,11 +26,6 @@ public abstract class MegDataEntryPathNormalizerBase : IMegDataEntryPathNormaliz
     /// <inheritdoc />
     public bool TryNormalize(ReadOnlySpan<char> filePath, Span<char> destination, out int charsWritten)
     {
-        if (filePath.Length == 0)
-        {
-            charsWritten = 0;
-            return true;
-        }
         try
         {
             charsWritten = Normalize(filePath, destination);

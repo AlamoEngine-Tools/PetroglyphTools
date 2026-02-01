@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -123,5 +124,11 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <returns>
     /// The minimum number of MEG files required to accommodate the provided data entries.
     /// </returns>
-    int GetMinCreatableMegFiles();
+    /// <exception cref="FileNotFoundException">
+    /// The build contains a local file entry that does not exist.
+    /// </exception>
+    /// <exception cref="MegEntrySizeException">
+    /// The builder contains an entry that exceeds the maximum allowed size for a MEG entry.
+    /// </exception>
+    int GetMinRequiredMegFiles(MegFileVersion megVersion);
 }

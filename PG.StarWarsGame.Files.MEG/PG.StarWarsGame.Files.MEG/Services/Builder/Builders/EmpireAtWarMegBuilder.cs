@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -18,13 +19,12 @@ public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
     protected override PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer =>
         EmpireAtWarMegDataEntryPathNormalizer.Instance;
 
-    internal override uint MaxEntrySize => int.MaxValue;
-
     /// <summary>
     /// Validates data entries to be compliant to Empire at War
-    /// Also, data entries with rooted paths or path operates (".", "..") are not allowed.
     /// </summary>
-    protected override PetroglyphMegBuilderDataEntryValidator PetroDataEntryValidator => EmpireAtWarMegBuilderDataEntryValidator.Instance;
+    public override IMegDataEntryValidator DataEntryValidator => EmpireAtWarMegBuilderDataEntryValidator.Instance;
+
+    internal override ulong MaxMegFileSize => MegFileConstants.EawMegMaxEntrySize;
 
     /// <summary>
     /// Validates file information to be compliant to Empire at War

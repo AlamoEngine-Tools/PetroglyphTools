@@ -7,12 +7,12 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal class MegFileBinaryInformation(
-    int metadataSize,
+    uint metadataSize,
     MegFileVersion megFileVersion,
     bool encrypted,
     IEnumerable<MegDataEntryBinaryInformation> entries)
 {
-    public int MetadataSize { get; } = metadataSize;
+    public uint MetadataSize { get; } = metadataSize;
 
     public bool Encrypted { get; } = encrypted;
 

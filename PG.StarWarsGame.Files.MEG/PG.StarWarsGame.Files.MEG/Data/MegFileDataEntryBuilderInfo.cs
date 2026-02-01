@@ -1,11 +1,14 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
+using AnakinRaW.CommonUtilities;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
-using AnakinRaW.CommonUtilities;
+using System;
+using System.IO;
+using System.IO.Abstractions;
+using PG.StarWarsGame.Files.MEG.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
@@ -30,32 +33,26 @@ public sealed class MegFileDataEntryBuilderInfo
     public bool Encrypted { get; }
 
     /// <summary>
-    /// Gets the size of the data entry or <see langword="null"/> if no size was specified.
+    /// Gets the size of the data entry.
     /// </summary>
-    public uint? Size { get; }
+    public uint Size { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class with a data entry origin info and optional override parameters.
     /// </summary>
     /// <param name="originInfo">The origin info of the data entry.</param>
     /// <param name="overrideFilePath">When not <see langword="null"/>, the specified file path will be used; otherwise the current file path will be used.</param>
-    /// <param name="fileSize">Pre-calculated size of the data entry. Parameter gets ignored when <paramref name="originInfo"/> holds an existing data entry.</param>
     /// <param name="overrideEncrypted">When not <see langword="null"/>, the specified encryption information will be used; otherwise the current encryption state path will be used.</param>
-    /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty or contains only whitespace.</exception>
+    /// <exception cref="ArgumentException"><paramref name="overrideFilePath"/> is empty.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="originInfo"/> is <see langword="null"/>.</exception>
-    public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo, string? overrideFilePath = null, uint? fileSize = null, bool? overrideEncrypted = null)
+    public MegFileDataEntryBuilderInfo(MegDataEntryOriginInfo originInfo, string? overrideFilePath = null, bool? overrideEncrypted = null)
     {
         if (overrideFilePath is not null)
-            ThrowHelper.ThrowIfNullOrWhiteSpace(overrideFilePath);
-
+            ThrowHelper.ThrowIfNullOrEmpty(overrideFilePath);
         OriginInfo = originInfo ?? throw new ArgumentNullException(nameof(originInfo));
-
-        var filePath = GetFilePath(originInfo, overrideFilePath);
-        FilePath = filePath;
-
-        Size = originInfo.IsLocalFile ? fileSize : originInfo.MegFileLocation!.DataEntry.Location.Size;
-
+        FilePath = GetFilePath(originInfo, overrideFilePath);
         Encrypted = GetEncryption(originInfo, overrideEncrypted);
+        RefreshSize();
     }
 
     /// <summary>
@@ -74,7 +71,7 @@ public sealed class MegFileDataEntryBuilderInfo
         if (dataEntry == null) 
             throw new ArgumentNullException(nameof(dataEntry));
         return new MegFileDataEntryBuilderInfo(
-            new MegDataEntryOriginInfo(new MegDataEntryLocationReference(megFile, dataEntry)), overrideFilePath, null, overrideEncrypted);
+            new MegDataEntryOriginInfo(new MegDataEntryLocationReference(megFile, dataEntry)), overrideFilePath, overrideEncrypted);
     }
 
     /// <summary>
@@ -87,46 +84,64 @@ public sealed class MegFileDataEntryBuilderInfo
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryReference"/> is <see langword="null"/>.</exception>
     public static MegFileDataEntryBuilderInfo FromEntryReference(MegDataEntryLocationReference dataEntryReference, string? overrideFilePath = null, bool? overrideEncrypted = null)
     {
-        if (dataEntryReference == null) 
-            throw new ArgumentNullException(nameof(dataEntryReference));
-        return new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(dataEntryReference), overrideFilePath, null, overrideEncrypted);
+        return dataEntryReference == null
+            ? throw new ArgumentNullException(nameof(dataEntryReference)) 
+            : new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(dataEntryReference), overrideFilePath, overrideEncrypted);
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="MegFileDataEntryBuilderInfo"/> class from a local file.
     /// </summary>
-    /// <param name="filePath">The local file path.</param>
+    /// <param name="file">The file to use.</param>
     /// <param name="filePathInMeg">When not <see langword="null"/>, the specified file path will be used; otherwise the current file path will be used.</param>
-    /// <param name="size">Optional, pre-calculated size of the data entry.</param>
     /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
-    /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="filePathInMeg"/> is empty or contains only whitespace.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
-    public static MegFileDataEntryBuilderInfo FromFile(string filePath, string? filePathInMeg, uint? size = null, bool encrypt = false)
+    /// <exception cref="ArgumentNullException"><paramref name="file"/> is <see langword="null"/>.</exception>
+    public static MegFileDataEntryBuilderInfo FromFile(IFileInfo file, string? filePathInMeg, bool encrypt = false)
     {
-        if (filePath == null) 
-            throw new ArgumentNullException(nameof(filePath));
+        if (file == null) 
+            throw new ArgumentNullException(nameof(file));
         return new MegFileDataEntryBuilderInfo(
-            new MegDataEntryOriginInfo(filePath), filePathInMeg, size, encrypt);
+            new MegDataEntryOriginInfo(file), filePathInMeg, encrypt);
+    }
+
+    /// <summary>
+    /// Updates the size of the data entry associated with this instance.
+    /// </summary>
+    /// <exception cref="FileNotFoundException">The file associated with the data entry does not exist.</exception>
+    /// <exception cref="MegEntrySizeException">The size of the file exceeds the maximum allowable size of 4 GB.</exception>
+    public void RefreshSize()
+    {
+        if (OriginInfo.IsEntryReference)
+            Size = OriginInfo.MegFileLocation.DataEntry.Location.Size;
+        else
+        {
+            var fileInfo = OriginInfo.FileInfo!;
+            fileInfo.Refresh();
+            if (!fileInfo.Exists)
+                throw new FileNotFoundException($"The file '{fileInfo.FullName}' does not exist");
+            if (fileInfo.Length > MegFileConstants.MegMaxEntrySize)
+                MegThrowHelper.ThrowDataEntryExceeds4GigabyteException(fileInfo.FullName);
+            var size = (uint)fileInfo.Length;
+            Size = size;
+        }
     }
 
     private static string GetFilePath(MegDataEntryOriginInfo originInfo, string? overrideFileName)
     {
         if (overrideFileName is not null)
             return overrideFileName;
-        if (originInfo.IsLocalFile)
-            return originInfo.FilePath;
-        return originInfo.MegFileLocation!.DataEntry.FilePath;
+        return originInfo.IsLocalFile 
+            ? originInfo.FileInfo.FullName 
+            : originInfo.MegFileLocation!.DataEntry.FilePath;
     }
 
     private static bool GetEncryption(MegDataEntryOriginInfo originInfo, bool? overrideEncrypted)
     {
         if (overrideEncrypted is not null)
-            return overrideEncrypted.Value;
-
+            return overrideEncrypted.Value; 
         // Fallback for the case, origin is a file system path but overrideEncrypted was forgotten to set explicitly.
         if (originInfo.IsLocalFile)
             return false;
-
         return originInfo.MegFileLocation!.DataEntry.Encrypted;
     }
 }

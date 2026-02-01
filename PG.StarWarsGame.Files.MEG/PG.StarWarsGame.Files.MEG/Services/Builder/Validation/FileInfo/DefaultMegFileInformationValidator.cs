@@ -23,7 +23,7 @@ public sealed class DefaultMegFileInformationValidator : IMegFileInformationVali
     /// <inheritdoc />
     public MegFileInfoValidationResult Validate(MegBuilderFileInformationValidationData infoValidationData)
     {
-        if (infoValidationData.FileInformation is null || infoValidationData.DataEntries is null)
+        if (infoValidationData?.FileInformation is null || infoValidationData?.DataEntries is null)
             return MegFileInfoValidationResult.Failed;
 
         var isEncrypted = infoValidationData.DataEntries.Any(e => e.Encrypted);

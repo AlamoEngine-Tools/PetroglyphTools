@@ -8,11 +8,10 @@ namespace PG.StarWarsGame.Files.MEG.Binary.V1;
 
 internal sealed class ConstructingMegArchiveBuilderV1(IServiceProvider services) : ConstructingMegArchiveBuilderBase(services)
 {
+    // NB: We do not override the MaxEntryFileSize, because this limitation, so far,
+    // only applies to Empire at War / Forces of Corruption but not to the V1 format in general.
+
     protected override MegFileVersion FileVersion => MegFileVersion.V1;
-
-    internal override uint MaxEntryFileSize => int.MaxValue;
-
-    internal override long MaxMegFileSize => int.MaxValue;
 
     protected override int GetFileDescriptorSize(bool entryGetsEncrypted)
     {

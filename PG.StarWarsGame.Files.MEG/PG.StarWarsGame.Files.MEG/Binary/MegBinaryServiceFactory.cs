@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.StarWarsGame.Files.MEG.Binary.SizeCalculation;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Files;
 
@@ -31,6 +32,14 @@ internal class MegBinaryServiceFactory(IServiceProvider serviceProvider) : IMegB
     {
         if (megVersion == MegFileVersion.V1)
             return new ConstructingMegArchiveBuilderV1(_serviceProvider);
+
+        throw new NotImplementedException("MEGs other than V1 are currently not supported.");
+    }
+
+    public IIMegSizeCalculator GetMegSizeCalculator(MegFileVersion megVersion)
+    {
+        if (megVersion == MegFileVersion.V1)
+            return new MegV1SizeCalculator();
 
         throw new NotImplementedException("MEGs other than V1 are currently not supported.");
     }

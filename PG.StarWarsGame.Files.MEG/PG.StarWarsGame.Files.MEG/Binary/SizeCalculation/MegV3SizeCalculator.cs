@@ -8,16 +8,16 @@ internal sealed class MegV3SizeCalculator : MegSizeCalculator
 
     protected override uint HeaderSize => 24u;
 
-    internal override ulong GetEntrySize(MegFileDataEntryBuilderInfo entry)
+    internal override ulong GetEntrySize(MegDataEntryBuilderInfo dataEntry)
     {
-        return GetBinaryEntrySizeWithEncryption(entry);
+        return GetBinaryEntrySizeWithEncryption(dataEntry);
     }
 
-    protected override uint GetFileTableRecordSize(MegFileDataEntryBuilderInfo entry)
+    protected override uint GetFileTableRecordSize(MegDataEntryBuilderInfo dataEntry)
     {
         // Encrypted entries: 2 bytes flags + 32 bytes padded data = 34 bytes
         // Unencrypted entries: 2 bytes flags + 18 bytes data = 20 bytes
-        return entry.Encrypted ? 34u : 20u;
+        return dataEntry.Encrypted ? 34u : 20u;
     }
 
     protected override ulong GetFilenameTableSize(uint rawSize)
@@ -28,9 +28,9 @@ internal sealed class MegV3SizeCalculator : MegSizeCalculator
             : rawSize;
     }
 
-    protected override void OnEntryAdded(MegFileDataEntryBuilderInfo entry)
+    protected override void OnEntryAdded(MegDataEntryBuilderInfo dataEntry)
     {
-        if (entry.Encrypted && !_isEncrypted)
+        if (dataEntry.Encrypted && !_isEncrypted)
         {
             _isEncrypted = true;
             // IMPORTANT: Recalculate cached size because filename table padding just changed!

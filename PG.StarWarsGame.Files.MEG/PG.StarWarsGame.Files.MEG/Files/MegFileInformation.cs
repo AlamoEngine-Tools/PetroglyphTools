@@ -38,7 +38,9 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     /// <param name="encryptionData">The encryption data of MEG file or <see langweord="null"/> if the MEG file is not encrypted.</param>
     /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
     /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
-    /// <exception cref="ArgumentException"><paramref name="fileVersion"/> is not <see cref="MegFileVersion.V3"/> but <paramref name="encryptionData"/> is not <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="fileVersion"/> is not <see cref="MegFileVersion.V3"/> but <paramref name="encryptionData"/> is not <see langword="null"/>.
+    /// </exception>
     [SetsRequiredMembers]
     public MegFileInformation(string path, MegFileVersion fileVersion, MegEncryptionData? encryptionData = null) : base(path)
     {

@@ -25,7 +25,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
         FileSystemStream fileStream, 
         MegFileVersion fileVersion, 
         MegEncryptionData? encryptionData, 
-        IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
+        IEnumerable<MegDataEntryBuilderInfo> builderInformation)
     {
         if (fileStream == null)
             throw new ArgumentNullException(nameof(fileStream));

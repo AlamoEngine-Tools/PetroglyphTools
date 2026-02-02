@@ -22,7 +22,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 {
     protected override bool CanProduceInvalidEntryPaths => true;
 
-    protected override Type ExpectedDataEntryValidatorType => typeof(EmpireAtWarMegBuilderDataEntryValidator);
+    protected override Type ExpectedDataEntryValidatorType => typeof(EmpireAtWarMegDataEntryValidator);
 
     protected override Type ExpectedFileInfoValidatorType => typeof(EmpireAtWarMegFileInformationValidator);
 
@@ -44,12 +44,12 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         return new EmpireAtWarMegBuilder(BasePath, ServiceProvider);
     }
 
-    protected override void AddDataToBuilder(IReadOnlyCollection<MegFileDataEntryBuilderInfo> data, PetroglyphGameMegBuilder builder)
+    protected override void AddDataToBuilder(IReadOnlyCollection<MegDataEntryBuilderInfo> data, PetroglyphGameMegBuilder builder)
     {
         foreach (var info in data)
         {
-            var entryPath = builder.ResolveEntryPath(FileSystem.Path.GetFullPath(info.FilePath))!;
-            builder.AddFile(info.FilePath, entryPath);
+            var entryPath = builder.ResolveEntryPath(FileSystem.Path.GetFullPath(info.EntryPath))!;
+            builder.AddFile(info.EntryPath, entryPath);
         }
     }
 
@@ -63,7 +63,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         return Random.Item(["test\0test", new string('a', 300)]);
     }
 
-    protected override (IReadOnlyCollection<MegFileDataEntryBuilderInfo> Data, byte[] Bytes) CreateValidData()
+    protected override (IReadOnlyCollection<MegDataEntryBuilderInfo> Data, byte[] Bytes) CreateValidData()
     {
         var xmlDir = FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(BasePath, "DATA", "XML"));
 
@@ -73,7 +73,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         FileSystem.File.WriteAllBytes(goFile, MegTestConstants.GameObjectFilesContent);
         FileSystem.File.WriteAllBytes(cfFile, MegTestConstants.CampaignFilesContent);
 
-        var testMeg = new List<MegFileDataEntryBuilderInfo>
+        var testMeg = new List<MegDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo(goFile)),
             new(new MegDataEntryOriginInfo(cfFile))
@@ -94,7 +94,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
     {
         var builder = CreateBuilder();
 
-        FileSystem.Initialize().WithFile("entry.txt").Which(m => m.HasStringContent("test"));
+        FileSystem.Initialize().WithFile("dataEntry.txt").Which(m => m.HasStringContent("test"));
 
         var entry1 = builder.ResolveEntryPath("entry1.txt");
         var entry2 = builder.ResolveEntryPath(FileSystem.Path.GetFullPath(FileSystem.Path.Combine(BasePath, "DATA", "XML", "entry2.txt")));
@@ -106,11 +106,11 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         Assert.Null(entry3);
         Assert.Equal(PathNormalizer.Normalize("DATA/XML/entry4ÖÄÜ.txt", new PathNormalizeOptions { UnifyDirectorySeparators = true }), entry4);
 
-        var result1 = builder.AddFile("entry.txt", entry1!);
-        var result1a = builder.AddFile("entry.txt", entry1!, true);
-        var result2 = builder.AddFile("entry.txt", entry2!);
-        var result3 = builder.AddFile("entry.txt", "/other/corruption/data/xml/entry3.txt");
-        var result4 = builder.AddFile("entry.txt", entry4!);
+        var result1 = builder.AddFile("dataEntry.txt", entry1!);
+        var result1a = builder.AddFile("dataEntry.txt", entry1!, true);
+        var result2 = builder.AddFile("dataEntry.txt", entry2!);
+        var result3 = builder.AddFile("dataEntry.txt", "/other/corruption/data/xml/entry3.txt");
+        var result4 = builder.AddFile("dataEntry.txt", entry4!);
 
         Assert.True(result1.Added);
         Assert.False(result1a.Added);
@@ -118,10 +118,10 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         Assert.True(result3.Added);
         Assert.True(result4.Added);
 
-        Assert.Equal("ENTRY1.TXT", result1.AddedBuilderInfo!.FilePath);
-        Assert.Equal("DATA\\XML\\ENTRY2.TXT", result2.AddedBuilderInfo!.FilePath);
-        Assert.Equal("OTHER\\CORRUPTION\\DATA\\XML\\ENTRY3.TXT", result3.AddedBuilderInfo!.FilePath);
-        Assert.Equal("DATA\\XML\\ENTRY4???.TXT", result4.AddedBuilderInfo!.FilePath);
+        Assert.Equal("ENTRY1.TXT", result1.AddedBuilderInfo!.EntryPath);
+        Assert.Equal("DATA\\XML\\ENTRY2.TXT", result2.AddedBuilderInfo!.EntryPath);
+        Assert.Equal("OTHER\\CORRUPTION\\DATA\\XML\\ENTRY3.TXT", result3.AddedBuilderInfo!.EntryPath);
+        Assert.Equal("DATA\\XML\\ENTRY4???.TXT", result4.AddedBuilderInfo!.EntryPath);
 
         Assert.Equal(4, builder.DataEntries.Count);
 

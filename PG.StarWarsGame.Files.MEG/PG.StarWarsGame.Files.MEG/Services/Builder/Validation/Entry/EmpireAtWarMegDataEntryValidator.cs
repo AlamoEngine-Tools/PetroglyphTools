@@ -10,73 +10,58 @@ using PG.StarWarsGame.Files.MEG.Data;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-/// Validates a MEG data entry whether it is compliant to a Petroglyph Star Wars game. 
+/// Represents a validator for MEG data entries used when building MEG files for Petroglyph Star Wars games.
 /// </summary>
-public sealed class EmpireAtWarMegBuilderDataEntryValidator : BinaryMegEntryValidator
+public sealed class EmpireAtWarMegDataEntryValidator : BinaryMegEntryValidator
 {
-    /// <summary>
-    /// Returns a singleton instance of the <see cref="EmpireAtWarMegBuilderDataEntryValidator"/>.
-    /// </summary>
-    public static readonly EmpireAtWarMegBuilderDataEntryValidator Instance = new();
-
     // Slashes are not allowed, cause the engine normalized them into back-slashes.
-    // Whitespaces (space, tab, new line) *technically* are allowed but there are scenarios where file names are separated by spaces in XML code.
+    // Whitespaces (space, tab, new line) *technically* are allowed but there are scenarios where
+    // file names are separated by spaces in XML code.
     // Since there is no space escaping implemented in the engine, file lookup would break at this point.
     // Thus, this validator is a little more sensitive.
     private static readonly char[] ForbiddenChars = ['/', ' ', '\0', '\t', '\r', '\n'];
 
-    private EmpireAtWarMegBuilderDataEntryValidator()
-    {
-    }
-    
-    /// <summary>
-    /// Validates the specified MEG file data entry builder information.
-    /// </summary>
-    /// <param name="entryInfo">The information of the MEG file data entry to validate.</param>
-    /// <returns>
-    /// A <see cref="MegDataEntryValidationResult"/> indicating the result of the validation.
-    /// </returns>
     /// <remarks>
-    /// This method performs several checks to ensure the validity of the MEG file data entry:
+    /// This method performs several checks to ensure the validity of the MEG data entry:
     /// <list type="bullet">
-    /// <item>Ensures the entry is not encrypted.</item>
+    /// <item>Ensures the data entry is not encrypted.</item>
     /// <item>Validates that the file path is not empty, does not exceed the maximum allowed length, and does not contain invalid characters.</item>
     /// <item>Checks that the file path is properly formatted, uppercased, and correctly encoded.</item>
     /// </list>
-    /// If any of these checks fail, an appropriate validation result is returned.
     /// </remarks>
-    protected override MegDataEntryValidationResult ValidateCore(MegFileDataEntryBuilderInfo entryInfo)
+    /// <inheritdoc />
+    protected override MegDataEntryValidationResult ValidateCore(MegDataEntryBuilderInfo dataEntry)
     {
-        if (entryInfo.Encrypted)
+        if (dataEntry.Encrypted)
             return new MegDataEntryValidationResult(MegDataEntryValidationStatus.Invalid, 
-                "MEG entry cannot be encrypted.");
+                "MEG data entry cannot be encrypted.");
         
-        if (entryInfo.Size > MegFileConstants.EawMegMaxEntrySize)
+        if (dataEntry.Size > MegFileConstants.EawMegMaxEntrySize)
             return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidEntryTooLarge,
-                "MEG entry size too large.");
+                "MEG data entry size too large.");
 
-        var entryPath = entryInfo.FilePath;
+        var entryPath = dataEntry.EntryPath;
         if (entryPath.Length is 0)
-            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath, 
-                "MEG entry path cannot be empty.");
+            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath,
+                "MEG data entry path cannot be empty.");
 
         if (entryPath.Length > MegFileConstants.EawMaxEntryPathLength)
             return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath, 
-                $"MEG entry path cannot be larger than {MegFileConstants.EawMaxEntryPathLength}.");
+                $"MEG data entry path cannot be larger than {MegFileConstants.EawMaxEntryPathLength}.");
 
         if (IsRootedOrStartsWithCurrent(entryPath))
-            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath, 
-                "MEG entry path cannot with current directory.");
+            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath,
+                "MEG data entry path cannot with current directory.");
 
         if (entryPath.IndexOfAny(ForbiddenChars) != -1)
-            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath, 
-                "MEG entry path contains invalid characters.");
+            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath,
+                "MEG data entry path contains invalid characters.");
 
         // If the path contains ':' the first one must also be the first character, iff we have a slashes present
         // This rule does not really make any sense (e.g, path ":\MY\TEST.TXT" or "TEST:TEST")
         if (entryPath.IndexOf(':') > 0 && entryPath.IndexOf('\\') != -1)
-            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath, 
-                "MEG entry path contains invalid characters.");
+            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath,
+                "MEG data entry path contains invalid characters.");
 
         Span<char> pathBuffer = stackalloc char[MegFileConstants.EawMaxEntryPathLength];
 
@@ -85,7 +70,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : BinaryMegEntryVali
 
         if (upperLength != entryPath.Length || !entryPath.Equals(upper, StringComparison.Ordinal))
             return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath,
-                "MEG entry path is not uppercased.");
+                "MEG data entry path is not uppercased.");
 
         var megEncoding = MegFileConstants.MegDataEntryPathEncoding;
         var asciiLength = megEncoding.EncodeString(entryPath, pathBuffer, megEncoding.GetByteCountPG(entryPath.Length));
@@ -93,7 +78,7 @@ public sealed class EmpireAtWarMegBuilderDataEntryValidator : BinaryMegEntryVali
 
         if (asciiLength != entryPath.Length || !entryPath.Equals(asAscii, StringComparison.Ordinal))
             return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath,
-                "MEG entry path is not correctly encoded.");
+                "MEG data entry path is not correctly encoded.");
 
         return MegDataEntryValidationResult.Valid;
     }

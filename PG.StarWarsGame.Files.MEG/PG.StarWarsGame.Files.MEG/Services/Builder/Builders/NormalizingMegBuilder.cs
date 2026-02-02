@@ -17,10 +17,6 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// </remarks>
 public sealed class NormalizingMegBuilder : MegBuilderBase
 {
-    /// <remarks>This builder always overrides duplicate entries.</remarks>
-    /// <inheritdoc/>
-    public override bool OverwritesDuplicateEntries => true;
-
     /// <summary>
     /// Gets the data entry path normalizer.
     /// </summary>

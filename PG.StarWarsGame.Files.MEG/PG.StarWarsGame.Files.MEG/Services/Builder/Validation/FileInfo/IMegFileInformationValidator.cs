@@ -1,17 +1,23 @@
 // Copyright (c) Alamo Engine To.ols and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.StarWarsGame.Files.MEG.Files;
+using System.Collections.Generic;
+using PG.StarWarsGame.Files.MEG.Data;
+
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-/// A validator for MEG file information.
+/// Represents a validator for MEG file information used when building MEG files.
 /// </summary>
 public interface IMegFileInformationValidator
 {
     /// <summary>
-    /// Validates a specified MEG file information to the rules of this instance.
+    /// Validates the specified MEG file information.
     /// </summary>
-    /// <param name="infoValidationData">The file information to validate</param>
-    /// <returns><see langword="true"/> if <paramref name="infoValidationData"/> is valid; otherwise, <see langword="false"/>.</returns>
-    MegFileInfoValidationResult Validate(MegBuilderFileInformationValidationData infoValidationData);
+    /// <param name="fileInformation">The MEG file information to validate.</param>
+    /// <param name="dataEntries">The collection of data entries associated with the MEG file.</param>
+    /// <returns>A <see cref="MegFileInfoValidationResult"/> indicating the outcome of the validation.</returns>
+    /// <exception cref="System.ArgumentNullException"><paramref name="fileInformation"/> or <paramref name="dataEntries"/> is <see langword="null"/>.</exception>
+    MegFileInfoValidationResult Validate(MegFileInformation fileInformation, IReadOnlyCollection<MegDataEntryBuilderInfo> dataEntries);
 }

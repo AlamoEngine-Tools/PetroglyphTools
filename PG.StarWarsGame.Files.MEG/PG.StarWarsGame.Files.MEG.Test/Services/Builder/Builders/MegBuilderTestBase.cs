@@ -18,7 +18,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilder, IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>
+public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilder, IReadOnlyCollection<MegDataEntryBuilderInfo>, MegFileInformation>
     where TBuilder : MegBuilderBase
 {
     protected virtual bool CanProduceInvalidEntryPaths => false;
@@ -92,11 +92,11 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Single(builder.DataEntries);
         Assert.Empty(entries);
 
-        if (entries is List<MegFileDataEntryBuilderInfo> builderList)
+        if (entries is List<MegDataEntryBuilderInfo> builderList)
         {
-            builderList.Add(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path1")));
-            builderList.Add(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path2")));
-            builderList.Add(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path3")));
+            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path1")));
+            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path2")));
+            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path3")));
             Assert.Single(builder.DataEntries);
         }
     }
@@ -131,7 +131,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var result = builder.AddFile("file.txt", "file.txt");
 
         Assert.Single(builder.DataEntries);
-        Assert.False(builder.Remove(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
+        Assert.False(builder.Remove(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
         Assert.Single(builder.DataEntries);
         Assert.True(builder.Remove(result.AddedBuilderInfo!));
         Assert.Empty(builder.DataEntries);
@@ -162,7 +162,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         Assert.DoesNotThrow(() => builder.DataEntries);
         Assert.DoesNotThrow(builder.Clear);
-        Assert.DoesNotThrow(() => builder.Remove(new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
+        Assert.DoesNotThrow(() => builder.Remove(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
 
         Assert.DoesNotThrow(builder.Dispose);
     }
@@ -201,13 +201,13 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         var expectedEntryPath = builder.DataEntryPathNormalizer?.Normalize(inputEntryPath) ?? inputEntryPath;
 
-        Assert.Equal(expectedEntryPath, result.AddedBuilderInfo.FilePath);
+        Assert.Equal(expectedEntryPath, result.AddedBuilderInfo.EntryPath);
         Assert.Null(result.OverwrittenBuilderInfo);
 
         Assert.Single(builder.DataEntries);
 
         var entry = builder.DataEntries.First();
-        Assert.Equal(expectedEntryPath, entry.FilePath);
+        Assert.Equal(expectedEntryPath, entry.EntryPath);
         Assert.False(entry.Encrypted);
         if (ExpectedAutomaticallyAddFileSizes == true)
             Assert.Equal(3u, entry.Size);
@@ -233,7 +233,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         var result = builder.AddFile(fileToAdd, inputEntryPath);
         Assert.True(result.Added);
-        Assert.Equal(expectedEntryPath, result.AddedBuilderInfo.FilePath);
+        Assert.Equal(expectedEntryPath, result.AddedBuilderInfo.EntryPath);
     }
 
     [Fact]
@@ -262,7 +262,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             MegFileConstants.MegDataEntryPathEncoding.EncodeString(
                 builder.DataEntryPathNormalizer?.Normalize(entryPath) ?? entryPath);
         Assert.True(result.Added);
-        Assert.Equal(expectedEntryPath, result.AddedBuilderInfo.FilePath);
+        Assert.Equal(expectedEntryPath, result.AddedBuilderInfo.EntryPath);
     }
 
     [Fact]
@@ -305,7 +305,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
             var expectedEncodedEntry = MegFileConstants.MegDataEntryPathEncoding.EncodeString(MegFileConstants.MegDataEntryPathEncoding.EncodeString(
                 builder.DataEntryPathNormalizer?.Normalize(inputEntryPath) ?? inputEntryPath));
-            Assert.Equal(expectedEncodedEntry, resultSecondAdd.AddedBuilderInfo.FilePath);
+            Assert.Equal(expectedEncodedEntry, resultSecondAdd.AddedBuilderInfo.EntryPath);
         }
     }
 
@@ -400,7 +400,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var expectedEntryPath = MegFileConstants.MegDataEntryPathEncoding.EncodeString(MegFileConstants.MegDataEntryPathEncoding.EncodeString(
             builder.DataEntryPathNormalizer?.Normalize(entry.FilePath) ?? entry.FilePath));
 
-        Assert.Equal(expectedEntryPath, actualEntry.FilePath);
+        Assert.Equal(expectedEntryPath, actualEntry.EntryPath);
         Assert.Same(entry, actualEntry.OriginInfo.MegFileLocation!.DataEntry);
     }
 
@@ -420,7 +420,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var expectedEntryPath = builder.DataEntryPathNormalizer?.Normalize("new.txt") ?? "new.txt";
 
         var actualEntry = builder.DataEntries.First();
-        Assert.Equal(expectedEntryPath, actualEntry.FilePath);
+        Assert.Equal(expectedEntryPath, actualEntry.EntryPath);
         Assert.Same(entry, actualEntry.OriginInfo.MegFileLocation!.DataEntry);
     }
 
@@ -439,7 +439,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var addedFile = builder.AddFile(fileToAdd, fileToAdd);
         Assert.True(addedFile.Added);
 
-        var resultSecondAdd = builder.AddEntry(new MegDataEntryLocationReference(meg, entry), addedFile.AddedBuilderInfo!.FilePath);
+        var resultSecondAdd = builder.AddEntry(new MegDataEntryLocationReference(meg, entry), addedFile.AddedBuilderInfo!.EntryPath);
 
         if (ExpectedOverwritesDuplicates == false)
         {

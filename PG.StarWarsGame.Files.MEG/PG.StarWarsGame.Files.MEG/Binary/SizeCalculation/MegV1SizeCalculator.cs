@@ -7,5 +7,5 @@ internal sealed class MegV1SizeCalculator : MegSizeCalculator
 {
     protected override uint HeaderSize => (uint)MegHeader.SizeValue;
 
-    protected override uint GetFileTableRecordSize(MegFileDataEntryBuilderInfo entry) => (uint)MegFileTableRecord.SizeValue;
+    protected override uint GetFileTableRecordSize(MegDataEntryBuilderInfo dataEntry) => (uint)MegFileTableRecord.SizeValue;
 }

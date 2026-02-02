@@ -52,13 +52,8 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <inheritdoc/>
     public abstract override IMegDataEntryValidator DataEntryValidator { get; }
 
-    /// <inheritdoc cref="PetroMegFileInformationValidator"/>
-    public sealed override IMegFileInformationValidator MegFileInformationValidator => PetroMegFileInformationValidator;
-
-    /// <summary>
-    /// Validates file information to be compliant to a Petroglyph game
-    /// </summary>
-    protected abstract PetroglyphMegFileInformationValidator PetroMegFileInformationValidator { get; }
+    /// <inheritdoc/>
+    public abstract override IMegFileInformationValidator MegFileInformationValidator { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PetroglyphGameMegBuilder"/> class with a specified game path.

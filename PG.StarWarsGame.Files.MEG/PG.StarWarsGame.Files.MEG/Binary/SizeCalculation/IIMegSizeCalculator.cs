@@ -17,33 +17,33 @@ internal interface IIMegSizeCalculator
     /// and the current state of the <see cref="IIMegSizeCalculator"/>.
     /// </summary>
     /// <param name="entries">
-    /// A collection of <see cref="MegFileDataEntryBuilderInfo"/> objects representing the data entries
+    /// A collection of <see cref="MegDataEntryBuilderInfo"/> objects representing the data entries
     /// to be included in the MEG file.
     /// </param>
     /// <returns>
     /// The total calculated size of the MEG file, including header, filename table, file table, and file data.
     /// </returns>
-    public ulong PreCalculateSize(IEnumerable<MegFileDataEntryBuilderInfo> entries);
+    public ulong PreCalculateSize(IEnumerable<MegDataEntryBuilderInfo> entries);
 
     /// <summary>
-    /// Pre-calculates the total size of the MEG file metadata and content for the specified entry.
+    /// Pre-calculates the total size of the MEG file metadata and content for the specified dataEntry.
     /// </summary>
-    /// <param name="entry">
-    /// The <see cref="MegFileDataEntryBuilderInfo"/> representing the file entry for which the size is to be calculated.
+    /// <param name="dataEntry">
+    /// The <see cref="MegDataEntryBuilderInfo"/> representing the data entry for which the size is to be calculated.
     /// </param>
     /// <returns>
     /// The total size, in bytes, of the MEG file metadata and content, including headers, filename table, file table, and file data.
     /// </returns>
-    public ulong PreCalculateSize(MegFileDataEntryBuilderInfo entry);
+    public ulong PreCalculateSize(MegDataEntryBuilderInfo dataEntry);
 
     /// <summary>
-    /// Adds a new file entry to the MEG file size calculation process.
+    /// Adds a new data entry to the MEG file size calculation process.
     /// </summary>
-    /// <param name="entry">
-    /// The <see cref="MegFileDataEntryBuilderInfo"/> instance representing the file entry to be added.
+    /// <param name="dataEntry">
+    /// The <see cref="MegDataEntryBuilderInfo"/> instance representing the data entry to be added.
     /// This includes metadata such as file path, size, and encryption status.
     /// </param>
-    public void AddEntry(MegFileDataEntryBuilderInfo entry);
+    public void AddEntry(MegDataEntryBuilderInfo dataEntry);
 
     /// <summary>
     /// Resets the internal state of the size calculation process, clearing any accumulated data

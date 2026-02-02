@@ -30,7 +30,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     [Fact]
     public void CreateMegArchive_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.Throws<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegDataEntryBuilderInfo>()));
         Assert.Throws<ArgumentNullException>(() =>
         {
             using var fs = FileSystem.File.OpenWrite("path");
@@ -68,9 +68,9 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         var dummyMeg = new MegFile(new MegArchive([]), new MegFileInformation(dummyMegFile, MegFileVersion.V1),
             ServiceProvider);
 
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
+        var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegFileDataEntryBuilderInfo.FromEntry(dummyMeg, meg.Archive[0])
+            MegDataEntryBuilderInfo.FromEntry(dummyMeg, meg.Archive[0])
         };
 
         Assert.Throws<FileNotInMegException>(() =>
@@ -90,9 +90,9 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
 
         var meg = _megFileService.Load(megFileName);
 
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
+        var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegFileDataEntryBuilderInfo.FromFile("notFound.txt", null)
+            MegDataEntryBuilderInfo.FromFile("notFound.txt", null)
         };
         Assert.Throws<FileNotFoundException>(() =>
         {
@@ -121,10 +121,10 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         FileSystem.Initialize().WithFile("1.txt").Which(m => m.HasStringContent("123"));
         FileSystem.Initialize().WithFile("2.txt").Which(m => m.HasStringContent("456"));
 
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
+        var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegFileDataEntryBuilderInfo.FromFile("1.txt", "file"),
-            MegFileDataEntryBuilderInfo.FromFile("2.txt", "file")
+            MegDataEntryBuilderInfo.FromFile("1.txt", "file"),
+            MegDataEntryBuilderInfo.FromFile("2.txt", "file")
         };
 
         using (var fs = FileSystem.File.OpenWrite(megFileName))
@@ -144,9 +144,9 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
 
         FileSystem.Initialize().WithFile("1.txt").Which(m => m.HasStringContent("123"));
 
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
+        var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegFileDataEntryBuilderInfo.FromFile("1.txt", "file", size: 99) // Size is not correct
+            MegDataEntryBuilderInfo.FromFile("1.txt", "file", size: 99) // Size is not correct
         };
 
         using var fs = FileSystem.File.OpenWrite(megFileName);
@@ -315,7 +315,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
             expectedData.EncryptionData);
 
         var builderInformation = meg.Archive.Select(e =>
-            new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
+            new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
 
         using (var fs = FileSystem.File.OpenWrite(expectedData.NewMegFilePath))
         {

@@ -9,13 +9,13 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Validation;
 
-public class DefaultMegFileInformationValidatorTest
+public class BinaryMegFileInformationValidatorTest
 {
     [Theory]
     [MemberData(nameof(ValidTestData))]
     public void TestValid(MegBuilderFileInformationValidationData builderInfo)
     {
-        var validator = DefaultMegFileInformationValidator.Instance;
+        var validator = BinaryMegFileInformationValidator.Instance;
         Assert.True(validator.Validate(builderInfo).IsValid);
     }
 
@@ -23,7 +23,7 @@ public class DefaultMegFileInformationValidatorTest
     [MemberData(nameof(InvalidTestData))]
     public void TestInvalid(MegBuilderFileInformationValidationData builderInfo)
     {
-        var validator = DefaultMegFileInformationValidator.Instance;
+        var validator = BinaryMegFileInformationValidator.Instance;
         Assert.False(validator.Validate(builderInfo).IsValid);
     }
 
@@ -32,22 +32,22 @@ public class DefaultMegFileInformationValidatorTest
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V1),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
         ];
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V2),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
         ];
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V3),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
         ];
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData()),
-            [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
+            [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];
     }
 
@@ -56,7 +56,7 @@ public class DefaultMegFileInformationValidatorTest
         yield return
         [
             CreateData(null!,
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];
         yield return
         [
@@ -65,26 +65,26 @@ public class DefaultMegFileInformationValidatorTest
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V1),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V2),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V3),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"), overrideEncrypted: true)])
         ];
         yield return
         [
             CreateData(new MegFileInformation("path", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData()),
-                [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
+                [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))])
         ];
     }
 
-    private static MegBuilderFileInformationValidationData CreateData(MegFileInformation megFileInformation, params MegFileDataEntryBuilderInfo[] entries)
+    private static MegBuilderFileInformationValidationData CreateData(MegFileInformation megFileInformation, params MegDataEntryBuilderInfo[] entries)
     {
         return new MegBuilderFileInformationValidationData(megFileInformation, entries);
     }

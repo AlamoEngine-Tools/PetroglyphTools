@@ -8,9 +8,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </summary>
 public readonly struct MegFileInfoValidationResult
 {
-    internal static readonly MegFileInfoValidationResult Failed = default;
-
-    internal static readonly MegFileInfoValidationResult Valid = new(true);
+    internal static readonly MegFileInfoValidationResult Valid = new(true, null);
 
     /// <summary>
     /// Gets an optional reason why the validation failed or <see langword="null"/>.
@@ -22,19 +20,14 @@ public readonly struct MegFileInfoValidationResult
     /// </summary>
     public bool IsValid { get; }
 
-    private MegFileInfoValidationResult(string? failReason)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MegFileInfoValidationResult"/> struct.
+    /// </summary>
+    /// <param name="valid">A value indicating whether the validation result is valid.</param>
+    /// <param name="failReason">The reason for validation failure, or <see langword="null"/> if the validation is successful.</param>
+    public MegFileInfoValidationResult(bool valid, string? failReason)
     {
-        IsValid = false;
+        IsValid = valid;
         FailReason = failReason;
-    }
-
-    internal MegFileInfoValidationResult(bool isValid)
-    {
-        IsValid = isValid;
-    }
-
-    internal static MegFileInfoValidationResult FromFailed(string? message)
-    {
-        return new MegFileInfoValidationResult(message);
     }
 }

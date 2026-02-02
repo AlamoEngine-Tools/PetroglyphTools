@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.SizeCalculation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -25,22 +24,22 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// <summary>
 /// Base class for a <see cref="IMegBuilder"/> service providing the fundamental implementations.
 /// </summary>
-public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>, IMegBuilder
+public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegDataEntryBuilderInfo>, MegFileInformation>, IMegBuilder
 {
-    private readonly Dictionary<Crc32, MegFileDataEntryBuilderInfo> _dataEntries = new();
+    private readonly Dictionary<Crc32, MegDataEntryBuilderInfo> _dataEntries = new();
     private readonly ICrc32HashingService _hashingService;
 
     internal virtual ulong MaxMegFileSize => MegFileConstants.MegMaxFileSize;
 
     /// <inheritdoc />
-    public sealed override IReadOnlyCollection<MegFileDataEntryBuilderInfo> BuilderData => DataEntries;
+    public sealed override IReadOnlyCollection<MegDataEntryBuilderInfo> BuilderData => DataEntries;
 
     /// <inheritdoc/>
     [MemberNotNullWhen(true, nameof(DataEntryPathNormalizer))]
     public bool NormalizesEntryPaths => DataEntryPathNormalizer is not null;
 
     /// <inheritdoc/>
-    public IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries => [.._dataEntries.Values];
+    public IReadOnlyCollection<MegDataEntryBuilderInfo> DataEntries => [.._dataEntries.Values];
 
     /// <inheritdoc/>
     /// <remarks>
@@ -52,8 +51,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     /// <remarks>
     /// By default, a validator instance is used which performs specification-level checks only.
     /// </remarks>
-    public virtual IMegFileInformationValidator MegFileInformationValidator =>
-        DefaultMegFileInformationValidator.Instance;
+    public virtual IMegFileInformationValidator MegFileInformationValidator { get; } = new BinaryMegFileInformationValidator();
 
     /// <inheritdoc/>
     /// <remarks>
@@ -119,9 +117,9 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     }
 
     /// <inheritdoc/>
-    public bool Remove(MegFileDataEntryBuilderInfo info)
+    public bool Remove(MegDataEntryBuilderInfo info)
     {
-        var crc = _hashingService.GetCrc32(info.FilePath, MegFileConstants.MegDataEntryPathEncoding);
+        var crc = _hashingService.GetCrc32(info.EntryPath, MegFileConstants.MegDataEntryPathEncoding);
         return _dataEntries.Remove(crc);
     }
 
@@ -145,13 +143,13 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
 
     private protected ICollection<MegFilePart> SplitIntoMinRequiredParts(
         MegFileVersion megVersion,
-        IEnumerable<MegFileDataEntryBuilderInfo> builderInfo)
+        IEnumerable<MegDataEntryBuilderInfo> builderInfo)
     {
         var metadataSizeCalculator = Services.GetRequiredService<IMegBinaryServiceFactory>()
             .GetMegSizeCalculator(megVersion);
 
         var parts = new List<MegFilePart>();
-        var currentPart = new List<MegFileDataEntryBuilderInfo>();
+        var currentPart = new List<MegDataEntryBuilderInfo>();
 
         foreach (var entry in builderInfo)
         {
@@ -178,7 +176,7 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
     }
 
     /// <inheritdoc />
-    protected sealed override void BuildFileCore(FileSystemStream fileStream, MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> data)
+    protected sealed override void BuildFileCore(FileSystemStream fileStream, MegFileInformation fileInformation, IReadOnlyCollection<MegDataEntryBuilderInfo> data)
     {
         var megService = Services.GetRequiredService<IMegFileService>();
         megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, data);
@@ -186,12 +184,12 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
 
     /// <inheritdoc />
     protected sealed override bool ValidateFileInformationCore(
-        MegFileInformation fileInformation, IReadOnlyCollection<MegFileDataEntryBuilderInfo> builderData, out string? failedReason)
+        MegFileInformation fileInformation, IReadOnlyCollection<MegDataEntryBuilderInfo> builderData, out string? failedReason)
     {
         if (builderData.Any(e => e.Encrypted))
             throw new NotImplementedException("Encryption is currently not supported.");
 
-        var validation = MegFileInformationValidator.Validate(new MegBuilderFileInformationValidationData(fileInformation, builderData));
+        var validation = MegFileInformationValidator.Validate(fileInformation, builderData);
         failedReason = validation.FailReason;
         return validation.IsValid;
     }
@@ -230,13 +228,13 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegFi
         if (_dataEntries.TryGetValue(crc, out var currentInfo))
         {
             if (!OverwritesDuplicateEntries)
-                return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.FilePath);
+                return AddDataEntryToBuilderResult.FromDuplicate(currentInfo.EntryPath);
         }
 
-        MegFileDataEntryBuilderInfo infoToAdd;
+        MegDataEntryBuilderInfo infoToAdd;
         try
         {
-            infoToAdd = new MegFileDataEntryBuilderInfo(originInfo, entryPath, encrypt);
+            infoToAdd = new MegDataEntryBuilderInfo(originInfo, entryPath, encrypt);
         }
         catch (MegEntrySizeException)
         {

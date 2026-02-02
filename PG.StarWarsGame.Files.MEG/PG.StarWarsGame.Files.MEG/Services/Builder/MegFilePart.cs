@@ -6,9 +6,9 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// <summary>
 /// Represents a single MEG file part with its entries and expected file size.
 /// </summary>
-internal sealed class MegFilePart(ICollection<MegFileDataEntryBuilderInfo> entries, uint expectedFileSize)
+internal sealed class MegFilePart(ICollection<MegDataEntryBuilderInfo> entries, uint expectedFileSize)
 {
-    public ICollection<MegFileDataEntryBuilderInfo> Entries { get; } = entries;
+    public ICollection<MegDataEntryBuilderInfo> Entries { get; } = entries;
     
     public uint ExpectedFileSize { get; } = expectedFileSize;
 }

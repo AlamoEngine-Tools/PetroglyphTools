@@ -12,7 +12,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 /// <summary>
 /// Normalizes a path in the same way the Empire at War Alamo engine normalizes meg entry paths (e.g, for file lookups).
 /// </summary>
-public sealed class EmpireAtWarMegDataEntryPathNormalizer : PetroglyphDataEntryPathNormalizer
+public sealed class EmpireAtWarMegDataEntryPathNormalizer : MegDataEntryPathNormalizerBase
 {
     /// <summary>
     /// Returns a singleton instance of the <see cref="EmpireAtWarMegDataEntryPathNormalizer"/>.
@@ -31,19 +31,19 @@ public sealed class EmpireAtWarMegDataEntryPathNormalizer : PetroglyphDataEntryP
     };
 
     /// <inheritdoc />
-    public override string Normalize(ReadOnlySpan<char> filePath)
+    public override string Normalize(ReadOnlySpan<char> entryPath)
     {
-        if (filePath.Length == 0)
+        if (entryPath.Length == 0)
             return string.Empty;
 
         char[]? pooledCharArray = null;
         try
         {
-            var buffer = filePath.Length > 265
-                ? pooledCharArray = ArrayPool<char>.Shared.Rent(filePath.Length)
-                : stackalloc char[filePath.Length];
+            var buffer = entryPath.Length > 265
+                ? pooledCharArray = ArrayPool<char>.Shared.Rent(entryPath.Length)
+                : stackalloc char[entryPath.Length];
 
-            var normalizedLength = PathNormalizer.Normalize(filePath, buffer, PetroglyphNormalizeOptions);
+            var normalizedLength = PathNormalizer.Normalize(entryPath, buffer, PetroglyphNormalizeOptions);
             var normalized = buffer.Slice(0, normalizedLength);
 
             SplitPath(normalized, out var path, out var file);
@@ -83,9 +83,9 @@ public sealed class EmpireAtWarMegDataEntryPathNormalizer : PetroglyphDataEntryP
 
 
     /// <inheritdoc />
-    protected override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+    protected override int Normalize(ReadOnlySpan<char> entryPath, Span<char> destination)
     {
-        if (filePath.Length == 0)
+        if (entryPath.Length == 0)
             return 0;
 
         char[]? pooledCharArray = null;
@@ -95,7 +95,7 @@ public sealed class EmpireAtWarMegDataEntryPathNormalizer : PetroglyphDataEntryP
                 ? pooledCharArray = ArrayPool<char>.Shared.Rent(destination.Length)
                 : stackalloc char[destination.Length];
 
-            var normalizedLength = PathNormalizer.Normalize(filePath, normalizationBuffer, PetroglyphNormalizeOptions);
+            var normalizedLength = PathNormalizer.Normalize(entryPath, normalizationBuffer, PetroglyphNormalizeOptions);
             var normalized = normalizationBuffer.Slice(0, normalizedLength);
 
             SplitPath(normalized, out var path, out var file);

@@ -13,27 +13,27 @@ public interface IMegDataEntryPathNormalizer
     /// <summary>
     /// Normalizes the specified MEG data entry path.
     /// </summary>
-    /// <param name="filePath">The entry's file path to normalize.</param>
+    /// <param name="entryPath">The entry's file path to normalize.</param>
     /// <returns>The normalized path.</returns>
-    string Normalize(string filePath);
+    string Normalize(string entryPath);
 
     /// <summary>
     /// Normalizes the specified span containing a MEG data entry path.
     /// </summary>
-    /// <param name="filePath">The entry's file path to normalize.</param>
+    /// <param name="entryPath">The entry's file path to normalize.</param>
     /// <returns>The normalized path.</returns>
-    string Normalize(ReadOnlySpan<char> filePath);
+    string Normalize(ReadOnlySpan<char> entryPath);
 
     /// <summary>
     /// Attempts to normalize the specified span containing a MEG data entry path to a preallocated character span, and returns a value that indicates whether the operation succeeded.
     /// </summary>
     /// <remarks>
     /// This method may require more characters for <paramref name="destination"/>
-    /// than there are in <paramref name="filePath"/>.
+    /// than there are in <paramref name="entryPath"/>.
     /// </remarks>
-    /// <param name="filePath">The entry's file path to normalize.</param>
+    /// <param name="entryPath">The entry's file path to normalize.</param>
     /// <param name="destination">The span to write the normalized path into.</param>
     /// <param name="charsWritten">The number of chars written to <paramref name="destination"/> are stored to this variable.</param>
     /// <returns><see langword="true"/> if the normalization was completed and copied to <paramref name="destination"/>; otherwise, <see langword="false"/>.</returns>
-    bool TryNormalize(ReadOnlySpan<char> filePath, Span<char> destination, out int charsWritten);
+    bool TryNormalize(ReadOnlySpan<char> entryPath, Span<char> destination, out int charsWritten);
 }

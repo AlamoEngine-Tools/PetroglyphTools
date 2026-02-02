@@ -29,19 +29,19 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     }
 
     /// <inheritdoc />
-    public override string Normalize(ReadOnlySpan<char> filePath)
+    public override string Normalize(ReadOnlySpan<char> entryPath)
     {
-        if (filePath.Length == 0)
+        if (entryPath.Length == 0)
             return string.Empty;
 
         char[]? pooledCharArray = null;
         try
         {
-            var buffer = filePath.Length > 265
-                ? pooledCharArray = ArrayPool<char>.Shared.Rent(filePath.Length)
-                : stackalloc char[filePath.Length];
+            var buffer = entryPath.Length > 265
+                ? pooledCharArray = ArrayPool<char>.Shared.Rent(entryPath.Length)
+                : stackalloc char[entryPath.Length];
 
-            var normalizedLength = PathNormalizer.Normalize(filePath, buffer, DefaultNormalizeOptions);
+            var normalizedLength = PathNormalizer.Normalize(entryPath, buffer, DefaultNormalizeOptions);
             return buffer.Slice(0, normalizedLength).ToString();
         }
         finally
@@ -52,8 +52,8 @@ public sealed class DefaultDataEntryPathNormalizer : MegDataEntryPathNormalizerB
     }
 
     /// <inheritdoc />
-    protected override int Normalize(ReadOnlySpan<char> filePath, Span<char> destination)
+    protected override int Normalize(ReadOnlySpan<char> entryPath, Span<char> destination)
     {
-        return filePath.Length == 0 ? 0 : PathNormalizer.Normalize(filePath, destination, DefaultNormalizeOptions);
+        return entryPath.Length == 0 ? 0 : PathNormalizer.Normalize(entryPath, destination, DefaultNormalizeOptions);
     }
 }

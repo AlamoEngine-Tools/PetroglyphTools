@@ -10,7 +10,10 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </remarks>
 public readonly struct MegDataEntryValidationResult
 {
-    internal static readonly MegDataEntryValidationResult Valid = default;
+    /// <summary>
+    /// Represents a validation result that indicates the data entry is valid.
+    /// </summary>
+    public static readonly MegDataEntryValidationResult Valid = default;
 
     /// <summary>
     /// Gets an optional reason why the validation failed or <see langword="null"/>.

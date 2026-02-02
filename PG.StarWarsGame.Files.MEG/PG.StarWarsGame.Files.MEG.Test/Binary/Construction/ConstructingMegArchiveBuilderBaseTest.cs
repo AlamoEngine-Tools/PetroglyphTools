@@ -54,7 +54,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
     public void BuildConstructingMegArchive_FileNotFound_Throws()
     {
         var service = CreateService();
-        var builderEntries = new List<MegFileDataEntryBuilderInfo>
+        var builderEntries = new List<MegDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
         };
@@ -69,7 +69,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         FileSystem.File.WriteAllBytes("A", [1, 2, 3, 4, 5, 6, 7]);
 
         var service = new SmallMaxFileSizeConstructingService(maxFileSize, ServiceProvider);
-        var builderEntries = new List<MegFileDataEntryBuilderInfo>
+        var builderEntries = new List<MegDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
         };
@@ -84,7 +84,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         FileSystem.File.Create("file.meg");
         var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
 
-        var builderEntries = new List<MegFileDataEntryBuilderInfo>
+        var builderEntries = new List<MegDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo(
                     new MegDataEntryLocationReference(
@@ -107,7 +107,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         FileSystem.File.Create("file.meg");
         var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
 
-        var builderEntries = new List<MegFileDataEntryBuilderInfo>
+        var builderEntries = new List<MegDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo(
                     new MegDataEntryLocationReference(
@@ -136,7 +136,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         var testData = "test data";
         FileSystem.Initialize().WithFile("A").Which(m => m.HasStringContent(testData));
         var service = CreateService();
-        var builderEntries = new List<MegFileDataEntryBuilderInfo>
+        var builderEntries = new List<MegDataEntryBuilderInfo>
         {
             new(new MegDataEntryOriginInfo("A"), "0"),
         };
@@ -221,7 +221,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         return new(
             nameof(EmptyMeg),
             // Input
-            new List<MegFileDataEntryBuilderInfo>(),
+            new List<MegDataEntryBuilderInfo>(),
             // Expected
             new List<ExpectedEntryData>()
         );
@@ -235,7 +235,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         return new(
             nameof(SingleFileMeg),
             // Input
-            new List<MegFileDataEntryBuilderInfo>
+            new List<MegDataEntryBuilderInfo>
             {
                 new(new MegDataEntryOriginInfo("A"), "0", 3)
             },
@@ -255,7 +255,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         return new(
             nameof(UnsortedWithDuplicateCrcDueToNonASCIIFilePath),
             // Input
-            new List<MegFileDataEntryBuilderInfo>
+            new List<MegDataEntryBuilderInfo>
             {
                 new(new MegDataEntryOriginInfo("A"), "0", 3),
                 new(new MegDataEntryOriginInfo("B"), "1", 1),
@@ -280,7 +280,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         return new(
             nameof(OnlyTwoEmptyFiles),
             // Input
-            new List<MegFileDataEntryBuilderInfo>
+            new List<MegDataEntryBuilderInfo>
             {
                 new(new MegDataEntryOriginInfo("A"), "1", 0),
                 new(new MegDataEntryOriginInfo("B"), "0", 0)
@@ -302,7 +302,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         return new(
             nameof(TwoEmptyFilesFirstThenData),
             // Input
-            new List<MegFileDataEntryBuilderInfo>
+            new List<MegDataEntryBuilderInfo>
             {
                 new(new MegDataEntryOriginInfo("A"), "1", 0),
                 new(new MegDataEntryOriginInfo("B"), "2", 0),
@@ -326,7 +326,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         return new(
             nameof(DataThenTwoEmptyFiles),
             // Input
-            new List<MegFileDataEntryBuilderInfo>
+            new List<MegDataEntryBuilderInfo>
             {
                 new(new MegDataEntryOriginInfo("A"), "1", 3),
                 new(new MegDataEntryOriginInfo("B"), "2", 0),
@@ -350,7 +350,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         return new(
             nameof(DataThenEmptyThenData),
             // Input
-            new List<MegFileDataEntryBuilderInfo>
+            new List<MegDataEntryBuilderInfo>
             {
                 new(new MegDataEntryOriginInfo("A"), "1", 3),
                 new(new MegDataEntryOriginInfo("B"), "2", 0),
@@ -367,9 +367,9 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
     }
 
 
-    public readonly struct ConstructingMegTestData(string testName, IEnumerable<MegFileDataEntryBuilderInfo> builderEntries, IList<ExpectedEntryData> expectedData)
+    public readonly struct ConstructingMegTestData(string testName, IEnumerable<MegDataEntryBuilderInfo> builderEntries, IList<ExpectedEntryData> expectedData)
     {
-        public IEnumerable<MegFileDataEntryBuilderInfo> BuilderEntries { get; } = builderEntries;
+        public IEnumerable<MegDataEntryBuilderInfo> BuilderEntries { get; } = builderEntries;
         public IList<ExpectedEntryData> ExpectedData { get; } = expectedData;
         public string TestName { get; } = testName;
     }

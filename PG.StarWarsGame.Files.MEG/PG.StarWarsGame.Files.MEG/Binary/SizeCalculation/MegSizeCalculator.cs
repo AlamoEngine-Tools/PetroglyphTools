@@ -32,24 +32,24 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
     }
 
     /// <summary>
-    /// Calculates the binary size of a MEG file entry, considering encryption.
+    /// Calculates the binary size of a MEG file dataEntry, considering encryption.
     /// </summary>
-    /// <param name="entryInfo">
-    /// The <see cref="MegFileDataEntryBuilderInfo"/> containing information about the MEG file entry.
+    /// <param name="dataEntry">
+    /// The <see cref="MegDataEntryBuilderInfo"/> containing information about the MEG file dataEntry.
     /// </param>
     /// <returns>
-    /// The size of the binary entry. If the entry is marked for encryption, the size is rounded up to the AES block size.
+    /// The size of the binary dataEntry. If the data entry is marked for encryption, the size is rounded up to the AES block size.
     /// </returns>
     /// <remarks>
-    /// This method determines the size of a MEG file entry by checking if encryption is enabled.
+    /// This method determines the size of a MEG data entry by checking if encryption is enabled.
     /// If encryption is applied, the size is adjusted to align with the AES block size.
     /// </remarks>
-    public static ulong GetBinaryEntrySizeWithEncryption(MegFileDataEntryBuilderInfo entryInfo)
+    public static ulong GetBinaryEntrySizeWithEncryption(MegDataEntryBuilderInfo dataEntry)
     {
-        return !entryInfo.Encrypted ? entryInfo.Size : RoundUpToAesBlockSize(entryInfo.Size);
+        return !dataEntry.Encrypted ? dataEntry.Size : RoundUpToAesBlockSize(dataEntry.Size);
     }
     
-    public ulong PreCalculateSize(IEnumerable<MegFileDataEntryBuilderInfo> entries)
+    public ulong PreCalculateSize(IEnumerable<MegDataEntryBuilderInfo> entries)
     {
         ulong totalSize = HeaderSize;
 
@@ -72,9 +72,9 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
         return totalSize;
     }
     
-    public ulong PreCalculateSize(MegFileDataEntryBuilderInfo entry)
+    public ulong PreCalculateSize(MegDataEntryBuilderInfo dataEntry)
     {
-        var entryPath = GetEntryPath(entry);
+        var entryPath = GetEntryPath(dataEntry);
        
         var filenameRecord = (uint)MegFileNameTableRecord.GetRecordSize(entryPath); 
         var rawFilenameTableSize = _currentRawFilenameTableSize + filenameRecord;
@@ -82,12 +82,12 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
         // Max value here is (ushort.Max + 2) * int.Max < long.Max
         var actualFilenameTableSize = GetFilenameTableSize(rawFilenameTableSize);
 
-        var fileTableRecord = GetFileTableRecordSize(entry);
+        var fileTableRecord = GetFileTableRecordSize(dataEntry);
         
         // Max value here is (34 * ushort.Max || 20 * int.Max) < long.Max
         var fileTableSize = _currentFileTableSize + fileTableRecord;
 
-        var fileSize = GetEntrySize(entry);
+        var fileSize = GetEntrySize(dataEntry);
 
         // Max value here uint.Max * int.Max > long.Max
         var megContentSize = _currentFileDataSize + fileSize;
@@ -103,12 +103,12 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
                megContentSize;
     }
 
-    public void AddEntry(MegFileDataEntryBuilderInfo entry)
+    public void AddEntry(MegDataEntryBuilderInfo dataEntry)
     {
-        var entryPath = GetEntryPath(entry);
+        var entryPath = GetEntryPath(dataEntry);
         var filenameRecord = (uint)MegFileNameTableRecord.GetRecordSize(entryPath);
-        var fileTableRecord = GetFileTableRecordSize(entry);
-        var fileSize = GetEntrySize(entry);
+        var fileTableRecord = GetFileTableRecordSize(dataEntry);
+        var fileSize = GetEntrySize(dataEntry);
 
         var oldFilenameTableSize = GetFilenameTableSize(_currentRawFilenameTableSize);
 
@@ -116,7 +116,7 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
         _currentFileTableSize += fileTableRecord;
         _currentFileDataSize += fileSize;
 
-        OnEntryAdded(entry);
+        OnEntryAdded(dataEntry);
 
         var newFilenameTableSize = GetFilenameTableSize(_currentRawFilenameTableSize);
 
@@ -129,9 +129,9 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
         CurrentSize += metadataDelta + fileSize;
     }
 
-    internal virtual ulong GetEntrySize(MegFileDataEntryBuilderInfo entry)
+    internal virtual ulong GetEntrySize(MegDataEntryBuilderInfo dataEntry)
     {
-        return entry.Size;
+        return dataEntry.Size;
     }
 
     public void Reset()
@@ -151,14 +151,14 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
         return ((ulong)size + MegFileConstants.AesBlockSize - 1) / MegFileConstants.AesBlockSize * MegFileConstants.AesBlockSize;
     }
 
-    protected abstract uint GetFileTableRecordSize(MegFileDataEntryBuilderInfo entry);
+    protected abstract uint GetFileTableRecordSize(MegDataEntryBuilderInfo dataEntry);
     
     protected virtual ulong GetFilenameTableSize(uint rawSize)
     {
         return rawSize;
     }
 
-    protected virtual void OnEntryAdded(MegFileDataEntryBuilderInfo entry)
+    protected virtual void OnEntryAdded(MegDataEntryBuilderInfo dataEntry)
     {
     }
 
@@ -177,8 +177,8 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
         CurrentSize = MetadataSize + _currentFileDataSize;
     }
 
-    private static string GetEntryPath(MegFileDataEntryBuilderInfo entry)
+    private static string GetEntryPath(MegDataEntryBuilderInfo dataEntry)
     {
-        return entry.FilePath;
+        return dataEntry.EntryPath;
     }
 }

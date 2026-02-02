@@ -14,19 +14,19 @@ public class NotNullDataEntryValidatorTest
 
     [Theory]
     [MemberData(nameof(ValidTestData))]
-    public void Validate_ValidData(MegFileDataEntryBuilderInfo builderInfo)
+    public void Validate_ValidData(MegDataEntryBuilderInfo builderInfo)
     {
         Assert.True(_validator.Validate(builderInfo));
-        Assert.True(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
+        Assert.True(_validator.Validate(builderInfo.EntryPath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
     [Theory]
     [MemberData(nameof(InvalidTestData))]
-    public void Validate_InvalidData(MegFileDataEntryBuilderInfo builderInfo)
+    public void Validate_InvalidData(MegDataEntryBuilderInfo builderInfo)
     {
         Assert.False(_validator.Validate(builderInfo));
         if (builderInfo is not null) 
-            Assert.False(_validator.Validate(builderInfo.FilePath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
+            Assert.False(_validator.Validate(builderInfo.EntryPath.AsSpan(), builderInfo.Encrypted, builderInfo.Size));
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class NotNullDataEntryValidatorTest
 
     public static IEnumerable<object[]> ValidTestData()
     {
-        yield return [new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))];
+        yield return [new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path"))];
     }
 
     public static IEnumerable<object?[]> InvalidTestData()

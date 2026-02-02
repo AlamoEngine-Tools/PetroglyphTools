@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// <summary>
 /// Service to create MEG files from local files or other MEG data entries ensuring custom validation and normalization rules.
 /// </summary>
-public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>
+public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuilderInfo>, MegFileInformation>
 {
     /// <summary>
     /// Gets a value indicating whether the <see cref="IMegBuilder"/> normalizes a data entry's path before adding it.
@@ -38,7 +38,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <summary>
     /// Gets a collection of all data entries which shall be packed to a .MEG file.
     /// </summary>
-    IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries { get; }
+    IReadOnlyCollection<MegDataEntryBuilderInfo> DataEntries { get; }
 
     /// <summary>
     /// Gets the data entry validator for this <see cref="IMegBuilder"/>.
@@ -92,7 +92,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <see langword="true"/> if item was successfully removed from the <see cref="IMegBuilder"/>; otherwise, <see langword="false"/>.
     /// This method also returns false if item is not found in the original <see cref="IMegBuilder"/>.
     /// </returns>
-    bool Remove(MegFileDataEntryBuilderInfo info);
+    bool Remove(MegDataEntryBuilderInfo info);
 
     /// <summary>
     /// Removes all builder information from the <see cref="IMegBuilder"/>.

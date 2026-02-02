@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Binary;
+using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -20,16 +20,16 @@ public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
         EmpireAtWarMegDataEntryPathNormalizer.Instance;
 
     /// <summary>
-    /// Validates data entries to be compliant to Empire at War
+    /// Gets the data entry validator to validate MEG data entries to be compliant to Empire at War
     /// </summary>
-    public override IMegDataEntryValidator DataEntryValidator => EmpireAtWarMegBuilderDataEntryValidator.Instance;
-
-    internal override ulong MaxMegFileSize => MegFileConstants.EawMegMaxEntrySize;
+    public override IMegDataEntryValidator DataEntryValidator { get; } = new EmpireAtWarMegDataEntryValidator();
 
     /// <summary>
-    /// Validates file information to be compliant to Empire at War
+    /// Gets the validator to validate whether an <seealso cref="MegFileInformation"/> is compliant to Empire at War
     /// </summary>
-    protected override PetroglyphMegFileInformationValidator PetroMegFileInformationValidator { get; }
+    public override IMegFileInformationValidator MegFileInformationValidator { get; }
+
+    internal override ulong MaxMegFileSize => MegFileConstants.EawMegMaxEntrySize;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarMegBuilder"/> class with a specified game path.
@@ -43,6 +43,6 @@ public sealed class EmpireAtWarMegBuilder : PetroglyphGameMegBuilder
     /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
     public EmpireAtWarMegBuilder(string baseDirectory, IServiceProvider services) : base(baseDirectory, services)
     {
-        PetroMegFileInformationValidator = services.GetRequiredService<EmpireAtWarMegFileInformationValidator>();
+        MegFileInformationValidator = new EmpireAtWarMegFileInformationValidator(services);
     }
 }

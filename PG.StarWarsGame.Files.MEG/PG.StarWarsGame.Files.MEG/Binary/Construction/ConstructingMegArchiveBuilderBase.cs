@@ -25,7 +25,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
     internal virtual uint MaxEntryFileSize => MegFileConstants.MegMaxEntrySize;
 
     // TODO: Test encryption cases
-    public IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries)
+    public IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegDataEntryBuilderInfo> builderEntries)
     {
         if (builderEntries == null) 
             throw new ArgumentNullException(nameof(builderEntries));
@@ -62,7 +62,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         return fileNameTableSize;
     }
 
-    private MegFileBinaryInformation GetBinaryInformation(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries)
+    private MegFileBinaryInformation GetBinaryInformation(IEnumerable<MegDataEntryBuilderInfo> builderEntries)
     {
         var calculator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetMegSizeCalculator(FileVersion);
         
@@ -90,11 +90,11 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
     }
 
     private MegDataEntryBinaryInformation CreateEntryBinaryInformation(
-        MegFileDataEntryBuilderInfo builderInfo, 
+        MegDataEntryBuilderInfo builderInfo, 
         Encoding encoding, 
         ICrc32HashingService crc32HashingService)
     {
-        var originalFilePath = builderInfo.FilePath;
+        var originalFilePath = builderInfo.EntryPath;
 
         var maxBytes = encoding.GetByteCountPG(originalFilePath.Length);
         var pathBytesBuffer = maxBytes > 256 ? new byte[maxBytes] : stackalloc byte[maxBytes];
@@ -121,12 +121,12 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
             builderInfo.OriginInfo);
     }
 
-    private MegDataEntrySize GetDataSize(MegFileDataEntryBuilderInfo entryInfo)
+    private MegDataEntrySize GetDataSize(MegDataEntryBuilderInfo dataEntryInfo)
     {
-        entryInfo.RefreshSize();
-        var binarySize = MegSizeCalculator.GetBinaryEntrySizeWithEncryption(entryInfo);
+        dataEntryInfo.RefreshSize();
+        var binarySize = MegSizeCalculator.GetBinaryEntrySizeWithEncryption(dataEntryInfo);
         return binarySize > MaxEntryFileSize
             ? throw new MegEntrySizeException("Entry file size is larger than the allowed.") 
-            : new MegDataEntrySize(entryInfo.Size, (uint)binarySize);
+            : new MegDataEntrySize(dataEntryInfo.Size, (uint)binarySize);
     }
 }

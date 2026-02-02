@@ -20,8 +20,8 @@ public class EmpireAtWarValidatorBenchmark
 {
     private static readonly Random Random = new(1138);
 
-    private EmpireAtWarMegBuilderDataEntryValidator _validator = null!;
-    private MegFileDataEntryBuilderInfo[] _toValidate = null!;
+    private EmpireAtWarMegDataEntryValidator _validator = null!;
+    private MegDataEntryBuilderInfo[] _toValidate = null!;
 
     [Params(2000, 200_000)]
     //[Params(2000)]
@@ -30,18 +30,18 @@ public class EmpireAtWarValidatorBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        _toValidate = new MegFileDataEntryBuilderInfo[N];
+        _toValidate = new MegDataEntryBuilderInfo[N];
 
         for (int i = 0; i < N; i++)
         {
             _toValidate[i] =
-                new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(RandomString(Random.Next(5, 200))));
+                new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(RandomString(Random.Next(5, 200))));
         }
 
         var sc = new ServiceCollection();
         sc.AddSingleton<IFileSystem>(new RealFileSystem());
 
-        _validator = EmpireAtWarMegBuilderDataEntryValidator.Instance;
+        _validator = EmpireAtWarMegDataEntryValidator.Instance;
     }
 
     [Benchmark(Baseline = true)]

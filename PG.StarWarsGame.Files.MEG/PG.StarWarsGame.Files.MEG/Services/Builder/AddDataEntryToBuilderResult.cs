@@ -34,12 +34,12 @@ public readonly struct AddDataEntryToBuilderResult
     /// <summary>
     /// The data entry info which was added or <see langword="null"/> if no entry was added.
     /// </summary>
-    public MegFileDataEntryBuilderInfo? AddedBuilderInfo { get; }
+    public MegDataEntryBuilderInfo? AddedBuilderInfo { get; }
 
     /// <summary>
     /// The data entry info which was overwritten or <see langword="null"/> if no data entry was overwritten.
     /// </summary>
-    public MegFileDataEntryBuilderInfo? OverwrittenBuilderInfo { get; }
+    public MegDataEntryBuilderInfo? OverwrittenBuilderInfo { get; }
 
     /// <summary>
     /// A user readable message why the entry was not added. <see langword="null"/> if the entry was added successfully or no message was provided.
@@ -49,8 +49,8 @@ public readonly struct AddDataEntryToBuilderResult
 
     private AddDataEntryToBuilderResult(
         AddDataEntryToBuilderState status,
-        MegFileDataEntryBuilderInfo? addedInfo,
-        MegFileDataEntryBuilderInfo? overwrittenInfo,
+        MegDataEntryBuilderInfo? addedInfo,
+        MegDataEntryBuilderInfo? overwrittenInfo,
         string? message)
     {
         Status = status;
@@ -59,7 +59,7 @@ public readonly struct AddDataEntryToBuilderResult
         Message = message;
     }
 
-    internal static AddDataEntryToBuilderResult EntryAdded(MegFileDataEntryBuilderInfo added, MegFileDataEntryBuilderInfo? overwrite)
+    internal static AddDataEntryToBuilderResult EntryAdded(MegDataEntryBuilderInfo added, MegDataEntryBuilderInfo? overwrite)
     {
         if (added == null)
             throw new ArgumentNullException(nameof(added));

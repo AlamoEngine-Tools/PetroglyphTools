@@ -75,7 +75,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var result = builder.AddFile("file.txt", "path/file.txt");
 
         Assert.False(result.Added);
-        Assert.Equal(AddDataEntryToBuilderState.FileOrEntryNotFound, result.Status);
+        Assert.Equal(MegDataEntryAddStatus.FileOrEntryNotFound, result.Status);
     }
 
     [Fact]
@@ -285,7 +285,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         if (ExpectedOverwritesDuplicates == false)
         {
             Assert.False(resultSecondAdd.Added);
-            Assert.Equal(AddDataEntryToBuilderState.DuplicateEntry, resultSecondAdd.Status);
+            Assert.Equal(MegDataEntryAddStatus.DuplicateEntry, resultSecondAdd.Status);
             Assert.Single(builder.DataEntries);
             Assert.Null(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.False(resultSecondAdd.WasOverwrite);
@@ -323,7 +323,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         var result = builder.AddFile(fileToAdd, GetFailingEntryPath());
 
-        Assert.Equal(AddDataEntryToBuilderState.InvalidEntry, result.Status);
+        Assert.Equal(MegDataEntryAddStatus.InvalidEntry, result.Status);
         Assert.Empty(builder.DataEntries);
     }
 
@@ -344,12 +344,12 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         if (addFileSize)
         {
-            Assert.Equal(AddDataEntryToBuilderState.EntryFileTooLarge, result.Status);
+            Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
             Assert.Empty(builder.DataEntries);
         }
         else
         {
-            Assert.Equal(AddDataEntryToBuilderState.Added, result.Status);
+            Assert.Equal(MegDataEntryAddStatus.Added, result.Status);
             Assert.Single(builder.DataEntries);
         }
     }
@@ -378,7 +378,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg, entry));
 
-        Assert.Equal(AddDataEntryToBuilderState.FileOrEntryNotFound, result.Status);
+        Assert.Equal(MegDataEntryAddStatus.FileOrEntryNotFound, result.Status);
         Assert.Empty(builder.DataEntries);
     }
 
@@ -398,7 +398,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var actualEntry = builder.DataEntries.First();
 
         var expectedEntryPath = MegFileConstants.MegDataEntryPathEncoding.EncodeString(MegFileConstants.MegDataEntryPathEncoding.EncodeString(
-            builder.DataEntryPathNormalizer?.Normalize(entry.FilePath) ?? entry.FilePath));
+            builder.DataEntryPathNormalizer?.Normalize(entry.Path) ?? entry.Path));
 
         Assert.Equal(expectedEntryPath, actualEntry.EntryPath);
         Assert.Same(entry, actualEntry.OriginInfo.MegFileLocation!.DataEntry);
@@ -443,7 +443,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         if (ExpectedOverwritesDuplicates == false)
         {
-            Assert.Equal(AddDataEntryToBuilderState.DuplicateEntry, resultSecondAdd.Status);
+            Assert.Equal(MegDataEntryAddStatus.DuplicateEntry, resultSecondAdd.Status);
             Assert.Single(builder.DataEntries);
             Assert.Null(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.False(resultSecondAdd.WasOverwrite);
@@ -451,7 +451,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         }
         else
         {
-            Assert.Equal(AddDataEntryToBuilderState.Added, resultSecondAdd.Status);
+            Assert.Equal(MegDataEntryAddStatus.Added, resultSecondAdd.Status);
             Assert.True(resultSecondAdd.WasOverwrite);
             Assert.Single(builder.DataEntries);
             Assert.Same(addedFile.AddedBuilderInfo, resultSecondAdd.OverwrittenBuilderInfo);
@@ -473,7 +473,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         var result = builder.AddEntry(new MegDataEntryLocationReference(meg, entry), GetFailingEntryPath());
 
-        Assert.Equal(AddDataEntryToBuilderState.InvalidEntry, result.Status);
+        Assert.Equal(MegDataEntryAddStatus.InvalidEntry, result.Status);
         Assert.Empty(builder.DataEntries);
     }
 

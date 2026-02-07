@@ -7,7 +7,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Exceptions;
 
-public class FileNotInMegExceptionTest : CommonMegTestBase
+public class EntryNotInMegExceptionTest : CommonMegTestBase
 {
     [Fact]
     public void Ctor()
@@ -19,7 +19,7 @@ public class FileNotInMegExceptionTest : CommonMegTestBase
             ServiceProvider);
         var entry = MegDataEntryTest.CreateEntry("path");
 
-        var e = new FileNotInMegException(new MegDataEntryLocationReference(megFileA, entry));
-        Assert.Exception(e, message: $"The file \"{entry.FilePath}\" is not contained in the MEG archive \"{megFileA.FilePath}\"");
+        var e = new EntryNotInMegException(new MegDataEntryLocationReference(megFileA, entry));
+        Assert.Exception(e, message: $"The file \"{entry.Path}\" is not contained in the MEG archive \"{megFileA.FilePath}\"");
     }
 }

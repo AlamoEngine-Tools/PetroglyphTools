@@ -53,7 +53,7 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
         Assert.Equal(3, fileSizes);
 
         Assert.Equal("TEST.TXT", megMetadata.FileNameTable[0].FileName);
-        Assert.Equal("TEST.TXT", megMetadata.FileNameTable[0].OriginalFilePath);
+        Assert.Equal("TEST.TXT", megMetadata.FileNameTable[0].OriginalFileName);
         Assert.Equal(3u, megMetadata.FileTable[0].FileSize);
     }
 
@@ -80,9 +80,9 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
         Assert.Equal(2, megMetadata.Header.FileNumber);
 
         Assert.Equal("TEST?.TXT", megMetadata.FileNameTable[0].FileName);
-        Assert.Equal("TESTü.TXT", megMetadata.FileNameTable[0].OriginalFilePath);
+        Assert.Equal("TESTü.TXT", megMetadata.FileNameTable[0].OriginalFileName);
         Assert.Equal("TEST?.TXT", megMetadata.FileNameTable[1].FileName);
-        Assert.Equal("TESTä.TXT", megMetadata.FileNameTable[1].OriginalFilePath);
+        Assert.Equal("TESTä.TXT", megMetadata.FileNameTable[1].OriginalFileName);
 
         // Not equal, cause MIKE uses Latin1 and thus CRC32 is calculated on the original file name, 
         Assert.NotEqual(megMetadata.FileTable[0].Crc32, megMetadata.FileTable[1].Crc32);
@@ -94,9 +94,9 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
         var megMetadata = _binaryReader.ReadBinary(new MemoryStream(MegTestConstants.ContentMegFileV1));
 
         Assert.Equal("DATA\\XML\\CAMPAIGNFILES.XML", megMetadata.FileNameTable[0].FileName);
-        Assert.Equal("DATA\\XML\\CAMPAIGNFILES.XML", megMetadata.FileNameTable[0].OriginalFilePath);
+        Assert.Equal("DATA\\XML\\CAMPAIGNFILES.XML", megMetadata.FileNameTable[0].OriginalFileName);
         Assert.Equal("DATA\\XML\\GAMEOBJECTFILES.XML", megMetadata.FileNameTable[1].FileName);
-        Assert.Equal("DATA\\XML\\GAMEOBJECTFILES.XML", megMetadata.FileNameTable[1].OriginalFilePath);
+        Assert.Equal("DATA\\XML\\GAMEOBJECTFILES.XML", megMetadata.FileNameTable[1].OriginalFileName);
     }
 
     public static IEnumerable<object[]> MegFilesBetween2GBAnd4GB()

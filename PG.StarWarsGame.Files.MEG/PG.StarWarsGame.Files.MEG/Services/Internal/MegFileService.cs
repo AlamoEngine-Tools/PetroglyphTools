@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,7 +58,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         foreach (var file in constructionArchive)
         {
-            using var dataStream = streamFactory.GetDataStream(file.Location);
+            using var dataStream = streamFactory.GetStream(file.Location);
 
             // TODO: Test in encryption case
             if (dataStream.Length != file.DataEntry.Location.Size)
@@ -74,15 +73,10 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
             dataBytesWritten += dataStream.Length;
         }
-
-        // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
-        // E.g, a MEG with one entry being exactly 4GB large.
-        // In this case, the Archive itself is larger (Metadata + 4GB),
-        // but the Metadata is would still be valid since each part is within the uint32 range. 
-        if (dataBytesWritten > uint.MaxValue)
-            MegThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
         
-        Debug.Assert(dataBytesWritten == fileStream.Position);
+        if (dataBytesWritten != constructionArchive.ExpectedFileSize)
+            throw new InvalidOperationException(
+                $"Actual total bytes written '{dataBytesWritten}' does not match expected value: {constructionArchive.ExpectedFileSize}");
     }
 
     public IMegFile Load(string filePath)

@@ -1,20 +1,23 @@
 using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.SizeCalculation;
+namespace PG.StarWarsGame.Files.MEG.Binary.Size;
 
-internal interface IIMegSizeCalculator
+internal interface IMegSizeCalculator
 {
     /// <summary>
     /// Gets the current total size, in bytes, of the MEG file being calculated.
     /// </summary>
     ulong CurrentSize { get; }
 
+    /// <summary>
+    /// Gets the size, in bytes, of the metadata associated with the MEG file.
+    /// </summary>
     ulong MetadataSize { get; }
 
     /// <summary>
     /// Pre-calculates the total size of the MEG file metadata and content based on the provided entries
-    /// and the current state of the <see cref="IIMegSizeCalculator"/>.
+    /// and the current state of the <see cref="IMegSizeCalculator"/>.
     /// </summary>
     /// <param name="entries">
     /// A collection of <see cref="MegDataEntryBuilderInfo"/> objects representing the data entries

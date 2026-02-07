@@ -120,10 +120,10 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         var archive = service.BuildConstructingMegArchive(builderEntries);
 
         // Check that filename gets encoded
-        Assert.Equal("???", archive[0].FilePath);
-        Assert.Equal("ÄÖÜ", archive[0].DataEntry.OriginalFilePath);
-        Assert.Equal("???", archive.Archive[0].FilePath);
-        Assert.Equal("ÄÖÜ", archive.Archive[0].OriginalFilePath);
+        Assert.Equal("???", archive[0].Path);
+        Assert.Equal("ÄÖÜ", archive[0].DataEntry.OriginalPath);
+        Assert.Equal("???", archive.Archive[0].Path);
+        Assert.Equal("ÄÖÜ", archive.Archive[0].OriginalPath);
 
         // Ensures that ASCII encoding was used for creating the CRC
         Assert.Equal(expectedCrc, archive.Archive[0].Crc32);
@@ -189,8 +189,8 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
             var expectedAbsoluteOffset = expectedHeaderSize + expectedData.RelativeOffset;
             Assert.Equal(expectedAbsoluteOffset, binaryEntry.Location.Offset);
             
-            Assert.Equal(expectedData.FilePath, binaryEntry.FilePath);
-            Assert.Equal(expectedData.FilePath, virtualEntry.FilePath);
+            Assert.Equal(expectedData.FilePath, binaryEntry.Path);
+            Assert.Equal(expectedData.FilePath, virtualEntry.Path);
             
             Assert.Equal(expectedData.Crc, binaryEntry.Crc32);
             Assert.Equal(expectedData.Crc, virtualEntry.Crc32);

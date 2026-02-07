@@ -8,11 +8,11 @@ namespace PG.StarWarsGame.Files.MEG;
 internal static class MegThrowHelper
 {
     [DoesNotReturn]
-    public static void ThrowDataEntryExceeds4GigabyteException(string? filePath)
+    public static void ThrowDataEntryExceeds4GigabyteException(string? path)
     {
-        var message = "Files larger than 4GB are not supported in MEG archives.";
-        if (filePath is not null)
-            message += $" File: '{filePath}'";
+        var message = "Entries larger than 4GB are not supported in MEG archives.";
+        if (path is not null)
+            message += $" File: '{path}'";
 
         throw new MegEntrySizeException(message);
     }

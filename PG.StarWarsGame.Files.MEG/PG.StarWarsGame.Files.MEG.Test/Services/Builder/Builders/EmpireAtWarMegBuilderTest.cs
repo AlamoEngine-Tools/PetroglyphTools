@@ -138,10 +138,10 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 
         Assert.Equal(4, meg.Archive.Count);
 
-        var packedEntry1 = meg.Archive.First(x => x.FilePath.Equals("ENTRY1.TXT"));
-        var packedEntry2 = meg.Archive.First(x => x.FilePath.Equals("DATA\\XML\\ENTRY2.TXT"));
-        var packedEntry3 = meg.Archive.First(x => x.FilePath.Equals("OTHER\\CORRUPTION\\DATA\\XML\\ENTRY3.TXT"));
-        var packedEntry4 = meg.Archive.First(x => x.FilePath.Equals("DATA\\XML\\ENTRY4???.TXT"));
+        var packedEntry1 = meg.Archive.First(x => x.Path.Equals("ENTRY1.TXT"));
+        var packedEntry2 = meg.Archive.First(x => x.Path.Equals("DATA\\XML\\ENTRY2.TXT"));
+        var packedEntry3 = meg.Archive.First(x => x.Path.Equals("OTHER\\CORRUPTION\\DATA\\XML\\ENTRY3.TXT"));
+        var packedEntry4 = meg.Archive.First(x => x.Path.Equals("DATA\\XML\\ENTRY4???.TXT"));
 
         Assert.NotNull(packedEntry1);
         Assert.NotNull(packedEntry2);
@@ -149,10 +149,10 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         Assert.NotNull(packedEntry4);
 
         var extractor = ServiceProvider.GetRequiredService<IMegFileExtractor>();
-        var entry1Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry1));
-        var entry2Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry2));
-        var entry3Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry3));
-        var entry4Data = extractor.GetFileData(new MegDataEntryLocationReference(meg, packedEntry4));
+        var entry1Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry1));
+        var entry2Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry2));
+        var entry3Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry3));
+        var entry4Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry4));
 
         using var ms = new MemoryStream();
         entry1Data.CopyTo(ms);

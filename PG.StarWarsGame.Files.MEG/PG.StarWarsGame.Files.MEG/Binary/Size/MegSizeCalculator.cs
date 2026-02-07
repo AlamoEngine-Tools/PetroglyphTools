@@ -3,7 +3,7 @@ using System.Diagnostics;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.SizeCalculation;
+namespace PG.StarWarsGame.Files.MEG.Binary.Size;
 
 /// <summary>
 /// Provides an abstract base class for calculating the metadata size of MEG files.
@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.MEG.Binary.SizeCalculation;
 /// for MEG files, including headers, filename tables, file tables, and file data.
 /// Specific MEG file formats should inherit from this class and implement the required logic.
 /// </remarks>
-internal abstract class MegSizeCalculator : IIMegSizeCalculator
+internal abstract class MegSizeCalculator : IMegSizeCalculator
 {
     private uint _currentRawFilenameTableSize;
     private ulong _currentFileTableSize;
@@ -22,6 +22,7 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
     protected abstract uint HeaderSize { get; }
 
     public ulong CurrentSize { get; private set; }
+    
     public ulong MetadataSize { get; private set;}
 
     protected MegSizeCalculator()
@@ -78,25 +79,14 @@ internal abstract class MegSizeCalculator : IIMegSizeCalculator
        
         var filenameRecord = (uint)MegFileNameTableRecord.GetRecordSize(entryPath); 
         var rawFilenameTableSize = _currentRawFilenameTableSize + filenameRecord;
-
-        // Max value here is (ushort.Max + 2) * int.Max < long.Max
-        var actualFilenameTableSize = GetFilenameTableSize(rawFilenameTableSize);
-
-        var fileTableRecord = GetFileTableRecordSize(dataEntry);
         
-        // Max value here is (34 * ushort.Max || 20 * int.Max) < long.Max
-        var fileTableSize = _currentFileTableSize + fileTableRecord;
-
+        var actualFilenameTableSize = GetFilenameTableSize(rawFilenameTableSize);
+        var fileTableRecord = GetFileTableRecordSize(dataEntry);
         var fileSize = GetEntrySize(dataEntry);
-
-        // Max value here uint.Max * int.Max > long.Max
+        
+        var fileTableSize = _currentFileTableSize + fileTableRecord;
         var megContentSize = _currentFileDataSize + fileSize;
-
-        // Most pessimistic file size (not actually possible):
-        // 16 +
-        // ((ushort.MaxValue + 2) * (long)int.MaxValue) +
-        // ((long)20 * int.MaxValue) +
-        // (Int128)uint.MaxValue * int.MaxValue;
+        
         return HeaderSize +
                actualFilenameTableSize +
                fileTableSize +

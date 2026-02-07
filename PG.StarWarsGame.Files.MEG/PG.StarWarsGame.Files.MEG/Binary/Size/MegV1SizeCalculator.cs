@@ -1,7 +1,7 @@
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Data;
 
-namespace PG.StarWarsGame.Files.MEG.Binary.SizeCalculation;
+namespace PG.StarWarsGame.Files.MEG.Binary.Size;
 
 internal sealed class MegV1SizeCalculator : MegSizeCalculator
 {

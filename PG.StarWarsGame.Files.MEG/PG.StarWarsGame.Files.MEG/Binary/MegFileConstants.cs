@@ -49,10 +49,17 @@ public class MegFileConstants
     //      If, however, Seek is called on the sub-file while reading it (e.g. to skip past unsupported chunks in a ChunkFile),
     //      then it doesn't, because MegaFileClass::Subfile_Seek calculates the new offset,
     //      which might lie above 2GB, and calls FileClass::Seek again with a signed integer. 
+    //
+    // Therefore, we limit the max entry size, and thus the max file size to int.MaxValue (2GB) for Eaw/Foc MEG files.
     /// <summary>
-    /// The max file size of a MEG entry for Empire at War / Forces of Corruption
+    /// The max size of a MEG entry for Empire at War / Forces of Corruption.
     /// </summary>
     public const int EawMegMaxEntrySize = int.MaxValue;
+    
+    /// <summary>
+    /// The max file size of a MEG file for Empire at War / Forces of Corruption.
+    /// </summary>
+    public const int EawMegMaxFileSize = EawMegMaxEntrySize;
 
     // However, the specification does not state which encoding is required but instead relies on the number of characters of a string.
     // Implicitly, a 1:1 ratio for bytes - # chars is required though, which limits the possible encodings to a single-byte encoding,

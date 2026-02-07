@@ -7,7 +7,6 @@ using System.IO;
 using System.IO.Abstractions;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -20,16 +19,18 @@ public interface IMegFileService
 {
     /// <summary>
     /// Creates a MEG file from a collection of data entries and writes it to a specified file stream.
-    /// It's recommended to use <see cref="IMegBuilder"/> instead, as this provides data validation and normalization.
     /// </summary>
     /// <remarks>
+    /// This is a low-level operation. It's recommended to use <see cref="IMegBuilder"/> instead, as this provides data validation and normalization.
+    /// <para>
     /// Notes:
     /// <br/>
     /// - Any MEG entry file path will be re-encoded to ASCII automatically.
     /// <br/>
-    /// - In the case <paramref name="builderInformation"/> contains an encrypted <see cref="MegDataEntry"/>, it will be decrypted first.
+    /// - In the case <paramref name="builderInformation"/> references an encrypted MEG data entry, the entry will be decrypted first.
     /// <br/>
     /// - The items of <paramref name="builderInformation"/> will be correctly sorted by this operation.
+    /// </para>
     /// </remarks>
     /// <param name="fileStream">The destination file stream to write the MEG archive to.</param>
     /// <param name="fileVersion">The MEG file version to use.</param>
@@ -40,6 +41,7 @@ public interface IMegFileService
     /// <exception cref="FileNotFoundException">A data entry file was not found.</exception>
     /// <exception cref="NotSupportedException">This library does not support creating the MEG archive from the specified arguments.</exception>
     /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported file size.</exception>
+    /// <exception cref="InvalidOperationException">Attempted to create MEG archive which does not match the expected binary result.</exception>
     void CreateMegArchive(FileSystemStream fileStream, MegFileVersion fileVersion, MegEncryptionData? encryptionData, IEnumerable<MegDataEntryBuilderInfo> builderInformation);
 
     /// <summary>

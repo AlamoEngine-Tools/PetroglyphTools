@@ -17,7 +17,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryLocationReference>, IEquatable<MegDataEntryReference>
 {
     /// <inheritdoc />
-    public override string FilePath => Location.DataEntry.FilePath;
+    public override string Path => Location.DataEntry.Path;
 
     /// <inheritdoc />
     public override Crc32 Crc32 => Location.DataEntry.Crc32;

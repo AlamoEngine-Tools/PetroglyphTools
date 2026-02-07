@@ -12,18 +12,18 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// <summary>
 /// Status information whether a file or data entry was added to an <see cref="IMegBuilder"/>.
 /// </summary>
-public readonly struct AddDataEntryToBuilderResult
+public readonly struct MegDataEntryAddResult
 {
     /// <summary>
     /// Gets whether the file or data entry was added or not.
     /// </summary>
     [MemberNotNullWhen(true, nameof(AddedBuilderInfo))]
-    public bool Added => Status == AddDataEntryToBuilderState.Added && AddedBuilderInfo is not null;
+    public bool Added => Status == MegDataEntryAddStatus.Added && AddedBuilderInfo is not null;
 
     /// <summary>
     /// Gets the status of the add operation.
     /// </summary>
-    public AddDataEntryToBuilderState Status { get; }
+    public MegDataEntryAddStatus Status { get; }
 
     /// <summary>
     /// Indicates whether a previous data entry was overwritten.
@@ -44,11 +44,10 @@ public readonly struct AddDataEntryToBuilderResult
     /// <summary>
     /// A user readable message why the entry was not added. <see langword="null"/> if the entry was added successfully or no message was provided.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     public string? Message { get; }
 
-    private AddDataEntryToBuilderResult(
-        AddDataEntryToBuilderState status,
+    private MegDataEntryAddResult(
+        MegDataEntryAddStatus status,
         MegDataEntryBuilderInfo? addedInfo,
         MegDataEntryBuilderInfo? overwrittenInfo,
         string? message)
@@ -59,44 +58,41 @@ public readonly struct AddDataEntryToBuilderResult
         Message = message;
     }
 
-    internal static AddDataEntryToBuilderResult EntryAdded(MegDataEntryBuilderInfo added, MegDataEntryBuilderInfo? overwrite)
+    internal static MegDataEntryAddResult EntryAdded(MegDataEntryBuilderInfo added, MegDataEntryBuilderInfo? overwrite)
     {
         if (added == null)
             throw new ArgumentNullException(nameof(added));
-        return new AddDataEntryToBuilderResult(AddDataEntryToBuilderState.Added, added, overwrite, null);
+        return new MegDataEntryAddResult(MegDataEntryAddStatus.Added, added, overwrite, null);
     }
 
-    internal static AddDataEntryToBuilderResult EntryNotAdded(AddDataEntryToBuilderState status, string? message)
+    internal static MegDataEntryAddResult EntryNotAdded(MegDataEntryAddStatus status, string? message)
     {
-        if (status == AddDataEntryToBuilderState.Added)
+        if (status == MegDataEntryAddStatus.Added)
             throw new ArgumentException(nameof(status));
-        return new AddDataEntryToBuilderResult(status, null, null, message);
+        return new MegDataEntryAddResult(status, null, null, message);
     }
 
-    internal static AddDataEntryToBuilderResult FromFileNotFound(string filePath)
+    internal static MegDataEntryAddResult FromFileNotFound(string filePath)
     {
-        return EntryNotAdded(AddDataEntryToBuilderState.FileOrEntryNotFound, $"Source file '{filePath}' does not exist.");
+        return EntryNotAdded(MegDataEntryAddStatus.FileOrEntryNotFound, $"Source file '{filePath}' does not exist.");
     }
 
-    internal static AddDataEntryToBuilderResult FromEntryNotFound(MegDataEntryLocationReference entryReference)
+    internal static MegDataEntryAddResult FromEntryNotFound(MegDataEntryLocationReference entryReference)
     {
-        return EntryNotAdded(AddDataEntryToBuilderState.FileOrEntryNotFound, $"Source entry '{entryReference}' does not exist.");
+        return EntryNotAdded(MegDataEntryAddStatus.FileOrEntryNotFound, $"Source entry '{entryReference}' does not exist.");
     }
 
-    internal static AddDataEntryToBuilderResult FromDuplicate(string filePath)
+    internal static MegDataEntryAddResult FromDuplicate(string filePath)
     {
-        return EntryNotAdded(AddDataEntryToBuilderState.DuplicateEntry, $"A data entry of the path '{filePath}' already exists.");
+        return EntryNotAdded(MegDataEntryAddStatus.DuplicateEntry, $"A data entry of the path '{filePath}' already exists.");
     }
 
     /// <inheritdoc/>
-    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         var sb = new StringBuilder(Status.ToString());
-        if (string.IsNullOrEmpty(Message))
-        {
+        if (!string.IsNullOrEmpty(Message)) 
             sb.Append($": {Message}");
-        }
         return sb.ToString();
     }
 }

@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.MEG.Utilities;
 /// <summary>
 /// Represent a read-only, non-seekable file stream that points to a single data entry inside a MEG file.
 /// </summary>
-public sealed class MegFileDataStream : Stream, IMegFileDataStream
+public sealed class MegEntryStream : Stream, IMegFileDataStream
 {
     /// <inheritdoc />
     public string EntryPath { get; }
@@ -52,7 +52,7 @@ public sealed class MegFileDataStream : Stream, IMegFileDataStream
 
     private long _currentPos;
 
-    internal MegFileDataStream(string entryPath, Stream baseStream, uint fileOffset, uint dataSize)
+    internal MegEntryStream(string entryPath, Stream baseStream, uint fileOffset, uint dataSize)
     {
         ThrowHelper.ThrowIfNullOrEmpty(entryPath);
         
@@ -75,9 +75,9 @@ public sealed class MegFileDataStream : Stream, IMegFileDataStream
         baseStream.Position = fileOffset;
     }
 
-    internal static MegFileDataStream CreateEmptyStream(string entryPath)
+    internal static MegEntryStream CreateEmptyStream(string entryPath)
     {
-        return new MegFileDataStream(entryPath, Null, 0, 0);
+        return new MegEntryStream(entryPath, Null, 0, 0);
     }
 
     /// <inheritdoc />

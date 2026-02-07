@@ -25,7 +25,7 @@ internal sealed class VirtualMegDataEntryReference(MegDataEntry dataEntry, MegDa
     public MegDataEntry DataEntry { get; } = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
 
     /// <inheritdoc />
-    public override string FilePath => DataEntry.FilePath;
+    public override string Path => DataEntry.Path;
 
     /// <inheritdoc />
     public override Crc32 Crc32 => DataEntry.Crc32;

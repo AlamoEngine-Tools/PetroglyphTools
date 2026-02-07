@@ -11,11 +11,16 @@ using AnakinRaW.CommonUtilities;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
-/// A <see cref="IMegBuilder"/> for building MEG files which are safe to be used for a Petroglyph game.
-/// Entry paths get normalized, resolved and encoded. This builder only accepts valid entries paths and valid MEG file paths. 
-/// <br/>
-/// Duplicate entries get overwritten.
+/// Represents an <see cref="IMegBuilder"/> for building MEG files compatible a Petroglyph game.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Entry paths get normalized. The builder only accepts valid entries paths and valid MEG file paths. 
+/// </para>
+/// <para>
+/// Duplicate entries get overwritten.
+/// </para>
+/// </remarks>
 public abstract class PetroglyphGameMegBuilder : MegBuilderBase
 {
     private readonly IDataEntryPathResolver _pathResolver;
@@ -27,10 +32,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
 
     /// <remarks>This builder always overrides duplicate entries.</remarks>
     /// <inheritdoc/>
-    public override bool OverwritesDuplicateEntries => true;
-
-    /// <inheritdoc />
-    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer => PetroglyphPathNormalizer;
+    public sealed override bool OverwritesDuplicateEntries => true;
 
     /// <summary>
     /// Gets the data entry path normalizer.
@@ -44,10 +46,12 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <br/>
     /// Note: Path operators ("./" or "../") will <b>not</b> get resolved.
     /// <br/>
-    /// Note: As the normalized path will always have the backslash as path operator ('\'),
+    /// Note: As the normalized path will always use the backslash as path operator ('\'),
     /// on Linux systems the path cannot be treated correctly anymore.
     /// </remarks>
-    protected abstract PetroglyphDataEntryPathNormalizer PetroglyphPathNormalizer { get; }
+    /// <inheritdoc />
+    public override IMegDataEntryPathNormalizer DataEntryPathNormalizer { get; } =
+        new PetroglyphMegDataEntryPathNormalizer();
 
     /// <inheritdoc/>
     public abstract override IMegDataEntryValidator DataEntryValidator { get; }
@@ -68,11 +72,8 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
         ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
-
-        baseDirectory = PathNormalizer.Normalize(baseDirectory, PathNormalizeOptions.EnsureTrailingSeparator);
-
-        var di = FileSystem.DirectoryInfo.New(baseDirectory);
-        BaseDirectory = di.FullName;
+        baseDirectory = PathNormalizer.Normalize(FileSystem.Path.GetFullPath(baseDirectory), PathNormalizeOptions.EnsureTrailingSeparator);
+        BaseDirectory = baseDirectory;
         _pathResolver = services.GetRequiredService<IDataEntryPathResolver>();
     }
 

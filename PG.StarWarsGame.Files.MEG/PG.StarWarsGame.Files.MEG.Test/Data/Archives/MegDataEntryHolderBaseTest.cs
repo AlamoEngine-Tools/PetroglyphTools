@@ -93,8 +93,8 @@ public class MegDataEntryHolderBaseTest
 
         var twoFound = archive.EntriesWithCrc(new Crc32(0));
         Assert.Equal(2, twoFound.Count);
-        Assert.Equal("a", twoFound[0].FilePath);
-        Assert.Equal("b", twoFound[1].FilePath);
+        Assert.Equal("a", twoFound[0].Path);
+        Assert.Equal("b", twoFound[1].Path);
 
         var oneFound = archive.EntriesWithCrc(new Crc32(1));
         Assert.Single(oneFound);
@@ -103,7 +103,7 @@ public class MegDataEntryHolderBaseTest
         Assert.Empty(noneFound);
 
         var first = archive.FirstEntryWithCrc(new Crc32(0));
-        Assert.Equal("a", first!.FilePath);
+        Assert.Equal("a", first!.Path);
 
         Assert.Throws<KeyNotFoundException>(() => archive.FirstEntryWithCrc(new Crc32(-1)));
     }
@@ -135,7 +135,7 @@ public class MegDataEntryHolderBaseTest
 
         var megFiles = files.Select(f => MegDataEntryTest.CreateEntry(f)).OfType<IMegDataEntry>().ToList();
         var meg = new TestArchive(megFiles);
-        var entries = meg.FindAllEntries(pattern, caseInsensitive).Select(e => e.FilePath).ToList();
+        var entries = meg.FindAllEntries(pattern, caseInsensitive).Select(e => e.Path).ToList();
         Assert.Equal(expectedMatches, entries);
     }
 

@@ -1,6 +1,7 @@
 using System;
+using System.IO;
 using PG.StarWarsGame.Files.MEG.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.SizeCalculation;
+using PG.StarWarsGame.Files.MEG.Binary.Size;
 using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
@@ -11,6 +12,15 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </summary>
 public class BinaryMegEntryValidator : IMegDataEntryValidator
 {
+    /// <summary>
+    /// Gets the maximum allowed size, in bytes, for a MEG data entry.
+    /// </summary>
+    /// <value>
+    /// The maximum allowed size, in bytes, for a MEG data entry, as defined by the binary specifications of MEG files.
+    /// Maximum data entry size is 4GB (2^32 - 1 bytes).
+    /// </value>
+    protected virtual uint MaxMegEntrySize { get; } = MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxEntrySize;
+    
     /// <inheritdoc/>
     /// <remarks>
     /// This method performs validation checks on the specified <paramref name="dataEntry"/> based on the binary specification of MEG files.
@@ -23,13 +33,34 @@ public class BinaryMegEntryValidator : IMegDataEntryValidator
         // Technically, empty file name is not illegal, thus we don't check here.
         if (dataEntry.EntryPath.Length > MegFileConstants.MegMaxEntryPathLength)
             return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath, "Entry path too long.");
+        
+        if (dataEntry.OriginInfo.IsEntryReference && !dataEntry.OriginInfo.MegFileLocation.Exists)
+            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidOriginNotFound,
+                "Origin file not found.");
 
-        // Necessary, because an uint.Max sized entry,
-        // which should get encrypted would be padded to uint.Max + 1, which then would be a long value
-        var binarySize = MegSizeCalculator.GetBinaryEntrySizeWithEncryption(dataEntry);
-        if (binarySize > MegFileConstants.MegMaxEntrySize)
-            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidPath, "Entry size too large.");
+        try
+        {
+            dataEntry.RefreshSize();
 
+            // Necessary, because an uint.Max sized entry,
+            // which should get encrypted would be padded to uint.Max + 1, which then would be a long value
+            var binarySize = MegSizeCalculator.GetBinaryEntrySizeWithEncryption(dataEntry);
+
+            if (binarySize > MaxMegEntrySize)
+                return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidEntryTooLarge,
+                    "Entry size too large.");
+        }
+        catch (FileNotFoundException)
+        {
+            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidOriginNotFound,
+                "Origin file not found.");
+        }
+        catch (MegEntrySizeException)
+        {
+            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidEntryTooLarge, 
+                "Entry size too large.");
+        }
+        
         return ValidateCore(dataEntry);
     }
 

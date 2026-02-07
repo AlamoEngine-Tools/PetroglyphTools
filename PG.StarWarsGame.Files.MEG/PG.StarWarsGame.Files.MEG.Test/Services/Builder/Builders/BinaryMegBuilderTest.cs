@@ -12,7 +12,7 @@ using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 
-public class PrimitiveMegBuilderTest : MegBuilderTestBase<PrimitiveMegBuilder>
+public class BinaryMegBuilderTest : MegBuilderTestBase<BinaryMegBuilder>
 {
     protected override Type ExpectedFileInfoValidatorType => typeof(BinaryMegFileInformationValidator);
     protected override Type ExpectedDataEntryValidatorType => typeof(NotNullDataEntryValidator);
@@ -22,12 +22,12 @@ public class PrimitiveMegBuilderTest : MegBuilderTestBase<PrimitiveMegBuilder>
 
     protected override bool FileInfoIsAlwaysValid => true;
 
-    protected override PrimitiveMegBuilder CreateBuilder()
+    protected override BinaryMegBuilder CreateBuilder()
     {
-        return new PrimitiveMegBuilder(ServiceProvider);
+        return new BinaryMegBuilder(ServiceProvider);
     }
 
-    protected override void AddDataToBuilder(IReadOnlyCollection<MegDataEntryBuilderInfo> data, PrimitiveMegBuilder builder)
+    protected override void AddDataToBuilder(IReadOnlyCollection<MegDataEntryBuilderInfo> data, BinaryMegBuilder builder)
     {
         foreach (var info in data)
         {

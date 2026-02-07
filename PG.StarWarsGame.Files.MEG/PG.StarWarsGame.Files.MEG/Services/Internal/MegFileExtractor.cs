@@ -20,13 +20,13 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(services),  IMegFileExtractor
 {
     /// <inheritdoc/>
-    public string GetAbsoluteFilePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy)
+    public string GetAbsolutePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy)
     {
         if (dataEntry is null) 
             throw new ArgumentNullException(nameof(dataEntry));
         ThrowHelper.ThrowIfNullOrWhiteSpace(rootPath);
 
-        var entryPath = dataEntry.FilePath;
+        var entryPath = dataEntry.Path;
         var absoluteRootPath = FileSystem.Path.GetFullPath(rootPath);
 
         if (!preserveDirectoryHierarchy)
@@ -44,20 +44,20 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
             return FileSystem.Path.GetFullPath(entryPath);
         }
 
-        return FileSystem.Path.GetFullPath(FileSystem.Path.Combine(absoluteRootPath, dataEntry.FilePath));
+        return FileSystem.Path.GetFullPath(FileSystem.Path.Combine(absoluteRootPath, dataEntry.Path));
     }
 
     /// <inheritdoc/>
-    public MegFileDataStream GetFileData(MegDataEntryLocationReference dataEntryLocation)
+    public MegEntryStream GetData(MegDataEntryLocationReference dataEntryLocation)
     {
         if (dataEntryLocation is null) 
             throw new ArgumentNullException(nameof(dataEntryLocation));
         
-        return Services.GetRequiredService<IMegDataStreamFactory>().GetDataStream(dataEntryLocation);
+        return Services.GetRequiredService<IMegDataStreamFactory>().GetStream(dataEntryLocation);
     }
 
     /// <inheritdoc/>
-    public bool ExtractFile(MegDataEntryLocationReference dataEntryLocation, string filePath, bool overwrite)
+    public bool ExtractEntry(MegDataEntryLocationReference dataEntryLocation, string filePath, bool overwrite)
     {
         if (dataEntryLocation is null)
             throw new ArgumentNullException(nameof(dataEntryLocation));
@@ -77,7 +77,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
 
         using var destinationStream = FileSystem.FileStream.New(fullFilePath, fileMode, FileAccess.Write, FileShare.None);
 
-        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>().GetDataStream(dataEntryLocation);
+        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>().GetStream(dataEntryLocation);
         dataStream.CopyTo(destinationStream);
 
         return true;

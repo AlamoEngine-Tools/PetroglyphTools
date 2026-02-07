@@ -2,12 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Text;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 
 /// <summary>
-/// Base class for an <see cref="IMegDataEntryPathNormalizer"/>.
+/// Represents a base implementation of <see cref="IMegDataEntryPathNormalizer"/>.
 /// </summary>
 public abstract class MegDataEntryPathNormalizerBase : IMegDataEntryPathNormalizer
 {
@@ -41,7 +40,7 @@ public abstract class MegDataEntryPathNormalizerBase : IMegDataEntryPathNormaliz
     /// <remarks>
     /// This method may require more characters for <paramref name="destination"/> than there are in <paramref name="entryPath"/>.
     /// </remarks>
-    /// <param name="entryPath">The entry's file path to normalize.</param>
+    /// <param name="entryPath">The read-only span containing the entry's file path to normalize.</param>
     /// <param name="destination">The span to write the normalized path into.</param>
     /// <returns><see langword="true"/>The number of chars written to <paramref name="destination"/> are stored to this variable.<see langword="false"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="destination"/> is too short.</exception>

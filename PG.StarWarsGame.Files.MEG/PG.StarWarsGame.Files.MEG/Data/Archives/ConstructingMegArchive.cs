@@ -15,13 +15,20 @@ internal sealed class ConstructingMegArchive : MegDataEntryHolderBase<VirtualMeg
     public MegFileVersion MegVersion { get; }
 
     public bool Encrypted { get; }
+    
+    public uint ExpectedFileSize { get; }
 
-    internal ConstructingMegArchive(IList<VirtualMegDataEntryReference> virtualEntries, MegFileVersion megVersion, bool encrypted) 
+    internal ConstructingMegArchive(
+        IList<VirtualMegDataEntryReference> virtualEntries, 
+        MegFileVersion megVersion,
+        uint expectedFileSize,
+        bool encrypted) 
         : base(virtualEntries)
     {
         var dataEntries = Entries.Select(f => f.DataEntry).ToList();
         Archive = new MegArchive(dataEntries);
         MegVersion = megVersion;
+        ExpectedFileSize = expectedFileSize;
         Encrypted = encrypted;
     }
 }

@@ -67,7 +67,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="entryPath"/> is empty.</exception>
-    AddDataEntryToBuilderResult AddFile(string filePath, string entryPath, bool encrypt = false);
+    MegDataEntryAddResult AddFile(string filePath, string entryPath, bool encrypt = false);
 
     /// <summary>
     /// Adds an existing data entry to the <see cref="IMegBuilder"/> and returns a status information to indicate whether the entry was successfully added. 
@@ -81,7 +81,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="entryReference"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="overridePathInMeg"/> is empty.</exception>
-    AddDataEntryToBuilderResult AddEntry(MegDataEntryLocationReference entryReference, string? overridePathInMeg = null,
+    MegDataEntryAddResult AddEntry(MegDataEntryLocationReference entryReference, string? overridePathInMeg = null,
         bool? overrideEncrypt = null);
 
     /// <summary>
@@ -100,19 +100,29 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     void Clear();
 
     /// <summary>
-    /// Builds one or many MEG files using the provided factory method to generate file information
-    /// and optionally overwriting existing files.
+    /// Builds multiple MEG archive files by splitting the data entries into the minimum required number of parts.
     /// </summary>
-    /// <param name="fileInfoFactory">
-    /// A factory method that generates <see cref="MegFileInformation"/> instances for each MEG file to be built.
-    /// The integer parameter represents the <b>one-based</b> index of the MEG file being created.
+    /// <remarks>
+    /// If all entries for the MEG builder fit into a single MEG file, the <paramref name="initialFileInformation"/>
+    /// is used as-is, including its file path. If multiple files are required, <paramref name="initialFileInformation"/>
+    /// serves as a template where the file path is replaced for each part using the <paramref name="filePathFactory"/>.
+    /// </remarks>
+    /// <param name="initialFileInformation">The file information used as a template for all output files.</param>
+    /// <param name="filePathFactory">
+    /// A function that generates the file path for each part based on its index (1-based). 
+    /// Not invoked if only a single file is created.
     /// </param>
-    /// <param name="overwrite">
-    /// A boolean value indicating whether to overwrite existing MEG files if they already exist.
-    /// </param>
-    /// <exception cref="ArgumentNullException"><paramref name="fileInfoFactory"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="fileInfoFactory"/> produced an invalid <see cref="MegFileInformation"/>.</exception>
-    void BuildMany(Func<int, MegFileInformation> fileInfoFactory, bool overwrite);
+    /// <param name="overwrite">A value indicating whether to overwrite existing files.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="initialFileInformation"/> is <see langword="null"/>.
+    /// -or-
+    /// <paramref name="filePathFactory"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// <paramref name="initialFileInformation"/> is not valid or <paramref name="filePathFactory"/> produced an invalid file path.
+    /// </exception>
+    /// <exception cref="IOException">The file could not be created due to an IO error.</exception>
+    public void BuildMany(MegFileInformation initialFileInformation, Func<int, string> filePathFactory, bool overwrite);
 
     /// <summary>
     /// Determines the minimum number of MEG files that must be created for the specified collection of data entry builder information
@@ -121,14 +131,6 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// <remarks>
     /// The method will return at least value <value>1</value>.
     /// </remarks>
-    /// <returns>
-    /// The minimum number of MEG files required to accommodate the provided data entries.
-    /// </returns>
-    /// <exception cref="FileNotFoundException">
-    /// The build contains a local file entry that does not exist.
-    /// </exception>
-    /// <exception cref="MegEntrySizeException">
-    /// The builder contains an entry that exceeds the maximum allowed size for a MEG entry.
-    /// </exception>
+    /// <returns>The minimum number of MEG files required to accommodate the provided data entries.</returns>
     int GetMinRequiredMegFiles(MegFileVersion megVersion);
 }

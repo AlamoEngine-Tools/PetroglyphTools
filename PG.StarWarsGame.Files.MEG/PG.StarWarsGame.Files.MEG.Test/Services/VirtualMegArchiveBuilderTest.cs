@@ -40,8 +40,8 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
             new(new(megFile, entry1)),
         };
 
-        Assert.Throws<FileNotInMegException>(() => service.BuildFrom(entries, false));
-        Assert.Throws<FileNotInMegException>(() => service.BuildFrom(entries, true));
+        Assert.Throws<EntryNotInMegException>(() => service.BuildFrom(entries, false));
+        Assert.Throws<EntryNotInMegException>(() => service.BuildFrom(entries, true));
     }
 
     [Fact]

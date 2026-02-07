@@ -64,6 +64,6 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
     /// <inheritdoc/>
     public override string ToString()
     {
-        return $"{MegFile.FilePath}::{DataEntry.FilePath}";
+        return $"{MegFile.FilePath}::{DataEntry.Path}";
     }
 }

@@ -7,7 +7,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 using System;
 using System.IO;
 using System.IO.Abstractions;
-using PG.StarWarsGame.Files.MEG.Binary;
+using PG.StarWarsGame.Files.MEG.Binary.Size;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
 
@@ -134,7 +134,7 @@ public sealed class MegDataEntryBuilderInfo
             fileInfo.Refresh();
             if (!fileInfo.Exists)
                 throw new FileNotFoundException($"The file '{fileInfo.FullName}' does not exist");
-            if (fileInfo.Length > MegFileConstants.MegMaxEntrySize)
+            if (fileInfo.Length > MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxEntrySize)
                 MegThrowHelper.ThrowDataEntryExceeds4GigabyteException(fileInfo.FullName);
             var size = (uint)fileInfo.Length;
             Size = size;
@@ -147,7 +147,7 @@ public sealed class MegDataEntryBuilderInfo
             return overrideEntryPath;
         return originInfo.IsLocalFile 
             ? originInfo.FileInfo.FullName 
-            : originInfo.MegFileLocation!.DataEntry.FilePath;
+            : originInfo.MegFileLocation!.DataEntry.Path;
     }
 
     private static bool GetEncryption(MegDataEntryOriginInfo originInfo, bool? overrideEncrypted)

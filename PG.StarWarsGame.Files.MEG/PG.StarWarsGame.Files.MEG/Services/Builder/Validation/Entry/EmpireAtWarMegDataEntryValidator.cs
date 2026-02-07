@@ -5,6 +5,7 @@ using System;
 using AnakinRaW.CommonUtilities.Extensions;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Binary;
+using PG.StarWarsGame.Files.MEG.Binary.Size;
 using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
@@ -21,6 +22,16 @@ public sealed class EmpireAtWarMegDataEntryValidator : BinaryMegEntryValidator
     // Thus, this validator is a little more sensitive.
     private static readonly char[] ForbiddenChars = ['/', ' ', '\0', '\t', '\r', '\n'];
 
+    /// <summary>
+    /// Gets the maximum allowed size for a MEG data entry when validating entries
+    /// for Empire at War and Forces of Corruption MEG files.
+    /// </summary>
+    /// <value>
+    /// The maximum allowed size for a MEG data entry when validating entries for Empire at War and Forces of Corruption MEG files.
+    /// Maximum entry size is limited to 2GB (2^32 - 1 bytes).
+    /// </value>
+    protected override uint MaxMegEntrySize { get; } = MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.EawFoc).MaxEntrySize;
+
     /// <remarks>
     /// This method performs several checks to ensure the validity of the MEG data entry:
     /// <list type="bullet">
@@ -35,10 +46,6 @@ public sealed class EmpireAtWarMegDataEntryValidator : BinaryMegEntryValidator
         if (dataEntry.Encrypted)
             return new MegDataEntryValidationResult(MegDataEntryValidationStatus.Invalid, 
                 "MEG data entry cannot be encrypted.");
-        
-        if (dataEntry.Size > MegFileConstants.EawMegMaxEntrySize)
-            return new MegDataEntryValidationResult(MegDataEntryValidationStatus.InvalidEntryTooLarge,
-                "MEG data entry size too large.");
 
         var entryPath = dataEntry.EntryPath;
         if (entryPath.Length is 0)

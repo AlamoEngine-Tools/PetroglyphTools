@@ -52,7 +52,7 @@ public class EmpireAtWarMegDataEntryPathNormalizerTest : PetroglyphDataEntryPath
         yield return ["\\\\", string.Empty];
         yield return [".TEST", ".TEST"];
 
-        // Now these are odd cases, but that's how the game behaves... 
+        // Now, these are odd cases, but that's how the game behaves... 
         yield return ["/TEST.TXT", "TEST.TXT\\TEST.TXT"];
         yield return ["./TEST.TXT", "TEST.TXT\\TEST.TXT"];
         yield return ["c:/test.txt", ":\\TEST.TXT"];

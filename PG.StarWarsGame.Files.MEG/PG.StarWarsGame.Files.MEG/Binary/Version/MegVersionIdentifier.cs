@@ -21,7 +21,7 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
     /// </summary>
     /// <param name="stream">The MEG archive stream</param>
     /// <param name="encrypted">Indicates whether the archive is encrypted or not.</param>
-    /// <returns></returns>
+    /// <returns>The determined <see cref="MegFileVersion"/> of the MEG stream.</returns>
     /// <exception cref="ArgumentNullException">The <paramref name="stream"/> is null.</exception>
     /// <exception cref="ArgumentException">The <paramref name="stream"/> is not readable or seekable.</exception>
     /// <exception cref="BinaryCorruptedException">The read data is not a valid MEG archive.</exception>

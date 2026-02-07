@@ -9,21 +9,21 @@ namespace PG.StarWarsGame.Files.MEG;
 /// <summary>
 /// The exception that is thrown when a data entry is not found inside a MEG archive.
 /// </summary>
-public sealed class FileNotInMegException : Exception
+public sealed class EntryNotInMegException : Exception
 {
-    private readonly string _file;
+    private readonly string _entry;
     private readonly string _megFile;
 
     /// <inheritdoc/>
-    public override string Message => field ??= $"The file \"{_file}\" is not contained in the MEG archive \"{_megFile}\"";
+    public override string Message => field ??= $"The entry \"{_entry}\" is not contained in the MEG archive \"{_megFile}\"";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FileNotInMegException"/> class with a location reference which does not exist.
+    /// Initializes a new instance of the <see cref="EntryNotInMegException"/> class with a location reference which does not exist.
     /// </summary>
     /// <param name="locationReference">The non-existing data entry location.</param>
-    internal FileNotInMegException(MegDataEntryLocationReference locationReference)
+    internal EntryNotInMegException(MegDataEntryLocationReference locationReference)
     {
-        _file = locationReference.DataEntry.FilePath;
+        _entry = locationReference.DataEntry.Path;
         _megFile = locationReference.MegFile.FilePath;
     }
 }

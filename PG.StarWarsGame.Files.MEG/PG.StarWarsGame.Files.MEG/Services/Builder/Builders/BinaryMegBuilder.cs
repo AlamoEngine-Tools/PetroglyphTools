@@ -6,21 +6,25 @@ using System;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
-/// A primitive <see cref="IMegBuilder"/> which performs no entry path normalization.
-/// <br/>
-/// Duplicate entries get overwritten.
+/// Represents an <see cref="IMegBuilder"/> for building MEG files compliant to the binary MEG file format,
+/// but without any entry path normalization or validation or than ensuring binary compliance.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Using this instance may produce MEG archives which are not compatible to PG games.
+/// </para>
+/// <para>
+/// Duplicate entries get overwritten.
+/// </para>
 /// </remarks>
-public sealed class PrimitiveMegBuilder : MegBuilderBase
+public sealed class BinaryMegBuilder : MegBuilderBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="PrimitiveMegBuilder"/> class.
+    /// Initializes a new instance of the <see cref="BinaryMegBuilder"/> class.
     /// </summary>
     /// <param name="services">The service provider.</param>
     /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
-    public PrimitiveMegBuilder(IServiceProvider services) : base(services)
+    public BinaryMegBuilder(IServiceProvider services) : base(services)
     {
     }
 }

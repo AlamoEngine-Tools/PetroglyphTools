@@ -73,7 +73,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
             MegDataEntryBuilderInfo.FromEntry(dummyMeg, meg.Archive[0])
         };
 
-        Assert.Throws<FileNotInMegException>(() =>
+        Assert.Throws<EntryNotInMegException>(() =>
         {
             using var fs = FileSystem.File.OpenWrite(newFileName);
             _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
@@ -306,7 +306,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         {
             var entry = meg.Archive[i];
             var expected = expectedData.EntryNames[i];
-            Assert.Equal(expected, entry.FilePath);
+            Assert.Equal(expected, entry.Path);
         }
 
         using var param = new MegFileInformation(
@@ -357,7 +357,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         {
             var entry = meg.Archive[i];
             var expected = expectedData.EntryNames[i];
-            Assert.Equal(expected, entry.FilePath);
+            Assert.Equal(expected, entry.Path);
         }
     }
 

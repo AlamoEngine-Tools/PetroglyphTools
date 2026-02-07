@@ -14,6 +14,10 @@ public enum MegDataEntryValidationStatus
     /// </summary>
     Invalid,
     /// <summary>
+    /// The entry's origin does not exist.
+    /// </summary>
+    InvalidOriginNotFound,
+    /// <summary>
     /// The entry path is not valid,
     /// </summary>
     InvalidPath,

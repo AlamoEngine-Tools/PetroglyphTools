@@ -8,6 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+
+<<<<<<< TODO: Unmerged change from project 'PG.StarWarsGame.Files.MEG (netstandard2.0)', Before:
+#if NETSTANDARD2_0
+=======
+using PG.StarWarsGame.Files.MEG.Binary.Size;
+
+#if NETSTANDARD2_0
+>>>>>>> After
+using PG.StarWarsGame.Files.MEG.Binary.Size;
 #if NETSTANDARD2_0
 using AnakinRaW.CommonUtilities.FileSystem;
 #endif
@@ -19,8 +28,6 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// </summary>
 public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInformationValidator
 {
-    private readonly IFileSystem _fileSystem;
-
     // The game arbitrary varies between 260 and 256, so we chose the larger value here. Mind that the value is 260 - 1,
     // because we need to reserve one byte for the zero-terminator '\0'.
     /// <summary>
@@ -28,13 +35,27 @@ public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInform
     /// </summary>
     public const int PetroglyphMaxFilePathLength = 259;
 
+    private readonly IFileSystem _fileSystem;
+
+    /// <summary>
+    /// Gets the maximum allowed size, in bytes, for a MEG file when validating 
+    /// compliance with the Petroglyph Star Wars: Empire at War and Forces of Corruption game.
+    /// </summary>
+    /// <value>
+    /// The maximum allowed size, in bytes, for a MEG file when
+    /// validating compliance with the Petroglyph Star Wars: Empire at War and Forces of Corruption game.
+    /// Maximum file size is limited to 2GB (2^32 - 1 bytes).
+    /// </value>
+    protected override uint MaxMegFileSize { get; } =
+        MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.EawFoc).MaxFileSize;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarMegFileInformationValidator"/> class.
     /// </summary>
     /// <param name="serviceProvider">The service provider.</param>
-    public EmpireAtWarMegFileInformationValidator(IServiceProvider serviceProvider)
+    public EmpireAtWarMegFileInformationValidator(IServiceProvider serviceProvider) : base(serviceProvider)
     {
-        _fileSystem = serviceProvider.GetRequiredService<IFileSystem>();
+        _fileSystem = ServiceProvider.GetRequiredService<IFileSystem>();
     }
 
     /// <remarks>

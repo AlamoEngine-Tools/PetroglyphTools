@@ -70,7 +70,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
 
         var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegDataEntryBuilderInfo.FromEntry(dummyMeg, meg.Archive[0])
+            new(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(dummyMeg, meg.Archive[0])))
         };
 
         Assert.Throws<EntryNotInMegException>(() =>
@@ -90,10 +90,14 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
 
         var meg = _megFileService.Load(megFileName);
 
+        FileSystem.File.WriteAllBytes("file.txt", []);
         var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegDataEntryBuilderInfo.FromFile("notFound.txt", null)
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("file.txt"), "file.txt")
         };
+
+        FileSystem.File.Delete("file.txt");
+
         Assert.Throws<FileNotFoundException>(() =>
         {
             using var fs = FileSystem.File.OpenWrite(newFileName);
@@ -123,8 +127,8 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
 
         var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegDataEntryBuilderInfo.FromFile("1.txt", "file"),
-            MegDataEntryBuilderInfo.FromFile("2.txt", "file")
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("1.txt"), "file"),
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("2.txt"), "file")
         };
 
         using (var fs = FileSystem.File.OpenWrite(megFileName))
@@ -135,22 +139,6 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         var bytes = FileSystem.File.ReadAllBytes(megFileName);
 
         Assert.Equal(expectedBytes, bytes);
-    }
-
-    [Fact]
-    public void CreateMegArchive_InvalidSize_Throws()
-    {
-        const string megFileName = "test.meg";
-
-        FileSystem.Initialize().WithFile("1.txt").Which(m => m.HasStringContent("123"));
-
-        var builderInfo = new List<MegDataEntryBuilderInfo>
-        {
-            MegDataEntryBuilderInfo.FromFile("1.txt", "file", size: 99) // Size is not correct
-        };
-
-        using var fs = FileSystem.File.OpenWrite(megFileName);
-        Assert.Throws<InvalidOperationException>(() => _megFileService.CreateMegArchive(fs, MegFileVersion.V1, null, builderInfo));
     }
 
     #endregion

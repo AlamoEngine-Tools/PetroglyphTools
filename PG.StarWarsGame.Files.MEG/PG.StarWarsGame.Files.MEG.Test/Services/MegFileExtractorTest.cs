@@ -1,11 +1,13 @@
-using System;
-using System.IO;
+using AnakinRaW.CommonUtilities.Testing;
 using AnakinRaW.CommonUtilities.Testing.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
+using PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
+using System;
+using System.IO;
 using Testably.Abstractions.Testing;
 using Xunit;
 using static PG.StarWarsGame.Files.MEG.Test.Data.Entries.MegDataEntryTest;
@@ -171,6 +173,27 @@ public class MegFileExtractorTest : CommonMegTestBase
         stream.CopyTo(ms);
 
         Assert.Equal(MegTestConstants.CampaignFilesContent, ms.ToArray());
+    }
+
+    [Fact]
+    public void GetFileData_FromUnorderedMeg()
+    {
+        var unorderedMeg = TestingHelpers.GetEmbeddedResourceAsByteArray(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_out_of_order.meg");
+        
+        FileSystem.Initialize()
+            .WithFile("test.meg").Which(m => m.HasBytesContent(unorderedMeg));
+
+        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+
+        var ms = new MemoryStream();
+
+        using (var stream = _extractor.GetData(new MegDataEntryLocationReference(meg, meg.Content[0]))) 
+            stream.CopyTo(ms);
+        using (var stream = _extractor.GetData(new MegDataEntryLocationReference(meg, meg.Content[1])))
+            stream.CopyTo(ms);
+        
+        Assert.Equal("456123"u8, ms.ToArray());
+        Assert.True(meg.Content[0].Location.Offset > meg.Content[1].Location.Offset);
     }
 
     [Fact]

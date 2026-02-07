@@ -44,9 +44,6 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
 
         foreach (var entry in Crc32Utilities.SortByCrc32(binaryInformation.Entries))
         {
-            if (currentOffset > uint.MaxValue)
-                throw new InvalidOperationException("Cannot construct a MEG file from the specified entries.");
-            
             var dataEntryLocation = new MegDataEntryLocation((uint)currentOffset, entry.Sizes.DataSize);
             var dataEntry = new MegDataEntry(entry.Path, entry.Crc32, dataEntryLocation, entry.Encrypted, entry.OriginalPath);
             
@@ -58,15 +55,6 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         Debug.Assert((long)calculator.CurrentSize == currentOffset);
 
         return new ConstructingMegArchive(entries, binaryInformation.MegFileVersion, (uint)calculator.CurrentSize, binaryInformation.Encrypted);
-    }
-
-    protected abstract int GetFileDescriptorSize(bool entryGetsEncrypted);
-
-    protected abstract int GetHeaderSize();
-
-    protected virtual int GetActualFileNameTableSize(int fileNameTableSize, bool megGetsEncrypted)
-    {
-        return fileNameTableSize;
     }
 
     private MegFileBinaryInformation GetBinaryInformation(
@@ -90,10 +78,9 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
                 encryptMeg = true;
         }
 
-        checked
-        {
-            return new MegFileBinaryInformation((uint)calculator.MetadataSize, FileVersion, encryptMeg, entryInfoList);
-        }
+        Debug.Assert(calculator.MetadataSize <= calculator.CurrentSize);
+
+        return new MegFileBinaryInformation((uint)calculator.MetadataSize, FileVersion, encryptMeg, entryInfoList);
     }
 
     private MegDataEntryBinaryInformation CreateEntryBinaryInformation(

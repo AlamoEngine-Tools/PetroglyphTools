@@ -5,9 +5,9 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
-public class VirtualMegDataEntryReferenceTest_Path : MegDataEntryBaseTest<MegDataEntryOriginInfo>
+public class VirtualMegDataEntryReferenceTest_FileInfo : MegDataEntryBaseTest<MegDataEntryOriginInfo>
 {
-    private VirtualMegDataEntryReference CreateVirtualMegDataEntryReference(string path, Crc32 crc, MegDataEntryOriginInfo location)
+    private static VirtualMegDataEntryReference CreateVirtualMegDataEntryReference(string path, Crc32 crc, MegDataEntryOriginInfo location)
     {
         return new VirtualMegDataEntryReference(MegDataEntryTest.CreateEntry(path, crc), location);
     }
@@ -19,7 +19,7 @@ public class VirtualMegDataEntryReferenceTest_Path : MegDataEntryBaseTest<MegDat
 
     protected override MegDataEntryOriginInfo CreateLocation(int seed)
     {
-        return new MegDataEntryOriginInfo(seed.ToString());
+        return new MegDataEntryOriginInfo(FileSystem.FileInfo.New($"{seed}.txt"));
     }
 
     [Fact]

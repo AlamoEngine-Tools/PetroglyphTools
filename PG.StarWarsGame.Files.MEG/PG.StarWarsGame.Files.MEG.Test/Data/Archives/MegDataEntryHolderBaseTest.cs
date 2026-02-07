@@ -12,7 +12,6 @@ namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
 public class MegDataEntryHolderBaseTest
 {
-
     [Fact]
     public void Ctor_Throw_NullArgument()
     {
@@ -103,7 +102,7 @@ public class MegDataEntryHolderBaseTest
         Assert.Empty(noneFound);
 
         var first = archive.FirstEntryWithCrc(new Crc32(0));
-        Assert.Equal("a", first!.Path);
+        Assert.Equal("a", first.Path);
 
         Assert.Throws<KeyNotFoundException>(() => archive.FirstEntryWithCrc(new Crc32(-1)));
     }

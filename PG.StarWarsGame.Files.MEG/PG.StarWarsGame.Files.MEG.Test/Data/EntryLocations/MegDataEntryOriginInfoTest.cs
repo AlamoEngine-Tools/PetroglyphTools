@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -13,19 +14,17 @@ public class MegDataEntryOriginInfoTest : PGTestBase
     [Fact]
     public void Ctor_InvalidArgs_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((string)null!));
+        Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((IFileInfo)null!));
         Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((MegDataEntryLocationReference)null!));
-
-        Assert.Throws<ArgumentException>(() => new MegDataEntryOriginInfo(string.Empty));
-        Assert.Throws<ArgumentException>(() => new MegDataEntryOriginInfo("    "));
     }
 
     [Fact]
-    public void Ctor_Path()
+    public void Ctor_FileInfo()
     {
-        var originInfo = new MegDataEntryOriginInfo("path");
+        var fi = FileSystem.FileInfo.New("test.xml");
+        var originInfo = new MegDataEntryOriginInfo(fi);
 
-        Assert.Equal("path", originInfo.FileInfo);
+        Assert.Same(fi, originInfo.FileInfo);
         Assert.Null(originInfo.MegFileLocation);
 
         Assert.True(originInfo.IsLocalFile);
@@ -62,8 +61,8 @@ public class MegDataEntryOriginInfoTest : PGTestBase
 
         var originLoc = new MegDataEntryOriginInfo(location);
         var otherOriginLoc = new MegDataEntryOriginInfo(otherLocation);
-        var originPath = new MegDataEntryOriginInfo("path");
-        var otherOriginPath = new MegDataEntryOriginInfo("path");
+        var originPath = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.xml"));
+        var otherOriginPath = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.xml"));
 
 
         Assert.Equal(originLoc, originLoc);
@@ -83,7 +82,7 @@ public class MegDataEntryOriginInfoTest : PGTestBase
         Assert.NotEqual(originPath, originLoc);
         Assert.NotEqual(originPath, (object)originLoc);
 
-        Assert.NotEqual(originPath, new MegDataEntryOriginInfo("PATH"));
+        Assert.NotEqual(originPath, new MegDataEntryOriginInfo(FileSystem.FileInfo.New("TEST.XML")));
 
         Assert.NotEqual(originLoc,
             new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("PATH"))));

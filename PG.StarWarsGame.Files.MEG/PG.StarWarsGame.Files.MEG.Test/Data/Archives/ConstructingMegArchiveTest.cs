@@ -16,17 +16,18 @@ public class ConstructingMegArchiveTest : CommonMegTestBase
     [Fact]
     public void Ctor_Throw_NullArgument()
     {
-        Assert.Throws<ArgumentNullException>(() =>new ConstructingMegArchive(null!, MegFileVersion.V1, false));
+        Assert.Throws<ArgumentNullException>(() =>new ConstructingMegArchive(null!, MegFileVersion.V1, 0, false));
     }
 
     [Fact]
     public void Ctor_Empty()
     {
         var entries = new List<VirtualMegDataEntryReference>();
-        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, true);
+        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, 123, true);
 
         Assert.Equal(MegFileVersion.V3, cArchive.MegVersion);
         Assert.Equal(new MegArchive(new List<MegDataEntry>()).ToList(), cArchive.Archive.ToList());
+        Assert.Equal(123u, cArchive.ExpectedFileSize);
         Assert.True(cArchive.Encrypted);
     }
 
@@ -42,7 +43,7 @@ public class ConstructingMegArchiveTest : CommonMegTestBase
         var locEntry = MegDataEntryTest.CreateEntry("pathC", new Crc32(3), 3, 3);
 
         var reference1 = new VirtualMegDataEntryReference(
-            entry1, new MegDataEntryOriginInfo("path"));
+            entry1, new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.xml")));
 
         var reference2 = new VirtualMegDataEntryReference(
             entry2, new MegDataEntryOriginInfo(new MegDataEntryLocationReference(mf, locEntry)));
@@ -52,7 +53,7 @@ public class ConstructingMegArchiveTest : CommonMegTestBase
             reference1, reference2
         };
 
-        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, false);
+        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, 123, false);
 
         Assert.Equal(MegFileVersion.V3, cArchive.MegVersion);
         Assert.False(cArchive.Encrypted);
@@ -63,5 +64,6 @@ public class ConstructingMegArchiveTest : CommonMegTestBase
         };
 
         Assert.Equal(expectedArchiveList, cArchive.Archive.ToList());
+        Assert.Equal(123u, cArchive.ExpectedFileSize);
     }
 }

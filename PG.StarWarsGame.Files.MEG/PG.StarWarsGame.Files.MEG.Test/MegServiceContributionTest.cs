@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
-using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test;
@@ -19,7 +18,6 @@ public class MegServiceContributionTest : CommonMegTestBase
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegVersionIdentifier>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegDataStreamFactory>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IVirtualMegArchiveBuilder>());
-        Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<EmpireAtWarMegFileInformationValidator>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IDataEntryPathResolver>());
     }
 }

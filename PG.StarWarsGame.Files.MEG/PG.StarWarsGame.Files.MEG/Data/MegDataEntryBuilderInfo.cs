@@ -7,6 +7,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 using System;
 using System.IO;
 using System.IO.Abstractions;
+using AnakinRaW.CommonUtilities;
 using PG.StarWarsGame.Files.MEG.Binary.Size;
 
 namespace PG.StarWarsGame.Files.MEG.Data;
@@ -60,7 +61,8 @@ public sealed class MegDataEntryBuilderInfo
     /// When not <see langword="null"/>, the specified encryption information will be used; otherwise the current encryption state path will be used.
     /// </param>
     /// <exception cref="ArgumentException">
-    /// <paramref name="overrideEntryPath"/> is empty -or-
+    /// <paramref name="overrideEntryPath"/> is empty
+    /// -or-
     /// <paramref name="dataEntry"/> does not exist in <paramref name="megFile"/>.
     /// </exception>
     /// <exception cref="ArgumentNullException"><paramref name="megFile"/> or <see paramref="dataEntry"/> is <see langword="null"/>.</exception>
@@ -93,9 +95,11 @@ public sealed class MegDataEntryBuilderInfo
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryReference"/> is <see langword="null"/>.</exception>
     public static MegDataEntryBuilderInfo FromEntryReference(MegDataEntryLocationReference dataEntryReference, string? overrideEntryPath = null, bool? overrideEncrypted = null)
     {
-        return dataEntryReference == null
-            ? throw new ArgumentNullException(nameof(dataEntryReference)) 
-            : new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(dataEntryReference), overrideEntryPath, overrideEncrypted);
+        if (dataEntryReference == null) 
+            throw new ArgumentNullException(nameof(dataEntryReference));
+        if (!dataEntryReference.Exists)
+            throw new ArgumentException("dataEntryReference does not point to an existing entry.", nameof(dataEntryReference));
+        return new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(dataEntryReference), overrideEntryPath, overrideEncrypted);
     }
 
     /// <summary>
@@ -107,14 +111,19 @@ public sealed class MegDataEntryBuilderInfo
     /// When not <see langword="null"/>, the specified path will be used; otherwise the full path of <paramref name="file"/> path will be used.
     /// </param>
     /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="file"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="file"/> does not exist.</exception>
-    public static MegDataEntryBuilderInfo FromFile(IFileInfo file, string? entryPath, bool encrypt = false)
+    /// <exception cref="ArgumentNullException"><paramref name="file"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="file"/> does not exist.
+    /// -or-
+    /// <paramref name="entryPath"/> is empty.
+    /// </exception>
+    public static MegDataEntryBuilderInfo FromFile(IFileInfo file, string entryPath, bool encrypt = false)
     {
         if (file == null) 
             throw new ArgumentNullException(nameof(file));
         if (!file.Exists)
             throw new ArgumentException($"The specified file '{file.FullName}' does not exist.", nameof(file));
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
         return new MegDataEntryBuilderInfo(
             new MegDataEntryOriginInfo(file), entryPath, encrypt);
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
@@ -19,37 +20,52 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     #region Ctor_LocalFile
 
     [Fact]
-    public void Ctor_OriginIsLocalFile()
+    public void Ctor_FileDoesNotExist_ThrowsFileNotFoundException()
     {
-        var origin = new MegDataEntryOriginInfo("path");
-        var info = new MegDataEntryBuilderInfo(origin);
-
-        Assert.Same(origin, info.OriginInfo);
-        Assert.Equal("path", info.EntryPath);
-        Assert.Null(info.Size);
-        Assert.False(info.Encrypted);
-    }
-
-    [Fact]
-    public void Ctor_OriginIsLocalFile_OverridesProperties()
-    {
-        var origin = new MegDataEntryOriginInfo("path");
-        var info = new MegDataEntryBuilderInfo(origin, "PATH", 123, true);
-
-        Assert.Same(origin, info.OriginInfo);
-        Assert.Equal("PATH", info.EntryPath);
-        Assert.Equal(123u, info.Size);
-        Assert.True(info.Encrypted);
+        var origin = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.xml"));
+        Assert.Throws<FileNotFoundException>(() => new MegDataEntryBuilderInfo(origin));
+        Assert.Throws<FileNotFoundException>(() => new MegDataEntryBuilderInfo(origin, "other.xml"));
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("    ")]
-    public void Ctor_OriginIsLocalFile_OverridesProperties_PathEmpty_Throws(string path)
+    [InlineData(null, true)]
+    [InlineData(null, false)]
+    [InlineData("TEST.XML", true)]
+    [InlineData("TEST.XML", false)]
+    [InlineData("    ", false)]
+    public void Ctor_OriginIsLocalFile(string? overridePath, bool encrypted)
     {
-        var origin = new MegDataEntryOriginInfo("path");
-        Assert.Throws<ArgumentException>(() => new MegDataEntryBuilderInfo(origin, path, 123, true));
+        using (var w = FileSystem.File.CreateText("test.xml"))
+            w.Write("123");
+
+        var origin = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.xml"));
+        var info = new MegDataEntryBuilderInfo(origin, overridePath, encrypted);
+
+        Assert.Same(origin, info.OriginInfo);
+        Assert.Equal(overridePath ?? origin.FileInfo!.FullName, info.EntryPath);
+        Assert.Equal(encrypted, info.Encrypted);
+        Assert.Equal(3u, info.Size);
     }
+
+    [Fact]
+    public void Ctor_OriginIsLocalFile_PathEmpty_Throws()
+    {
+        using (var w = FileSystem.File.CreateText("test.xml"))
+            w.Write("123");
+
+        var origin = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.xml"));
+        Assert.Throws<ArgumentException>(() => new MegDataEntryBuilderInfo(origin, string.Empty));
+    }
+
+
+    [Fact]
+    public void Ctor_OriginIsLocalFile_FileTooLarge_ThrowsMegEntrySizeException()
+    {
+        var mockFileInfo = new MegTestConstants.LargeFileInfo("large_file.bin", (long)uint.MaxValue + 1);
+        var origin = new MegDataEntryOriginInfo(mockFileInfo);
+        Assert.Throws<MegEntrySizeException>(() => new MegDataEntryBuilderInfo(origin, "path"));
+    }
+
 
     #endregion
 
@@ -72,72 +88,81 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
         Assert.True(info.Encrypted);
     }
 
-    [Fact]
-    public void Ctor_OriginIsEntryReference_OverridesProperties()
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData(null, false)]
+    [InlineData("TEST.XML", true)]
+    [InlineData("TEST.XML", false)]
+    [InlineData("    ", false)]
+    public void Ctor_OriginIsEntryReference_OverridesProperties(string? overridePath, bool encrypted)
     {
         FileSystem.File.Create("file.meg");
         var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
         var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(
             meg, MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
 
-        var info = new MegDataEntryBuilderInfo(origin, "PATH", 999, false);
+        var info = new MegDataEntryBuilderInfo(origin, overridePath, encrypted);
 
         Assert.Same(origin, info.OriginInfo);
-        Assert.Equal("PATH", info.EntryPath);
-        Assert.Equal(321u, info.Size); // Value 999 must be ignored
-        Assert.False(info.Encrypted);
+        Assert.Equal(overridePath ?? "path", info.EntryPath);
+        Assert.Equal(321u, info.Size);
+        Assert.Equal(encrypted, info.Encrypted);
     }
 
     [Theory]
     [InlineData("")]
-    [InlineData("    ")]
     public void Ctor_OriginIsEntryReference_OverridesProperties_PathEmpty_Throws(string path)
     {
         FileSystem.File.Create("file.meg");
         var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
         var origin = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(
             meg, MegDataEntryTest.CreateEntry("path", default, 123, 321, true)));
-        Assert.Throws<ArgumentException>(() => new MegDataEntryBuilderInfo(origin, path, 123, true));
+        Assert.Throws<ArgumentException>(() => new MegDataEntryBuilderInfo(origin, path, true));
     }
 
     #endregion
 
     #region Factory_FromFile
 
-    [Fact]
-    public void FromFile()
-    {
-        var info = MegDataEntryBuilderInfo.FromFile("path", null);
-        Assert.True(info.OriginInfo.IsLocalFile);
-        Assert.Equal("path", info.EntryPath);
-        Assert.Null(info.Size);
-        Assert.False(info.Encrypted);
-    }
-
-    [Fact]
-    public void FromFile_OverridesProperties()
-    {
-        var info = MegDataEntryBuilderInfo.FromFile("path", "123", 123, true);
-        Assert.True(info.OriginInfo.IsLocalFile);
-        Assert.Equal("123", info.EntryPath);
-        Assert.Equal(123u, info.Size);
-        Assert.True(info.Encrypted);
-    }
-
     [Theory]
-    [InlineData("", null)]
-    [InlineData("   ", null)]
-    [InlineData("test", "")]
-    [InlineData("test", "   ")]
-    public void FromFile_Throws(string path, string? overridePath)
+    [InlineData("TEST.XML", true)]
+    [InlineData("TEST.XML", false)]
+    [InlineData("    ", false)]
+    [InlineData("    ", true)]
+    public void FromFile(string overridePath, bool encrypted)
     {
-        Assert.Throws<ArgumentException>(() => MegDataEntryBuilderInfo.FromFile(path, overridePath));
+        using (var w = FileSystem.File.CreateText("test.xml"))
+            w.Write("123");
+
+        var info = MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("test.xml"), overridePath, encrypted);
+        Assert.True(info.OriginInfo.IsLocalFile);
+        Assert.Equal(overridePath, info.EntryPath);
+        Assert.Equal(3u, info.Size);
+        Assert.Equal(encrypted, info.Encrypted);
     }
 
     [Fact]
-    public void FromFile_Null_Throws()
+    public void FromFile_FileDoesNotExist_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>((Action)(() => 
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("test.xml"), "test.xml", true)));
+    }
+
+    [Fact]
+    public void FromFile_FileInfoNull_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => MegDataEntryBuilderInfo.FromFile(null!, "random"));
+    }
+
+    [Fact]
+    public void FromFile_InvalidEntryPath_ThrowsArgumentException()
+    {
+        using (var w = FileSystem.File.CreateText("test.xml"))
+            w.Write("123");
+        Assert.Throws<ArgumentNullException>(() => 
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("test.xml"), null!));
+        Assert.Throws<ArgumentException>(() =>
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("test.xml"), string.Empty));
     }
 
     #endregion
@@ -148,59 +173,58 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     public void FromEntry_NullArgs()
     {
         FileSystem.File.Create("file.meg");
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
-        var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
+        var entry = MegDataEntryTest.CreateEntry("test.xml", default, 123, 321, true);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+       
         Assert.Throws<ArgumentNullException>(() => MegDataEntryBuilderInfo.FromEntry(null!, entry));
         Assert.Throws<ArgumentNullException>(() => MegDataEntryBuilderInfo.FromEntry(meg, null!));
     }
 
     [Fact]
-    public void FromEntry_OriginIsLocalFile()
+    public void FromEntry_EntryNotInMeg_ThrowsArgumentException()
     {
         FileSystem.File.Create("file.meg");
         var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
-        var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
+        var entry = MegDataEntryTest.CreateEntry("test.xml", default, 123, 321, true);
 
-        var info = MegDataEntryBuilderInfo.FromEntry(meg, entry);
-
-        Assert.True(info.OriginInfo.IsEntryReference);
-        Assert.Equal("path", info.EntryPath);
-        Assert.Equal(321u, info.Size);
-        Assert.Equal(123u, info.OriginInfo.MegFileLocation!.DataEntry.Location.Offset);
-        Assert.True(info.Encrypted);
-    }
-
-    [Fact]
-    public void FromEntry_OriginIsEntryReference_OverridesProperties()
-    {
-        FileSystem.File.Create("file.meg");
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
-        var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
-
-        var info = MegDataEntryBuilderInfo.FromEntry(meg, entry, "PATH", false);
-
-        Assert.True(info.OriginInfo.IsEntryReference);
-        Assert.Equal("PATH", info.EntryPath);
-        Assert.Equal(321u, info.Size); // Value 999 must be ignored
-        Assert.Equal(123u, info.OriginInfo.MegFileLocation!.DataEntry.Location.Offset);
-        Assert.False(info.Encrypted);
+        Assert.Throws<ArgumentException>(() => MegDataEntryBuilderInfo.FromEntry(meg, entry));
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("    ")]
-    public void FromEntry_OriginIsEntryReference_OverridesProperties_PathEmpty_Throws(string path)
+    [InlineData(null, true)]
+    [InlineData(null, false)]
+    [InlineData("TEST.XML", true)]
+    [InlineData("TEST.XML", false)]
+    [InlineData("    ", false)]
+    public void FromEntry_SetsProperties(string? overridePath, bool encrypted)
     {
         FileSystem.File.Create("file.meg");
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var entry = MegDataEntryTest.CreateEntry("test.xml", default, 123, 321, true);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        
+        var info = MegDataEntryBuilderInfo.FromEntry(meg, entry, overridePath, encrypted);
+
+        Assert.True(info.OriginInfo.IsEntryReference);
+        Assert.Equal(overridePath ?? "test.xml", info.EntryPath);
+        Assert.Equal(321u, info.Size);
+        Assert.Equal(123u, info.OriginInfo.MegFileLocation!.DataEntry.Location.Offset);
+        Assert.Equal(encrypted, info.Encrypted);
+    }
+
+    [Fact]
+    public void FromEntry_OriginIsEntryReference_EntryPathEmpty_ThrowsArgumentException()
+    {
+        FileSystem.File.Create("file.meg");
         var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
-        Assert.Throws<ArgumentException>(() => MegDataEntryBuilderInfo.FromEntry(meg, entry, path, false));
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        
+        Assert.Throws<ArgumentException>(() =>
+            MegDataEntryBuilderInfo.FromEntry(meg, entry, string.Empty, false));
     }
 
     #endregion
 
     #region Factory FromEntryReference
-
 
     [Fact]
     public void FromEntryReference_NullArgs()
@@ -209,47 +233,113 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     }
 
     [Fact]
-    public void FromEntryReference_OriginIsLocalFile()
+    public void FromEntryReference_EntryNotInMeg_ThrowsArgumentException()
     {
         FileSystem.File.Create("file.meg");
         var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
-        var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
+        var entry = MegDataEntryTest.CreateEntry("test.xml", default, 123, 321, true);
 
-        var info = MegDataEntryBuilderInfo.FromEntryReference(new MegDataEntryLocationReference(meg, entry));
-
-        Assert.True(info.OriginInfo.IsEntryReference);
-        Assert.Equal("path", info.EntryPath);
-        Assert.Equal(321u, info.Size);
-        Assert.Equal(123u, info.OriginInfo.MegFileLocation!.DataEntry.Location.Offset);
-        Assert.True(info.Encrypted);
-    }
-
-    [Fact]
-    public void FromEntryReference_OriginIsEntryReference_OverridesProperties()
-    {
-        FileSystem.File.Create("file.meg");
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
-        var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
-
-        var info = MegDataEntryBuilderInfo.FromEntryReference(new MegDataEntryLocationReference(meg, entry), "PATH", false);
-
-        Assert.True(info.OriginInfo.IsEntryReference);
-        Assert.Equal("PATH", info.EntryPath);
-        Assert.Equal(321u, info.Size); // Value 999 must be ignored
-        Assert.Equal(123u, info.OriginInfo.MegFileLocation!.DataEntry.Location.Offset);
-        Assert.False(info.Encrypted);
+        Assert.Throws<ArgumentException>(() => 
+            MegDataEntryBuilderInfo.FromEntryReference(new MegDataEntryLocationReference(meg, entry)));
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("    ")]
-    public void FromEntryReference_OriginIsEntryReference_OverridesProperties_PathEmpty_Throws(string path)
+    [InlineData(null, true)]
+    [InlineData(null, false)]
+    [InlineData("TEST.XML", true)]
+    [InlineData("TEST.XML", false)]
+    [InlineData("    ", false)]
+    public void FromEntryReference_OriginIsLocalFile(string? overridePath, bool encrypted)
     {
         FileSystem.File.Create("file.meg");
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var entry = MegDataEntryTest.CreateEntry("test.xml", default, 123, 321, true);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        
+        var info = MegDataEntryBuilderInfo.FromEntryReference(new MegDataEntryLocationReference(meg, entry), overridePath, encrypted);
+
+        Assert.True(info.OriginInfo.IsEntryReference);
+        Assert.Equal(overridePath ?? "test.xml", info.EntryPath);
+        Assert.Equal(321u, info.Size);
+        Assert.Equal(123u, info.OriginInfo.MegFileLocation!.DataEntry.Location.Offset);
+        Assert.Equal(encrypted, info.Encrypted);
+    }
+
+    [Fact]
+    public void FromEntryReference_OriginIsEntryReference_EntryPathEmpty_ThrowsArgumentException()
+    {
+        FileSystem.File.Create("file.meg");
         var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
         Assert.Throws<ArgumentException>(() => MegDataEntryBuilderInfo.FromEntryReference(
-            new MegDataEntryLocationReference(meg, entry), path, false));
+            new MegDataEntryLocationReference(meg, entry), string.Empty, false));
+    }
+
+    #endregion
+
+    #region RefreshSize
+
+    [Fact]
+    public void RefreshSize_FromMegEntry()
+    {
+        FileSystem.File.Create("file.meg");
+        var entry = MegDataEntryTest.CreateEntry("path", default, 123, 321, true);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+
+        var info = MegDataEntryBuilderInfo.FromEntryReference(new MegDataEntryLocationReference(meg, entry));
+
+        Assert.Equal(321u, info.Size);
+
+        info.RefreshSize();
+
+        Assert.Equal(321u, info.Size);
+    }
+
+    [Fact]
+    public void RefreshSize_FromFile_SizeUpdates()
+    {
+        using (var w = FileSystem.File.CreateText("test.xml"))
+            w.Write("123");
+
+        var info = MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("test.xml"), "test.xml");
+
+        Assert.Equal(3u, info.Size);
+
+        using (var w = FileSystem.File.CreateText("test.xml"))
+            w.Write("");
+
+        info.RefreshSize();
+
+        Assert.Equal(0u, info.Size);
+    }
+
+    [Fact]
+    public void RefreshSize_FromFile_FileDeleted_ThrowsFileNotFoundException()
+    {
+        using (var w = FileSystem.File.CreateText("test.xml"))
+            w.Write("123");
+
+        var info = MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("test.xml"), "test.xml");
+
+        Assert.Equal(3u, info.Size);
+
+        FileSystem.File.Delete("test.xml");
+
+        Assert.Throws<FileNotFoundException>(() => info.RefreshSize());
+    }
+
+    [Fact]
+    public void RefreshSize_FileTooLarge_ThrowsMegEntrySizeException()
+    {
+        var mockFileInfo = new MegTestConstants.LargeFileInfo("large_file.bin", uint.MaxValue);
+        var info = MegDataEntryBuilderInfo.FromFile(mockFileInfo, "path");
+        
+        Assert.Equal(uint.MaxValue, info.Size);
+
+        info.RefreshSize();
+
+        mockFileInfo.Length = (long)uint.MaxValue + 1;
+
+        Assert.Throws<MegEntrySizeException>(() => info.RefreshSize());
     }
 
     #endregion

@@ -17,9 +17,9 @@ public class EntryNotInMegExceptionTest : CommonMegTestBase
 
         var megFileA = new MegFile(new MegArchive([]), new MegFileInformation("a.meg", MegFileVersion.V1),
             ServiceProvider);
-        var entry = MegDataEntryTest.CreateEntry("path");
+        var entry = MegDataEntryTest.CreateEntry("text.xml");
 
         var e = new EntryNotInMegException(new MegDataEntryLocationReference(megFileA, entry));
-        Assert.Exception(e, message: $"The file \"{entry.Path}\" is not contained in the MEG archive \"{megFileA.FilePath}\"");
+        Assert.Exception(e, message: $"The entry \"{entry.Path}\" is not contained in the MEG archive \"{megFileA.FilePath}\"");
     }
 }

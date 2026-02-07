@@ -9,7 +9,7 @@ public static class MegThrowHelperTest
     {
         var e = Record.Exception(() => MegThrowHelper.ThrowDataEntryExceeds4GigabyteException("filePath"));
         Assert.IsType<MegEntrySizeException>(e, true);
-        Assert.Equal("Files larger than 4GB are not supported in MEG archives. File: 'filePath'", e.Message);
+        Assert.Equal("Entries larger than 4GB are not supported in MEG archives. File: 'filePath'", e.Message);
     }
 
     [Fact]

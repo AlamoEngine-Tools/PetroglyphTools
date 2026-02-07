@@ -70,7 +70,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
     }
 
     private MegFileBinaryInformation GetBinaryInformation(
-        IEnumerable<MegDataEntryBuilderInfo> builderEntries,
+        IEnumerable<MegDataEntryBuilderInfo> entries,
         IMegSizeCalculator calculator)
     {
         var encryptMeg = false;
@@ -79,15 +79,15 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         var checksumService = Services.GetRequiredService<ICrc32HashingService>();
         var megEncoding = MegFileConstants.MegDataEntryPathEncoding;
 
-        foreach (var builderInfo in builderEntries)
+        foreach (var entry in entries)
         {
-            calculator.AddEntry(builderInfo);
+            entryInfoList.Add(CreateEntryBinaryInformation(entry, megEncoding, checksumService));
+            calculator.AddEntry(entry);
             if (calculator.CurrentSize > MaxFileSize)
                 throw new MegSizeException("The to be constructed MEG file is too large.");
 
-            if (builderInfo.Encrypted)
+            if (entry.Encrypted)
                 encryptMeg = true;
-            entryInfoList.Add(CreateEntryBinaryInformation(builderInfo, megEncoding, checksumService));
         }
 
         checked

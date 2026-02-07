@@ -89,6 +89,23 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
     }
 
     [Fact]
+    public void ReadBinary_UnsortedEntryContent()
+    {
+        var unorderedMeg = TestingHelpers.GetEmbeddedResource(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_out_of_order.meg");
+        var megMetadata = _binaryReader.ReadBinary(unorderedMeg);
+        Assert.Equal(2, megMetadata.FileNameTable.Count);
+        Assert.Equal(2, megMetadata.FileTable.Count);
+        Assert.Equal(2, megMetadata.Header.FileNumber);
+
+        Assert.Equal("FileB.txt", megMetadata.FileNameTable[0].FileName);
+        Assert.Equal("FileA.txt", megMetadata.FileNameTable[1].FileName);
+
+        // Content of first entry starts after content of second entry.
+        Assert.True(megMetadata.FileTable[0].FileOffset > megMetadata.FileTable[1].FileOffset);
+    }
+
+
+    [Fact]
     public void ReadBinary_TwoFiles2()
     {
         var megMetadata = _binaryReader.ReadBinary(new MemoryStream(MegTestConstants.ContentMegFileV1));

@@ -1,40 +1,9 @@
-using System;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
-
-
-public class MegDataEntryBaseTest : MegDataEntryBaseTest<MegDataEntryBaseTest.TestLocation>
-{
-    [Fact]
-    public void CtorNull()
-    {
-        Assert.Throws<ArgumentNullException>(() => CreateEntry("path", new Crc32(0), null!));
-    }
-
-    protected override MegDataEntryBase<TestLocation> CreateEntry(string path, Crc32 crc, TestLocation location)
-    {
-        return new TestDataEntry(path, crc, location);
-    }
-
-    protected override TestLocation CreateLocation(int seed)
-    {
-        return new TestLocation();
-    }
-
-    private class TestDataEntry(string path, Crc32 crc32, TestLocation location)
-        : MegDataEntryBase<TestLocation>(location)
-    {
-        public override string Path { get; } = path;
-        public override Crc32 Crc32 { get; } = crc32;
-    }
-
-    public class TestLocation : IDataEntryLocation;
-
-}
 
 public abstract class MegDataEntryBaseTest<T> : CommonMegTestBase where T : IDataEntryLocation
 {

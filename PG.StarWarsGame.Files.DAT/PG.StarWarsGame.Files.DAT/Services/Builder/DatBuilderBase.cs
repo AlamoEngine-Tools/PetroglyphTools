@@ -48,7 +48,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     /// <summary>
     /// Initializes a new instance of the <see cref="DatBuilderBase"/> class.
     /// </summary>
-    /// <param name="overrideKind"></param>
+    /// <param name="overrideKind">Specifies how the build treats duplicate entries.</param>
     /// <param name="services">The service provider.</param>
     protected DatBuilderBase(BuilderOverrideKind overrideKind, IServiceProvider services) : base(services)
     {

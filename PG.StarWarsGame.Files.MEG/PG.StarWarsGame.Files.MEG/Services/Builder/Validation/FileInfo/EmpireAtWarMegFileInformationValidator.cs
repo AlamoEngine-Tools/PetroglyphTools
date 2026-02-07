@@ -8,14 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-
-<<<<<<< TODO: Unmerged change from project 'PG.StarWarsGame.Files.MEG (netstandard2.0)', Before:
-#if NETSTANDARD2_0
-=======
-using PG.StarWarsGame.Files.MEG.Binary.Size;
-
-#if NETSTANDARD2_0
->>>>>>> After
 using PG.StarWarsGame.Files.MEG.Binary.Size;
 #if NETSTANDARD2_0
 using AnakinRaW.CommonUtilities.FileSystem;
@@ -66,7 +58,8 @@ public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInform
     /// </list>
     /// </remarks>
     /// <inheritdoc />
-    protected override MegFileInfoValidationResult ValidateCore(MegFileInformation fileInformation, IReadOnlyCollection<MegDataEntryBuilderInfo> dataEntries)
+    protected override MegFileInfoValidationResult ValidateCore(MegFileInformation fileInformation,
+        IReadOnlyCollection<MegDataEntryBuilderInfo> dataEntries)
     {
         if (fileInformation.FileVersion != MegFileVersion.V1)
             return new MegFileInfoValidationResult(false, "File version must be V1.");
@@ -81,5 +74,4 @@ public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInform
             ? new MegFileInfoValidationResult(false, $"File name is not valid: '{result}'")
             : MegFileInfoValidationResult.Valid;
     }
-
 }

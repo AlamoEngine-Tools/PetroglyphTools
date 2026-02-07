@@ -35,7 +35,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     [Fact]
     public void GetFileData_OriginInfo_Throws_FileNotFound()
     {
-       var originInfo = new MegDataEntryOriginInfo("test.txt");
+       var originInfo = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.txt"));
         Assert.Throws<FileNotFoundException>(() => _streamFactory.GetStream(originInfo));
     }
 
@@ -44,7 +44,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     {
         FileSystem.Initialize().WithFile("test.txt").Which(m => m.HasBytesContent([1,2,3]));
 
-        var originInfo = new MegDataEntryOriginInfo("test.txt");
+        var originInfo = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.txt"));
         var stream = _streamFactory.GetStream(originInfo);
         Assert.Equal(3, stream.Length);
 

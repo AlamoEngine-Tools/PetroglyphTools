@@ -54,9 +54,9 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegDa
 
     /// <inheritdoc/>
     /// <value>
-    /// <seealso cref="BinaryMegEntryValidator"/> by default.
+    /// <seealso cref="BinaryMegDataEntryValidator"/> by default.
     /// </value>
-    public virtual IMegDataEntryValidator DataEntryValidator { get; } = new BinaryMegEntryValidator();
+    public virtual IMegDataEntryValidator DataEntryValidator { get; } = new BinaryMegDataEntryValidator();
 
     /// <inheritdoc/>
     /// <value>

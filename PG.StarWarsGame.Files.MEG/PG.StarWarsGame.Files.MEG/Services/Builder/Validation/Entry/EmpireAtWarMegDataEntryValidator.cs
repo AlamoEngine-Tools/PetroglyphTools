@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// <summary>
 /// Represents a validator for MEG data entries used when building MEG files for Petroglyph Star Wars games.
 /// </summary>
-public sealed class EmpireAtWarMegDataEntryValidator : BinaryMegEntryValidator
+public sealed class EmpireAtWarMegDataEntryValidator : BinaryMegDataEntryValidator
 {
     // Slashes are not allowed, cause the engine normalized them into back-slashes.
     // Whitespaces (space, tab, new line) *technically* are allowed but there are scenarios where

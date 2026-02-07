@@ -10,7 +10,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 /// Represents a validator for MEG data entries that validates data entries
 /// to be compliant with the binary specifications of MEG files
 /// </summary>
-public class BinaryMegEntryValidator : IMegDataEntryValidator
+public class BinaryMegDataEntryValidator : IMegDataEntryValidator
 {
     /// <summary>
     /// Gets the maximum allowed size, in bytes, for a MEG data entry.

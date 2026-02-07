@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using PG.Commons.Hashing;
-using PG.Commons.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
@@ -47,13 +46,6 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
         
         var metadataSize = endPosition - startPosition;
         var actualMegSize = byteStream.Length - startPosition;
-
-        // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
-        // E.g, a MEG with one entry being exactly 4GB large.
-        // In this case, the Archive itself is larger (Metadata + 4GB),
-        // but the Metadata would still be valid since each part is within the uint32 range. 
-        if (actualMegSize > uint.MaxValue)
-            MegThrowHelper.ThrowMegExceeds4GigabyteException(byteStream.TryGetFilePath());
         
         Validator.Validate(metadata, metadataSize, actualMegSize);
 

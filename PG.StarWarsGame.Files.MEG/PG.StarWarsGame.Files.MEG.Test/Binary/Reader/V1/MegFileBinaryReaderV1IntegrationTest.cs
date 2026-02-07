@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +5,7 @@ using System.Text;
 using AnakinRaW.CommonUtilities.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using Xunit;
 
@@ -102,12 +102,15 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
     public static IEnumerable<object[]> MegFilesBetween2GBAnd4GB()
     {
         yield return [new[] { ("FILE1.DAT", (long)OneAndHalfGB), ("FILE2.DAT", OneGB) }];
-        yield return [new[] { ("LARGEFILE.DAT", (long)ThreeGB) }];
+        yield return [new[] { ("FILE1.DAT", (long)ThreeGB) }];
+        yield return [new[] { ("FILE1.DAT", (long)ThreeGB), ("FILE2.DAT", TwoGB) }];
+        // FILE1 Size: uint.MaxValue - 70 means FILE2 starts exactly at uint.MaxValue
+        yield return [new[] { ("FILE1.DAT", (long)uint.MaxValue - 70), ("FILE2.DAT", uint.MaxValue) }];
     }
 
     [Theory]
     [MemberData(nameof(MegFilesBetween2GBAnd4GB))]
-    public void ReadBinary_MegFileBetween2GBAnd4GB_Succeeds((string fileName, long fileSize)[] files)
+    public void ReadBinary_LargeButValidToReadMegs((string fileName, long fileSize)[] files)
     {
         var entries = files.Select(f => new MegFileEntry(
             f.fileName,
@@ -124,28 +127,141 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
         Assert.Equal(files.Length, megMetadata.Header.FileNumber);
     }
 
-    public static IEnumerable<object[]> MegFilesGreaterThan4GB()
+    [Fact]
+    public void ReadBinary_OutOfOrderFileContents_Succeeds()
     {
-        yield return [new[] { ("FILE1.DAT", (long)ThreeGB), ("FILE2.DAT", TwoGB) }];
+        // Create MEG with records sorted by CRC (B, A)
+        // But file contents will be A then B (out of record order)
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms);
+
+        // Header
+        writer.Write(2u);
+        writer.Write(2u);
+
+        // Filename Table
+        writer.Write((ushort)5);
+        writer.Write("B.TXT"u8.ToArray());
+        writer.Write((ushort)5);
+        writer.Write("A.TXT"u8.ToArray());
+
+        var metadataSize = (uint)ms.Position + 20 * 2;
+
+        // Record for B (CRC 1)
+        writer.Write(1u); // CRC
+        writer.Write(0u); // Index
+        writer.Write(20u); // Size
+        writer.Write(metadataSize + 10u); // Offset (after A)
+        writer.Write(0u); // Name Index
+
+        // Record for A (CRC 2)
+        writer.Write(2u); // CRC
+        writer.Write(1u); // Index
+        writer.Write(10u); // Size
+        writer.Write(metadataSize); // Offset (before B)
+        writer.Write(1u); // Name Index
+
+        var megData = ms.ToArray();
+        var fakeLength = megData.Length + 30;
+        using var stream = new LargeMegMemoryStream(megData, fakeLength);
+
+        var megMetadata = _binaryReader.ReadBinary(stream);
+        Assert.Equal(2, megMetadata.FileTable.Count);
+    }
+
+
+    // The following test cases produce invalid Metadata due to uint overflows
+    public static IEnumerable<object[]> MegFilesGreaterThan4GB_Corrupt()
+    {
         yield return [new[] { ("LARGEFILE.DAT", FiveGB) }];
+
+        // Two files, where the second one starts at an offset that overflows uint32.
+        // File 1: 3GB
+        // File 2: 2GB
+        // Metadata: ~100 bytes
+        // Expected File 2 Offset: ~3GB + 100 bytes (fits in uint32)
+        // Expected Archive Size: ~5GB + 100 bytes:
+        // File 3: 1GB
+        // Expected File 3 Offset: ~5GB + 100 bytes -> overflows to ~1GB + 100 bytes.
+        yield return [new[]
+        {
+            ("FILE1.DAT", (long)ThreeGB), 
+            ("FILE2.DAT", TwoGB),
+            ("FILE3.DAT", OneGB)
+        }];
+
+        // 5 files of 1GB each.
+        yield return [Enumerable.Range(1, 5).Select(i => ($"FILE{i}.DAT", (long)OneGB)).ToArray()];
+
+        // Case where offsets wrap around but technically look "ordered" if not careful.
+        // File 1: 4GB - 200 bytes
+        // File 2: 300 bytes
+        // Total: 4GB + 100 bytes
+        // Offset 1: ~100 bytes
+        // Offset 2: (~100 + 4GB - 200) = 4GB - 100 bytes (fits in uint32)
+        // Offset 3: (4GB - 100 + 300) = 4GB + 200 -> 200 bytes (wraps!)
+        yield return [new[]
+        {
+            ("F1.DAT", 4L * 1024 * 1024 * 1024 - 200),
+            ("F2.DAT", 300L),
+            ("F3.DAT", 100L)
+        }];
     }
 
     [Theory]
-    [MemberData(nameof(MegFilesGreaterThan4GB))]
-    public void ReadBinary_MegFileGreaterThan4GB_ThrowsMegSizeException((string fileName, long fileSize)[] files)
+    [MemberData(nameof(MegFilesGreaterThan4GB_Corrupt))]
+    public void ReadBinary_MegFileGreaterThan4GB_CorruptMetadata_ThrowsBinaryCorruptedException((string fileName, long fileSize)[] input)
     {
-        var entries = files.Select(f => new MegFileEntry(
+        var entries = input.Select(f => new MegFileEntry(
             f.fileName,
             f.fileSize,
             _crc32HashingService.GetCrc32(f.fileName, Encoding.ASCII)
         )).ToArray();
 
         var megData = CreateMeg(entries);
-        var fakeLength = megData.Length + files.Sum(f => f.fileSize);
+        var fakeLength = megData.Length + input.Sum(f => f.fileSize);
         using var stream = new LargeMegMemoryStream(megData, fakeLength);
 
-        var exception = Assert.Throws<MegSizeException>(() => _binaryReader.ReadBinary(stream));
-        Assert.Contains("4GB", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Throws<BinaryCorruptedException>(() => _binaryReader.ReadBinary(stream));
+    }
+
+    [Fact]
+    public void ReadBinary_GapsBetweenFiles_ThrowsBinaryCorruptedException()
+    {
+        var entries = new[]
+        {
+            new MegFileEntry("A.TXT", 10, new Crc32(1)),
+        };
+
+        var megData = CreateMeg(entries);
+        var fakeLength = megData.Length + 10 + 1; // 1 byte gap
+        using var stream = new LargeMegMemoryStream(megData, fakeLength);
+
+        Assert.Throws<BinaryCorruptedException>(() => _binaryReader.ReadBinary(stream));
+    }
+
+    [Fact]
+    public void ReadBinary_OverlappingFiles_ThrowsBinaryCorruptedException()
+    {
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms);
+        writer.Write(2u);
+        writer.Write(2u);
+        writer.Write((ushort)5); writer.Write("A.TXT"u8.ToArray());
+        writer.Write((ushort)5); writer.Write("B.TXT"u8.ToArray());
+
+        var metadataSize = (uint)ms.Position + 20 * 2;
+        
+        // Record for A
+        writer.Write(1u); writer.Write(0u); writer.Write(10u); writer.Write(metadataSize); writer.Write(0u);
+        // Record for B - overlaps with A
+        writer.Write(2u); writer.Write(1u); writer.Write(10u); writer.Write(metadataSize + 5u); writer.Write(1u);
+
+        var megData = ms.ToArray();
+        var fakeLength = megData.Length + 15; // Total size if A+B overlap by 5
+        using var stream = new LargeMegMemoryStream(megData, fakeLength);
+
+        Assert.Throws<BinaryCorruptedException>(() => _binaryReader.ReadBinary(stream));
     }
     
     private static byte[] CreateMeg(params MegFileEntry[] files)

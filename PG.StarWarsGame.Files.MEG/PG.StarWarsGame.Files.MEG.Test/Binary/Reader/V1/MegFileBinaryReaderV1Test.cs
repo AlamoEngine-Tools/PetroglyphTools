@@ -25,7 +25,7 @@ public class MegFileBinaryReaderV1Test : MegFileBinaryReaderBaseTest
 
     protected override byte[] GetValidData()
     {
-        // Empty file
+        // Empty MEG
         return
         [
             0, 0, 0, 0,

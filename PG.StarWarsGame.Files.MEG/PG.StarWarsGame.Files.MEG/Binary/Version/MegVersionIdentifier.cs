@@ -177,7 +177,6 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
 
                 if (CheckFirstAndLastRecord(reader, dataStart, numFiles, &FileRecordIsV2))
                     return MegFileVersion.V2;
-                throw new BinaryCorruptedException("Unrecognized .MEG file version.");
             }
 
             throw new BinaryCorruptedException("Unrecognized .MEG file version.");

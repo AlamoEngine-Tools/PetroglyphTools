@@ -54,13 +54,7 @@ internal abstract class MegFileBinaryReaderBase<TMegMetadata, TMegHeader, TMegFi
         // but the Metadata would still be valid since each part is within the uint32 range. 
         if (actualMegSize > uint.MaxValue)
             MegThrowHelper.ThrowMegExceeds4GigabyteException(byteStream.TryGetFilePath());
-
-        if (metadataSize <= 0 || actualMegSize <= 0)
-            throw new BinaryCorruptedException("A MEG file cannot be empty (0 bytes).");
-
-        if (actualMegSize < metadataSize)
-            throw new BinaryCorruptedException("Reading the ");
-
+        
         Validator.Validate(metadata, metadataSize, actualMegSize);
 
         return metadata;

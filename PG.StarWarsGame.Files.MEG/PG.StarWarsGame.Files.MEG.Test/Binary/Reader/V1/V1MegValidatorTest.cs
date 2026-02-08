@@ -57,8 +57,8 @@ public class V1MegValidatorTest : CommonMegTestBase
         });
         var fileTable = new MegFileTable(new List<MegFileTableRecord>
         {
-            new(new Crc32(0), 0, 3, 0, 0 ),
-            new(new Crc32(0), 1, 5, 0, 1 )
+            new(new Crc32(0), 0, 3, 54, 0 ),
+            new(new Crc32(0), 1, 5, 54 + 3, 1 )
         });
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
@@ -114,46 +114,6 @@ public class V1MegValidatorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void Validate_UnsortedCrc32_ThrowsBinaryCorruptedException()
-    {
-        var header = new MegHeader(2, 2);
-        var nameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>
-        {
-            MegFileNameTableRecordTest.CreateNameRecord("A"),
-            MegFileNameTableRecordTest.CreateNameRecord("B")
-        });
-        var fileTable = new MegFileTable(new List<MegFileTableRecord>
-        {
-            new(new Crc32(2), 0, 10, 54, 0),
-            new(new Crc32(1), 1, 10, 64, 1)
-        });
-        var metadata = new MegMetadata(header, nameTable, fileTable);
-
-        var exception = Assert.Throws<BinaryCorruptedException>(() => _validator.Validate(metadata, metadata.Size, metadata.Size + 20));
-        Assert.Equal("The MEG file table is not sorted by CRC32.", exception.Message);
-    }
-
-    [Fact]
-    public void Validate_MismatchedIndex_ThrowsBinaryCorruptedException()
-    {
-        var header = new MegHeader(2, 2);
-        var nameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>
-        {
-            MegFileNameTableRecordTest.CreateNameRecord("A"),
-            MegFileNameTableRecordTest.CreateNameRecord("B")
-        });
-        var fileTable = new MegFileTable(new List<MegFileTableRecord>
-        {
-            new(new Crc32(1), 1, 10, 54, 0),
-            new(new Crc32(2), 1, 10, 64, 1)
-        });
-        var metadata = new MegMetadata(header, nameTable, fileTable);
-
-        var exception = Assert.Throws<BinaryCorruptedException>(() => _validator.Validate(metadata, metadata.Size, metadata.Size + 20));
-        Assert.Equal("The file record at index 0 has a mismatched index property: 1.", exception.Message);
-    }
-
-    [Fact]
     public void Validate_FileNameIndexOutOfRange_ThrowsBinaryCorruptedException()
     {
         var header = new MegHeader(1, 1);
@@ -168,7 +128,7 @@ public class V1MegValidatorTest : CommonMegTestBase
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
         var exception = Assert.Throws<BinaryCorruptedException>(() => _validator.Validate(metadata, metadata.Size, metadata.Size + 10));
-        Assert.Equal("The file record at index 0 has an out-of-range filename index: 1.", exception.Message);
+        Assert.Equal("File record (CRC: 1) has an out-of-range filename index: 1.", exception.Message);
     }
 
     [Fact]
@@ -188,7 +148,7 @@ public class V1MegValidatorTest : CommonMegTestBase
         var metadata = new MegMetadata(header, nameTable, fileTable);
 
         var exception = Assert.Throws<BinaryCorruptedException>(() => _validator.Validate(metadata, metadata.Size, metadata.Size + 20));
-        Assert.Equal("The file record at index 1 has a duplicate filename index: 0.", exception.Message);
+        Assert.Equal("File record (CRC: 2) has a duplicate filename index: 0.", exception.Message);
     }
 
     [Theory]
@@ -235,5 +195,51 @@ public class V1MegValidatorTest : CommonMegTestBase
         var exception = Assert.Throws<BinaryCorruptedException>(() => 
             _validator.Validate(metadata, 31, 40));
         Assert.Equal("The size of the MEG file does not match the expected file size.", exception.Message);
+    }
+    [Fact]
+    public void Validate_FileOffsetInMetadata_ThrowsBinaryCorruptedException()
+    {
+        var header = new MegHeader(1, 1);
+        var nameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>
+        {
+            MegFileNameTableRecordTest.CreateNameRecord("A")
+        });
+
+        // Metadata size: 8 + (2 + 1) + 20 = 31
+        // File offset set to 30 (within metadata)
+        var fileTable = new MegFileTable(new List<MegFileTableRecord>
+        {
+            new(new Crc32(0), 0, 10, 30, 0)
+        });
+        var metadata = new MegMetadata(header, nameTable, fileTable);
+
+        var exception = Assert.Throws<BinaryCorruptedException>(() =>
+            _validator.Validate(metadata, 31, 41));
+        Assert.Equal("The content of file record (CRC: 0) starts within the metadata.", exception.Message);
+    }
+
+    [Fact]
+    public void Validate_OverlappingFiles_ThrowsBinaryCorruptedException()
+    {
+        var header = new MegHeader(2, 2);
+        var nameTable = new BinaryTable<MegFileNameTableRecord>(new List<MegFileNameTableRecord>
+        {
+            MegFileNameTableRecordTest.CreateNameRecord("A"),
+            MegFileNameTableRecordTest.CreateNameRecord("B")
+        });
+
+        // Metadata size: 8 + (2 + 1) + (2 + 1) + 2 * 20 = 54
+        // File A: offset 54, size 10
+        // File B: offset 60, size 10 -> overlaps with A
+        var fileTable = new MegFileTable(new List<MegFileTableRecord>
+        {
+            new(new Crc32(1), 0, 10, 54, 0),
+            new(new Crc32(2), 1, 10, 60, 1)
+        });
+        var metadata = new MegMetadata(header, nameTable, fileTable);
+
+        var exception = Assert.Throws<BinaryCorruptedException>(() =>
+            _validator.Validate(metadata, 54, 74));
+        Assert.Equal("The content of file record (CRC: 2) overlaps with the content of a previous record.", exception.Message);
     }
 }

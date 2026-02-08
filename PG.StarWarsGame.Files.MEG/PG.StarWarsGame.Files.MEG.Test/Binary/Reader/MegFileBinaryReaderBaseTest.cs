@@ -120,7 +120,7 @@ public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
             10, 0, 0, 0,
             100, 0, 0, 0,
             0, 0, 0, 0,
-            
+
             3, 0, 0, 0, // Unsorted
             1, 0, 0, 0,
             20, 0, 0, 0,
@@ -130,8 +130,8 @@ public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
 
         var header = new MegHeader(2, 2);
         var binaryReader = new PetroglyphBinaryReader(new MemoryStream(data), false);
-        
-        var exception = Assert.Throws<BinaryCorruptedException>(() => 
+
+        var exception = Assert.Throws<BinaryCorruptedException>(() =>
         {
             var megReader = (dynamic)CreateMegBinaryReader();
             megReader.BuildFileTable(binaryReader, header);
@@ -149,7 +149,7 @@ public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
             10, 0, 0, 0,
             100, 0, 0, 0,
             0, 0, 0, 0,
-            
+
             2, 0, 0, 0,
             5, 0, 0, 0, // Should be 1
             20, 0, 0, 0,
@@ -159,8 +159,8 @@ public abstract class MegFileBinaryReaderBaseTest : CommonMegTestBase
 
         var header = new MegHeader(2, 2);
         var binaryReader = new PetroglyphBinaryReader(new MemoryStream(data), false);
-        
-        var exception = Assert.Throws<BinaryCorruptedException>(() => 
+
+        var exception = Assert.Throws<BinaryCorruptedException>(() =>
         {
             var megReader = (dynamic)CreateMegBinaryReader();
             megReader.BuildFileTable(binaryReader, header);

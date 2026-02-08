@@ -34,7 +34,7 @@ public class V1MegValidatorIntegrationTest : CommonMegTestBase
         var data = new MemoryStream(invalidMegData);
 
         var exception = Assert.Throws<BinaryCorruptedException>(() => _binaryReader.ReadBinary(data));
-        Assert.Contains("does not match the expected file size", exception.Message);
+        Assert.Contains("The size of the MEG file does not match the expected file size.", exception.Message);
     }
 
     [Fact]
@@ -43,35 +43,35 @@ public class V1MegValidatorIntegrationTest : CommonMegTestBase
         var invalidMegData = CreateMegWithTruncatedData();
         var data = new MemoryStream(invalidMegData);
 
+        // We use the binary reader here, which reads the metadata and then validates the whole MEG file.
+        // In case of truncated data, the validator will notice that actual stream length is less than expected.
         var exception = Assert.Throws<BinaryCorruptedException>(() => _binaryReader.ReadBinary(data));
         Assert.Contains("The size of the MEG file does not match the expected file size.", exception.Message);
     }
+
 
     private static byte[] CreateMegWithIncorrectFileSize()
     {
         var megData = new byte[MegTestConstants.ContentMegFileV1.Length];
         Array.Copy(MegTestConstants.ContentMegFileV1, megData, megData.Length);
 
-        const int fileSizeOffset = 74;
-        megData[fileSizeOffset] = 0xF4;
-        megData[fileSizeOffset + 1] = 0x01;
-        megData[fileSizeOffset + 2] = 0x00;
-        megData[fileSizeOffset + 3] = 0x00;
+        // Modify the size of the second (last) file to be larger (from 483 to 486 bytes).
+        // This causes the total expected size to exceed the actual stream length.
+        const int file2SizeOffset = 94;
+        megData[file2SizeOffset] = 0xE6; 
+        megData[file2SizeOffset + 1] = 0x01;
+        megData[file2SizeOffset + 2] = 0x00;
+        megData[file2SizeOffset + 3] = 0x00;
 
         return megData;
     }
 
     private static byte[] CreateMegWithTruncatedData()
     {
-        var megData = new byte[MegTestConstants.ContentMegFileV1.Length];
+        // Actually truncate the data by removing the last 10 bytes.
+        // The metadata remains unchanged, so the expected size will be larger than the actual stream length.
+        var megData = new byte[MegTestConstants.ContentMegFileV1.Length - 10];
         Array.Copy(MegTestConstants.ContentMegFileV1, megData, megData.Length);
-
-        const int file2SizeOffset = 94;
-        megData[file2SizeOffset] = 0xE9;
-        megData[file2SizeOffset + 1] = 0x14;
-        megData[file2SizeOffset + 2] = 0x00;
-        megData[file2SizeOffset + 3] = 0x00;
-
         return megData;
     }
 }

@@ -1,12 +1,10 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.Linq;
-using PG.Commons.Hashing;
-using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
+using System;
+using System.Linq;
 
 namespace PG.StarWarsGame.Files.MEG.Binary.Validation;
 
@@ -23,36 +21,40 @@ internal abstract class MegBinaryValidator<TMetadata>(IServiceProvider servicePr
         if (actualMetadataSize != metadata.Size)
             throw new BinaryCorruptedException("The size of the metadata does not match the actual read data.");
 
+        var fileTable = metadata.FileTable;
+        var fileNameCount = metadata.FileNameTable.Count;
+
         var totalDataSize = 0L;
-        var fileNameIndices = new bool[metadata.FileNameTable.Count];
-        var lastCrc = default(Crc32);
+        var currentOffset = actualMetadataSize;
+        var fileNameIndices = new bool[fileNameCount];
 
-        for (var i = 0; i < metadata.FileTable.Count; i++)
+        // The reader, which is calling the validation, already assured that
+        // - the file records are sorted by CRC
+        // - the written file record index matches the actual position in the MEG
+
+        foreach (var record in fileTable.OrderBy(r => r.FileOffset))
         {
-            var record = metadata.FileTable[i];
-
             totalDataSize += record.FileSize;
 
-            if (record.Crc32 < lastCrc)
-                throw new BinaryCorruptedException("The MEG file table is not sorted by CRC32.");
+            if (record.FileOffset < actualMetadataSize)
+                throw new BinaryCorruptedException($"The content of file record ({record.Crc32}) starts within the metadata.");
 
-            lastCrc = record.Crc32;
+            if (record.FileOffset < currentOffset)
+                throw new BinaryCorruptedException($"The content of file record ({record.Crc32}) overlaps with the content of a previous record.");
 
-            if (record.Index != i)
-                throw new BinaryCorruptedException($"The file record at index {i} has a mismatched index property: {record.Index}.");
+            currentOffset = record.FileOffset + record.FileSize;
 
-            if (record.FileNameIndex < 0 || record.FileNameIndex >= metadata.FileNameTable.Count)
-                throw new BinaryCorruptedException($"The file record at index {i} has an out-of-range filename index: {record.FileNameIndex}.");
+            var fileNameIndex = record.FileNameIndex;
+            if ((uint)fileNameIndex >= (uint)fileNameCount)
+                throw new BinaryCorruptedException($"File record ({record.Crc32}) has an out-of-range filename index: {fileNameIndex}.");
 
-            if (fileNameIndices[record.FileNameIndex])
-                throw new BinaryCorruptedException($"The file record at index {i} has a duplicate filename index: {record.FileNameIndex}.");
-            
-            fileNameIndices[record.FileNameIndex] = true;
+            if (fileNameIndices[fileNameIndex])
+                throw new BinaryCorruptedException($"File record ({record.Crc32}) has a duplicate filename index: {fileNameIndex}.");
+
+            fileNameIndices[fileNameIndex] = true;
         }
 
-        var expectedArchiveSize = actualMetadataSize + totalDataSize;
-
-        if (expectedArchiveSize != actualFileSize)
+        if (actualMetadataSize + totalDataSize != actualFileSize)
             throw new BinaryCorruptedException("The size of the MEG file does not match the expected file size.");
 
         // We cannot validate whether the file names in file name table actually match the CRC32 of the file record table,

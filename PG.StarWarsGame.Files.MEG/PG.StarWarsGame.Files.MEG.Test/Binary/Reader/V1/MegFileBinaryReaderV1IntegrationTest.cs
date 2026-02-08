@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using AnakinRaW.CommonUtilities.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
@@ -22,12 +21,10 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
     // ReSharper restore InconsistentNaming
 
     private readonly MegFileBinaryReaderV1 _binaryReader;
-    private readonly ICrc32HashingService _crc32HashingService;
 
     public MegFileBinaryReaderV1IntegrationTest()
     {
         _binaryReader = new MegFileBinaryReaderV1(ServiceProvider);
-        _crc32HashingService = ServiceProvider.GetRequiredService<ICrc32HashingService>();
     }
 
     [Fact]
@@ -129,10 +126,10 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
     [MemberData(nameof(MegFilesBetween2GBAnd4GB))]
     public void ReadBinary_LargeButValidToReadMegs((string fileName, long fileSize)[] files)
     {
-        var entries = files.Select(f => new MegFileEntry(
+        var entries = files.Select((f, i) => new MegFileEntry(
             f.fileName,
             f.fileSize,
-            _crc32HashingService.GetCrc32(f.fileName, Encoding.ASCII)
+            new Crc32(i)
         )).ToArray();
 
         var megData = CreateMeg(entries);
@@ -229,10 +226,10 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
     [MemberData(nameof(MegFilesGreaterThan4GB_Corrupt))]
     public void ReadBinary_MegFileGreaterThan4GB_CorruptMetadata_ThrowsBinaryCorruptedException((string fileName, long fileSize)[] input)
     {
-        var entries = input.Select(f => new MegFileEntry(
+        var entries = input.Select((f, i) => new MegFileEntry(
             f.fileName,
             f.fileSize,
-            _crc32HashingService.GetCrc32(f.fileName, Encoding.ASCII)
+            new Crc32(i)
         )).ToArray();
 
         var megData = CreateMeg(entries);

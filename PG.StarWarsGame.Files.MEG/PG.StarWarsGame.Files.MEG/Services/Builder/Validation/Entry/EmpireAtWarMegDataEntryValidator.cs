@@ -40,7 +40,7 @@ public sealed class EmpireAtWarMegDataEntryValidator : BinaryMegDataEntryValidat
     /// <item>Checks that the file path is properly formatted, uppercased, and correctly encoded.</item>
     /// </list>
     /// </remarks>
-    /// <inheritdoc />
+    /// <inheritdoc/>
     protected override MegDataEntryValidationResult ValidateCore(MegDataEntryBuilderInfo dataEntry)
     {
         if (dataEntry.Encrypted)

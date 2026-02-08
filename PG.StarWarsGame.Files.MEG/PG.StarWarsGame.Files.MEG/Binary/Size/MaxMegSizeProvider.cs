@@ -10,8 +10,8 @@ internal static class MaxMegSizeProvider
         {
             MaxMegSizeMode.Binary => new MaxMegSizes
             {
-                MaxEntrySize = MegFileConstants.MegMaxFileSize,
-                MaxFileSize = MegFileConstants.MegMaxEntrySize
+                MaxEntrySize = MegFileConstants.MegMaxEntrySize,
+                MaxFileSize = MegFileConstants.MegMaxFileSize
             },
             MaxMegSizeMode.EawFoc => new MaxMegSizes
             {

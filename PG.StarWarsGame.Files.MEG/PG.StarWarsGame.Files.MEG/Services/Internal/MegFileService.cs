@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,9 +75,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
             dataBytesWritten += dataStream.Length;
         }
         
-        if (dataBytesWritten != constructionArchive.ExpectedFileSize)
-            throw new InvalidOperationException(
-                $"Actual total bytes written '{dataBytesWritten}' does not match expected value: {constructionArchive.ExpectedFileSize}");
+        Debug.Assert(dataBytesWritten == constructionArchive.ExpectedFileSize);
     }
 
     public IMegFile Load(string filePath)

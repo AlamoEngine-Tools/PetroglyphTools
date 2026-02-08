@@ -61,7 +61,7 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     [Fact]
     public void Ctor_OriginIsLocalFile_FileTooLarge_ThrowsMegEntrySizeException()
     {
-        var mockFileInfo = new MegTestConstants.LargeFileInfo("large_file.bin", (long)uint.MaxValue + 1);
+        var mockFileInfo = new MegTestConstants.FakeFileInfo("large_file.bin", (long)uint.MaxValue + 1);
         var origin = new MegDataEntryOriginInfo(mockFileInfo);
         Assert.Throws<MegEntrySizeException>(() => new MegDataEntryBuilderInfo(origin, "path"));
     }
@@ -330,7 +330,7 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     [Fact]
     public void RefreshSize_FileTooLarge_ThrowsMegEntrySizeException()
     {
-        var mockFileInfo = new MegTestConstants.LargeFileInfo("large_file.bin", uint.MaxValue);
+        var mockFileInfo = new MegTestConstants.FakeFileInfo("large_file.bin", uint.MaxValue);
         var info = MegDataEntryBuilderInfo.FromFile(mockFileInfo, "path");
         
         Assert.Equal(uint.MaxValue, info.Size);

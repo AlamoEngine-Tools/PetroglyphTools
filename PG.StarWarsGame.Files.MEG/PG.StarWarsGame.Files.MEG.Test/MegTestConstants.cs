@@ -519,7 +519,7 @@ internal static class MegTestConstants
         47, 71, 97, 109, 101, 95, 79, 98, 106, 101, 99, 116, 95, 70, 105, 108, 101, 115, 62
     ];
 
-    internal class LargeFileInfo(string fullName, long length) : IFileInfo
+    internal class FakeFileInfo(string fullName, long length) : IFileInfo
     {
         public string FullName => fullName;
         public long Length { get; set; } = length;

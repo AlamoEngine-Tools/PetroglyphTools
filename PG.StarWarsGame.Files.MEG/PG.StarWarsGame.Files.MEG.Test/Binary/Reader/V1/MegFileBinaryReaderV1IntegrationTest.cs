@@ -113,7 +113,7 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
         Assert.Equal("DATA\\XML\\GAMEOBJECTFILES.XML", megMetadata.FileNameTable[1].OriginalFileName);
     }
 
-    public static IEnumerable<object[]> MegFilesBetween2GBAnd4GB()
+    public static IEnumerable<object[]> LargeButValidMegsReadTestData()
     {
         yield return [new[] { ("FILE1.DAT", (long)OneAndHalfGB), ("FILE2.DAT", OneGB) }];
         yield return [new[] { ("FILE1.DAT", (long)ThreeGB) }];
@@ -123,7 +123,7 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
     }
 
     [Theory]
-    [MemberData(nameof(MegFilesBetween2GBAnd4GB))]
+    [MemberData(nameof(LargeButValidMegsReadTestData))]
     public void ReadBinary_LargeButValidToReadMegs((string fileName, long fileSize)[] files)
     {
         var entries = files.Select((f, i) => new MegFileEntry(

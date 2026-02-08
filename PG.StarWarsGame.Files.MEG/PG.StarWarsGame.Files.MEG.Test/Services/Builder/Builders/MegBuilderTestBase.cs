@@ -11,7 +11,9 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.Testing;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -22,13 +24,11 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     where TBuilder : MegBuilderBase
 {
     protected virtual bool CanProduceInvalidEntryPaths => false;
-
     protected abstract Type ExpectedFileInfoValidatorType { get; }
     protected abstract Type ExpectedDataEntryValidatorType { get; }
     protected abstract Type? ExpectedDataEntryPathNormalizerType { get; }
     protected abstract bool? ExpectedOverwritesDuplicates { get; }
-    protected abstract bool? ExpectedAutomaticallyAddFileSizes { get; }
-
+    
     protected override string DefaultFileName => "test.meg";
 
     protected override void SetupServices(IServiceCollection serviceCollection)
@@ -63,8 +63,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Equal(ExpectedDataEntryValidatorType, builder.DataEntryValidator.GetType());
         Assert.Equal(ExpectedDataEntryPathNormalizerType, builder.DataEntryPathNormalizer?.GetType());
         Assert.Equal(ExpectedOverwritesDuplicates, builder.OverwritesDuplicateEntries);
-        Assert.Equal(ExpectedAutomaticallyAddFileSizes, builder.AutomaticallyAddFileSizes);
-        Assert.Equal(uint.MaxValue, builder.MaxEntrySize);
+        Assert.True(builder.MaxMegFileSize > 0);
     }
 
     [Fact]
@@ -90,13 +89,13 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         builder.AddFile("file.txt", "file.txt");
 
         Assert.Single(builder.DataEntries);
-        Assert.Empty(entries);
+        Assert.Single(entries);
 
         if (entries is List<MegDataEntryBuilderInfo> builderList)
         {
-            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path1")));
-            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path2")));
-            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("path3")));
+            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(FileSystem.FileInfo.New("path1"))));
+            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(FileSystem.FileInfo.New("path2"))));
+            builderList.Add(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(FileSystem.FileInfo.New("path3"))));
             Assert.Single(builder.DataEntries);
         }
     }
@@ -131,7 +130,8 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var result = builder.AddFile("file.txt", "file.txt");
 
         Assert.Single(builder.DataEntries);
-        Assert.False(builder.Remove(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
+        FileSystem.Initialize().WithFile("notFound.txt");
+        Assert.False(builder.Remove(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(FileSystem.FileInfo.New("notFound.txt")))));
         Assert.Single(builder.DataEntries);
         Assert.True(builder.Remove(result.AddedBuilderInfo!));
         Assert.Empty(builder.DataEntries);
@@ -160,15 +160,15 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Throws<ObjectDisposedException>(() =>
             builder.Build(new MegFileInformation("a.meg", MegFileVersion.V1), false));
 
-        Assert.DoesNotThrow(() => builder.DataEntries);
+        Assert.DoesNotThrow(() => { _ = builder.DataEntries; });
         Assert.DoesNotThrow(builder.Clear);
-        Assert.DoesNotThrow(() => builder.Remove(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo("notFound.txt"))));
+        Assert.DoesNotThrow(() => builder.Remove(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(FileSystem.FileInfo.New("file.txt")))));
 
         Assert.DoesNotThrow(builder.Dispose);
     }
 
     #region AddFile
-    
+
     [Fact]
     public void AddFile_Throws()
     {
@@ -186,7 +186,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void AddFile_WithFileSize()
+    public void AddFile()
     {
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "path/file.txt";
@@ -209,12 +209,9 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var entry = builder.DataEntries.First();
         Assert.Equal(expectedEntryPath, entry.EntryPath);
         Assert.False(entry.Encrypted);
-        if (ExpectedAutomaticallyAddFileSizes == true)
-            Assert.Equal(3u, entry.Size);
-        else
-            Assert.Null(entry.Size);
+        Assert.Equal(3u, entry.Size);
 
-        Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), entry.OriginInfo.FileInfo);
+        Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), entry.OriginInfo.FileInfo!.FullName);
     }
 
     [Fact]
@@ -248,11 +245,12 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         // Make sure the normalizer triggers
         var builder = CreateBuilder();
-        
+
         var entryPath = firstPart + secondPart;
         var result = builder.AddFile(fileToAdd, firstPart + secondPart);
 
-        if (!builder.DataEntryValidator.Validate(entryPath.AsSpan(), false, null))
+        var validationResult = builder.DataEntryValidator.Validate(new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(FileSystem.FileInfo.New(fileToAdd)), entryPath));
+        if (!validationResult.IsValid)
         {
             Assert.False(result.Added);
             return;
@@ -289,7 +287,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.Single(builder.DataEntries);
             Assert.Null(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.False(resultSecondAdd.WasOverwrite);
-            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FileInfo);
+            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FileInfo!.FullName);
         }
         else
         {
@@ -298,8 +296,8 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.NotNull(resultSecondAdd.AddedBuilderInfo);
             Assert.NotNull(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.True(resultSecondAdd.WasOverwrite);
-            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), resultSecondAdd.OverwrittenBuilderInfo.OriginInfo.FileInfo);
-            Assert.Equal(FileSystem.Path.GetFullPath(otherFileToAdd), resultSecondAdd.AddedBuilderInfo.OriginInfo.FileInfo);
+            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), resultSecondAdd.OverwrittenBuilderInfo.OriginInfo.FileInfo!.FullName);
+            Assert.Equal(FileSystem.Path.GetFullPath(otherFileToAdd), resultSecondAdd.AddedBuilderInfo.OriginInfo.FileInfo!.FullName);
 
             //Assert that duplicate check was based on encoded(thus also normalized) file path, cause the original inputs have different values.
 
@@ -327,10 +325,25 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Empty(builder.DataEntries);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void AddFile_AddFileSize_FileTooLarge_Throws(bool addFileSize)
+    [Fact]
+    public void AddFile_AddFileSize_FileTooLarge_Throws()
+    {
+        var path = FileSystem.Path.GetFullPath("large_file.bin");
+        FileSystem.File.WriteAllBytes(path, [1]);
+        var mockFileInfo = new MegTestConstants.FakeFileInfo(path, (long)uint.MaxValue + 1);
+        
+        // We use a custom builder to access AddBuilderInfo
+        var builder = new TestOriginMegBuilder(ServiceProvider);
+
+        var result = builder.AddWithOrigin(new MegDataEntryOriginInfo(mockFileInfo), "path", false);
+
+        Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
+        Assert.Equal("The entry is too large to be added to a MEG file.", result.Message);
+        Assert.Empty(builder.DataEntries);
+    }
+
+    [Fact]
+    public void AddFile_AddFileSize_LimitReached_Throws()
     {
         const string fileToAdd = "file.txt";
         const string inputEntryPath = "file.txt";
@@ -338,20 +351,43 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         // One byte too large.
         FileSystem.Initialize().WithFile(fileToAdd).Which(x => x.HasBytesContent([1, 2, 3, 4]));
 
-        var builder = new MaxFileSizeMegBuilder(3, addFileSize, ServiceProvider);
+        var builder = new MaxFileSizeMegBuilder(3, ServiceProvider);
 
         var result = builder.AddFile(fileToAdd, inputEntryPath);
 
-        if (addFileSize)
-        {
-            Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
-            Assert.Empty(builder.DataEntries);
-        }
-        else
-        {
-            Assert.Equal(MegDataEntryAddStatus.Added, result.Status);
-            Assert.Single(builder.DataEntries);
-        }
+        Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
+        Assert.Empty(builder.DataEntries);
+    }
+
+    [Fact]
+    public void AddFile_NormalizationReturnsEmpty_ReturnsFailedNormalization()
+    {
+        FileSystem.Initialize().WithFile("file.txt");
+        var builder = new NormalizerMegBuilder(new EmptyNormalizer(), ServiceProvider);
+        var result = builder.AddFile("file.txt", "somePath");
+        Assert.Equal(MegDataEntryAddStatus.FailedNormalization, result.Status);
+        Assert.Equal("Normalized entry path cannot be null or empty.", result.Message);
+    }
+
+    [Fact]
+    public void AddFile_NormalizationThrows_ReturnsFailedNormalization()
+    {
+        FileSystem.Initialize().WithFile("file.txt");
+        var builder = new NormalizerMegBuilder(new ThrowingNormalizer(), ServiceProvider);
+        var result = builder.AddFile("file.txt", "somePath");
+        Assert.Equal(MegDataEntryAddStatus.FailedNormalization, result.Status);
+        Assert.Equal("Normalization failed", result.Message);
+    }
+
+    [Fact]
+    public void AddFile_ValidationThrows_ReturnsInvalidEntry()
+    {
+        FileSystem.Initialize().WithFile("file.txt");
+        var builder = new ThrowingValidatorMegBuilder(ServiceProvider);
+        var result = builder.AddFile("file.txt", "somePath");
+        Assert.Equal(MegDataEntryAddStatus.InvalidEntry, result.Status);
+        Assert.Contains("Entry validation failed with exception", result.Message!);
+        Assert.Contains("Validation failed", result.Message!);
     }
 
     #endregion
@@ -447,7 +483,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.Single(builder.DataEntries);
             Assert.Null(resultSecondAdd.OverwrittenBuilderInfo);
             Assert.False(resultSecondAdd.WasOverwrite);
-            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FileInfo);
+            Assert.Equal(FileSystem.Path.GetFullPath(fileToAdd), builder.DataEntries.First().OriginInfo.FileInfo!.FullName);
         }
         else
         {
@@ -461,20 +497,115 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
-    public void AddEntry_ValidatorFails()
+    public void AddEntry_AddFileSize_FileTooLarge_Throws()
     {
-        if (!CanProduceInvalidEntryPaths)
-            return;
-
         var meg = CreateTestMeg();
         var entry = meg.Archive[0];
 
-        var builder = CreateBuilder();
+        var builder = new MaxFileSizeMegBuilder(entry.Location.Size - 1, ServiceProvider);
 
-        var result = builder.AddEntry(new MegDataEntryLocationReference(meg, entry), GetFailingEntryPath());
+        var result = builder.AddEntry(new MegDataEntryLocationReference(meg, entry));
 
-        Assert.Equal(MegDataEntryAddStatus.InvalidEntry, result.Status);
+        Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
         Assert.Empty(builder.DataEntries);
+    }
+
+    #endregion
+
+    #region GetMinRequiredMegFiles
+
+    [Fact]
+    public void GetMinRequiredMegFiles_EntryTooLarge_Throws()
+    {
+        FileSystem.File.WriteAllBytes("1.txt", [1, 2, 3]);
+
+        // Max file size 36 is too small for MEG with a file (metadata + content)
+        var builder = new MaxFileSizeMegBuilder(uint.MaxValue, ServiceProvider, 36);
+        builder.AddFile("1.txt", "1.txt");
+
+        Assert.Throws<InvalidOperationException>(() => builder.GetMinRequiredMegFiles(MegFileVersion.V1));
+    }
+
+    [Fact]
+    public void GetMinRequiredMegFiles_SingleFile()
+    {
+        FileSystem.File.WriteAllBytes("1.txt", [1, 2, 3]);
+        FileSystem.File.WriteAllBytes("2.txt", [4, 5, 6]);
+
+        var builder = new MaxFileSizeMegBuilder(uint.MaxValue, ServiceProvider, 1000);
+        builder.AddFile("1.txt", "1.txt");
+        builder.AddFile("2.txt", "2.txt");
+
+        Assert.Equal(1, builder.GetMinRequiredMegFiles(MegFileVersion.V1));
+    }
+    
+    [Fact]
+    public void GetMinRequiredMegFiles_MultipleFiles()
+    {
+        FileSystem.File.WriteAllBytes("1.txt", [1, 2, 3]);
+        FileSystem.File.WriteAllBytes("2.txt", [4, 5, 6]);
+        
+        var builder = new MaxFileSizeMegBuilder(uint.MaxValue, ServiceProvider, 40);
+        builder.AddFile("1.txt", "1.txt");
+        builder.AddFile("2.txt", "2.txt");
+
+        Assert.Equal(2, builder.GetMinRequiredMegFiles(MegFileVersion.V1));
+    }
+
+    #endregion
+
+    #region BuildMany
+
+    [Fact]
+    public void BuildMany_SingleFile()
+    {
+        FileSystem.File.WriteAllBytes("1.txt", [1, 2, 3]);
+        var builder = new MaxFileSizeMegBuilder(uint.MaxValue, ServiceProvider, 1000);
+        builder.AddFile("1.txt", "1.txt");
+
+        var fileInfo = CreateFileInfo(true, "out.meg");
+        var factoryCalled = 0;
+        builder.BuildMany(fileInfo, _ =>
+        {
+            factoryCalled++;
+            return "unused.meg";
+        }, true);
+
+        Assert.Equal(0, factoryCalled);
+        Assert.True(FileSystem.File.Exists("out.meg"));
+    }
+
+    [Fact]
+    public void BuildMany_MultipleFiles()
+    {
+        FileSystem.File.WriteAllBytes("1.txt", [1, 2, 3]);
+        FileSystem.File.WriteAllBytes("2.txt", [4, 5, 6]);
+        
+        // See GetMinRequiredMegFiles for size calculation
+        var builder = new MaxFileSizeMegBuilder(uint.MaxValue, ServiceProvider, 40);
+        builder.AddFile("1.txt", "1.txt");
+        builder.AddFile("2.txt", "2.txt");
+
+        var fileInfo = CreateFileInfo(true, "out.meg");
+        var factoryCalled = 0;
+        builder.BuildMany(fileInfo, i =>
+        {
+            factoryCalled++;
+            return $"out_{i}.meg";
+        }, true);
+
+        Assert.Equal(2, factoryCalled);
+        Assert.False(FileSystem.File.Exists("out.meg")); // Should NOT exist as it was split
+        Assert.True(FileSystem.File.Exists("out_1.meg"));
+        Assert.True(FileSystem.File.Exists("out_2.meg"));
+    }
+
+    [Fact]
+    public void BuildMany_ThrowsOnNull()
+    {
+        var builder = CreateBuilder();
+        Assert.Throws<ArgumentNullException>(() => builder.BuildMany(null!, _ => "a.meg", true));
+        Assert.Throws<ArgumentNullException>(() => builder.BuildMany(CreateFileInfo(true, "a.meg"), null!, true));
     }
 
     #endregion
@@ -491,10 +622,60 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         return ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
     }
 
-    private class MaxFileSizeMegBuilder(uint maxFileSize, bool addFileSize, IServiceProvider services) : MegBuilderBase(services)
+    private class MaxFileSizeMegBuilder(uint maxFileSize, IServiceProvider services, uint? maxMegSize = null) : MegBuilderBase(services)
     {
-        internal override uint MaxEntrySize => maxFileSize;
+        public uint MaxEntrySize { get; } = maxFileSize;
 
-        public override bool AutomaticallyAddFileSizes => addFileSize;
+        public override uint MaxMegFileSize => maxMegSize ?? base.MaxMegFileSize;
+
+        public override IMegDataEntryValidator DataEntryValidator => new MaxEntrySizeValidator(MaxEntrySize);
+
+        private class MaxEntrySizeValidator(uint maxEntrySize) : BinaryMegDataEntryValidator
+        {
+            protected override uint MaxMegEntrySize => maxEntrySize;
+        }
+    }
+
+    private class NormalizerMegBuilder(IMegDataEntryPathNormalizer normalizer, IServiceProvider services) : MegBuilderBase(services)
+    {
+        public override IMegDataEntryPathNormalizer DataEntryPathNormalizer { get; } = normalizer;
+    }
+
+    private class EmptyNormalizer : IMegDataEntryPathNormalizer
+    {
+        public string Normalize(string entryPath) => string.Empty;
+        public string Normalize(ReadOnlySpan<char> entryPath) => string.Empty;
+        public bool TryNormalize(ReadOnlySpan<char> entryPath, Span<char> destination, out int charsWritten)
+        {
+            charsWritten = 0;
+            return true;
+        }
+    }
+
+    private class ThrowingNormalizer : IMegDataEntryPathNormalizer
+    {
+        public string Normalize(string entryPath) => throw new Exception("Normalization failed");
+        public string Normalize(ReadOnlySpan<char> entryPath) => throw new Exception("Normalization failed");
+        public bool TryNormalize(ReadOnlySpan<char> entryPath, Span<char> destination, out int charsWritten) => throw new Exception("Normalization failed");
+    }
+
+    private class ThrowingValidatorMegBuilder(IServiceProvider services) : MegBuilderBase(services)
+    {
+        public override IMegDataEntryValidator DataEntryValidator { get; } = new ThrowingValidator();
+
+        private class ThrowingValidator : IMegDataEntryValidator
+        {
+            public MegDataEntryValidationResult Validate(MegDataEntryBuilderInfo dataEntry) => throw new Exception("Validation failed");
+        }
+    }
+
+    private class TestOriginMegBuilder(IServiceProvider services) : MegBuilderBase(services)
+    {
+        public MegDataEntryAddResult AddWithOrigin(MegDataEntryOriginInfo originInfo, string entryPath, bool encrypt)
+        {
+            return (MegDataEntryAddResult)typeof(MegBuilderBase)
+                .GetMethod("AddBuilderInfo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(this, [originInfo, entryPath, encrypt])!;
+        }
     }
 }

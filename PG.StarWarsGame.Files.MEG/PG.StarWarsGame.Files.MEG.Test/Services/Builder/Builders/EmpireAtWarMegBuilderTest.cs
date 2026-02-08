@@ -75,8 +75,8 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 
         var testMeg = new List<MegDataEntryBuilderInfo>
         {
-            new(new MegDataEntryOriginInfo(goFile)),
-            new(new MegDataEntryOriginInfo(cfFile))
+            new(new MegDataEntryOriginInfo(FileSystem.FileInfo.New(goFile))),
+            new(new MegDataEntryOriginInfo(FileSystem.FileInfo.New(cfFile)))
         };
 
         return (testMeg, MegTestConstants.ContentMegFileV1);

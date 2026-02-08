@@ -15,10 +15,9 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder;
 public class BinaryMegBuilderTest : MegBuilderTestBase<BinaryMegBuilder>
 {
     protected override Type ExpectedFileInfoValidatorType => typeof(BinaryMegFileInformationValidator);
-    protected override Type ExpectedDataEntryValidatorType => typeof(NotNullDataEntryValidator);
+    protected override Type ExpectedDataEntryValidatorType => typeof(BinaryMegDataEntryValidator);
     protected override Type? ExpectedDataEntryPathNormalizerType => null;
     protected override bool? ExpectedOverwritesDuplicates => true;
-    protected override bool? ExpectedAutomaticallyAddFileSizes => false;
 
     protected override bool FileInfoIsAlwaysValid => true;
 
@@ -44,8 +43,8 @@ public class BinaryMegBuilderTest : MegBuilderTestBase<BinaryMegBuilder>
 
         var testMeg = new List<MegDataEntryBuilderInfo>
         {
-            new(new MegDataEntryOriginInfo("1.txt"), "1.txt"),
-            new(new MegDataEntryOriginInfo("2.txt"), "2.txt"),
+            new(new MegDataEntryOriginInfo(FileSystem.FileInfo.New("1.txt")), "1.txt"),
+            new(new MegDataEntryOriginInfo(FileSystem.FileInfo.New("2.txt")), "2.txt"),
         };
 
 

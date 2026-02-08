@@ -8,6 +8,8 @@ internal sealed class MegV3SizeCalculator : MegSizeCalculator
 
     protected override uint HeaderSize => 24u;
 
+    protected override bool IsFilenameTableEncrypted => _isEncrypted;
+
     internal override ulong GetEntrySize(MegDataEntryBuilderInfo dataEntry)
     {
         return GetBinaryEntrySizeWithEncryption(dataEntry);
@@ -20,12 +22,9 @@ internal sealed class MegV3SizeCalculator : MegSizeCalculator
         return dataEntry.Encrypted ? 34u : 20u;
     }
 
-    protected override ulong GetFilenameTableSize(uint rawSize)
+    protected override bool ShouldEncryptFilenameTable(MegDataEntryBuilderInfo dataEntry)
     {
-        // The ENTIRE filename table is encrypted as a single blob if ANY entry is encrypted
-        return _isEncrypted
-            ? RoundUpToAesBlockSize(rawSize) 
-            : rawSize;
+        return dataEntry.Encrypted;
     }
 
     protected override void OnEntryAdded(MegDataEntryBuilderInfo dataEntry)
@@ -33,8 +32,6 @@ internal sealed class MegV3SizeCalculator : MegSizeCalculator
         if (dataEntry.Encrypted && !_isEncrypted)
         {
             _isEncrypted = true;
-            // IMPORTANT: Recalculate cached size because filename table padding just changed!
-            RecalculateCachedSize();
         }
     }
 

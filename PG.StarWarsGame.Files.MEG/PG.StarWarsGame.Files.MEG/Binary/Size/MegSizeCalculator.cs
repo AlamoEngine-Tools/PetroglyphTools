@@ -25,6 +25,8 @@ internal abstract class MegSizeCalculator : IMegSizeCalculator
     
     public ulong MetadataSize { get; private set;}
 
+    protected virtual bool IsFilenameTableEncrypted => false;
+
     protected MegSizeCalculator()
     {
         // ReSharper disable VirtualMemberCallInConstructor
@@ -52,63 +54,58 @@ internal abstract class MegSizeCalculator : IMegSizeCalculator
     
     public ulong PreCalculateSize(IEnumerable<MegDataEntryBuilderInfo> entries)
     {
-        ulong totalSize = HeaderSize;
+        var rawFilenameTableSize = _currentRawFilenameTableSize;
+        var fileTableSize = _currentFileTableSize;
+        var fileDataSize = _currentFileDataSize;
+        var shouldEncryptFilenameTable = IsFilenameTableEncrypted;
 
         foreach (var entry in entries)
         {
-            var entryPath = GetEntryPath(entry);
-            var filenameRecordSize = (uint)MegFileNameTableRecord.GetRecordSize(entryPath);
-            var rawFilenameTableSize = _currentRawFilenameTableSize + filenameRecordSize;
-
-            var actualFilenameTableSize = GetFilenameTableSize(rawFilenameTableSize);
-            var fileTableRecordSize = GetFileTableRecordSize(entry);
-            var fileTableSize = _currentFileTableSize + fileTableRecordSize;
-
-            var fileDataSize = GetEntrySize(entry);
-            var megContentSize = _currentFileDataSize + fileDataSize;
-
-            totalSize += actualFilenameTableSize + fileTableSize + megContentSize;
+            UpdateSizesForEntry(
+                ref rawFilenameTableSize,
+                ref fileTableSize,
+                ref fileDataSize,
+                ref shouldEncryptFilenameTable,
+                entry);
         }
 
-        return totalSize;
+        return CalculateTotalSize(rawFilenameTableSize, fileTableSize, fileDataSize, shouldEncryptFilenameTable);
     }
     
     public ulong PreCalculateSize(MegDataEntryBuilderInfo dataEntry)
     {
-        var entryPath = GetEntryPath(dataEntry);
-       
-        var filenameRecord = (uint)MegFileNameTableRecord.GetRecordSize(entryPath); 
-        var rawFilenameTableSize = _currentRawFilenameTableSize + filenameRecord;
-        
-        var actualFilenameTableSize = GetFilenameTableSize(rawFilenameTableSize);
-        var fileTableRecord = GetFileTableRecordSize(dataEntry);
-        var fileSize = GetEntrySize(dataEntry);
-        
-        var fileTableSize = _currentFileTableSize + fileTableRecord;
-        var megContentSize = _currentFileDataSize + fileSize;
-        
-        return HeaderSize +
-               actualFilenameTableSize +
-               fileTableSize +
-               megContentSize;
+        var rawFilenameTableSize = _currentRawFilenameTableSize;
+        var fileTableSize = _currentFileTableSize;
+        var fileDataSize = _currentFileDataSize;
+        var shouldEncryptFilenameTable = IsFilenameTableEncrypted;
+
+        UpdateSizesForEntry(
+            ref rawFilenameTableSize,
+            ref fileTableSize,
+            ref fileDataSize,
+            ref shouldEncryptFilenameTable,
+            dataEntry);
+
+        return CalculateTotalSize(rawFilenameTableSize, fileTableSize, fileDataSize, shouldEncryptFilenameTable);
     }
 
     public void AddEntry(MegDataEntryBuilderInfo dataEntry)
     {
-        var entryPath = GetEntryPath(dataEntry);
-        var filenameRecord = (uint)MegFileNameTableRecord.GetRecordSize(entryPath);
+        var oldFilenameTableSize = GetFilenameTableSize(_currentRawFilenameTableSize, IsFilenameTableEncrypted);
         var fileTableRecord = GetFileTableRecordSize(dataEntry);
         var fileSize = GetEntrySize(dataEntry);
+        var shouldEncryptFilenameTable = IsFilenameTableEncrypted;
 
-        var oldFilenameTableSize = GetFilenameTableSize(_currentRawFilenameTableSize);
-
-        _currentRawFilenameTableSize += filenameRecord;
-        _currentFileTableSize += fileTableRecord;
-        _currentFileDataSize += fileSize;
+        UpdateSizesForEntry(
+            ref _currentRawFilenameTableSize,
+            ref _currentFileTableSize,
+            ref _currentFileDataSize,
+            ref shouldEncryptFilenameTable,
+            dataEntry);
 
         OnEntryAdded(dataEntry);
 
-        var newFilenameTableSize = GetFilenameTableSize(_currentRawFilenameTableSize);
+        var newFilenameTableSize = GetFilenameTableSize(_currentRawFilenameTableSize, IsFilenameTableEncrypted);
 
         Debug.Assert(newFilenameTableSize >= oldFilenameTableSize,
             "New filename table size must be greater than or equal to old size.");
@@ -143,9 +140,16 @@ internal abstract class MegSizeCalculator : IMegSizeCalculator
 
     protected abstract uint GetFileTableRecordSize(MegDataEntryBuilderInfo dataEntry);
     
-    protected virtual ulong GetFilenameTableSize(uint rawSize)
+    protected virtual ulong GetFilenameTableSize(uint rawSize, bool encrypt)
     {
-        return rawSize;
+        return encrypt
+            ? RoundUpToAesBlockSize(rawSize)
+            : rawSize;
+    }
+    
+    protected virtual bool ShouldEncryptFilenameTable(MegDataEntryBuilderInfo dataEntry)
+    {
+        return false;
     }
 
     protected virtual void OnEntryAdded(MegDataEntryBuilderInfo dataEntry)
@@ -156,15 +160,23 @@ internal abstract class MegSizeCalculator : IMegSizeCalculator
     {
     }
 
-    /// <summary>
-    /// Recalculates the cached current size from scratch.
-    /// Call this when state changes that affect previous entries (e.g., V3 encryption state change).
-    /// </summary>
-    protected void RecalculateCachedSize()
+    private ulong CalculateTotalSize(uint rawFilenameTableSize, ulong fileTableSize, ulong fileDataSize, bool encryptFilenameTable)
     {
-        var filenameTableSize = GetFilenameTableSize(_currentRawFilenameTableSize);
-        MetadataSize = HeaderSize + filenameTableSize + _currentFileTableSize;
-        CurrentSize = MetadataSize + _currentFileDataSize;
+        var filenameTableSize = GetFilenameTableSize(rawFilenameTableSize, encryptFilenameTable);
+        return HeaderSize + filenameTableSize + fileTableSize + fileDataSize;
+    }
+
+    private void UpdateSizesForEntry(
+        ref uint rawFilenameTableSize,
+        ref ulong fileTableSize,
+        ref ulong fileDataSize,
+        ref bool shouldEncryptFilenameTable,
+        MegDataEntryBuilderInfo entry)
+    {
+        rawFilenameTableSize += (uint)MegFileNameTableRecord.GetRecordSize(GetEntryPath(entry));
+        fileTableSize += GetFileTableRecordSize(entry);
+        fileDataSize += GetEntrySize(entry);
+        shouldEncryptFilenameTable |= ShouldEncryptFilenameTable(entry);
     }
 
     private static string GetEntryPath(MegDataEntryBuilderInfo dataEntry)

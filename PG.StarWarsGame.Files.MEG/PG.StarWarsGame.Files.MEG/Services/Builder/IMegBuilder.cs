@@ -119,7 +119,11 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// <paramref name="filePathFactory"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    /// <paramref name="initialFileInformation"/> is not valid or <paramref name="filePathFactory"/> produced an invalid file path.
+    /// <paramref name="initialFileInformation"/> is not valid
+    /// -or-
+    /// <paramref name="filePathFactory"/> produced an invalid file path
+    /// -or
+    /// it is impossible to create MEG files because of the current state of the builder.
     /// </exception>
     /// <exception cref="IOException">The file could not be created due to an IO error.</exception>
     public void BuildMany(MegFileInformation initialFileInformation, Func<int, string> filePathFactory, bool overwrite);
@@ -132,5 +136,6 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// The method will return at least value <value>1</value>.
     /// </remarks>
     /// <returns>The minimum number of MEG files required to accommodate the provided data entries.</returns>
+    /// <exception cref="InvalidOperationException">It is impossible to create MEG files because of the current state of the builder.</exception>
     int GetMinRequiredMegFiles(MegFileVersion megVersion);
 }

@@ -25,7 +25,8 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// <summary>
 /// Base class for a <see cref="IMegBuilder"/> service providing the fundamental implementations.
 /// </summary>
-public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegDataEntryBuilderInfo>, MegFileInformation>, IMegBuilder
+public abstract class MegBuilderBase
+    : FileBuilderBase<IReadOnlyCollection<MegDataEntryBuilderInfo>, MegFileInformation>, IMegBuilder
 {
     private readonly Dictionary<Crc32, MegDataEntryBuilderInfo> _dataEntryTable = new();
     private readonly ICrc32HashingService _hashingService;
@@ -200,6 +201,9 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegDa
     /// maximum file size limit defined by the MEG file version. If an individual entry exceeds the 
     /// maximum size, it will be placed in its own part.
     /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    /// It is impossible to split into multiple MEG files because of the current state of the builder.
+    /// </exception>
     protected ICollection<ICollection<MegDataEntryBuilderInfo>> SplitIntoMinRequiredParts(
         MegFileVersion megVersion,
         IEnumerable<MegDataEntryBuilderInfo> builderInfo)
@@ -216,11 +220,18 @@ public abstract class MegBuilderBase : FileBuilderBase<IReadOnlyCollection<MegDa
         {
             var preCalculatedSize = metadataSizeCalculator.PreCalculateSize(entry);
 
-            if (preCalculatedSize > maxFileSize && currentPart.Count > 0)
+            if (preCalculatedSize > maxFileSize)
             {
-                parts.Add(currentPart);
-                currentPart = [];
-                metadataSizeCalculator.Reset();
+                if (currentPart.Count > 0)
+                {
+                    parts.Add(currentPart);
+                    currentPart = [];
+                    metadataSizeCalculator.Reset();
+                    preCalculatedSize = metadataSizeCalculator.PreCalculateSize(entry);
+                }
+
+                if (preCalculatedSize > maxFileSize)
+                    throw new InvalidOperationException("Unable to build MEG archive from current builder entries.");
             }
 
             currentPart.Add(entry);

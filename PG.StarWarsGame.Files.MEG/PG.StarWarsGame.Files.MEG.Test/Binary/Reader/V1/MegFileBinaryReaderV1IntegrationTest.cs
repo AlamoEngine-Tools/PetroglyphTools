@@ -261,8 +261,11 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
         using var writer = new BinaryWriter(ms);
         writer.Write(2u);
         writer.Write(2u);
-        writer.Write((ushort)5); writer.Write("A.TXT"u8.ToArray());
-        writer.Write((ushort)5); writer.Write("B.TXT"u8.ToArray());
+        
+        writer.Write((ushort)5);
+        writer.Write("A.TXT"u8.ToArray());
+        writer.Write((ushort)5);
+        writer.Write("B.TXT"u8.ToArray());
 
         var metadataSize = (uint)ms.Position + 20 * 2;
         
@@ -278,6 +281,57 @@ public class MegFileBinaryReaderV1IntegrationTest : CommonMegTestBase
         Assert.Throws<BinaryCorruptedException>(() => _binaryReader.ReadBinary(stream));
     }
     
+    [Fact]
+    public void ReadBinary_FilenameTableOrderDiffersFromFileTableOrder()
+    {
+        using var ms = new MemoryStream();
+        using var writer = new BinaryWriter(ms);
+        writer.Write(2u); 
+        writer.Write(2u);
+
+        // Filename Table: [B, A]
+        writer.Write((ushort)5);
+        writer.Write("B.TXT"u8.ToArray());
+        writer.Write((ushort)5);
+        writer.Write("A.TXT"u8.ToArray());
+
+        var metadataEndOffset = (uint)ms.Position + 20 * 2;
+
+        // Record for A
+        writer.Write(0x100u);
+        writer.Write(0u);
+        writer.Write(10u);
+        writer.Write(metadataEndOffset);
+        writer.Write(1u);      // Index in Filename Table (A.txt is at index 1)
+        
+        // Record for B
+        writer.Write(0x200u);
+        writer.Write(1u);
+        writer.Write(20u);
+        writer.Write(metadataEndOffset + 10u);
+        writer.Write(0u);      // Index in Filename Table (B.txt is at index 0)
+        
+        // Data for A and B
+        writer.Write(new byte[10 + 20]);
+
+        var megData = ms.ToArray();
+        using var stream = new MemoryStream(megData);
+        
+        var metadata = _binaryReader.ReadBinary(stream);
+        
+        Assert.Equal(2, metadata.FileTable.Count);
+        
+        // Record 0 should be A
+        Assert.Equal(0x100u, (uint)metadata.FileTable[0].Crc32);
+        Assert.Equal(1, metadata.FileTable[0].FileNameIndex);
+        Assert.Equal("A.TXT", metadata.FileNameTable[metadata.FileTable[0].FileNameIndex].FileName);
+
+        // Record 1 should be B
+        Assert.Equal(0x200u, (uint)metadata.FileTable[1].Crc32);
+        Assert.Equal(0, metadata.FileTable[1].FileNameIndex);
+        Assert.Equal("B.TXT", metadata.FileNameTable[metadata.FileTable[1].FileNameIndex].FileName);
+    }
+
     private static byte[] CreateMeg(params MegFileEntry[] files)
     {
         var numFiles = (uint)files.Length;

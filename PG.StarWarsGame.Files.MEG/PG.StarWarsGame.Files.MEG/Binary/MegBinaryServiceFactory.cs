@@ -38,9 +38,10 @@ internal class MegBinaryServiceFactory(IServiceProvider serviceProvider) : IMegB
 
     public IMegSizeCalculator GetMegSizeCalculator(MegFileVersion megVersion)
     {
-        if (megVersion == MegFileVersion.V1)
-            return new MegV1SizeCalculator();
-
-        throw new NotImplementedException("MEGs other than V1 are currently not supported.");
+        return megVersion switch
+        {
+            MegFileVersion.V1 => new MegV1SizeCalculator(),
+            _ => throw new NotImplementedException($"MEG version {megVersion} is currently not supported.")
+        };
     }
 }

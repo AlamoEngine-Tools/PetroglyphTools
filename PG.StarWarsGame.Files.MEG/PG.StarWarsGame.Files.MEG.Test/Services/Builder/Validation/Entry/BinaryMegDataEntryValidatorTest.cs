@@ -20,7 +20,9 @@ public class BinaryMegDataEntryValidatorTest : BinaryMegDataEntryValidatorTestBa
     [MemberData(nameof(InvalidTestData))]
     public virtual void Validate_InvalidData(MegDataEntryBuilderInfo? builderInfo, MegDataEntryValidationStatus expectedStatus)
     {
-        Assert.Equal(expectedStatus, CreateValidator().Validate(builderInfo!).Status);
+        var result = CreateValidator().Validate(builderInfo!);
+        Assert.Equal(expectedStatus, result.Status);
+        Assert.False(result.IsValid);
     }
 
     public static IEnumerable<object?[]> InvalidTestData()
@@ -41,6 +43,8 @@ public class BinaryMegDataEntryValidatorTest : BinaryMegDataEntryValidatorTestBa
     {
         var data = new SharedDataBuilder();
         var info = data.CreateInfo(path);
-        Assert.Equal(MegDataEntryValidationStatus.Valid, CreateValidator().Validate(info).Status);
+        var result = CreateValidator().Validate(info);
+        Assert.Equal(MegDataEntryValidationStatus.Valid, result.Status);
+        Assert.True(result.IsValid);
     }
 }

@@ -27,6 +27,16 @@ public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInform
     /// </summary>
     public const int PetroglyphMaxFilePathLength = 259;
 
+    /// <summary>
+    /// Gets the collection of supported <see cref="MegFileVersion"/> values for the validator.
+    /// </summary>
+    /// <value>
+    /// A read-only collection containing the supported versions of the .MEG file format
+    /// that are validated by this implementation.
+    /// For <see cref="EmpireAtWarMegFileInformationValidator"/>, this includes only <see cref="MegFileVersion.V1"/>.
+    /// </value>
+    protected override IReadOnlyCollection<MegFileVersion> SupportedVersions { get; } = [MegFileVersion.V1];
+
     private readonly IFileSystem _fileSystem;
 
     /// <summary>
@@ -40,6 +50,18 @@ public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInform
     /// </value>
     protected override uint MaxMegFileSize { get; } =
         MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.EawFoc).MaxFileSize;
+
+    /// <summary>
+    /// Gets the maximum allowed size, in bytes, for a MEG data entry when validating 
+    /// compliance with the Petroglyph Star Wars: Empire at War and Forces of Corruption game.
+    /// </summary>
+    /// <value>
+    /// The maximum allowed size, in bytes, for a MEG data entry when
+    /// validating compliance with the Petroglyph Star Wars: Empire at War and Forces of Corruption game.
+    /// Maximum entry size is limited to 2GB (2^32 - 1 bytes).
+    /// </value>
+    protected override uint MaxMegEntrySize { get; } =
+        MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.EawFoc).MaxEntrySize;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarMegFileInformationValidator"/> class.
@@ -61,9 +83,6 @@ public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInform
     protected override MegFileInfoValidationResult ValidateCore(MegFileInformation fileInformation,
         IReadOnlyCollection<MegDataEntryBuilderInfo> dataEntries)
     {
-        if (fileInformation.FileVersion != MegFileVersion.V1)
-            return new MegFileInfoValidationResult(false, "File version must be V1.");
-
         var fileName = _fileSystem.Path.GetFileName(fileInformation.FilePath.AsSpan());
 
         // As we cannot know the actual path on the target system where the game will be installed,

@@ -21,7 +21,9 @@ public abstract class BinaryMegDataEntryValidatorTestBase : CommonMegTestBase
     [MemberData(nameof(ValidTestData))]
     public void Validate_ValidData(MegDataEntryBuilderInfo builderInfo)
     {
-        Assert.Equal(MegDataEntryValidationStatus.Valid, CreateValidator().Validate(builderInfo).Status);
+        var result = CreateValidator().Validate(builderInfo);
+        Assert.Equal(MegDataEntryValidationStatus.Valid, result.Status);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
@@ -41,7 +43,9 @@ public abstract class BinaryMegDataEntryValidatorTestBase : CommonMegTestBase
         
         var info = new MegDataEntryBuilderInfo(origin, "PATH");
         
-        Assert.Equal(MegDataEntryValidationStatus.InvalidOriginNotFound, CreateValidator().Validate(info).Status);
+        var result = CreateValidator().Validate(info);
+        Assert.Equal(MegDataEntryValidationStatus.InvalidOriginNotFound, result.Status);
+        Assert.False(result.IsValid);
     }
 
     [Fact]
@@ -53,7 +57,9 @@ public abstract class BinaryMegDataEntryValidatorTestBase : CommonMegTestBase
         
         FileSystem.File.Delete(file);
         
-        Assert.Equal(MegDataEntryValidationStatus.InvalidOriginNotFound, CreateValidator().Validate(info).Status);
+        var result = CreateValidator().Validate(info);
+        Assert.Equal(MegDataEntryValidationStatus.InvalidOriginNotFound, result.Status);
+        Assert.False(result.IsValid);
     }
 
     [Fact]
@@ -64,7 +70,9 @@ public abstract class BinaryMegDataEntryValidatorTestBase : CommonMegTestBase
         var info = MegDataEntryBuilderInfo.FromFile(bigFile, "ANY");
         // Now exceed the max size before validation
         bigFile.Length = (long)maxSize + 1;
-        Assert.Equal(MegDataEntryValidationStatus.InvalidEntryTooLarge, CreateValidator().Validate(info).Status);
+        var result = CreateValidator().Validate(info);
+        Assert.Equal(MegDataEntryValidationStatus.InvalidEntryTooLarge, result.Status);
+        Assert.False(result.IsValid);
     }
 
     public static IEnumerable<object[]> ValidTestData()

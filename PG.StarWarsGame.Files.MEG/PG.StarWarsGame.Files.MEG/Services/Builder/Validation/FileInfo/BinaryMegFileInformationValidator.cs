@@ -1,15 +1,15 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using Microsoft.Extensions.DependencyInjection;
+using PG.StarWarsGame.Files.MEG.Binary;
+using PG.StarWarsGame.Files.MEG.Binary.Size;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using PG.StarWarsGame.Files.MEG.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.Size;
 
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
@@ -24,6 +24,17 @@ public class BinaryMegFileInformationValidator : IMegFileInformationValidator
     protected readonly IServiceProvider ServiceProvider;
 
     /// <summary>
+    /// Gets the MEG file versions supported by this validator.
+    /// </summary>
+    /// <value>
+    /// A read-only collection containing the supported versions of the .MEG file format
+    /// that are validated by this implementation.
+    /// For <see cref="BinaryMegFileInformationValidator"/>, this includes all versions
+    /// </value>
+    protected virtual IReadOnlyCollection<MegFileVersion> SupportedVersions { get; } 
+        = [MegFileVersion.V1, MegFileVersion.V2, MegFileVersion.V3];
+
+    /// <summary>
     /// Gets the maximum allowed size for a MEG file in bytes, as defined by the MEG specification.
     /// </summary>
     /// <value>
@@ -31,6 +42,15 @@ public class BinaryMegFileInformationValidator : IMegFileInformationValidator
     /// </value>
     protected virtual uint MaxMegFileSize { get; } =
         MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxFileSize;
+
+    /// <summary>
+    /// Gets the maximum allowed size for a MEG data entry in bytes, as defined by the MEG specification.
+    /// </summary>
+    /// <value>
+    /// The maximum allowed size for a MEG data entry in bytes, as defined by the MEG specification.
+    /// </value>
+    protected virtual uint MaxMegEntrySize { get; } =
+        MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxEntrySize;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BinaryMegFileInformationValidator"/> class.
@@ -54,6 +74,9 @@ public class BinaryMegFileInformationValidator : IMegFileInformationValidator
         if (dataEntries == null)
             throw new ArgumentNullException(nameof(dataEntries));
 
+        if (!SupportedVersions.Contains(fileInformation.FileVersion))
+            return new MegFileInfoValidationResult(false, $"MEG version {fileInformation.FileVersion} is currently not supported.");
+
         var isEncrypted = dataEntries.Any(e => e.Encrypted);
         var hasEncryptionData = fileInformation.HasEncryption;
 
@@ -63,15 +86,30 @@ public class BinaryMegFileInformationValidator : IMegFileInformationValidator
         if (!isEncrypted && hasEncryptionData)
             return new MegFileInfoValidationResult(false, "No encryption data must be provided for non-encrypted MEG archives.");
 
-
-        var sizeCalculator = ServiceProvider.GetRequiredService<IMegBinaryServiceFactory>()
-            .GetMegSizeCalculator(fileInformation.FileVersion);
+        IMegSizeCalculator sizeCalculator;
+        try
+        {
+            sizeCalculator = ServiceProvider.GetRequiredService<IMegBinaryServiceFactory>()
+                .GetMegSizeCalculator(fileInformation.FileVersion);
+        }
+        catch (NotImplementedException)
+        {
+            return new MegFileInfoValidationResult(false, $"MEG version {fileInformation.FileVersion} is currently not supported.");
+        }
 
         try
         {
             foreach (var entry in dataEntries)
             {
                 entry.RefreshSize();
+
+                // Necessary, because an uint.Max sized entry,
+                // which should get encrypted would be padded to uint.Max + 1, which then would be a long value
+                var binarySize = MegSizeCalculator.GetBinaryEntrySizeWithEncryption(entry);
+
+                if (binarySize > MaxMegEntrySize)
+                    return new MegFileInfoValidationResult(false, "A MEG entry exceeds the maximum allowed size.");
+
                 sizeCalculator.AddEntry(entry);
             }
             

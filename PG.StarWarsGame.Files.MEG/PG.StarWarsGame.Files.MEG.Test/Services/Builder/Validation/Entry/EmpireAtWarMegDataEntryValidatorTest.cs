@@ -19,14 +19,18 @@ public class EmpireAtWarMegDataEntryValidatorTest : BinaryMegDataEntryValidatorT
     [MemberData(nameof(EawValidTestData))]
     public void Validate_EawSpecific(MegDataEntryBuilderInfo builderInfo)
     {
-        Assert.Equal(MegDataEntryValidationStatus.Valid, CreateValidator().Validate(builderInfo).Status);
+        var result = CreateValidator().Validate(builderInfo);
+        Assert.Equal(MegDataEntryValidationStatus.Valid, result.Status);
+        Assert.True(result.IsValid);
     }
 
     [Theory]
     [MemberData(nameof(InvalidTestDataEaw))]
     public void Validate_InvalidInfos_EawSpecific(MegDataEntryBuilderInfo? builderInfo, MegDataEntryValidationStatus expectedStatus)
     {
-        Assert.Equal(expectedStatus, CreateValidator().Validate(builderInfo).Status);
+        var result = CreateValidator().Validate(builderInfo!);
+        Assert.Equal(expectedStatus, result.Status);
+        Assert.False(result.IsValid);
     }
 
     public static IEnumerable<object[]> EawValidTestData()

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
-public abstract class DataEntryPathNormalizerTestBase
+public abstract class MegDataEntryPathNormalizerTestBase
 {
     protected abstract IMegDataEntryPathNormalizer CreateNormalizer();
 
@@ -26,7 +26,7 @@ public abstract class DataEntryPathNormalizerTestBase
         TestNormalizePassSpan(normalizer, source, expected);
     }
 
-    private void TestNormalizePassSpan(IMegDataEntryPathNormalizer normalizer, string source, string expected)
+    private static void TestNormalizePassSpan(IMegDataEntryPathNormalizer normalizer, string source, string expected)
     {
         Span<char> buffer = new char[source.AsSpan().Length * 2 + 1];
         
@@ -35,7 +35,7 @@ public abstract class DataEntryPathNormalizerTestBase
         Assert.Equal(expected, buffer.Slice(0, length).ToString());
     }
 
-    private void TestNormalizePass(IMegDataEntryPathNormalizer normalizer, string source, string expected)
+    private static void TestNormalizePass(IMegDataEntryPathNormalizer normalizer, string source, string expected)
     {
         var actual = normalizer.Normalize(source);
         Assert.Equal(expected, actual);

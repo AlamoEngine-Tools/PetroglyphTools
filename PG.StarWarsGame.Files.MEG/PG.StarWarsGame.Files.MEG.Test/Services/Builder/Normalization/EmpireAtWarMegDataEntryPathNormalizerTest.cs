@@ -4,46 +4,22 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Services.Builder.Normalization;
 
-public class EmpireAtWarMegDataEntryPathNormalizerTest : PetroglyphDataEntryPathNormalizerTestBase
+public class EmpireAtWarMegDataEntryPathNormalizerTest : PetroglyphMegDataEntryPathNormalizerTestBase
 {
-    protected override PetroglyphDataEntryPathNormalizer CreatePGNormalizer()
+    protected override PetroglyphMegDataEntryPathNormalizer CreatePetroglyphNormalizer()
     {
-        return EmpireAtWarMegDataEntryPathNormalizer.Instance;
+        return new EmpireAtWarMegDataEntryPathNormalizer();
     }
 
     [Theory]
-    [MemberData(nameof(ValidPathsToNormalize))]
-    public void Normalize_Success(string source, string expected)
+    [MemberData(nameof(EmpireAtWarTestNormalizeTestData))]
+    public void Normalize_EmpireAtWar(string source, string expected)
     {
         TestNormalizePathPasses(source, expected);
     }
-    
-    public static IEnumerable<object[]> ValidPathsToNormalize()
+
+    public static IEnumerable<object[]> EmpireAtWarTestNormalizeTestData()
     {
-        // Null and empty handling
-        yield return [null!, string.Empty];
-        yield return ["", string.Empty];
-        yield return [".", "."];
-
-        // Do nothing
-        yield return ["TEST", "TEST"];
-
-        // Separator at end
-        yield return ["TEST\\", "TEST\\"];
-        yield return ["MY\\TEST\\", "MY\\TEST\\"];
-
-        // The normalizer of the engine does not check or ensure the max length and works with any size
-        yield return [new string('a', 270), new string('A', 270)];
-
-        // This normalizer does not encode
-        yield return ["fileÖ?", "FILEÖ?"];
-
-        // Uppercase
-        yield return ["fiLE.TxT", "FILE.TXT"];
-
-        // Normalize directory separators
-        yield return ["MY/PATH\\FILE", "MY\\PATH\\FILE"];
-
         // Trim this directory but do not trim period-starting file name
         yield return [".\\MY\\TEST.txt", "MY\\TEST.TXT"];
         yield return ["./my/TEST", "MY\\TEST"];

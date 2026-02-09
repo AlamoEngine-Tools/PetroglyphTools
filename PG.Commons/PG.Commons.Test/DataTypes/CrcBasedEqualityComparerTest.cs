@@ -50,7 +50,7 @@ public class HasCrcClass(int crc32) : IHasCrc32, IEquatable<HasCrcClass>
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((HasCrcClass)obj);
     }
 
@@ -71,7 +71,7 @@ public class CrcBasedEqualityComparerTest_Class : CrcBasedEqualityComparerTest<H
     public void GetHashCode_NullArgs_Throws()
     {
         var comparer = CrcBasedEqualityComparer<HasCrcClass>.Instance;
-        Assert.Throws<ArgumentNullException>(() => comparer.GetHashCode(null!));
+        Assert.Equal(0, comparer.GetHashCode(null));
     }
 }
 

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using System.Collections.Generic;
 
 namespace PG.Commons.Data;
@@ -72,9 +71,8 @@ public sealed class CrcBasedEqualityComparer<T> : IEqualityComparer<T> where T :
     /// <returns>
     /// A hash code for the specified object, derived from its <see cref="IHasCrc32.Crc32"/> value.
     /// </returns>
-    /// <exception cref="ArgumentNullException"><paramref name="obj"/> is <see langword="null"/>.</exception>
-    public int GetHashCode(T obj)
+    public int GetHashCode(T? obj)
     {
-        return obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.Crc32.GetHashCode();
+        return obj?.Crc32.GetHashCode() ?? 0;
     }
 }

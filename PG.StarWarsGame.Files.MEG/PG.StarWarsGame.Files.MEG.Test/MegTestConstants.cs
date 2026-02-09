@@ -555,8 +555,8 @@ internal static class MegTestConstants
         public void Encrypt() => throw new NotImplementedException();
         public void MoveTo(string destFileName) => throw new NotImplementedException();
         public void MoveTo(string destFileName, bool overwrite) => throw new NotImplementedException();
-        public IFileInfo Replace(string destinationFileName, string destinationBackupFileName) => throw new NotImplementedException();
-        public IFileInfo Replace(string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors) => throw new NotImplementedException();
+        public IFileInfo Replace(string destinationFileName, string? destinationBackupFileName) => throw new NotImplementedException();
+        public IFileInfo Replace(string destinationFileName, string? destinationBackupFileName, bool ignoreMetadataErrors) => throw new NotImplementedException();
         public string LinkTarget => throw new NotImplementedException();
         public void CreateAsSymbolicLink(string pathToTarget) => throw new NotImplementedException();
         public IFileSystemInfo ResolveLinkTarget(bool returnFinalTarget) => throw new NotImplementedException();

@@ -10,7 +10,7 @@ using Xunit;
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
 public abstract class MegDataEntryHolderBaseTest<TEntry, TArchive> : CommonMegTestBase 
-    where TEntry : IMegDataEntry 
+    where TEntry : class, IMegDataEntry
     where TArchive : IMegDataEntryHolder<TEntry>
 {
     protected abstract TArchive CreateArchive(IList<TEntry> entries);
@@ -34,6 +34,7 @@ public abstract class MegDataEntryHolderBaseTest<TEntry, TArchive> : CommonMegTe
         var archive = CreateArchive(entries);
 
         Assert.Equal(2, archive.Count);
+        
         Assert.Same(entry1, archive[0]);
         Assert.Same(entry2, archive[1]);
 

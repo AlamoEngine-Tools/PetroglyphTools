@@ -28,15 +28,15 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     [Fact]
     public void GetDataStream_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => _streamFactory.GetDataStream((MegDataEntryOriginInfo)null!));
-        Assert.Throws<ArgumentNullException>(() => _streamFactory.GetDataStream((MegDataEntryLocationReference)null!));
+        Assert.Throws<ArgumentNullException>(() => _streamFactory.GetStream((MegDataEntryOriginInfo)null!));
+        Assert.Throws<ArgumentNullException>(() => _streamFactory.GetStream((MegDataEntryLocationReference)null!));
     }
 
     [Fact]
     public void GetFileData_OriginInfo_Throws_FileNotFound()
     {
-       var originInfo = new MegDataEntryOriginInfo("test.txt");
-        Assert.Throws<FileNotFoundException>(() => _streamFactory.GetDataStream(originInfo));
+       var originInfo = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.txt"));
+        Assert.Throws<FileNotFoundException>(() => _streamFactory.GetStream(originInfo));
     }
 
     [Fact]
@@ -44,8 +44,8 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     {
         FileSystem.Initialize().WithFile("test.txt").Which(m => m.HasBytesContent([1,2,3]));
 
-        var originInfo = new MegDataEntryOriginInfo("test.txt");
-        var stream = _streamFactory.GetDataStream(originInfo);
+        var originInfo = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.txt"));
+        var stream = _streamFactory.GetStream(originInfo);
         Assert.Equal(3, stream.Length);
 
         var resultStream = new MemoryStream(new byte[3]);
@@ -66,7 +66,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
 
         var originInfo = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, entry));
 
-        var stream = _streamFactory.GetDataStream(originInfo);
+        var stream = _streamFactory.GetStream(originInfo);
         Assert.Equal(2, stream.Length);
 
         var resultStream = new MemoryStream(new byte[2]);
@@ -88,7 +88,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
 
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        Assert.Throws<FileNotInMegException>(() => _streamFactory.GetDataStream(location));
+        Assert.Throws<EntryNotInMegException>(() => _streamFactory.GetStream(location));
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
 
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        Assert.Throws<FileNotFoundException>(() => _streamFactory.GetDataStream(location));
+        Assert.Throws<FileNotFoundException>(() => _streamFactory.GetStream(location));
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
 
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        var stream = _streamFactory.GetDataStream(location);
+        var stream = _streamFactory.GetStream(location);
         Assert.Equal(0, stream.Length);
     }
 
@@ -141,7 +141,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
 
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        var stream = _streamFactory.GetDataStream(location);
+        var stream = _streamFactory.GetStream(location);
         Assert.Equal(2, stream.Length);
 
         var resultStream = new MemoryStream(new byte[2]);

@@ -1,10 +1,28 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System;
+using System.IO;
+using System.IO.Abstractions;
+
 namespace PG.StarWarsGame.Files.MEG.Test;
 
 internal static class MegTestConstants
 {
+    internal class NonSeekableStream : Stream
+    {
+        public override void Flush() => throw new NotImplementedException();
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
+        public override void SetLength(long value) => throw new NotImplementedException();
+        public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
+        public override bool CanWrite => true;
+        public override long Length => 1;
+        public override long Position { get; set; }
+    }
+
     internal static byte[] GameObjectFilesContent = [
         60, 63, 120, 109, 108, 32, 118, 101, 114, 115, 105, 111, 110, 61, 34, 49, 46, 48, 34, 32, 63, 62, 13,
         10, 13, 10, 60, 71, 97, 109, 101, 95, 79, 98, 106, 101, 99, 116, 95, 70, 105, 108, 101, 115, 62, 13, 10, 13, 10,
@@ -500,4 +518,58 @@ internal static class MegTestConstants
         95, 85, 110, 105, 116, 115, 46, 88, 77, 76, 60, 47, 70, 105, 108, 101, 62, 13, 10, 13, 10, 13, 10, 13, 10, 60,
         47, 71, 97, 109, 101, 95, 79, 98, 106, 101, 99, 116, 95, 70, 105, 108, 101, 115, 62
     ];
+
+    internal class FakeFileInfo(string fullName, long length) : IFileInfo
+    {
+        public string FullName => fullName;
+        public long Length { get; set; } = length;
+        public bool Exists => true;
+
+        #region Other IFileInfo Members
+        public void Delete() => throw new NotImplementedException();
+        public void Refresh() { }
+        public FileSystemStream OpenRead() => throw new NotImplementedException();
+        public FileSystemStream OpenWrite() => throw new NotImplementedException();
+        public FileSystemStream Open(FileMode mode) => throw new NotImplementedException();
+        public FileSystemStream Open(FileMode mode, FileAccess access) => throw new NotImplementedException();
+        public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share) => throw new NotImplementedException();
+        public IFileSystem FileSystem => throw new NotImplementedException();
+        public FileAttributes Attributes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime CreationTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime CreationTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Extension => throw new NotImplementedException();
+        public DateTime LastAccessTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime LastWriteTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime LastWriteTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Name => throw new NotImplementedException();
+        public IDirectoryInfo? Directory => throw new NotImplementedException();
+        public string? DirectoryName => throw new NotImplementedException();
+        public bool IsReadOnly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public StreamWriter AppendText() => throw new NotImplementedException();
+        public IFileInfo CopyTo(string destFileName) => throw new NotImplementedException();
+        public IFileInfo CopyTo(string destFileName, bool overwrite) => throw new NotImplementedException();
+        public FileSystemStream Create() => throw new NotImplementedException();
+        public StreamWriter CreateText() => throw new NotImplementedException();
+        public void Decrypt() => throw new NotImplementedException();
+        public void Encrypt() => throw new NotImplementedException();
+        public void MoveTo(string destFileName) => throw new NotImplementedException();
+        public void MoveTo(string destFileName, bool overwrite) => throw new NotImplementedException();
+        public IFileInfo Replace(string destinationFileName, string? destinationBackupFileName) => throw new NotImplementedException();
+        public IFileInfo Replace(string destinationFileName, string? destinationBackupFileName, bool ignoreMetadataErrors) => throw new NotImplementedException();
+        public string LinkTarget => throw new NotImplementedException();
+        public void CreateAsSymbolicLink(string pathToTarget) => throw new NotImplementedException();
+        public IFileSystemInfo ResolveLinkTarget(bool returnFinalTarget) => throw new NotImplementedException();
+        public StreamReader OpenText() => throw new NotImplementedException();
+
+#if NET7_0_OR_GREATER
+        public UnixFileMode UnixFileMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+#endif
+
+#if NET6_0_OR_GREATER
+        public FileSystemStream Open(FileStreamOptions options) => throw new NotImplementedException();
+#endif
+
+        #endregion
+    }
 }

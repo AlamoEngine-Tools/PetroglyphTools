@@ -9,5 +9,5 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal interface IConstructingMegArchiveBuilder
 {
-    IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegFileDataEntryBuilderInfo> builderEntries);
+    IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegDataEntryBuilderInfo> builderEntries);
 }

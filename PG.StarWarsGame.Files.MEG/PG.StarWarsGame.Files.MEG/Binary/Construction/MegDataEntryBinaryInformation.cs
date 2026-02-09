@@ -9,15 +9,15 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal class MegDataEntryBinaryInformation(
     Crc32 crc32,
-    string filePath,
+    string path,
     MegDataEntrySize sizes,
     bool encrypted,
-    string originalFilePath,
+    string originalPath,
     MegDataEntryOriginInfo origin) : IHasCrc32
 {
-    public string FilePath { get; } = filePath;
+    public string Path { get; } = path;
 
-    public string OriginalFilePath { get; } = originalFilePath;
+    public string OriginalPath { get; } = originalPath;
 
     public Crc32 Crc32 { get; } = crc32;
 

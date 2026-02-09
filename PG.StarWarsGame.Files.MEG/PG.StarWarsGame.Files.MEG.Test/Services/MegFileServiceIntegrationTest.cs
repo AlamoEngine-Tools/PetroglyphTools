@@ -1,3 +1,4 @@
+using PG.StarWarsGame.Files.MEG.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -30,7 +31,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
     [Fact]
     public void CreateMegArchive_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegFileDataEntryBuilderInfo>()));
+        Assert.Throws<ArgumentNullException>(() => _megFileService.CreateMegArchive(null!, MegFileVersion.V1, null, new List<MegDataEntryBuilderInfo>()));
         Assert.Throws<ArgumentNullException>(() =>
         {
             using var fs = FileSystem.File.OpenWrite("path");
@@ -68,37 +69,68 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         var dummyMeg = new MegFile(new MegArchive([]), new MegFileInformation(dummyMegFile, MegFileVersion.V1),
             ServiceProvider);
 
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
+        var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegFileDataEntryBuilderInfo.FromEntry(dummyMeg, meg.Archive[0])
+            new(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(dummyMeg, meg.Archive[0])))
         };
 
-        Assert.Throws<FileNotInMegException>(() =>
+        Assert.Throws<EntryNotInMegException>(() =>
         {
             using var fs = FileSystem.File.OpenWrite(newFileName);
             _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
         });
     }
 
-    [Fact]
-    public void CreateMegArchive_EntryNotFoundOnFileSystem_Throws()
+    private sealed class ManualStreamFactory(Stream streamToReturn) : IMegDataStreamFactory
     {
-        const string megFileName = "test.meg";
-        const string newFileName = "new.meg";
+        public Stream GetStream(MegDataEntryOriginInfo originInfo) => streamToReturn;
+        public MegEntryStream GetStream(MegDataEntryLocationReference locationReference) => throw new NotImplementedException();
+    }
 
-        FileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
+    [Theory]
+    [InlineData(CreateMegArchiveInvalidOperationType.DataEntrySizeMismatch)]
+    [InlineData(CreateMegArchiveInvalidOperationType.FilePositionMismatch)]
+    public void CreateMegArchive_ThrowsInvalidOperationException(CreateMegArchiveInvalidOperationType type)
+    {
+        const string megFileName = "new.meg";
+        const string entryFileName = "file.txt";
 
-        var meg = _megFileService.Load(megFileName);
+        FileSystem.File.WriteAllBytes(entryFileName, [1, 2, 3]);
+        var fileInfo = FileSystem.FileInfo.New(entryFileName);
+        var builderInfo = MegDataEntryBuilderInfo.FromFile(fileInfo, entryFileName);
 
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
+        Stream streamToReturn = type switch
         {
-            MegFileDataEntryBuilderInfo.FromFile("notFound.txt", null)
+            CreateMegArchiveInvalidOperationType.DataEntrySizeMismatch => new MemoryStream([1, 2, 3, 4]),
+            _ => new MemoryStream([1, 2, 3])
         };
-        Assert.Throws<FileNotFoundException>(() =>
+
+        var manualFactory = new ManualStreamFactory(streamToReturn);
+
+        var sc = new ServiceCollection();
+        SetupServices(sc);
+        sc.AddSingleton(FileSystem);
+        sc.AddSingleton<IMegDataStreamFactory>(manualFactory);
+        var serviceProvider = sc.BuildServiceProvider();
+
+        var megFileService = serviceProvider.GetRequiredService<IMegFileService>();
+
+        var ex = Assert.Throws<InvalidOperationException>(() =>
         {
-            using var fs = FileSystem.File.OpenWrite(newFileName);
-            _megFileService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
+            using var fs = FileSystem.File.OpenWrite(megFileName);
+            if (type == CreateMegArchiveInvalidOperationType.FilePositionMismatch)
+                fs.WriteByte(0);
+            megFileService.CreateMegArchive(fs, MegFileVersion.V1, null, [builderInfo]);
         });
+
+        var expectedMessagePart = type switch
+        {
+            CreateMegArchiveInvalidOperationType.DataEntrySizeMismatch => "Actual data entry size",
+            CreateMegArchiveInvalidOperationType.FilePositionMismatch => "Actual file position",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+
+        Assert.Contains(expectedMessagePart, ex.Message);
     }
 
     [Fact]
@@ -121,10 +153,10 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         FileSystem.Initialize().WithFile("1.txt").Which(m => m.HasStringContent("123"));
         FileSystem.Initialize().WithFile("2.txt").Which(m => m.HasStringContent("456"));
 
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
+        var builderInfo = new List<MegDataEntryBuilderInfo>
         {
-            MegFileDataEntryBuilderInfo.FromFile("1.txt", "file"),
-            MegFileDataEntryBuilderInfo.FromFile("2.txt", "file")
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("1.txt"), "file"),
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("2.txt"), "file")
         };
 
         using (var fs = FileSystem.File.OpenWrite(megFileName))
@@ -135,22 +167,6 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         var bytes = FileSystem.File.ReadAllBytes(megFileName);
 
         Assert.Equal(expectedBytes, bytes);
-    }
-
-    [Fact]
-    public void CreateMegArchive_InvalidSize_Throws()
-    {
-        const string megFileName = "test.meg";
-
-        FileSystem.Initialize().WithFile("1.txt").Which(m => m.HasStringContent("123"));
-
-        var builderInfo = new List<MegFileDataEntryBuilderInfo>
-        {
-            MegFileDataEntryBuilderInfo.FromFile("1.txt", "file", size: 99) // Size is not correct
-        };
-
-        using var fs = FileSystem.File.OpenWrite(megFileName);
-        Assert.Throws<InvalidOperationException>(() => _megFileService.CreateMegArchive(fs, MegFileVersion.V1, null, builderInfo));
     }
 
     #endregion
@@ -306,7 +322,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         {
             var entry = meg.Archive[i];
             var expected = expectedData.EntryNames[i];
-            Assert.Equal(expected, entry.FilePath);
+            Assert.Equal(expected, entry.Path);
         }
 
         using var param = new MegFileInformation(
@@ -315,7 +331,7 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
             expectedData.EncryptionData);
 
         var builderInformation = meg.Archive.Select(e =>
-            new MegFileDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
+            new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, e))));
 
         using (var fs = FileSystem.File.OpenWrite(expectedData.NewMegFilePath))
         {
@@ -357,8 +373,14 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         {
             var entry = meg.Archive[i];
             var expected = expectedData.EntryNames[i];
-            Assert.Equal(expected, entry.FilePath);
+            Assert.Equal(expected, entry.Path);
         }
+    }
+
+    public enum CreateMegArchiveInvalidOperationType
+    {
+        DataEntrySizeMismatch,
+        FilePositionMismatch,
     }
 
     private record ExpectedMegTestData

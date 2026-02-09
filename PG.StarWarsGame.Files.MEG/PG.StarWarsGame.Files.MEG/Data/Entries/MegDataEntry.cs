@@ -17,7 +17,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEquatable<MegDataEntry>
 {
     /// <inheritdoc />
-    public override string FilePath { get; }
+    public override string Path { get; }
 
     /// <inheritdoc />
     public override Crc32 Crc32 { get; }
@@ -25,7 +25,7 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// <summary>
     /// The original file path value without the default MEG encoding applied.
     /// </summary>
-    public string OriginalFilePath { get; }
+    public string OriginalPath { get; }
 
     /// <summary>
     /// Indicates whether the file is encrypted
@@ -35,27 +35,28 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// <summary>
     /// Initializes a new instance of the <see cref="MegDataEntry"/> class.
     /// </summary>
-    /// <param name="filePath">The file path of the entry.</param>
+    /// <param name="entryPath">The file path of the entry.</param>
     /// <param name="crc32">The CRC32 checksum of the filePath</param>
     /// <param name="location">The location information of the entry inside it's MEG file.</param>
     /// <param name="encrypted">Indicates whether this entry is encrypted or not.</param>
-    /// <param name="originalFilePath">The original file path value.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    internal MegDataEntry(string filePath, Crc32 crc32, MegDataEntryLocation location, bool encrypted, string originalFilePath) : base(location)
+    /// <param name="originalPath">The original file path value.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="entryPath"/> or <paramref name="originalPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty or only consists of while spaces.</exception>
+    /// <exception cref="ArgumentException"><paramref name="originalPath"/> is empty.</exception>
+    internal MegDataEntry(string entryPath, Crc32 crc32, MegDataEntryLocation location, bool encrypted, string originalPath) : base(location)
     {
-        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
-        ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(entryPath);
+        ThrowHelper.ThrowIfNullOrEmpty(originalPath);
 
-        StringUtilities.ValidateIsAsciiOnly(filePath.AsSpan());
+        StringUtilities.ValidateIsAsciiOnly(entryPath.AsSpan());
         
         Crc32 = crc32;
         Encrypted = encrypted;
-        OriginalFilePath = originalFilePath;
+        OriginalPath = originalPath;
 
         // Note: We cannot validate correct CRC32 here in order to stay compatible with MIKE.NL's tool.
         // See the ASCII vs. Latin1 encoding problem.
-        FilePath = filePath;
+        Path = entryPath;
     }
 
     /// <inheritdoc />

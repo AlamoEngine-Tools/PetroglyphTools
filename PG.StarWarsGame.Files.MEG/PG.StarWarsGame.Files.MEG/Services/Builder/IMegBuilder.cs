@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -15,7 +16,7 @@ namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 /// <summary>
 /// Service to create MEG files from local files or other MEG data entries ensuring custom validation and normalization rules.
 /// </summary>
-public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntryBuilderInfo>, MegFileInformation>
+public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuilderInfo>, MegFileInformation>
 {
     /// <summary>
     /// Gets a value indicating whether the <see cref="IMegBuilder"/> normalizes a data entry's path before adding it.
@@ -37,7 +38,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <summary>
     /// Gets a collection of all data entries which shall be packed to a .MEG file.
     /// </summary>
-    IReadOnlyCollection<MegFileDataEntryBuilderInfo> DataEntries { get; }
+    IReadOnlyCollection<MegDataEntryBuilderInfo> DataEntries { get; }
 
     /// <summary>
     /// Gets the data entry validator for this <see cref="IMegBuilder"/>.
@@ -66,7 +67,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="entryPath"/> is empty.</exception>
-    AddDataEntryToBuilderResult AddFile(string filePath, string entryPath, bool encrypt = false);
+    MegDataEntryAddResult AddFile(string filePath, string entryPath, bool encrypt = false);
 
     /// <summary>
     /// Adds an existing data entry to the <see cref="IMegBuilder"/> and returns a status information to indicate whether the entry was successfully added. 
@@ -80,7 +81,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="entryReference"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="overridePathInMeg"/> is empty.</exception>
-    AddDataEntryToBuilderResult AddEntry(MegDataEntryLocationReference entryReference, string? overridePathInMeg = null,
+    MegDataEntryAddResult AddEntry(MegDataEntryLocationReference entryReference, string? overridePathInMeg = null,
         bool? overrideEncrypt = null);
 
     /// <summary>
@@ -91,10 +92,50 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegFileDataEntry
     /// <see langword="true"/> if item was successfully removed from the <see cref="IMegBuilder"/>; otherwise, <see langword="false"/>.
     /// This method also returns false if item is not found in the original <see cref="IMegBuilder"/>.
     /// </returns>
-    bool Remove(MegFileDataEntryBuilderInfo info);
+    bool Remove(MegDataEntryBuilderInfo info);
 
     /// <summary>
     /// Removes all builder information from the <see cref="IMegBuilder"/>.
     /// </summary>
     void Clear();
+
+    /// <summary>
+    /// Builds multiple MEG archive files by splitting the data entries into the minimum required number of parts.
+    /// </summary>
+    /// <remarks>
+    /// If all entries for the MEG builder fit into a single MEG file, the <paramref name="initialFileInformation"/>
+    /// is used as-is, including its file path. If multiple files are required, <paramref name="initialFileInformation"/>
+    /// serves as a template where the file path is replaced for each part using the <paramref name="filePathFactory"/>.
+    /// </remarks>
+    /// <param name="initialFileInformation">The file information used as a template for all output files.</param>
+    /// <param name="filePathFactory">
+    /// A function that generates the file path for each part based on its index (1-based). 
+    /// Not invoked if only a single file is created.
+    /// </param>
+    /// <param name="overwrite">A value indicating whether to overwrite existing files.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="initialFileInformation"/> is <see langword="null"/>.
+    /// -or-
+    /// <paramref name="filePathFactory"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// <paramref name="initialFileInformation"/> is not valid
+    /// -or-
+    /// <paramref name="filePathFactory"/> produced an invalid file path
+    /// -or
+    /// it is impossible to create MEG files because of the current state of the builder.
+    /// </exception>
+    /// <exception cref="IOException">The file could not be created due to an IO error.</exception>
+    public void BuildMany(MegFileInformation initialFileInformation, Func<int, string> filePathFactory, bool overwrite);
+
+    /// <summary>
+    /// Determines the minimum number of MEG files that must be created for the specified collection of data entry builder information
+    /// due to the size constraints of MEG files the builder produces.
+    /// </summary>
+    /// <remarks>
+    /// The method will return at least value <value>1</value>.
+    /// </remarks>
+    /// <returns>The minimum number of MEG files required to accommodate the provided data entries.</returns>
+    /// <exception cref="InvalidOperationException">It is impossible to create MEG files because of the current state of the builder.</exception>
+    int GetMinRequiredMegFiles(MegFileVersion megVersion);
 }

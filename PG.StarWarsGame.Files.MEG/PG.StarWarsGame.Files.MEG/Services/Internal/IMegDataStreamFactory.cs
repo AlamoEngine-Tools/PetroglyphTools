@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 
 internal interface IMegDataStreamFactory
 {
-    Stream GetDataStream(MegDataEntryOriginInfo originInfo);
+    Stream GetStream(MegDataEntryOriginInfo originInfo);
 
-    MegFileDataStream GetDataStream(MegDataEntryLocationReference locationReference);
+    MegEntryStream GetStream(MegDataEntryLocationReference locationReference);
 }

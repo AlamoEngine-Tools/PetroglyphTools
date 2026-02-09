@@ -59,8 +59,8 @@ public abstract class MegBinaryConverterTest
             var expectedEntry = entries[i];
             var actualEntry = model[i];
 
-            Assert.Equal(expectedEntry.FilePath, actualEntry.FilePath);
-            Assert.Equal(expectedEntry.OriginalFilePath, actualEntry.OriginalFilePath);
+            Assert.Equal(expectedEntry.Path, actualEntry.Path);
+            Assert.Equal(expectedEntry.OriginalPath, actualEntry.OriginalPath);
             Assert.Equal(expectedEntry.Crc32, actualEntry.Crc32);
             Assert.Equal(expectedEntry.Location.Size, actualEntry.Location.Size);
             Assert.Equal(expectedEntry.Location.Offset, actualEntry.Location.Offset);
@@ -118,8 +118,8 @@ public abstract class MegBinaryConverterTest
         for (var i = 0; i < binary.FileNameTable.Count; i++)
         {
             var nameEntry = binary.FileNameTable[i];
-            Assert.Equal(model[i].FilePath, nameEntry.FileName);
-            Assert.Equal(model[i].OriginalFilePath, nameEntry.OriginalFilePath);
+            Assert.Equal(model[i].Path, nameEntry.FileName);
+            Assert.Equal(model[i].OriginalPath, nameEntry.OriginalFileName);
         }
 
         for (var i = 0; i < binary.FileTable.Count; i++)

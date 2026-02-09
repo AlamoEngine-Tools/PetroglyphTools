@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
-using Xunit;
+using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
-public class MegArchiveTest
+public class MegArchiveTest : MegDataEntryHolderBaseTest<MegDataEntry, IMegArchive>
 {
-    [Fact]
-    public void Ctor_Throw_NullArgument()
-    { 
-        Assert.Throws<ArgumentNullException>(() => new MegArchive(null!));
+    protected override IMegArchive CreateArchive(IList<MegDataEntry> entries)
+    {
+        return new MegArchive(entries);
     }
 
-    [Fact]
-    public void Ctor()
+    protected override MegDataEntry CreateEntry(string path, Crc32 crc = default)
     {
-        var entries = new List<MegDataEntry>();
-        _ = new MegArchive(entries);
+        return MegDataEntryTest.CreateEntry(path, crc);
     }
 }

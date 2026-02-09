@@ -36,7 +36,7 @@ public class MegFileNameTableRecordTest
         const string expectedOrgPath = "someUnusualStringÜöä😅";
         var record = Assert.DoesNotThrow(() => new MegFileNameTableRecord("path", expectedOrgPath));
         Assert.Equal("path", record.FileName);
-        Assert.Equal(expectedOrgPath, record.OriginalFilePath);
+        Assert.Equal(expectedOrgPath, record.OriginalFileName);
     }
 
     [Theory]

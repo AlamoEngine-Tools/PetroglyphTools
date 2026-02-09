@@ -27,13 +27,13 @@ public class Crc32HashingProviderTest
 
         Assert.Equal(sizeof(Crc32), bytesWritten);
         var expectedBytes = BitConverter.GetBytes(expected);
-        Assert.Equal(expectedBytes, destination.Slice(0, bytesWritten).ToArray());
+        Assert.Equal(expectedBytes.AsSpan(), destination[..bytesWritten]);
 
 
         bytesWritten = new Crc32HashingProvider().HashData(new MemoryStream(inputData), destination);
         Assert.Equal(sizeof(Crc32), bytesWritten);
         expectedBytes = BitConverter.GetBytes(expected);
-        Assert.Equal(expectedBytes, destination.Slice(0, bytesWritten).ToArray());
+        Assert.Equal(expectedBytes.AsSpan(), destination[..bytesWritten]);
     }
 
     [Theory]
@@ -44,10 +44,11 @@ public class Crc32HashingProviderTest
     public async Task HashDataAsync(byte[] inputData, uint expected)
     {
         var destination = new byte[20];
-        var bytesWritten = await new Crc32HashingProvider().HashDataAsync(new MemoryStream(inputData), destination);
+        var bytesWritten = await new Crc32HashingProvider()
+            .HashDataAsync(new MemoryStream(inputData), destination, TestContext.Current.CancellationToken);
 
         Assert.Equal(4, bytesWritten);
         var expectedBytes = BitConverter.GetBytes(expected);
-        Assert.Equal(expectedBytes, destination.AsSpan().Slice(0, bytesWritten).ToArray());
+        Assert.Equal(expectedBytes.AsSpan(), destination.AsSpan()[..bytesWritten]);
     }
 }

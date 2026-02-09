@@ -3,10 +3,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Binary;
-using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
-using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 namespace PG.StarWarsGame.Files.MEG;
 
@@ -29,12 +27,6 @@ public static class MegServiceContribution
         serviceCollection.AddSingleton<IMegDataStreamFactory>(sp => new MegDataStreamFactory(sp));
         serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(_ => new VirtualMegArchiveBuilder());
 
-        serviceCollection.AddSingleton(sp => new EmpireAtWarMegFileInformationValidator(sp));
-
         serviceCollection.AddSingleton<IDataEntryPathResolver>(sp => new PetroglyphRelativeDataEntryPathResolver(sp));
-
-        serviceCollection.AddSingleton<IMegBinaryValidator>(sp => new MegBinaryValidator(sp));
-        serviceCollection.AddSingleton<IFileTableValidator>(_ => new MegFileTableValidator());
-        serviceCollection.AddSingleton<IMegFileSizeValidator>(_ => new MegFileSizeValidator());
     }
 }

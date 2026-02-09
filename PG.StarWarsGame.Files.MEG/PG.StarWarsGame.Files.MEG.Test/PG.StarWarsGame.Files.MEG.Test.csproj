@@ -15,14 +15,14 @@
 		<None Remove="Resources\Files\v1_2_files_empty.meg" />
 		<None Remove="Resources\Files\v1_2_files_with_extended_ascii_name.meg" />
 		<None Remove="Resources\Files\v1_empty.meg" />
+		<None Remove="Resources\Files\v1_out_of_order.meg" />
 		<None Remove="Resources\Files\v2_2_files_data.meg" />
 		<None Remove="Resources\Files\v3n_2_files_data.meg" />
-		<None Remove="Services\Builder\MegBuilderBaseTest.cs~RF11bba75.TMP" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
 		<PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
-		<PackageReference Include="Microsoft.Testing.Platform" Version="2.0.2" />
+		<PackageReference Include="Microsoft.Testing.Platform" Version="2.1.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
 		<PackageReference Include="coverlet.msbuild" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
@@ -48,6 +48,7 @@
 		<EmbeddedResource Include="Resources\Files\v1_2_files_empty.meg" />
 		<EmbeddedResource Include="Resources\Files\v1_2_files_with_extended_ascii_name.meg" />
 		<EmbeddedResource Include="Resources\Files\v1_empty.meg" />
+		<EmbeddedResource Include="Resources\Files\v1_out_of_order.meg" />
 		<EmbeddedResource Include="Resources\Files\v2_2_files_data.meg" />
 		<EmbeddedResource Include="Resources\Files\v3n_2_files_data.meg" />
 	</ItemGroup>

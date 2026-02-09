@@ -51,7 +51,7 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
         {
             if (entry.Crc32 < lastCrc)
                 throw new ArgumentException("not sorted", nameof(entries));
-            fileNames.Add(entry.FilePath);
+            fileNames.Add(entry.Path);
             copyList.Add(entry);
             lastCrc = entry.Crc32;
         }

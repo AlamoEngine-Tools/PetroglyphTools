@@ -21,7 +21,7 @@ public class MegBinaryConverterV1Test : MegBinaryConverterTest
 
     private protected override BinaryTable<MegFileNameTableRecord> CreateFileNameTable(IList<MegDataEntry> entries)
     {
-        return new BinaryTable<MegFileNameTableRecord>(entries.Select(e => new MegFileNameTableRecord(e.FilePath, e.OriginalFilePath)).ToList());
+        return new BinaryTable<MegFileNameTableRecord>(entries.Select(e => new MegFileNameTableRecord(e.Path, e.OriginalPath)).ToList());
     }
 
     private protected override IMegFileTable CreateFileTable(List<IMegFileDescriptor> records)

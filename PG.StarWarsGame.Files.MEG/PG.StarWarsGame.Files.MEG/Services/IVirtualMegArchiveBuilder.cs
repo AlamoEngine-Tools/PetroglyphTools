@@ -22,7 +22,7 @@ public interface IVirtualMegArchiveBuilder
     /// <param name="fileEntries">The collection of data references.</param>
     /// <param name="replaceExisting">When <see langowrd="true"/>, entries with the same CRC32 checksum get replaced.</param>
     /// <returns>The virtual MEG archive.</returns>
-    /// <exception cref="FileNotInMegException">When a <see cref="MegDataEntryReference"/> does not point to a real location.</exception>
+    /// <exception cref="EntryNotInMegException">When a <see cref="MegDataEntryReference"/> does not point to a real location.</exception>
     IVirtualMegArchive BuildFrom(IEnumerable<MegDataEntryReference> fileEntries, bool replaceExisting);
 
     /// <summary>

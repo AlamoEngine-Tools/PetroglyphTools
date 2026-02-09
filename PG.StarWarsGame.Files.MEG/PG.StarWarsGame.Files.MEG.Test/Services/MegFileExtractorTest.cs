@@ -1,11 +1,13 @@
-using System;
-using System.IO;
+using AnakinRaW.CommonUtilities.Testing;
 using AnakinRaW.CommonUtilities.Testing.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
+using PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
+using System;
+using System.IO;
 using Testably.Abstractions.Testing;
 using Xunit;
 using static PG.StarWarsGame.Files.MEG.Test.Data.Entries.MegDataEntryTest;
@@ -25,10 +27,10 @@ public class MegFileExtractorTest : CommonMegTestBase
     public void GetAbsoluteFilePath_Throws()
     {
         var entry = CreateEntry("path");
-        Assert.Throws<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(null!, "path", false));
-        Assert.Throws<ArgumentNullException>(() => _extractor.GetAbsoluteFilePath(entry, null!, false));
-        Assert.Throws<ArgumentException>(() => _extractor.GetAbsoluteFilePath(entry, "", false));
-        Assert.Throws<ArgumentException>(() => _extractor.GetAbsoluteFilePath(entry, "   ", false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.GetAbsolutePath(null!, "path", false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.GetAbsolutePath(entry, null!, false));
+        Assert.Throws<ArgumentException>(() => _extractor.GetAbsolutePath(entry, "", false));
+        Assert.Throws<ArgumentException>(() => _extractor.GetAbsolutePath(entry, "   ", false));
     }
 
     [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
@@ -49,7 +51,7 @@ public class MegFileExtractorTest : CommonMegTestBase
 
     public void GetAbsoluteFilePath_Windows(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
-        var path = _extractor.GetAbsoluteFilePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
+        var path = _extractor.GetAbsolutePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
         Assert.Equal(expectedPath, path);
     }
 
@@ -69,7 +71,7 @@ public class MegFileExtractorTest : CommonMegTestBase
 
     public void GetAbsoluteFilePath_Linux(string entryPath, string rootDir, bool preserveHierarchy, string expectedPath)
     {
-        var path = _extractor.GetAbsoluteFilePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
+        var path = _extractor.GetAbsolutePath(CreateEntry(entryPath), rootDir, preserveHierarchy);
         Assert.Equal(expectedPath, path);
     }
 
@@ -77,13 +79,13 @@ public class MegFileExtractorTest : CommonMegTestBase
     public void GetAbsoluteFilePath_ThrowsInvalidOperation()
     {
         var entry = CreateEntry("notAFile.txt/");
-        Assert.Throws<InvalidOperationException>(() => _extractor.GetAbsoluteFilePath(entry, "someRoot", false));
+        Assert.Throws<InvalidOperationException>(() => _extractor.GetAbsolutePath(entry, "someRoot", false));
     }
 
     [Fact]
     public void GetFileData_ThrowsArgumentNull()
     {
-        Assert.Throws<ArgumentNullException>(() => _extractor.GetFileData(null!));
+        Assert.Throws<ArgumentNullException>(() => _extractor.GetData(null!));
     }
 
     [Fact]
@@ -98,13 +100,13 @@ public class MegFileExtractorTest : CommonMegTestBase
 
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        Assert.Throws<IOException>(() => _extractor.GetFileData(location));
+        Assert.Throws<IOException>(() => _extractor.GetData(location));
     }
 
     [Fact]
     public void ExtractFile_ThrowsArgumentsIncorrect()
     {
-        Assert.Throws<ArgumentNullException>(() => _extractor.ExtractFile(null!, "path", false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.ExtractEntry(null!, "path", false));
 
         var entry = CreateEntry("file.txt");
 
@@ -117,10 +119,10 @@ public class MegFileExtractorTest : CommonMegTestBase
 
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        Assert.Throws<ArgumentNullException>(() => _extractor.ExtractFile(location, null!, false));
+        Assert.Throws<ArgumentNullException>(() => _extractor.ExtractEntry(location, null!, false));
 
-        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, "", false));
-        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, "    ", false));
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractEntry(location, "", false));
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractEntry(location, "    ", false));
     }
 
     [PlatformSpecificTheory(TestPlatformIdentifier.Windows)]
@@ -135,7 +137,7 @@ public class MegFileExtractorTest : CommonMegTestBase
             ServiceProvider);
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, filePathWhereToExtract, false));
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractEntry(location, filePathWhereToExtract, false));
     }
 
     [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
@@ -150,7 +152,7 @@ public class MegFileExtractorTest : CommonMegTestBase
 
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        Assert.Throws<ArgumentException>(() => _extractor.ExtractFile(location, filePathWhereToExtract, false));
+        Assert.Throws<ArgumentException>(() => _extractor.ExtractEntry(location, filePathWhereToExtract, false));
     }
 
     [Fact]
@@ -165,12 +167,33 @@ public class MegFileExtractorTest : CommonMegTestBase
         var entry = meg.Content[0];
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        using var stream = _extractor.GetFileData(location);
+        using var stream = _extractor.GetData(location);
 
         var ms = new MemoryStream();
         stream.CopyTo(ms);
 
         Assert.Equal(MegTestConstants.CampaignFilesContent, ms.ToArray());
+    }
+
+    [Fact]
+    public void GetFileData_FromUnorderedMeg()
+    {
+        var unorderedMeg = TestingHelpers.GetEmbeddedResourceAsByteArray(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_out_of_order.meg");
+        
+        FileSystem.Initialize()
+            .WithFile("test.meg").Which(m => m.HasBytesContent(unorderedMeg));
+
+        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+
+        var ms = new MemoryStream();
+
+        using (var stream = _extractor.GetData(new MegDataEntryLocationReference(meg, meg.Content[0]))) 
+            stream.CopyTo(ms);
+        using (var stream = _extractor.GetData(new MegDataEntryLocationReference(meg, meg.Content[1])))
+            stream.CopyTo(ms);
+        
+        Assert.Equal("456123"u8, ms.ToArray());
+        Assert.True(meg.Content[0].Location.Offset > meg.Content[1].Location.Offset);
     }
 
     [Fact]
@@ -185,7 +208,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         var entry = meg.Content[0];
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        var extracted = _extractor.ExtractFile(location, "file.txt", false);
+        var extracted = _extractor.ExtractEntry(location, "file.txt", false);
 
         Assert.True(extracted);
         Assert.True(FileSystem.File.Exists("file.txt"));
@@ -199,7 +222,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.File.WriteAllBytes("file.txt", otherFileData);
 
         //Extract again
-        extracted = _extractor.ExtractFile(location, "file.txt", false);
+        extracted = _extractor.ExtractEntry(location, "file.txt", false);
         Assert.False(extracted);
 
         actualFileData = FileSystem.File.ReadAllBytes("file.txt");
@@ -222,7 +245,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         var entry = meg.Content[0];
         var location = new MegDataEntryLocationReference(meg, entry);
 
-        var extracted = _extractor.ExtractFile(location, "file.txt", true);
+        var extracted = _extractor.ExtractEntry(location, "file.txt", true);
         Assert.True(extracted);
 
         var actualFileData = FileSystem.File.ReadAllBytes("file.txt");
@@ -244,7 +267,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         var location = new MegDataEntryLocationReference(meg, entry);
 
 
-        var extracted = _extractor.ExtractFile(location, filePathWhereToExtract, false);
+        var extracted = _extractor.ExtractEntry(location, filePathWhereToExtract, false);
         Assert.True(extracted);
 
         var actualFileData = FileSystem.File.ReadAllBytes(filePathWhereToExtract);

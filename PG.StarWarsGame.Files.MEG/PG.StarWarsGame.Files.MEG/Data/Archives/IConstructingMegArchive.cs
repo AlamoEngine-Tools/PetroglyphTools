@@ -16,4 +16,6 @@ internal interface IConstructingMegArchive : IMegDataEntryHolder<VirtualMegDataE
     MegFileVersion MegVersion { get; }
 
     bool Encrypted { get; }
+    
+    uint ExpectedFileSize { get; }
 }

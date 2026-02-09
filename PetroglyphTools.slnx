@@ -15,6 +15,7 @@
     <Build Project="false" />
   </Project>
   <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files.Test/PG.StarWarsGame.Files.Test.csproj" />
+  <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files.Testing/PG.StarWarsGame.Files.Testing.csproj"/>
   <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files/PG.StarWarsGame.Files.csproj" />
   <Project Path="PG.Testing/PG.Testing.csproj" />
 </Solution>

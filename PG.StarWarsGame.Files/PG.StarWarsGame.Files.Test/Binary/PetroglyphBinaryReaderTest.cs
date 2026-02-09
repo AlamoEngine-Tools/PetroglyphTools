@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
 using PG.StarWarsGame.Files.Binary;
-using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.Test.Utilities;
@@ -38,7 +38,7 @@ public abstract class PetroglyphBinaryReaderTestBase
     [Fact]
     public void Ctor_NullArgs_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new PetroglyphBinaryReader(null!, TestUtility.GetRandomBool()));
+        Assert.Throws<ArgumentNullException>(() => new PetroglyphBinaryReader(null!, Random.Bool()));
     }
 
     [Theory]
@@ -59,7 +59,7 @@ public abstract class PetroglyphBinaryReaderTestBase
     public void UnsupportedMethods_Throws()
     {
         var stream = new MemoryStream([1, 2, 3, 4, 5, 6]);
-        var reader = new PetroglyphBinaryReader(stream, TestUtility.GetRandomBool());
+        var reader = new PetroglyphBinaryReader(stream, Random.Bool());
 
         Assert.Throws<NotSupportedException>(() => reader.Read());
         Assert.Throws<NotSupportedException>(() => reader.Read(new char[1], 0, 0));

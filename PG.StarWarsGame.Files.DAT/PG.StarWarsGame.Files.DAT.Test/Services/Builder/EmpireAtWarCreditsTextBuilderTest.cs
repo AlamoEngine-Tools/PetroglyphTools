@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AnakinRaW.CommonUtilities.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
-using System.Linq;
 using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
-using PG.Testing;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services.Builder;
@@ -60,7 +60,7 @@ public class EmpireAtWarCreditsTextBuilderTest : PetroglyphStarWarsGameDatBuilde
     {
         using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
-            using var stream = TestUtility.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
+            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
         }
 

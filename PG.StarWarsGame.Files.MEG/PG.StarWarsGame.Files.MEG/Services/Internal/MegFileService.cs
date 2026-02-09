@@ -10,11 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
-using PG.StarWarsGame.Files.MEG.Binary.Validation;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using AnakinRaW.CommonUtilities;
-using PG.StarWarsGame.Files.Binary;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -23,7 +21,11 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 {
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
-    public void CreateMegArchive(FileSystemStream fileStream, MegFileVersion fileVersion, MegEncryptionData? encryptionData, IEnumerable<MegFileDataEntryBuilderInfo> builderInformation)
+    public void CreateMegArchive(
+        FileSystemStream fileStream, 
+        MegFileVersion fileVersion, 
+        MegEncryptionData? encryptionData, 
+        IEnumerable<MegDataEntryBuilderInfo> builderInformation)
     {
         if (fileStream == null)
             throw new ArgumentNullException(nameof(fileStream));
@@ -57,7 +59,7 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         foreach (var file in constructionArchive)
         {
-            using var dataStream = streamFactory.GetDataStream(file.Location);
+            using var dataStream = streamFactory.GetStream(file.Location);
 
             // TODO: Test in encryption case
             if (dataStream.Length != file.DataEntry.Location.Size)
@@ -72,15 +74,8 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
             dataBytesWritten += dataStream.Length;
         }
-
-        // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
-        // E.g, a MEG with one entry being exactly 4GB large.
-        // In this case, the Archive itself is larger (Metadata + 4GB),
-        // but the Metadata is would still be valid since each part is within the uint32 range. 
-        if (dataBytesWritten > uint.MaxValue)
-            MegThrowHelper.ThrowMegExceeds4GigabyteException(fileStream.Name);
-
-        Debug.Assert(dataBytesWritten == fileStream.Position);
+        
+        Debug.Assert(dataBytesWritten == constructionArchive.ExpectedFileSize);
     }
 
     public IMegFile Load(string filePath)
@@ -106,50 +101,17 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
 
         stream.Seek(startPosition, SeekOrigin.Begin);
 
-        var megMetadata = LoadAndValidateMetadata(stream, megFileInfo);
+        var megMetadata = Load(stream, megFileInfo);
 
         var converter = BinaryServiceFactory.GetConverter(megVersion);
         var megArchive = converter.BinaryToModel(megMetadata);
         return new MegFile(megArchive, megFileInfo, Services);
     }
 
-    private IMegFileMetadata LoadAndValidateMetadata(Stream megStream, MegFileInformation megFileInfo)
+    private IMegFileMetadata Load(Stream megStream, MegFileInformation megFileInfo)
     {
         using var binaryReader = BinaryServiceFactory.GetReader(megFileInfo.FileVersion);
-
-        var startPosition = megStream.Position;
-        var megMetadata = binaryReader.ReadBinary(megStream);
-        var endPosition = megStream.Position;
-
-        var bytesRead = endPosition - startPosition;
-
-        // There is no reason to validate the archive's size if we cannot access the whole stream size. 
-        // We also don't want to read the whole stream if this is a "lazy" stream (such as a pipe)
-        if (!megStream.CanSeek)
-            throw new NotSupportedException("Non-seekable streams are currently not supported.");
-
-        var actualMegSize = megStream.Length - startPosition;
-
-        // Note: Technically, the specification does not disallow MEG files larger than 4GB. 
-        // E.g, a MEG with one entry being exactly 4GB large.
-        // In this case, the Archive itself is larger (Metadata + 4GB),
-        // but the Metadata is would still be valid since each part is within the uint32 range. 
-        if (actualMegSize > uint.MaxValue)
-            MegThrowHelper.ThrowMegExceeds4GigabyteException(megFileInfo.FilePath);
-
-        var validator = Services.GetRequiredService<IMegBinaryValidator>();
-
-        var validationResult = validator.Validate(new MegBinaryValidationInformation
-        {
-            Metadata = megMetadata,
-            FileSize = actualMegSize,
-            BytesRead = bytesRead
-        });
-
-        if (!validationResult)
-            throw new BinaryCorruptedException($"Unable to read .MEG archive");
-
-        return megMetadata;
+        return binaryReader.ReadBinary(megStream);
     }
 
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)

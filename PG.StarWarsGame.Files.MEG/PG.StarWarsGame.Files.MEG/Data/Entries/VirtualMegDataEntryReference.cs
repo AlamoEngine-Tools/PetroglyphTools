@@ -8,7 +8,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
 /// <summary>
-/// Intermediate MEG data entry necessary to construct new .MEG files which data entries from various locations.
+/// Intermediate MEG data entry necessary to construct new .MEG files with data entries from various locations.
 /// <br/>
 /// This data entry type hold the following information:
 /// <list type="bullet">
@@ -25,7 +25,7 @@ internal sealed class VirtualMegDataEntryReference(MegDataEntry dataEntry, MegDa
     public MegDataEntry DataEntry { get; } = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
 
     /// <inheritdoc />
-    public override string FilePath => DataEntry.FilePath;
+    public override string Path => DataEntry.Path;
 
     /// <inheritdoc />
     public override Crc32 Crc32 => DataEntry.Crc32;

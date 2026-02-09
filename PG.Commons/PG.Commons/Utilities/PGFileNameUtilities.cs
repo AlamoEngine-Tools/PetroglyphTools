@@ -49,9 +49,7 @@ public static class PGFileNameUtilities
         {
             if (IsInvalidFileCharacter(t))
                 return true;
-
         }
-
         return false;
     }
 

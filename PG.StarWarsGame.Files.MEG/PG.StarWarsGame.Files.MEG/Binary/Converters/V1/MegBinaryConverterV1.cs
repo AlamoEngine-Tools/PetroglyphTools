@@ -24,7 +24,7 @@ internal sealed class MegBinaryConverterV1(IServiceProvider services) : MegBinar
         for (var i = 0; i < model.Count; i++)
         {
             var dataEntry = model[i];
-            fileNameTableEntries.Add(new MegFileNameTableRecord(dataEntry.FilePath, dataEntry.OriginalFilePath));
+            fileNameTableEntries.Add(new MegFileNameTableRecord(dataEntry.Path, dataEntry.OriginalPath));
 
             var binaryRecord = new MegFileTableRecord(
                 dataEntry.Crc32, 

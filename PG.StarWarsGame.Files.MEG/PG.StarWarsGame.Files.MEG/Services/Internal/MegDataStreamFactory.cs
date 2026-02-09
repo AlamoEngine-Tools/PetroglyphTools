@@ -15,34 +15,34 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 internal sealed class MegDataStreamFactory(IServiceProvider serviceProvider)
     : ServiceBase(serviceProvider), IMegDataStreamFactory
 {
-    public Stream GetDataStream(MegDataEntryOriginInfo originInfo)
+    public Stream GetStream(MegDataEntryOriginInfo originInfo)
     {
         if (originInfo == null) 
             throw new ArgumentNullException(nameof(originInfo));
-        
-        if (originInfo.FilePath is not null)
-            return FileSystem.FileStream.New(originInfo.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-        return GetDataStream(originInfo.MegFileLocation!);
+        if (originInfo.FileInfo is not null)
+            return originInfo.FileInfo.OpenRead();
+
+        return GetStream(originInfo.MegFileLocation!);
     }
 
-    public MegFileDataStream GetDataStream(MegDataEntryLocationReference locationReference)
+    public MegEntryStream GetStream(MegDataEntryLocationReference locationReference)
     {
         if (locationReference == null) 
             throw new ArgumentNullException(nameof(locationReference));
 
         if (!locationReference.Exists)
-            throw new FileNotInMegException(locationReference);
+            throw new EntryNotInMegException(locationReference);
 
         if (locationReference.DataEntry.Encrypted)
         {
             throw new NotImplementedException("Encrypted archives are currently not supported");
         }
 
-        return CreateDataStream(locationReference.MegFile.FilePath, locationReference.DataEntry);
+        return CreateStream(locationReference.MegFile.FilePath, locationReference.DataEntry);
     }
 
-    private MegFileDataStream CreateDataStream(string megFilePath, MegDataEntry entry)
+    private MegEntryStream CreateStream(string megFilePath, MegDataEntry entry)
     {
         if (!FileSystem.File.Exists(megFilePath))
             throw new FileNotFoundException($"MEG file '{megFilePath}' does not exist", megFilePath);
@@ -50,11 +50,11 @@ internal sealed class MegDataStreamFactory(IServiceProvider serviceProvider)
         // Cause MIKE.NL's tool uses the offset megFile[megSize + 1] for empty Entries we would cause an ArgumentOutOfRangeException
         // when trying to access this index on a real file. Therefore, we return the Null stream.
         if (entry.Location.Size == 0)
-            return MegFileDataStream.CreateEmptyStream(entry.FilePath);
+            return MegEntryStream.CreateEmptyStream(entry.Path);
 
         var fs = Services.GetRequiredService<IFileSystem>();
 
         var megFileStream = fs.FileStream.New(megFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        return new MegFileDataStream(entry.FilePath, megFileStream, entry.Location.Offset, entry.Location.Size);
+        return new MegEntryStream(entry.Path, megFileStream, entry.Location.Offset, entry.Location.Size);
     }
 }

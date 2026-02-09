@@ -15,7 +15,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegDataEntryBase<T>> where T : IDataEntryLocation
 {
     /// <inheritdoc />
-    public abstract string FilePath { get; }
+    public abstract string Path { get; }
 
     /// <inheritdoc />
     public abstract Crc32 Crc32 { get; }
@@ -51,7 +51,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return FilePath == other.FilePath && Crc32.Equals(other.Crc32) && EqualityComparer<T>.Default.Equals(Location, other.Location);
+        return Path == other.Path && Crc32.Equals(other.Crc32) && EqualityComparer<T>.Default.Equals(Location, other.Location);
     }
 
     /// <inheritdoc />
@@ -69,6 +69,6 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        return HashCode.Combine(FilePath, Crc32, Location);
+        return HashCode.Combine(Path, Crc32, Location);
     }
 }

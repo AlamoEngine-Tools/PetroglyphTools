@@ -19,7 +19,7 @@ public sealed class EmpireAtWarMasterTextBuilder : PetroglyphStarWarsGameDatBuil
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextBuilder"/> class.
     /// </summary>
-    /// <param name="overwriteDuplicates"></param>
+    /// <param name="overwriteDuplicates">Specifies how the build treats duplicates.</param>
     /// <param name="services">The service provider.</param>
     public EmpireAtWarMasterTextBuilder(bool overwriteDuplicates, IServiceProvider services) 
         : base(overwriteDuplicates ? BuilderOverrideKind.Overwrite : BuilderOverrideKind.NoOverwrite, services)

@@ -48,4 +48,30 @@ public readonly struct MegDataEntryLocation : IDataEntryLocation, IEquatable<Meg
     {
         return HashCode.Combine(Offset, Size);
     }
+
+    /// <summary>
+    /// Determines whether two <see cref="MegDataEntryLocation"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="MegDataEntryLocation"/> to compare.</param>
+    /// <param name="right">The second <see cref="MegDataEntryLocation"/> to compare.</param>
+    /// <returns>
+    /// <see langword="true"/> if the specified <see cref="MegDataEntryLocation"/> instances are equal; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool operator ==(MegDataEntryLocation left, MegDataEntryLocation right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two <see cref="MegDataEntryLocation"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="MegDataEntryLocation"/> to compare.</param>
+    /// <param name="right">The second <see cref="MegDataEntryLocation"/> to compare.</param>
+    /// <returns>
+    /// <see langword="true"/> if the specified <see cref="MegDataEntryLocation"/> instances are not equal; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool operator !=(MegDataEntryLocation left, MegDataEntryLocation right)
+    {
+        return !(left == right);
+    }
 }

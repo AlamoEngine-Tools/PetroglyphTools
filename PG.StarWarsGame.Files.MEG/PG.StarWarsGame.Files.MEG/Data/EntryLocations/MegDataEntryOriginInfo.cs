@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using AnakinRaW.CommonUtilities;
+using System.IO.Abstractions;
 
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
@@ -13,14 +13,26 @@ namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegDataEntryOriginInfo>
 {
     /// <summary>
-    /// 
+    /// Gets a value indicating whether the data entry originates from a local file on the file system.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(FilePath))]
-    public bool IsLocalFile => FilePath != null;
+    /// <remarks>
+    /// If this property returns <see langword="true"/>, the <see cref="FileInfo"/> property is guaranteed to be non-<see langword="null"/>.
+    /// </remarks>
+    /// <value>
+    /// <see langword="true"/> if the data entry is from a local file; otherwise, <see langword="false"/>.
+    /// </value>
+    [MemberNotNullWhen(true, nameof(FileInfo))]
+    public bool IsLocalFile => FileInfo != null;
 
     /// <summary>
-    /// 
+    /// Gets a value indicating whether the data entry originates from a MEG archive reference.
     /// </summary>
+    /// <remarks>
+    /// If this property returns <see langword="true"/>, the <see cref="MegFileLocation"/> property is guaranteed to be non-<see langword="null"/>.
+    /// </remarks>
+    /// <value>
+    /// <see langword="true"/> if the data entry is from a referend MEG entry; otherwise, <see langword="false"/>.
+    /// </value>
     [MemberNotNullWhen(true, nameof(MegFileLocation))]
     public bool IsEntryReference => MegFileLocation != null;
 
@@ -32,18 +44,16 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     /// <summary>
     /// Gets the file's path on the file system. <see langeword="null"/> if not present.
     /// </summary>
-    public string? FilePath { get; }
+    public IFileInfo? FileInfo { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> structure to the specified file path.
+    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> structure to the specified file.
     /// </summary>
-    /// <param name="filePath">The file path.</param>
-    /// <exception cref="ArgumentNullException">If <paramref name="filePath"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">If <paramref name="filePath"/> is empty or only whitespace.</exception>
-    public MegDataEntryOriginInfo(string filePath)
+    /// <param name="fileInfo">The origin file.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="fileInfo"/> is <see langword="null"/>.</exception>
+    public MegDataEntryOriginInfo(IFileInfo fileInfo)
     {
-        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
-        FilePath = filePath;
+        FileInfo = fileInfo ?? throw new ArgumentNullException(nameof(fileInfo));
     }
 
     /// <summary>
@@ -63,18 +73,27 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return Equals(MegFileLocation, other.MegFileLocation) && string.Equals(FilePath, other.FilePath, StringComparison.Ordinal);
+        return Equals(MegFileLocation, other.MegFileLocation) && 
+               string.Equals(FileInfo?.FullName, other.FileInfo?.FullName, StringComparison.Ordinal);
     }
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is MegDataEntryOriginInfo other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is MegDataEntryOriginInfo other && Equals(other));
     }
 
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        return HashCode.Combine(MegFileLocation, FilePath);
+        return HashCode.Combine(MegFileLocation, FileInfo?.FullName);
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return IsLocalFile 
+            ? $"Local File: '{FileInfo.FullName}'"
+            : $"MEG Entry: '{MegFileLocation}'";
     }
 }

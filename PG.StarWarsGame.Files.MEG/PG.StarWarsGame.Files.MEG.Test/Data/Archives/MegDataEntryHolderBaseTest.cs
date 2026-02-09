@@ -5,33 +5,36 @@ using System.Linq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
-using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Archives;
 
-public class MegDataEntryHolderBaseTest
+public abstract class MegDataEntryHolderBaseTest<TEntry, TArchive> : CommonMegTestBase 
+    where TEntry : class, IMegDataEntry
+    where TArchive : IMegDataEntryHolder<TEntry>
 {
+    protected abstract TArchive CreateArchive(IList<TEntry> entries);
 
     [Fact]
     public void Ctor_Throw_NullArgument()
     {
-        Assert.Throws<ArgumentNullException>(() => new TestArchive(null!));
+        Assert.ThrowsAny<ArgumentException>(() => CreateArchive(null!));
     }
 
     [Fact]
     public void Ctor()
     {
-        var entry1 = MegDataEntryTest.CreateEntry("path");
-        var entry2 = MegDataEntryTest.CreateEntry("other");
-        var entries = new List<IMegDataEntry>
+        var entry1 = CreateEntry("path");
+        var entry2 = CreateEntry("other");
+        var entries = new List<TEntry>
         {
             entry1, entry2
         };
 
-        var archive = new TestArchive(entries);
+        var archive = CreateArchive(entries);
 
         Assert.Equal(2, archive.Count);
+        
         Assert.Same(entry1, archive[0]);
         Assert.Same(entry2, archive[1]);
 
@@ -40,31 +43,31 @@ public class MegDataEntryHolderBaseTest
         foreach (var entry in (IEnumerable)archive)
             newEntries.Add((IMegDataEntry)entry);
 
-        Assert.Equal(entries, newEntries);
+        Assert.Equal(entries.Cast<IMegDataEntry>(), newEntries);
     }
 
     [Fact]
     public void Ctor_UnsortedEntries_Throws()
     {
-        var entry1 = MegDataEntryTest.CreateEntry("path", new Crc32(1));
-        var entry2 = MegDataEntryTest.CreateEntry("other", new Crc32(0));
+        var entry1 = CreateEntry("path", new Crc32(1));
+        var entry2 = CreateEntry("other", new Crc32(0));
         
-        Assert.Throws<ArgumentException>(() => new TestArchive([entry1, entry2]));
+        Assert.ThrowsAny<ArgumentException>(() => CreateArchive([entry1, entry2]));
     }
 
     [Fact]
     public void IndexOf_Contains()
     {
-        var entry1 = MegDataEntryTest.CreateEntry("path");
-        var entry2 = MegDataEntryTest.CreateEntry("other");
-        var entries = new List<IMegDataEntry>
+        var entry1 = CreateEntry("path");
+        var entry2 = CreateEntry("other");
+        var entries = new List<TEntry>
         {
             entry1, entry2
         };
 
-        var archive = new TestArchive(entries);
+        var archive = CreateArchive(entries);
 
-        var entry3 = MegDataEntryTest.CreateEntry("third");
+        var entry3 = CreateEntry("third");
 
         Assert.Equal(0, archive.IndexOf(entry1));
         Assert.Equal(1, archive.IndexOf(entry2));
@@ -78,23 +81,23 @@ public class MegDataEntryHolderBaseTest
     [Fact]
     public void EntriesWithCrc_FirstEntryWithCrc()
     {
-        var entry1 = MegDataEntryTest.CreateEntry("a", new Crc32(0));
-        var entry2 = MegDataEntryTest.CreateEntry("b", new Crc32(0));
-        var entry3 = MegDataEntryTest.CreateEntry("c", new Crc32(1));
+        var entry1 = CreateEntry("a", new Crc32(0));
+        var entry2 = CreateEntry("b", new Crc32(0));
+        var entry3 = CreateEntry("c", new Crc32(1));
 
-        var entries = new List<IMegDataEntry>
+        var entries = new List<TEntry>
         {
             entry1,
             entry2,
             entry3
         };
 
-        var archive = new TestArchive(entries);
+        var archive = CreateArchive(entries);
 
         var twoFound = archive.EntriesWithCrc(new Crc32(0));
         Assert.Equal(2, twoFound.Count);
-        Assert.Equal("a", twoFound[0].FilePath);
-        Assert.Equal("b", twoFound[1].FilePath);
+        Assert.Equal("a", twoFound[0].Path);
+        Assert.Equal("b", twoFound[1].Path);
 
         var oneFound = archive.EntriesWithCrc(new Crc32(1));
         Assert.Single(oneFound);
@@ -103,7 +106,7 @@ public class MegDataEntryHolderBaseTest
         Assert.Empty(noneFound);
 
         var first = archive.FirstEntryWithCrc(new Crc32(0));
-        Assert.Equal("a", first!.FilePath);
+        Assert.Equal("a", first.Path);
 
         Assert.Throws<KeyNotFoundException>(() => archive.FirstEntryWithCrc(new Crc32(-1)));
     }
@@ -133,9 +136,9 @@ public class MegDataEntryHolderBaseTest
     public void FindAllEntries(string pattern, string[] files, string[] expectedMatches, bool caseInsensitive = false)
     {
 
-        var megFiles = files.Select(f => MegDataEntryTest.CreateEntry(f)).OfType<IMegDataEntry>().ToList();
-        var meg = new TestArchive(megFiles);
-        var entries = meg.FindAllEntries(pattern, caseInsensitive).Select(e => e.FilePath).ToList();
+        var megFiles = files.Select(f => CreateEntry(f)).ToList();
+        var meg = CreateArchive(megFiles);
+        var entries = meg.FindAllEntries(pattern, caseInsensitive).Select(e => e.Path).ToList();
         Assert.Equal(expectedMatches, entries);
     }
 
@@ -144,9 +147,9 @@ public class MegDataEntryHolderBaseTest
     [InlineData("")]
     public void FindAllEntries_Throws(string? pattern)
     {
-        var meg = new TestArchive([]);
+        var meg = CreateArchive([]);
         Assert.ThrowsAny<ArgumentException>(() => meg.FindAllEntries(pattern!, true));
     }
 
-    private class TestArchive(IList<IMegDataEntry> entries) : MegDataEntryHolderBase<IMegDataEntry>(entries);
+    protected abstract TEntry CreateEntry(string path, Crc32 crc = default);
 }

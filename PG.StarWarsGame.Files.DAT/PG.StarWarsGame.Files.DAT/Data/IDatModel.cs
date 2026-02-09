@@ -76,7 +76,7 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// </summary>
     /// <param name="key">The key to match.</param>
     /// <returns>List of matching entries.</returns>
-    ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);
+    ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);
 
     /// <summary>
     /// Gets a list of entries with the matching key or an empty list, if the key is not found.
@@ -84,7 +84,7 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// <param name="key">The key to match.</param>
     /// <returns>List of matching entries.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
-    ReadOnlyFrugalList<DatStringEntry> EntriesWithKey(string key);
+    ImmutableFrugalList<DatStringEntry> EntriesWithKey(string key);
 
     /// <summary>
     /// Gets the first value associated with the specified key.

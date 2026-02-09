@@ -14,8 +14,8 @@ public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
         var entry = new MegDataEntry("path ab", new Crc32(123), new MegDataEntryLocation(1, 2), true, "path\u00A0ab");
 
         Assert.Equal(new Crc32(123), entry.Crc32);
-        Assert.Equal("path ab", entry.FilePath);
-        Assert.Equal("path\u00A0ab", entry.OriginalFilePath);
+        Assert.Equal("path ab", entry.Path);
+        Assert.Equal("path\u00A0ab", entry.OriginalPath);
         Assert.Equal(1u, entry.Location.Offset);
         Assert.Equal(2u, entry.Location.Size);
         Assert.True(entry.Encrypted);
@@ -27,8 +27,8 @@ public class MegDataEntryTest : MegDataEntryBaseTest<MegDataEntryLocation>
         var entry = new MegDataEntry("path", new Crc32(123), default, true, "path");
 
         Assert.Equal(new Crc32(123), entry.Crc32);
-        Assert.Equal("path", entry.FilePath);
-        Assert.Equal("path", entry.OriginalFilePath);
+        Assert.Equal("path", entry.Path);
+        Assert.Equal("path", entry.OriginalPath);
         Assert.Equal(0u, entry.Location.Offset);
         Assert.Equal(0u, entry.Location.Size);
         Assert.True(entry.Encrypted);

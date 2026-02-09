@@ -17,9 +17,13 @@ internal readonly struct MegFileNameTableRecord : IBinary
 {
     private readonly ushort _fileNameLength;
 
+    // While this technically is a path, not just a file name,
+    // we keep the original wording of the spec for the binary data types.
     internal string FileName { get; }
 
-    internal string OriginalFilePath { get; }
+    internal string OriginalFileName { get; }
+
+    public int Size => sizeof(ushort) + _fileNameLength;
 
     public byte[] Bytes
     {
@@ -30,27 +34,26 @@ internal readonly struct MegFileNameTableRecord : IBinary
             return bytes;
         }
     }
-
-    public int Size => sizeof(ushort) + _fileNameLength;
+    
     public void GetBytes(Span<byte> bytes)
     {
         BinaryPrimitives.WriteUInt16LittleEndian(bytes, _fileNameLength);
         MegFileConstants.MegDataEntryPathEncoding.GetBytes(FileName.AsSpan(), bytes.Slice(sizeof(ushort)));
     }
 
-    public MegFileNameTableRecord(string filePath, string originalFilePath)
+    public MegFileNameTableRecord(string fileName, string originalFileName)
     {
-        ThrowHelper.ThrowIfNullOrEmpty(originalFilePath);
-        ThrowHelper.ThrowIfNullOrWhiteSpace(filePath);
-        StringUtilities.ValidateIsAsciiOnly(filePath.AsSpan());
-        _fileNameLength = MegFilePathUtilities.ValidateFilePathCharacterLength(filePath);
+        ThrowHelper.ThrowIfNullOrEmpty(originalFileName);
+        ThrowHelper.ThrowIfNullOrWhiteSpace(fileName);
+        StringUtilities.ValidateIsAsciiOnly(fileName.AsSpan());
+        _fileNameLength = MegPathUtilities.ValidateEntryFileNameLength(fileName);
 
-        OriginalFilePath = originalFilePath;
-        FileName = filePath;
+        OriginalFileName = originalFileName;
+        FileName = fileName;
     }
 
-    internal static int GetRecordSize(string filePath)
+    internal static int GetRecordSize(string fileName)
     {
-        return sizeof(ushort) + MegFilePathUtilities.ValidateFilePathCharacterLength(filePath);
+        return sizeof(ushort) + MegPathUtilities.ValidateEntryFileNameLength(fileName);
     }
 }

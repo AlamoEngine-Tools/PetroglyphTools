@@ -58,7 +58,7 @@ internal sealed class VirtualMegArchiveBuilder : IVirtualMegArchiveBuilder
         foreach (var entry in fileEntries)
         {
             if (checkExists && !entry.Location.Exists)
-                throw new FileNotInMegException(entry.Location);
+                throw new EntryNotInMegException(entry.Location);
 
             if (replaceExisting)
                 sortedEntries[entry.Crc32] = entry;

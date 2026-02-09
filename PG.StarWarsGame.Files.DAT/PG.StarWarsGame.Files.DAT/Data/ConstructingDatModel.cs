@@ -46,14 +46,14 @@ internal class ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatFile
 
     public bool ContainsKey(Crc32 key) => throw new NotSupportedException();
 
-    public ReadOnlyFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key) => throw new NotSupportedException();
+    public ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key) => throw new NotSupportedException();
 
-    public ReadOnlyFrugalList<DatStringEntry> EntriesWithKey(string key) => throw new NotSupportedException();
+    public ImmutableFrugalList<DatStringEntry> EntriesWithKey(string key) => throw new NotSupportedException();
 
     public string GetValue(Crc32 key) => throw new NotSupportedException();
 
     public bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value) => throw new NotSupportedException();
-    public DatStringEntry FirstEntryWithKey(string key) => throw new NotImplementedException();
+    public DatStringEntry FirstEntryWithKey(string key) => throw new NotSupportedException();
 
-    public DatStringEntry FirstEntryWithCrc(Crc32 key) => throw new NotImplementedException();
+    public DatStringEntry FirstEntryWithCrc(Crc32 key) => throw new NotSupportedException();
 }

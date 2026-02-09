@@ -64,7 +64,7 @@ public interface IMegFileExtractor
     /// <exception cref="ArgumentNullException"><paramref name="dataEntry"/> or <paramref name="rootPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="rootPath"/> is empty or contains only whitespace.</exception>
     /// <exception cref="InvalidOperationException">The absolute path could not be determined.</exception>
-    string GetAbsoluteFilePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy);
+    string GetAbsolutePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy);
 
 
     /// <summary>
@@ -74,9 +74,9 @@ public interface IMegFileExtractor
     /// <returns>A stream containing the files contents.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>
-    /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
+    /// <exception cref="EntryNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    MegFileDataStream GetFileData(MegDataEntryLocationReference dataEntryLocation);
+    MegEntryStream GetData(MegDataEntryLocationReference dataEntryLocation);
 
 
     /// <summary>
@@ -88,7 +88,7 @@ public interface IMegFileExtractor
     /// <br/>
     /// <b>Note: </b><paramref name="filePath"/> will first be resolved by <see cref="Path.GetFullPath(string)"/>. File path information of the data entry will not be used.
     /// <br/>
-    /// Use <see cref="GetAbsoluteFilePath"/> to create a <see cref="IMegDataEntry"/>-based absolute path.
+    /// Use <see cref="GetAbsolutePath"/> to create a <see cref="IMegDataEntry"/>-based absolute path.
     /// </remarks>
     /// <param name="dataEntryLocation">The data entry information.</param>
     /// <param name="filePath">The destination file path.</param>
@@ -97,8 +97,8 @@ public interface IMegFileExtractor
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> or <paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>
     /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>
-    /// <exception cref="FileNotInMegException">The data entry does not exist in the .MEG file.</exception>
+    /// <exception cref="EntryNotInMegException">The data entry does not exist in the .MEG file.</exception>
     /// <exception cref="IOException">Data extraction failed due to an IO error.</exception>
     /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    bool ExtractFile(MegDataEntryLocationReference dataEntryLocation, string filePath, bool overwrite);
+    bool ExtractEntry(MegDataEntryLocationReference dataEntryLocation, string filePath, bool overwrite);
 }

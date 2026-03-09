@@ -34,7 +34,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
 		<PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
 		<PackageReference Include="Microsoft.Testing.Platform" Version="2.1.0" />
 		<PackageReference Include="coverlet.msbuild" Version="8.0.0">
@@ -51,6 +51,7 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
+  	<PackageReference Include="Testably.Abstractions.Testing" Version="5.3.1" />
 		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.Testing\PG.StarWarsGame.Files.Testing.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
 	</ItemGroup>

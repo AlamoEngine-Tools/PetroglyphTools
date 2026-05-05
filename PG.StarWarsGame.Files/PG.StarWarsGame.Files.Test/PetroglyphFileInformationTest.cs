@@ -10,7 +10,7 @@ public class PetroglyphFileInformationTest
     [InlineData("")]
     public void EmptyPath_Throws(string? path)
     {
-        Assert.ThrowsAny<ArgumentException>(() => _ = new MegTestParam
+        Assert.ThrowsAny<ArgumentException>(() => _ = new TestMegFileInfo
         {
             FilePath = path!
         });
@@ -19,7 +19,7 @@ public class PetroglyphFileInformationTest
     [Fact]
     public void Dispose()
     {
-        var info = new MegTestParam
+        var info = new TestMegFileInfo
         {
             FilePath = "somePath"
         };

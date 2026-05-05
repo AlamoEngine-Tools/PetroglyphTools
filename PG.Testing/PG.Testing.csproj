@@ -8,6 +8,8 @@
 	</PropertyGroup>	
 	<ItemGroup>
 		<PackageReference Include="AnakinRaW.CommonUtilities.Testing" Version="13.0.18" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
+	<PackageReference Include="System.Collections.Immutable" Version="10.0.7" />
 		<PackageReference Include="Testably.Abstractions.Testing" Version="6.2.0" />
 	</ItemGroup>
 	<ItemGroup>

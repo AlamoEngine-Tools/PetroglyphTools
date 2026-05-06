@@ -10,16 +10,39 @@ public class PetroglyphFileInformationTest
     [InlineData("")]
     public void EmptyPath_Throws(string? path)
     {
-        Assert.ThrowsAny<ArgumentException>(() => _ = new MegTestParam
+        Assert.ThrowsAny<ArgumentException>(() => _ = new TestMegFileInfo
         {
             FilePath = path!
         });
     }
 
+    [Theory]
+    [InlineData("file.txt")]
+    [InlineData("FILE.TXT")]
+    [InlineData("path/file.txt")]
+    [InlineData("PATH\\FILE.TXT")]
+    public void FilePath_ContainsRawData(string path)
+    {
+        Assert.Equal(path, new TestFileInfo
+        {
+            FilePath = path,
+        }.FilePath);
+        Assert.Equal(path, new TestMegFileInfo
+        {
+            FilePath = path,
+            IsInsideMeg = true
+        }.FilePath);
+        Assert.Equal(path, new TestMegFileInfo
+        {
+            FilePath = path,
+            IsInsideMeg = false
+        }.FilePath);
+    }
+
     [Fact]
     public void Dispose()
     {
-        var info = new MegTestParam
+        var info = new TestMegFileInfo
         {
             FilePath = "somePath"
         };

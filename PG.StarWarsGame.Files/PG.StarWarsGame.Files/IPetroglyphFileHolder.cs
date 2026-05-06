@@ -28,7 +28,16 @@ public interface IPetroglyphFileHolder : IDisposable
     /// Gets the relative or absolute file path e.g, "c:/my/path/myfile.txt".
     /// </summary>
     /// <remarks>
-    /// Relative paths are only allowed if the file is packed inside a MEG archive.
+    /// <para>
+    /// If <see cref="FileInformation"/> originates from a MEG file,
+    /// the returned path is normalized to the current operating system.
+    /// This means the Windows directory separator ("\")
+    /// is treated as directory separator on linux systems too.
+    /// To retrieve the original file path for MEG files, use <see cref="PetroglyphFileInformation.FilePath"/> of <see cref="FileInformation"/>.
+    /// </para>
+    /// <para>
+    /// Relative paths are only returned if the file is packed inside a MEG archive.
+    /// </para>
     /// </remarks>
     string FilePath { get; }
 
@@ -37,13 +46,29 @@ public interface IPetroglyphFileHolder : IDisposable
     /// or <see cref="string.Empty"/> if the file does not contain directory information.
     /// </summary>
     /// <remarks>
+    /// <para>
+    /// If <see cref="FileInformation"/> originates from a MEG file,
+    /// the returned directory path is normalized to the current operating system.
+    /// This means the Windows directory separator ("\")
+    /// is treated as directory separator on linux systems too.
+    /// To retrieve the original file path for MEG files, use <see cref="PetroglyphFileInformation.FilePath"/> of <see cref="FileInformation"/>.
+    /// </para>
+    /// <para>
     /// Relative or empty paths are only allowed if the file is packed inside a MEG archive.
+    /// </para>
     /// </remarks>
     string Directory { get; }
 
     /// <summary>
     /// Gets the file name with extension, e.g, "myfile.txt".
     /// </summary>
+    /// <remarks>
+    /// If <see cref="FileInformation"/> originates from a MEG file,
+    /// the returned file name is normalized to the current operating system.
+    /// This means the Windows directory separator ("\")
+    /// is treated as directory separator on linux systems too.
+    /// To retrieve the original file path for MEG files, use <see cref="PetroglyphFileInformation.FilePath"/> of <see cref="FileInformation"/>.
+    /// </remarks>
     string FileName { get; }
 }
 

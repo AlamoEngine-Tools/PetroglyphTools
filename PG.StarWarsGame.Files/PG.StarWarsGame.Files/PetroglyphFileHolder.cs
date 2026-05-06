@@ -4,7 +4,9 @@
 using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Runtime.InteropServices;
 using AnakinRaW.CommonUtilities;
+using AnakinRaW.CommonUtilities.FileSystem.Normalization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -72,6 +74,7 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
     /// <param name="model">The data model of this holder.</param>
     /// <param name="fileInformation">The file information for this holder.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider" /> for this instance.</param>
+    /// <exception cref="ArgumentException"><paramref name="fileInformation"/> contains an invalid path or is not a file.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="model"/> or <paramref name="fileInformation"/> or <paramref name="serviceProvider"/> is <see langword="null" />.</exception>
     /// <exception cref="FileNotFoundException">The underlying local file of the <see cref="IPetroglyphFileHolder{TModel,TFileInfo}"/> does not exist.</exception>
     protected PetroglyphFileHolder(TModel model, TFileInfo fileInformation, IServiceProvider serviceProvider)
@@ -86,39 +89,50 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
         FileSystem = serviceProvider.GetRequiredService<IFileSystem>();
         Logger = serviceProvider.GetService<ILoggerFactory>()?.CreateLogger(GetType()) ?? NullLogger.Instance;
 
-        var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
-
-        // We got a path with trailing path separator which is treated as a directory path.
-        if (string.IsNullOrEmpty(fileInfo.Name))
-            throw new ArgumentException($"The specified path '{fileInfo.FullName}' is not a valid file path.");
-
-        var fileName = fileInfo.Name;
-        ThrowHelper.ThrowIfNullOrEmpty(fileName);
-
-        FileName = fileInfo.Name;
-
         if (fileInformation is PetroglyphMegPackableFileInformation { IsInsideMeg: true })
         {
-            FilePath = fileInformation.FilePath;
-            Directory = FileSystem.Path.GetDirectoryName(fileInformation.FilePath) ??
+            var path = fileInformation.FilePath;
+
+            // NB: This is necessary, because for EaW/FoC the file paths inside MEG files use
+            // are normalized to treat backslashes as directory separators.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                path = PathNormalizer.Normalize(path, PathHelper.UnixMegPathNormalizationOptions);
+
+            FilePath = path;
+            FileName = GetFileNameOrThrow(path);
+            Directory = FileSystem.Path.GetDirectoryName(path) ??
                         throw new InvalidOperationException($"No directory found for file '{FilePath}'");
 
+            // Create a defensive copy of the file information to ensure that the original
+            // instance can be safely disposed without affecting this holder.
             _internalFileInformation = fileInformation with { };
         }
         else
         {
+            var fileInfo = FileSystem.FileInfo.New(fileInformation.FilePath);
+            
+            // Use absolute paths for local files.
+            FilePath = fileInfo.FullName;
+            FileName = GetFileNameOrThrow(fileInfo.FullName);
+
             // We can only check whether the file exists if it is a local file.
             if (!fileInfo.Exists)
                 throw new FileNotFoundException($"File '{fileInfo.FullName}' not found.", fileInfo.FullName);
 
-            // Use absolute paths for local files.
-            FilePath = fileInfo.FullName;
             Directory = fileInfo.DirectoryName ??
                         throw new InvalidOperationException($"No directory found for file '{FilePath}'");
 
             // Create a copy with the full file path.
             _internalFileInformation = fileInformation with { FilePath = FilePath };
         }
+    }
+    
+    private string GetFileNameOrThrow(string path)
+    {
+        var name = FileSystem.Path.GetFileName(path);
+        return string.IsNullOrEmpty(name) 
+            ? throw new ArgumentException($"The specified path '{path}' is not a file.") 
+            : name;
     }
 
     /// <inheritdoc />

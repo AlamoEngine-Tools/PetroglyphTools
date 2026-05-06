@@ -15,11 +15,12 @@ public abstract record PetroglyphFileInformation : IDisposable
     private readonly string _filePath;
 
     /// <summary>
-    /// Gets or sets the file path e.g, "c:/my/path/myfile.txt"
+    /// Gets or sets the path of the file e.g, "c:/my/path/myfile.txt"
     /// </summary>
     /// <remarks>
-    /// The path may be relative.
+    /// The path is taken as-is and may be relative.
     /// </remarks>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is empty.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     public required string FilePath
     {

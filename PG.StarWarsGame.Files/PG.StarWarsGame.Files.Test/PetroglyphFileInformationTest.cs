@@ -16,6 +16,29 @@ public class PetroglyphFileInformationTest
         });
     }
 
+    [Theory]
+    [InlineData("file.txt")]
+    [InlineData("FILE.TXT")]
+    [InlineData("path/file.txt")]
+    [InlineData("PATH\\FILE.TXT")]
+    public void FilePath_ContainsRawData(string path)
+    {
+        Assert.Equal(path, new TestFileInfo
+        {
+            FilePath = path,
+        }.FilePath);
+        Assert.Equal(path, new TestMegFileInfo
+        {
+            FilePath = path,
+            IsInsideMeg = true
+        }.FilePath);
+        Assert.Equal(path, new TestMegFileInfo
+        {
+            FilePath = path,
+            IsInsideMeg = false
+        }.FilePath);
+    }
+
     [Fact]
     public void Dispose()
     {

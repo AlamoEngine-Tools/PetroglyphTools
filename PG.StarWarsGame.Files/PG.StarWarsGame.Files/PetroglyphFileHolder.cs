@@ -93,8 +93,10 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
         {
             var path = fileInformation.FilePath;
 
-            // NB: This is necessary, because for EaW/FoC the file paths inside MEG files use
-            // are normalized to treat backslashes as directory separators.
+            // NB: This is necessary, because for EaW/FoC file paths inside MEG files
+            // may use Windows-style separators even on Unix-based systems.
+            // Therefore, the paths of files originating from MEG files
+            // are sanitized to treat backslashes as directory separators.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 path = PathNormalizer.Normalize(path, PathHelper.UnixMegPathNormalizationOptions);
 

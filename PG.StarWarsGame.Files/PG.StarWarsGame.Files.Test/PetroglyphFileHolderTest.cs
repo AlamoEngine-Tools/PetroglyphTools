@@ -102,7 +102,7 @@ public abstract class PetroglyphFileHolderTest<TModel, TFileInfo, THolder> : PGT
     [PlatformSpecificTheory(TestPlatformIdentifier.Linux)]
     [InlineData("/   ", "   ", "/", "/   ")]
     [InlineData("./   ", "   ", "/", "/   ")]
-    [InlineData("   ", "   ", "/", "/   ")]  // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
+    //[InlineData("   ", "   ", "/", "/   ")]  // Currently not possible due to https://github.com/TestableIO/System.IO.Abstractions/issues/1070
     public void PassingFileNames_Whitespace_Linux(string filePath, string? expectedFileName, string expectedDirectory, string expectedFullPath)
     {
         var model = CreateModel();

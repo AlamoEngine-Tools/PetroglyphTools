@@ -1,6 +1,6 @@
 ﻿namespace PG.StarWarsGame.Files.Test;
 
-public record MegTestParam : PetroglyphMegPackableFileInformation
+public record TestMegFileInfo : PetroglyphMegPackableFileInformation
 {
     public bool IsDisposed { get; private set; }
 

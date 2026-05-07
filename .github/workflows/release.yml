@@ -54,7 +54,7 @@ jobs:
       - uses: dotnet/nbgv@master
         id: nbgv
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: v${{ steps.nbgv.outputs.SemVer2 }}
           tag_name: v${{ steps.nbgv.outputs.SemVer2 }}

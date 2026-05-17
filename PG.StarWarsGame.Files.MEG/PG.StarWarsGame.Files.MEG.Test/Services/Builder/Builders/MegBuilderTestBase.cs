@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Extensions;
 using AnakinRaW.CommonUtilities.Testing.Extensions;
@@ -512,6 +513,84 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
     #endregion
 
+    #region AddBytes
+
+    [Fact]
+    public void AddBytes_Throws()
+    {
+        var builder = CreateBuilder();
+        var bytes = new byte[] { 1, 2, 3 };
+
+        Assert.Throws<ArgumentNullException>(() => builder.AddBytes(null!, "path"));
+        Assert.Throws<ArgumentNullException>(() => builder.AddBytes(bytes, null!));
+        Assert.Throws<ArgumentException>(() => builder.AddBytes(bytes, ""));
+    }
+
+    [Fact]
+    public void AddBytes_AddsEntry()
+    {
+        var builder = CreateBuilder();
+        var bytes = new byte[] { 1, 2, 3, 4, 5 };
+
+        var result = builder.AddBytes(bytes, "entry.bin");
+
+        Assert.True(result.Added, $"Actual: {result.Status}");
+        Assert.Single(builder.DataEntries);
+
+        var entry = builder.DataEntries.First();
+        Assert.True(entry.OriginInfo.IsBytes);
+        Assert.NotSame(bytes, entry.OriginInfo.Bytes);
+        Assert.Equal(bytes, entry.OriginInfo.Bytes);
+        Assert.Equal(5u, entry.Size);
+        Assert.False(entry.Encrypted);
+    }
+
+    [Fact]
+    public void AddBytes_MutationAfterAdd_DoesNotAffectEntry()
+    {
+        var builder = CreateBuilder();
+        var bytes = new byte[] { 1, 2, 3 };
+
+        builder.AddBytes(bytes, "entry.bin");
+
+        bytes[0] = 99;
+
+        Assert.Equal([1, 2, 3], builder.DataEntries.First().OriginInfo.Bytes);
+    }
+
+    [Fact]
+    public void AddBytes_Empty_AddsEntry()
+    {
+        var builder = CreateBuilder();
+
+        var result = builder.AddBytes([], "entry.bin");
+
+        Assert.True(result.Added, $"Actual: {result.Status}");
+        Assert.Equal(0u, builder.DataEntries.First().Size);
+    }
+
+    [Fact]
+    public void AddBytes_TooLarge_ReturnsEntryFileTooLarge()
+    {
+        var builder = new MaxFileSizeMegBuilder(3, ServiceProvider);
+
+        var result = builder.AddBytes([1, 2, 3, 4], "entry.bin");
+
+        Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
+        Assert.Empty(builder.DataEntries);
+    }
+
+    [Fact]
+    public void AddBytes_DisposedBuilder_Throws()
+    {
+        var builder = CreateBuilder();
+        builder.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => builder.AddBytes([1, 2, 3], "entry.bin"));
+    }
+
+    #endregion
+
     #region GetMinRequiredMegFiles
 
     [Fact]
@@ -550,6 +629,49 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         builder.AddFile("2.txt", "2.txt");
 
         Assert.Equal(2, builder.GetMinRequiredMegFiles(MegFileVersion.V1));
+    }
+
+    #endregion
+
+    #region Build_FromBytes
+
+    [Fact]
+    public void Build_FromBytes_RoundTrip()
+    {
+        var contents = new byte[] { 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+
+        var builder = CreateBuilder();
+        var addResult = builder.AddBytes(contents, "bytes-entry.bin");
+        Assert.True(addResult.Added, $"Actual: {addResult.Status}");
+
+        var fileInfo = CreateFileInfo(true, "out.meg");
+        builder.Build(fileInfo, true);
+
+        Assert.True(FileSystem.File.Exists("out.meg"));
+
+        var loaded = ServiceProvider.GetRequiredService<IMegFileService>().Load("out.meg");
+        Assert.Single(loaded.Archive);
+
+        var extractor = ServiceProvider.GetRequiredService<IMegFileExtractor>();
+        using var extracted = extractor.GetData(new MegDataEntryLocationReference(loaded, loaded.Archive[0]));
+        var sink = new MemoryStream();
+        extracted.CopyTo(sink);
+        Assert.Equal(contents, sink.ToArray());
+    }
+
+    [Fact]
+    public void Build_FromBytes_Twice_Works()
+    {
+        var contents = new byte[] { 1, 2, 3, 4 };
+
+        var builder = CreateBuilder();
+        builder.AddBytes(contents, "entry.bin");
+
+        builder.Build(CreateFileInfo(true, "first.meg"), true);
+        builder.Build(CreateFileInfo(true, "second.meg"), true);
+
+        Assert.True(FileSystem.File.Exists("first.meg"));
+        Assert.True(FileSystem.File.Exists("second.meg"));
     }
 
     #endregion

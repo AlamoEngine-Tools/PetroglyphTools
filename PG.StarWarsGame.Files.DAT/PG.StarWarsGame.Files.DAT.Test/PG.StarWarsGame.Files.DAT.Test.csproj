@@ -54,7 +54,4 @@
 		<ProjectReference Include="..\..\PG.StarWarsGame.Files\PG.StarWarsGame.Files.Testing\PG.StarWarsGame.Files.Testing.csproj" />
 		<ProjectReference Include="..\PG.StarWarsGame.Files.DAT\PG.StarWarsGame.Files.DAT.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-	</ItemGroup>
 </Project>

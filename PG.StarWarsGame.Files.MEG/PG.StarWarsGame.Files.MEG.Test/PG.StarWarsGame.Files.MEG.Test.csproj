@@ -52,7 +52,4 @@
 		<EmbeddedResource Include="Resources\Files\v2_2_files_data.meg" />
 		<EmbeddedResource Include="Resources\Files\v3n_2_files_data.meg" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-	</ItemGroup>
 </Project>

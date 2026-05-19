@@ -42,7 +42,4 @@
 	<ItemGroup>
 		<None Update="C:\Users\Anakin\Source\Repos\AlamoEngine-Tools\PetroglyphTools\aet.png" Link="aet.png" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-	</ItemGroup>
 </Project>

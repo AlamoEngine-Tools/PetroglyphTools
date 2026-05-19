@@ -159,7 +159,7 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     [Fact]
     public void GetFileData_OriginInfo_Bytes_Empty()
     {
-        var originInfo = new MegDataEntryOriginInfo(Array.Empty<byte>());
+        var originInfo = new MegDataEntryOriginInfo([]);
 
         using var resultStream = _streamFactory.GetStream(originInfo);
         Assert.Equal(0, resultStream.Length);

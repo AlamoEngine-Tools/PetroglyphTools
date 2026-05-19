@@ -5,6 +5,7 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities;
@@ -181,8 +182,8 @@ public sealed class MegDataEntryBuilderInfo
             return originInfo.FileInfo.FullName;
         if (originInfo.IsEntryReference)
             return originInfo.MegFileLocation.DataEntry.Path;
-        throw new ArgumentException(
-            "A byte-buffer-backed entry requires an explicit entry path.", nameof(overrideEntryPath));
+        Debug.Fail("A byte-buffer-backed entry requires an explicit entry path. Callers must validate before invoking the internal constructor.");
+        throw new InvalidOperationException("A byte-buffer-backed entry requires an explicit entry path.");
     }
 
     private static bool GetEncryption(MegDataEntryOriginInfo originInfo, bool? overrideEncrypted)

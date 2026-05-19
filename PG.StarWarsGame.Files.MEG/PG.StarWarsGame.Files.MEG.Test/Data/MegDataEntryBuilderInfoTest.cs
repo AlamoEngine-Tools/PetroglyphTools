@@ -312,7 +312,7 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     [Fact]
     public void FromBytes_Empty_OK()
     {
-        var info = MegDataEntryBuilderInfo.FromBytes(Array.Empty<byte>(), "entry.bin");
+        var info = MegDataEntryBuilderInfo.FromBytes([], "entry.bin");
 
         Assert.True(info.OriginInfo.IsBytes);
         Assert.Equal(0u, info.Size);

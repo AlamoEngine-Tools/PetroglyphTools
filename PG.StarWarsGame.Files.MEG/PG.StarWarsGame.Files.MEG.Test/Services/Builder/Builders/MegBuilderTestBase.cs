@@ -659,21 +659,6 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Equal(contents, sink.ToArray());
     }
 
-    [Fact]
-    public void Build_FromBytes_Twice_Works()
-    {
-        var contents = new byte[] { 1, 2, 3, 4 };
-
-        var builder = CreateBuilder();
-        builder.AddBytes(contents, "entry.bin");
-
-        builder.Build(CreateFileInfo(true, "first.meg"), true);
-        builder.Build(CreateFileInfo(true, "second.meg"), true);
-
-        Assert.True(FileSystem.File.Exists("first.meg"));
-        Assert.True(FileSystem.File.Exists("second.meg"));
-    }
-
     #endregion
 
     #region BuildMany

@@ -17,8 +17,11 @@ internal sealed class MegDataStreamFactory(IServiceProvider serviceProvider)
 {
     public Stream GetStream(MegDataEntryOriginInfo originInfo)
     {
-        if (originInfo == null) 
+        if (originInfo == null)
             throw new ArgumentNullException(nameof(originInfo));
+
+        if (originInfo.IsBytes)
+            return new MemoryStream(originInfo.Bytes, writable: false);
 
         if (originInfo.FileInfo is not null)
             return originInfo.FileInfo.OpenRead();

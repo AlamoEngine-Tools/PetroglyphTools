@@ -88,7 +88,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> class from the specified byte span.
     /// The span is copied; subsequent mutations to <paramref name="bytes"/> do not affect this origin.
     /// </summary>
-    /// <param name="bytes">The buffer containing the entry bytes.</param>
+    /// <param name="bytes">The read-only span containing the entry bytes.</param>
     public MegDataEntryOriginInfo(ReadOnlySpan<byte> bytes)
     {
         Bytes = bytes.ToArray();

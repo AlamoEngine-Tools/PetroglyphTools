@@ -312,6 +312,43 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     [Fact]
     public void FromBytes_Empty_OK()
     {
+        var info = MegDataEntryBuilderInfo.FromBytes((byte[])[], "entry.bin");
+
+        Assert.True(info.OriginInfo.IsBytes);
+        Assert.Equal(0u, info.Size);
+    }
+
+    #endregion
+
+    #region Factory FromReadOnlySpan<byte>
+
+    [Theory]
+    [InlineData("entry.bin", true)]
+    [InlineData("entry.bin", false)]
+    public void FromBytes_Span(string entryPath, bool encrypted)
+    {
+        Span<byte> bytes = [1, 2, 3, 4, 5];
+
+        var info = MegDataEntryBuilderInfo.FromBytes(bytes, entryPath, encrypted);
+
+        Assert.True(info.OriginInfo.IsBytes);
+        Assert.Equal(bytes.ToArray(), info.OriginInfo.Bytes);
+        Assert.Equal(entryPath, info.EntryPath);
+        Assert.Equal(5u, info.Size);
+        Assert.Equal(encrypted, info.Encrypted);
+    }
+
+    [Fact]
+    public void FromBytes_Soan_NullOrEmptyEntryPath_Throws()
+    {
+        byte[] bytes = [1, 2, 3];
+        Assert.Throws<ArgumentNullException>(() => MegDataEntryBuilderInfo.FromBytes(bytes.AsSpan(), null!));
+        Assert.Throws<ArgumentException>(() => MegDataEntryBuilderInfo.FromBytes(bytes.AsSpan(), ""));
+    }
+
+    [Fact]
+    public void FromBytes_Span_Empty_OK()
+    {
         var info = MegDataEntryBuilderInfo.FromBytes([], "entry.bin");
 
         Assert.True(info.OriginInfo.IsBytes);
@@ -326,6 +363,19 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
     public void RefreshSize_FromBytes_Unchanged()
     {
         var bytes = new byte[] { 1, 2, 3, 4 };
+        var info = MegDataEntryBuilderInfo.FromBytes(bytes, "entry.bin");
+
+        Assert.Equal(4u, info.Size);
+
+        info.RefreshSize();
+
+        Assert.Equal(4u, info.Size);
+    }
+
+    [Fact]
+    public void RefreshSize_FromBytes_Span_Unchanged()
+    {
+        Span<byte> bytes = [1, 2, 3, 4];
         var info = MegDataEntryBuilderInfo.FromBytes(bytes, "entry.bin");
 
         Assert.Equal(4u, info.Size);
@@ -381,7 +431,7 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
 
         FileSystem.File.Delete("test.xml");
 
-        Assert.Throws<FileNotFoundException>(() => info.RefreshSize());
+        Assert.Throws<FileNotFoundException>(info.RefreshSize);
     }
 
     [Fact]
@@ -396,7 +446,7 @@ public class MegDataEntryBuilderInfoTest : CommonMegTestBase
 
         mockFileInfo.Length = (long)uint.MaxValue + 1;
 
-        Assert.Throws<MegEntrySizeException>(() => info.RefreshSize());
+        Assert.Throws<MegEntrySizeException>(info.RefreshSize);
     }
 
     #endregion

@@ -130,6 +130,21 @@ public sealed class MegDataEntryBuilderInfo
     }
 
     /// <summary>
+    /// Creates a new instance of the <see cref="MegDataEntryBuilderInfo"/> class from an read-only span of bytes.
+    /// The span is copied; subsequent mutations to <paramref name="bytes"/> do not affect the resulting entry.
+    /// </summary>
+    /// <param name="bytes">The read-only span containing the entry bytes.</param>
+    /// <param name="entryPath">The path of the entry within the MEG archive.</param>
+    /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="bytes"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
+    public static MegDataEntryBuilderInfo FromBytes(ReadOnlySpan<byte> bytes, string entryPath, bool encrypt = false)
+    {
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+        return new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(bytes), entryPath, encrypt);
+    }
+
+    /// <summary>
     /// Creates a new instance of the <see cref="MegDataEntryBuilderInfo"/> class from an in-memory byte buffer.
     /// The buffer is copied; subsequent mutations to <paramref name="bytes"/> do not affect the resulting entry.
     /// </summary>

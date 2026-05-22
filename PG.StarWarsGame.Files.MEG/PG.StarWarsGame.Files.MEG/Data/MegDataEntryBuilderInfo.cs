@@ -136,7 +136,7 @@ public sealed class MegDataEntryBuilderInfo
     /// <param name="bytes">The read-only span containing the entry bytes.</param>
     /// <param name="entryPath">The path of the entry within the MEG archive.</param>
     /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="bytes"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
     public static MegDataEntryBuilderInfo FromBytes(ReadOnlySpan<byte> bytes, string entryPath, bool encrypt = false)
     {

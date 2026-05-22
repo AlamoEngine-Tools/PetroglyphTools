@@ -85,6 +85,21 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
         bool? overrideEncrypt = null);
 
     /// <summary>
+    /// Adds an in-memory byte buffer copied from the specified span as a data entry to the <see cref="IMegBuilder"/>.
+    /// The buffer is copied; subsequent mutations to <paramref name="bytes"/> do not affect the resulting entry.
+    /// </summary>
+    /// <remarks>
+    /// The actual data entry's file path might be different to <paramref name="entryPath"/> due to optional normalization and mandatory encoding.
+    /// </remarks>
+    /// <param name="bytes">The buffer containing the entry bytes.</param>
+    /// <param name="entryPath">The desired file path of the data entry inside the MEG archive.</param>
+    /// <param name="encrypt">Indicates whether the data entry shall be encrypted.</param>
+    /// <returns>The result of this operation.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="entryPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
+    MegDataEntryAddResult AddBytes(ReadOnlySpan<byte> bytes, string entryPath, bool encrypt = false);
+
+    /// <summary>
     /// Adds an in-memory byte buffer as a data entry to the <see cref="IMegBuilder"/>.
     /// The buffer is copied; subsequent mutations to <paramref name="bytes"/> do not affect the resulting entry.
     /// </summary>

@@ -546,6 +546,24 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
+    public void AddBytes_Span_AddsEntry()
+    {
+        var builder = CreateBuilder();
+        Span<byte> bytes = [1, 2, 3, 4, 5];
+
+        var result = builder.AddBytes(bytes, "entry.bin");
+
+        Assert.True(result.Added, $"Actual: {result.Status}");
+        Assert.Single(builder.DataEntries);
+
+        var entry = builder.DataEntries.First();
+        Assert.True(entry.OriginInfo.IsBytes);
+        Assert.Equal(bytes.ToArray(), entry.OriginInfo.Bytes);
+        Assert.Equal(5u, entry.Size);
+        Assert.False(entry.Encrypted);
+    }
+
+    [Fact]
     public void AddBytes_MutationAfterAdd_DoesNotAffectEntry()
     {
         var builder = CreateBuilder();
@@ -559,11 +577,35 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     }
 
     [Fact]
+    public void AddBytes_Span_MutationAfterAdd_DoesNotAffectEntry()
+    {
+        var builder = CreateBuilder();
+        Span<byte> bytes = [1, 2, 3];
+
+        builder.AddBytes(bytes, "entry.bin");
+
+        bytes[0] = 99;
+
+        Assert.Equal([1, 2, 3], builder.DataEntries.First().OriginInfo.Bytes);
+    }
+
+    [Fact]
     public void AddBytes_Empty_AddsEntry()
     {
         var builder = CreateBuilder();
 
-        var result = builder.AddBytes([], "entry.bin");
+        var result = builder.AddBytes((byte[])[], "entry.bin");
+
+        Assert.True(result.Added, $"Actual: {result.Status}");
+        Assert.Equal(0u, builder.DataEntries.First().Size);
+    }
+
+    [Fact]
+    public void AddBytes_Span_Empty_AddsEntry()
+    {
+        var builder = CreateBuilder();
+
+        var result = builder.AddBytes(ReadOnlySpan<byte>.Empty, "entry.bin");
 
         Assert.True(result.Added, $"Actual: {result.Status}");
         Assert.Equal(0u, builder.DataEntries.First().Size);
@@ -574,7 +616,18 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     {
         var builder = new MaxFileSizeMegBuilder(3, ServiceProvider);
 
-        var result = builder.AddBytes([1, 2, 3, 4], "entry.bin");
+        var result = builder.AddBytes((byte[])[1, 2, 3, 4], "entry.bin");
+
+        Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
+        Assert.Empty(builder.DataEntries);
+    }
+
+    [Fact]
+    public void AddBytes_Span_TooLarge_ReturnsEntryFileTooLarge()
+    {
+        var builder = new MaxFileSizeMegBuilder(3, ServiceProvider);
+
+        var result = builder.AddBytes((ReadOnlySpan<byte>)[1, 2, 3, 4], "entry.bin");
 
         Assert.Equal(MegDataEntryAddStatus.EntryFileTooLarge, result.Status);
         Assert.Empty(builder.DataEntries);
@@ -586,7 +639,8 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var builder = CreateBuilder();
         builder.Dispose();
 
-        Assert.Throws<ObjectDisposedException>(() => builder.AddBytes([1, 2, 3], "entry.bin"));
+        Assert.Throws<ObjectDisposedException>(() => builder.AddBytes((byte[])[1, 2, 3], "entry.bin"));
+        Assert.Throws<ObjectDisposedException>(() => builder.AddBytes((ReadOnlySpan<byte>)[1, 2, 3], "entry.bin"));
     }
 
     #endregion

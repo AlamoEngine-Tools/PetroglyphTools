@@ -65,7 +65,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     public byte[]? Bytes { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> structure to the specified file.
+    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> class to the specified file.
     /// </summary>
     /// <param name="fileInfo">The origin file.</param>
     /// <exception cref="ArgumentNullException"><paramref name="fileInfo"/> is <see langword="null"/>.</exception>
@@ -75,7 +75,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> structure to the specified MEG file's data entry.
+    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> class to the specified MEG file's data entry.
     /// </summary>
     /// <param name="locationReference">The MEG file's data entry.</param>
     /// <exception cref="ArgumentNullException">If <paramref name="locationReference"/> is <see langword="null"/>.</exception>
@@ -85,7 +85,17 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> structure backed by the specified byte buffer.
+    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> class from the specified byte span.
+    /// The span is copied; subsequent mutations to <paramref name="bytes"/> do not affect this origin.
+    /// </summary>
+    /// <param name="bytes">The buffer containing the entry bytes.</param>
+    public MegDataEntryOriginInfo(ReadOnlySpan<byte> bytes)
+    {
+        Bytes = bytes.ToArray();
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> class from the specified byte buffer.
     /// The buffer is copied; subsequent mutations to <paramref name="bytes"/> do not affect this origin.
     /// </summary>
     /// <param name="bytes">The buffer containing the entry bytes.</param>

@@ -127,6 +127,15 @@ public abstract class MegBuilderBase
     }
 
     /// <inheritdoc/>
+    public MegDataEntryAddResult AddBytes(ReadOnlySpan<byte> bytes, string entryPath, bool encrypt = false)
+    {
+        ThrowIfDisposed();
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+
+        return AddBuilderInfo(new MegDataEntryOriginInfo(bytes), entryPath, encrypt);
+    }
+
+    /// <inheritdoc/>
     public MegDataEntryAddResult AddBytes(byte[] bytes, string entryPath, bool encrypt = false)
     {
         ThrowIfDisposed();

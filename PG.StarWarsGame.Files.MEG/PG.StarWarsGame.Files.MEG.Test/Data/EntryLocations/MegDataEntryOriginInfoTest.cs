@@ -16,6 +16,7 @@ public class MegDataEntryOriginInfoTest : PGTestBase
     {
         Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((IFileInfo)null!));
         Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((MegDataEntryLocationReference)null!));
+        Assert.Throws<ArgumentNullException>(() => new MegDataEntryOriginInfo((byte[])null!));
     }
 
     [Fact]
@@ -26,9 +27,11 @@ public class MegDataEntryOriginInfoTest : PGTestBase
 
         Assert.Same(fi, originInfo.FileInfo);
         Assert.Null(originInfo.MegFileLocation);
+        Assert.Null(originInfo.Bytes);
 
         Assert.True(originInfo.IsLocalFile);
         Assert.False(originInfo.IsEntryReference);
+        Assert.False(originInfo.IsBytes);
     }
 
     [Fact]
@@ -44,10 +47,92 @@ public class MegDataEntryOriginInfoTest : PGTestBase
 
         Assert.Equal(location, originInfo.MegFileLocation);
         Assert.Null(originInfo.FileInfo);
+        Assert.Null(originInfo.Bytes);
 
         Assert.True(originInfo.IsEntryReference);
         Assert.False(originInfo.IsLocalFile);
+        Assert.False(originInfo.IsBytes);
     }
+
+    #region CTOR_Byte[]
+
+    [Fact]
+    public void Ctor_Bytes()
+    {
+        var bytes = new byte[] { 1, 2, 3, 4 };
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        Assert.NotSame(bytes, originInfo.Bytes);
+        Assert.Equal(bytes, originInfo.Bytes);
+        Assert.Null(originInfo.FileInfo);
+        Assert.Null(originInfo.MegFileLocation);
+
+        Assert.True(originInfo.IsBytes);
+        Assert.False(originInfo.IsLocalFile);
+        Assert.False(originInfo.IsEntryReference);
+    }
+
+    [Fact]
+    public void Ctor_Bytes_Empty_OK()
+    {
+        var bytes = Array.Empty<byte>();
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        Assert.True(originInfo.IsBytes);
+        Assert.Empty(originInfo.Bytes!);
+    }
+
+    [Fact]
+    public void Ctor_Bytes_DefensiveCopy()
+    {
+        var bytes = new byte[] { 1, 2, 3 };
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        bytes[0] = 99;
+
+        Assert.Equal([1, 2, 3], originInfo.Bytes);
+    }
+
+    #endregion
+
+    #region CTOR_ReadOnlySpan<byte>
+
+    [Fact]
+    public void Ctor_Bytes_Span()
+    {
+        Span<byte> bytes = [1, 2, 3, 4];
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        Assert.Equal(bytes.ToArray(), originInfo.Bytes);
+        Assert.Null(originInfo.FileInfo);
+        Assert.Null(originInfo.MegFileLocation);
+
+        Assert.True(originInfo.IsBytes);
+        Assert.False(originInfo.IsLocalFile);
+        Assert.False(originInfo.IsEntryReference);
+    }
+
+    [Fact]
+    public void Ctor_Bytes_Span_Empty_OK()
+    {
+        var originInfo = new MegDataEntryOriginInfo(ReadOnlySpan<byte>.Empty);
+
+        Assert.True(originInfo.IsBytes);
+        Assert.Empty(originInfo.Bytes!);
+    }
+
+    [Fact]
+    public void Ctor_Bytes_Span_DefensiveCopy()
+    {
+        Span<byte> bytes = [1, 2, 3];
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        bytes[0] = 99;
+
+        Assert.Equal([1, 2, 3], originInfo.Bytes);
+    }
+
+    #endregion
 
     [Fact]
     public void EqualsHashCode()
@@ -91,5 +176,30 @@ public class MegDataEntryOriginInfoTest : PGTestBase
 
         Assert.Equal(originLoc.GetHashCode(), otherOriginLoc.GetHashCode());
         Assert.Equal(originPath.GetHashCode(), otherOriginPath.GetHashCode());
+    }
+
+    [Fact]
+    public void EqualsHashCode_Bytes()
+    {
+        var bytes = new byte[] { 1, 2, 3 };
+        var origin = new MegDataEntryOriginInfo(bytes);
+
+        // Self-equality.
+        Assert.Equal(origin, origin);
+        Assert.Equal(origin, (object)origin);
+        Assert.False(origin.Equals(null));
+
+        // Each ctor call clones the buffer, so two origins from the same input are NOT equal
+        // (they own distinct internal buffers).
+        var otherOrigin = new MegDataEntryOriginInfo(bytes);
+        Assert.NotEqual(origin, otherOrigin);
+
+        Assert.NotEqual(origin, new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.xml")));
+
+        var spanOrigin = new MegDataEntryOriginInfo((ReadOnlySpan<byte>)bytes);
+        Assert.Equal(spanOrigin, spanOrigin);
+        Assert.Equal(spanOrigin, (object)spanOrigin);
+
+        Assert.NotEqual(origin, otherOrigin);
     }
 }

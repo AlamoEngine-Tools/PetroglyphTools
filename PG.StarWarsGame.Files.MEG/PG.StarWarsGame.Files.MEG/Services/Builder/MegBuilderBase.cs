@@ -108,7 +108,7 @@ public abstract class MegBuilderBase
         bool? overrideEncrypt = null)
     {
         ThrowIfDisposed();
-        
+
         if (overridePathInMeg is not null && string.IsNullOrWhiteSpace(overridePathInMeg))
             throw new ArgumentException("Override path in MEG cannot be empty or whitespace.", nameof(overridePathInMeg));
         if (entryReference == null)
@@ -119,11 +119,31 @@ public abstract class MegBuilderBase
 
         if (!entryReference.Exists)
             return MegDataEntryAddResult.FromEntryNotFound(entryReference);
-        
+
         return AddBuilderInfo(
-            new MegDataEntryOriginInfo(entryReference), 
+            new MegDataEntryOriginInfo(entryReference),
             entryPath,
             encrypt);
+    }
+
+    /// <inheritdoc/>
+    public MegDataEntryAddResult AddBytes(ReadOnlySpan<byte> bytes, string entryPath, bool encrypt = false)
+    {
+        ThrowIfDisposed();
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+
+        return AddBuilderInfo(new MegDataEntryOriginInfo(bytes), entryPath, encrypt);
+    }
+
+    /// <inheritdoc/>
+    public MegDataEntryAddResult AddBytes(byte[] bytes, string entryPath, bool encrypt = false)
+    {
+        ThrowIfDisposed();
+        if (bytes == null)
+            throw new ArgumentNullException(nameof(bytes));
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+
+        return AddBuilderInfo(new MegDataEntryOriginInfo(bytes), entryPath, encrypt);
     }
 
     /// <inheritdoc/>

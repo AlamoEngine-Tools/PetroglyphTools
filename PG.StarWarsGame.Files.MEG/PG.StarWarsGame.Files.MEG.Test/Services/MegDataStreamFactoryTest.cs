@@ -128,6 +128,44 @@ public class MegDataStreamFactoryTest : CommonMegTestBase
     }
 
     [Fact]
+    public void GetFileData_OriginInfo_Bytes()
+    {
+        var bytes = new byte[] { 10, 20, 30, 40, 50 };
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        using var resultStream = _streamFactory.GetStream(originInfo);
+        Assert.Equal(5, resultStream.Length);
+
+        var sink = new MemoryStream();
+        resultStream.CopyTo(sink);
+        Assert.Equal(bytes, sink.ToArray());
+    }
+
+    [Fact]
+    public void GetFileData_OriginInfo_Bytes_Replayable()
+    {
+        var bytes = new byte[] { 10, 20, 30, 40, 50 };
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        using (var first = _streamFactory.GetStream(originInfo))
+            first.CopyTo(new MemoryStream());
+
+        using var second = _streamFactory.GetStream(originInfo);
+        var sink = new MemoryStream();
+        second.CopyTo(sink);
+        Assert.Equal(bytes, sink.ToArray());
+    }
+
+    [Fact]
+    public void GetFileData_OriginInfo_Bytes_Empty()
+    {
+        var originInfo = new MegDataEntryOriginInfo([]);
+
+        using var resultStream = _streamFactory.GetStream(originInfo);
+        Assert.Equal(0, resultStream.Length);
+    }
+
+    [Fact]
     public void GetFileData_LocationReference_File()
     {
         FileSystem.Initialize().WithFile("a.meg").Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));

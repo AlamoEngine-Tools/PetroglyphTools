@@ -19,15 +19,15 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="AnakinRaW.CommonUtilities" Version="13.0.18" />
-		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="13.0.18" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
-		<PackageReference Include="System.IO.Hashing" Version="10.0.7" />
+		<PackageReference Include="AnakinRaW.CommonUtilities" Version="13.0.23" />
+		<PackageReference Include="AnakinRaW.CommonUtilities.FileSystem" Version="13.0.23" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+		<PackageReference Include="System.IO.Hashing" Version="10.0.8" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" Condition="$(TargetFramework) == 'netstandard2.0'" />
-		<PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.7" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+		<PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.8" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
 		<PackageReference Include="Nullable" Version="1.3.1" Condition="$(TargetFramework) == 'netstandard2.0'">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

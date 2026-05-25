@@ -5,6 +5,7 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities;
@@ -119,13 +120,45 @@ public sealed class MegDataEntryBuilderInfo
     /// </exception>
     public static MegDataEntryBuilderInfo FromFile(IFileInfo file, string entryPath, bool encrypt = false)
     {
-        if (file == null) 
+        if (file == null)
             throw new ArgumentNullException(nameof(file));
         if (!file.Exists)
             throw new ArgumentException($"The specified file '{file.FullName}' does not exist.", nameof(file));
         ThrowHelper.ThrowIfNullOrEmpty(entryPath);
         return new MegDataEntryBuilderInfo(
             new MegDataEntryOriginInfo(file), entryPath, encrypt);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="MegDataEntryBuilderInfo"/> class from an read-only span of bytes.
+    /// The span is copied; subsequent mutations to <paramref name="bytes"/> do not affect the resulting entry.
+    /// </summary>
+    /// <param name="bytes">The read-only span containing the entry bytes.</param>
+    /// <param name="entryPath">The path of the entry within the MEG archive.</param>
+    /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="entryPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
+    public static MegDataEntryBuilderInfo FromBytes(ReadOnlySpan<byte> bytes, string entryPath, bool encrypt = false)
+    {
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+        return new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(bytes), entryPath, encrypt);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="MegDataEntryBuilderInfo"/> class from an in-memory byte buffer.
+    /// The buffer is copied; subsequent mutations to <paramref name="bytes"/> do not affect the resulting entry.
+    /// </summary>
+    /// <param name="bytes">The buffer containing the entry bytes.</param>
+    /// <param name="entryPath">The path of the entry within the MEG archive.</param>
+    /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="bytes"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
+    public static MegDataEntryBuilderInfo FromBytes(byte[] bytes, string entryPath, bool encrypt = false)
+    {
+        if (bytes == null)
+            throw new ArgumentNullException(nameof(bytes));
+        ThrowHelper.ThrowIfNullOrEmpty(entryPath);
+        return new MegDataEntryBuilderInfo(new MegDataEntryOriginInfo(bytes), entryPath, encrypt);
     }
 
     /// <summary>
@@ -136,7 +169,13 @@ public sealed class MegDataEntryBuilderInfo
     public void RefreshSize()
     {
         if (OriginInfo.IsEntryReference)
+        {
             Size = OriginInfo.MegFileLocation.DataEntry.Location.Size;
+        }
+        else if (OriginInfo.IsBytes)
+        {
+            Size = (uint)OriginInfo.Bytes.Length;
+        }
         else
         {
             var fileInfo = OriginInfo.FileInfo!;
@@ -154,17 +193,20 @@ public sealed class MegDataEntryBuilderInfo
     {
         if (overrideEntryPath is not null)
             return overrideEntryPath;
-        return originInfo.IsLocalFile 
-            ? originInfo.FileInfo.FullName 
-            : originInfo.MegFileLocation!.DataEntry.Path;
+        if (originInfo.IsLocalFile)
+            return originInfo.FileInfo.FullName;
+        if (originInfo.IsEntryReference)
+            return originInfo.MegFileLocation.DataEntry.Path;
+        Debug.Fail("A byte-buffer-backed entry requires an explicit entry path. Callers must validate before invoking the internal constructor.");
+        throw new InvalidOperationException("A byte-buffer-backed entry requires an explicit entry path.");
     }
 
     private static bool GetEncryption(MegDataEntryOriginInfo originInfo, bool? overrideEncrypted)
     {
         if (overrideEncrypted is not null)
-            return overrideEncrypted.Value; 
-        // Fallback for the case, origin is a file system path but overrideEncrypted was forgotten to set explicitly.
-        if (originInfo.IsLocalFile)
+            return overrideEncrypted.Value;
+        // Fallback for the case, origin is a file system path or byte buffer but overrideEncrypted was forgotten to set explicitly.
+        if (originInfo.IsLocalFile || originInfo.IsBytes)
             return false;
         return originInfo.MegFileLocation!.DataEntry.Encrypted;
     }

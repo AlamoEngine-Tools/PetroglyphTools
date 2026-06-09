@@ -3,10 +3,16 @@
 
 namespace PG.StarWarsGame.Localisation.Data.Config.v2
 {
+    /// <summary>
+    /// Specifies whether a translation project provides core game text, expansion text, or mod text.
+    /// </summary>
     public enum OverrideType
     {
+        /// <summary>Core base-game translation resources.</summary>
         Core,
+        /// <summary>Expansion translation resources.</summary>
         Expansion,
+        /// <summary>Mod-specific translation resources.</summary>
         Mod
     }
 }

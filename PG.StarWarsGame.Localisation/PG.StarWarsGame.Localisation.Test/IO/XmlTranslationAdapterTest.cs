@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Localisation.Data;
 using PG.StarWarsGame.Localisation.IO.Xml;
+using System.Linq;
 using PG.StarWarsGame.Localisation.Languages;
 using Xunit;
 
@@ -72,5 +73,23 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         var db2 = new TranslationDatabaseFactory().CreateKeyed(new[] { De });
         CreateImporter().Import(xml, db2);
         Assert.Empty(db2);
+    }
+
+    [Fact]
+    public void Export_KeyedDatabase_WritesKeysAlphabetically()
+    {
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        db.SetTranslation("ZEBRA", En, "z");
+        db.SetTranslation("APPLE", En, "a");
+        db.SetTranslation("MONKEY", En, "m");
+
+        var xml = CreateExporter().Export(db);
+        XNamespace ns = "http://www.example.org/eaw-translation/";
+        var keys = xml.Root!
+            .Elements(ns + "Localisation")
+            .Select(e => e.Attribute("key")!.Value)
+            .ToList();
+
+        Assert.Equal(new[] { "APPLE", "MONKEY", "ZEBRA" }, keys);
     }
 }

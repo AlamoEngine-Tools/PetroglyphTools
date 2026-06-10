@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Localisation.Languages
 {
     /// <summary>The language definition for Japanese (JA).</summary>
     /// <remarks>Officially supported by the Alamo Engine.</remarks>
-    [OfficiallySupportedLanguage]
+    [OfficiallySupportedLanguage(AlamoGameContext.BaseGame)]
     [ExcludeFromCodeCoverage]
     public sealed class JapaneseAlamoLanguageDefinition : AlamoLanguageDefinitionBase
     {

@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using PG.StarWarsGame.Localisation.Languages;
+using PG.StarWarsGame.Localisation.Languages.Attributes;
 using PG.StarWarsGame.Localisation.Services;
 using Xunit;
 
@@ -41,7 +43,7 @@ public class LanguageServiceTest
     public void OfficiallySupported_ReturnsOnlySupported()
     {
         var svc = CreateService();
-        Assert.All(svc.OfficiallySupported, l => Assert.True(l.IsOfficiallySupported));
+        Assert.All(svc.OfficiallySupported(), l => Assert.True(l.IsOfficiallySupported()));
     }
 
     [Fact]
@@ -105,10 +107,60 @@ public class LanguageServiceTest
         Assert.Throws<ArgumentNullException>(() => svc.IsOfficiallySupported(null!));
     }
 
+    [Fact]
+    public void OfficiallySupported_WithContext_ReturnsOnlyContextMatchingLanguages()
+    {
+        var baseOnly = new BaseGameOnlyTestLanguage();
+        var expOnly = new ExpansionOnlyTestLanguage();
+        var both = new EnglishAlamoLanguageDefinition();
+        var svc = new LanguageService(new IAlamoLanguageDefinition[] { baseOnly, expOnly, both });
+
+        var baseResult = svc.OfficiallySupported(AlamoGameContext.BaseGame);
+        var expResult = svc.OfficiallySupported(AlamoGameContext.Expansion);
+
+        Assert.Contains(baseOnly, baseResult);
+        Assert.Contains(both, baseResult);
+        Assert.DoesNotContain(expOnly, baseResult);
+
+        Assert.Contains(expOnly, expResult);
+        Assert.Contains(both, expResult);
+        Assert.DoesNotContain(baseOnly, expResult);
+    }
+
+    [Fact]
+    public void IsOfficiallySupported_WithContext_ReturnsCorrectResultPerContext()
+    {
+        var baseOnly = new BaseGameOnlyTestLanguage();
+        var svc = new LanguageService(new IAlamoLanguageDefinition[] { baseOnly, new EnglishAlamoLanguageDefinition() });
+
+        Assert.True(svc.IsOfficiallySupported(baseOnly, AlamoGameContext.BaseGame));
+        Assert.False(svc.IsOfficiallySupported(baseOnly, AlamoGameContext.Expansion));
+    }
+
+    [Fact]
+    public void IsOfficiallySupported_WithContext_Throws_OnNull()
+    {
+        var svc = CreateService();
+        Assert.Throws<ArgumentNullException>(() => svc.IsOfficiallySupported(null!, AlamoGameContext.BaseGame));
+    }
+
     private sealed class UnsupportedTestLanguage : AlamoLanguageDefinitionBase
     {
         protected override string ConfiguredLanguageIdentifier => "KLINGON";
-        protected override System.Globalization.CultureInfo ConfiguredCulture =>
-            System.Globalization.CultureInfo.InvariantCulture;
+        protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
+    }
+
+    [OfficiallySupportedLanguage(AlamoGameContext.BaseGame)]
+    private sealed class BaseGameOnlyTestLanguage : AlamoLanguageDefinitionBase
+    {
+        protected override string ConfiguredLanguageIdentifier => "BASE_ONLY";
+        protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
+    }
+
+    [OfficiallySupportedLanguage(AlamoGameContext.Expansion)]
+    private sealed class ExpansionOnlyTestLanguage : AlamoLanguageDefinitionBase
+    {
+        protected override string ConfiguredLanguageIdentifier => "EXP_ONLY";
+        protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
     }
 }

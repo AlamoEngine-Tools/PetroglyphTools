@@ -74,4 +74,20 @@ public class PropertiesTranslationAdapterTest : CommonLocalisationTestBase
         CreateImporter().Import(new StringReader(props), En, db);
         Assert.Single(db);
     }
+
+    [Fact]
+    public void Export_KeyedDatabase_WritesKeysAlphabetically()
+    {
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        db.SetTranslation("ZEBRA", En, "z");
+        db.SetTranslation("APPLE", En, "a");
+        db.SetTranslation("MONKEY", En, "m");
+
+        var props = CreateExporter().Export(db, En);
+        var lines = props.Split('\n');
+        var dataLines = System.Array.FindAll(lines, l => l.Contains("="));
+        Assert.StartsWith("APPLE=", dataLines[0]);
+        Assert.StartsWith("MONKEY=", dataLines[1]);
+        Assert.StartsWith("ZEBRA=", dataLines[2]);
+    }
 }

@@ -24,7 +24,11 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
 
             var root = new XElement(Ns + "LocalisationData");
 
-            foreach (var entry in source)
+            var rows = source is IKeyedTranslationDatabase
+                ? source.OrderBy(e => e.Key, StringComparer.Ordinal).AsEnumerable()
+                : source.AsEnumerable();
+
+            foreach (var entry in rows)
             {
                 var locEl = new XElement(Ns + "Localisation",
                     new XAttribute("key", entry.Key));

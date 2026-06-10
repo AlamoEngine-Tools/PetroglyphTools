@@ -21,9 +21,6 @@ namespace PG.StarWarsGame.Localisation.Services
         public IReadOnlyList<IAlamoLanguageDefinition> AllLanguages => _all;
 
         /// <inheritdoc/>
-        public IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported => _officiallySupported;
-
-        /// <inheritdoc/>
         public IAlamoLanguageDefinition Default =>
             _all.FirstOrDefault(l => l.IsDefault)
             ?? throw new InvalidOperationException("No default language definition is registered.");
@@ -38,11 +35,20 @@ namespace PG.StarWarsGame.Localisation.Services
 
             var list = languages.ToList();
             _all = list.AsReadOnly();
-            _officiallySupported = list.Where(l => l.IsOfficiallySupported).ToList().AsReadOnly();
+            _officiallySupported = list.Where(l => l.IsOfficiallySupported()).ToList().AsReadOnly();
             _byIdentifier = list.ToDictionary(
                 l => l.LanguageIdentifier,
                 l => l,
                 StringComparer.OrdinalIgnoreCase);
+        }
+
+        /// <inheritdoc/>
+        public IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported() => _officiallySupported;
+
+        /// <inheritdoc/>
+        public IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported(AlamoGameContext context)
+        {
+            return _all.Where(l => l.IsOfficiallySupported(context)).ToList().AsReadOnly();
         }
 
         /// <inheritdoc/>
@@ -51,7 +57,16 @@ namespace PG.StarWarsGame.Localisation.Services
             if (language is null)
                 throw new ArgumentNullException(nameof(language));
             return _byIdentifier.TryGetValue(language.LanguageIdentifier, out var found)
-                   && found.IsOfficiallySupported;
+                   && found.IsOfficiallySupported();
+        }
+
+        /// <inheritdoc/>
+        public bool IsOfficiallySupported(IAlamoLanguageDefinition language, AlamoGameContext context)
+        {
+            if (language is null)
+                throw new ArgumentNullException(nameof(language));
+            return _byIdentifier.TryGetValue(language.LanguageIdentifier, out var found)
+                   && found.IsOfficiallySupported(context);
         }
 
         /// <inheritdoc/>

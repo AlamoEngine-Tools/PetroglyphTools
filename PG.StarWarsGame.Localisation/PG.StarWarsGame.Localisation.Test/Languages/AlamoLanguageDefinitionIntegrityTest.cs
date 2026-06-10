@@ -54,7 +54,7 @@ public class AlamoLanguageDefinitionIntegrityTest
             .Select(t => (IAlamoLanguageDefinition)System.Activator.CreateInstance(t)!)
             .ToList();
 
-        Assert.All(langs, l => Assert.True(l.IsOfficiallySupported));
+        Assert.All(langs, l => Assert.True(l.IsOfficiallySupported()));
     }
 
     [Fact]

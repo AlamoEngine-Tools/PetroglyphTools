@@ -70,4 +70,20 @@ public class CsvTranslationAdapterTest : CommonLocalisationTestBase
         CreateImporter().Import(new StringReader("key,ENGLISH\n"), db);
         Assert.Empty(db);
     }
+
+    [Fact]
+    public void Export_KeyedDatabase_WritesKeysAlphabetically()
+    {
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        db.SetTranslation("ZEBRA", En, "z");
+        db.SetTranslation("APPLE", En, "a");
+        db.SetTranslation("MONKEY", En, "m");
+
+        var csv = CreateExporter().Export(db);
+        var lines = csv.Split('\n');
+        // lines[0] is header; data lines follow
+        Assert.Equal("APPLE", lines[1].Split(',')[0]);
+        Assert.Equal("MONKEY", lines[2].Split(',')[0]);
+        Assert.Equal("ZEBRA", lines[3].Split(',')[0]);
+    }
 }

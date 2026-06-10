@@ -33,8 +33,12 @@ namespace PG.StarWarsGame.Localisation.IO.Csv
             }
             sb.Append('\n');
 
-            // Rows
-            foreach (var entry in source)
+            // Rows — keyed databases sort alphabetically for reproducible diffs
+            var rows = source is IKeyedTranslationDatabase
+                ? source.OrderBy(e => e.Key, StringComparer.Ordinal).AsEnumerable()
+                : source.AsEnumerable();
+
+            foreach (var entry in rows)
             {
                 sb.Append(Escape(entry.Key));
                 foreach (var lang in langs)

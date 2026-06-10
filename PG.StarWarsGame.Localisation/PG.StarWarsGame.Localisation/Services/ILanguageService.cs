@@ -14,8 +14,11 @@ namespace PG.StarWarsGame.Localisation.Services
         /// <summary>Gets all registered language definitions.</summary>
         IReadOnlyList<IAlamoLanguageDefinition> AllLanguages { get; }
 
-        /// <summary>Gets only the officially supported language definitions.</summary>
-        IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported { get; }
+        /// <summary>Returns all officially supported language definitions across all game contexts.</summary>
+        IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported();
+
+        /// <summary>Returns the officially supported language definitions for the given <paramref name="context"/>.</summary>
+        IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported(AlamoGameContext context);
 
         /// <summary>
         /// Gets the default game language (English).
@@ -26,12 +29,20 @@ namespace PG.StarWarsGame.Localisation.Services
         IAlamoLanguageDefinition Default { get; }
 
         /// <summary>
-        /// Returns <see langword="true"/> if <paramref name="language"/> is in the officially supported list.
+        /// Returns <see langword="true"/> if <paramref name="language"/> is officially supported in at least one game context.
         /// </summary>
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when <paramref name="language"/> is <see langword="null"/>.
         /// </exception>
         bool IsOfficiallySupported(IAlamoLanguageDefinition language);
+
+        /// <summary>
+        /// Returns <see langword="true"/> if <paramref name="language"/> is officially supported in the given <paramref name="context"/>.
+        /// </summary>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when <paramref name="language"/> is <see langword="null"/>.
+        /// </exception>
+        bool IsOfficiallySupported(IAlamoLanguageDefinition language, AlamoGameContext context);
 
         /// <summary>
         /// Attempts to find a language definition whose <see cref="IAlamoLanguageDefinition.LanguageIdentifier"/>

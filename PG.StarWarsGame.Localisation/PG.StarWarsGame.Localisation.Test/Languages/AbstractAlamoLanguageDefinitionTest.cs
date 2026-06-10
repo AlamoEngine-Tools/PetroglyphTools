@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using PG.StarWarsGame.Localisation.Languages;
+using PG.StarWarsGame.Localisation.Languages.Attributes;
 using Xunit;
 
 namespace PG.StarWarsGame.Localisation.Test.Languages;
@@ -27,7 +28,7 @@ public class AbstractAlamoLanguageDefinitionTest
     public void IsOfficiallySupported_IsTrue_WhenMarkedWithAttribute()
     {
         var lang = new EnglishAlamoLanguageDefinition();
-        Assert.True(lang.IsOfficiallySupported);
+        Assert.True(lang.IsOfficiallySupported());
     }
 
     [Fact]
@@ -53,5 +54,53 @@ public class AbstractAlamoLanguageDefinitionTest
         var english = new EnglishAlamoLanguageDefinition();
         var german = new GermanAlamoLanguageDefinition();
         Assert.NotEqual<IAlamoLanguageDefinition>(english, german);
+    }
+
+    [Fact]
+    public void IsOfficiallySupported_WithContext_ReturnsTrueForBothContexts_WhenNoContextsSpecified()
+    {
+        var lang = new EnglishAlamoLanguageDefinition();
+        Assert.True(lang.IsOfficiallySupported(AlamoGameContext.BaseGame));
+        Assert.True(lang.IsOfficiallySupported(AlamoGameContext.Expansion));
+    }
+
+    [Fact]
+    public void IsOfficiallySupported_WithContext_ReturnsFalse_WhenLanguageHasNoAttribute()
+    {
+        var lang = new UnsupportedTestLanguage();
+        Assert.False(lang.IsOfficiallySupported(AlamoGameContext.BaseGame));
+        Assert.False(lang.IsOfficiallySupported(AlamoGameContext.Expansion));
+    }
+
+    [Fact]
+    public void IsOfficiallySupported_WithContext_ReturnsTrue_OnlyForMatchingContext()
+    {
+        var baseOnly = new BaseGameOnlyTestLanguage();
+        Assert.True(baseOnly.IsOfficiallySupported(AlamoGameContext.BaseGame));
+        Assert.False(baseOnly.IsOfficiallySupported(AlamoGameContext.Expansion));
+
+        var expOnly = new ExpansionOnlyTestLanguage();
+        Assert.False(expOnly.IsOfficiallySupported(AlamoGameContext.BaseGame));
+        Assert.True(expOnly.IsOfficiallySupported(AlamoGameContext.Expansion));
+    }
+
+    private sealed class UnsupportedTestLanguage : AlamoLanguageDefinitionBase
+    {
+        protected override string ConfiguredLanguageIdentifier => "KLINGON";
+        protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
+    }
+
+    [OfficiallySupportedLanguage(AlamoGameContext.BaseGame)]
+    private sealed class BaseGameOnlyTestLanguage : AlamoLanguageDefinitionBase
+    {
+        protected override string ConfiguredLanguageIdentifier => "BASE_ONLY";
+        protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
+    }
+
+    [OfficiallySupportedLanguage(AlamoGameContext.Expansion)]
+    private sealed class ExpansionOnlyTestLanguage : AlamoLanguageDefinitionBase
+    {
+        protected override string ConfiguredLanguageIdentifier => "EXP_ONLY";
+        protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
     }
 }

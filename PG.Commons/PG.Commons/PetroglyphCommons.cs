@@ -3,6 +3,7 @@
 
 using AnakinRaW.CommonUtilities.Hashing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PG.Commons.Hashing;
 
 namespace PG.Commons;
@@ -10,7 +11,7 @@ namespace PG.Commons;
 /// <summary>
 /// Provides initialization routines for this library.
 /// </summary>
-public static class PetroglyphCommons 
+public static class PetroglyphCommons
 {
     /// <summary>
     /// Adds all necessary services provided by this library to the specified <see cref="IServiceCollection"/>.
@@ -18,7 +19,8 @@ public static class PetroglyphCommons
     /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add services to.</param>
     public static void ContributeServices(IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<IHashAlgorithmProvider>(new Crc32HashingProvider());
-        serviceCollection.AddSingleton<ICrc32HashingService>(sp => new Crc32HashingService(sp));
+        serviceCollection.TryAddSingleton<IHashAlgorithmProvider>(new Crc32HashingProvider());
+        serviceCollection.TryAddSingleton<IHashingService>(sp => new HashingService(sp));
+        serviceCollection.TryAddSingleton<ICrc32HashingService>(sp => new Crc32HashingService(sp));
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PG.StarWarsGame.Localisation.Languages;
 
@@ -46,7 +47,7 @@ namespace PG.StarWarsGame.Localisation.Services
         public IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported() => _officiallySupported;
 
         /// <inheritdoc/>
-        public IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported(AlamoGameContext context)
+        public IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported(GameContext context)
         {
             return _all.Where(l => l.IsOfficiallySupported(context)).ToList().AsReadOnly();
         }
@@ -61,7 +62,7 @@ namespace PG.StarWarsGame.Localisation.Services
         }
 
         /// <inheritdoc/>
-        public bool IsOfficiallySupported(IAlamoLanguageDefinition language, AlamoGameContext context)
+        public bool IsOfficiallySupported(IAlamoLanguageDefinition language, GameContext context)
         {
             if (language is null)
                 throw new ArgumentNullException(nameof(language));
@@ -70,7 +71,7 @@ namespace PG.StarWarsGame.Localisation.Services
         }
 
         /// <inheritdoc/>
-        public bool TryGetByIdentifier(string identifier, out IAlamoLanguageDefinition? language)
+        public bool TryGetByIdentifier(string identifier, [NotNullWhen(true)] out IAlamoLanguageDefinition? language)
         {
             return _byIdentifier.TryGetValue(identifier, out language);
         }

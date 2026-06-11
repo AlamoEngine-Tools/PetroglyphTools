@@ -3,21 +3,27 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using PG.StarWarsGame.Localisation.Data.Config.v2;
 using PG.StarWarsGame.Localisation.Languages;
+using PG.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Localisation.Baseline.Test;
 
-public class BaselineTranslationProviderTest : CommonBaselineTestBase
+public class BaselineTranslationProviderTest : PGTestBase
 {
+    protected override void SetupServices(IServiceCollection serviceCollection)
+    {
+        base.SetupServices(serviceCollection);
+        serviceCollection.SupportLocalisationBaseline();
+    }
+
     private IBaselineTranslationProvider Provider =>
         ServiceProvider.GetRequiredService<IBaselineTranslationProvider>();
 
     [Theory]
-    [InlineData(GameType.EaW)]
-    [InlineData(GameType.FoC)]
-    public void GetMasterText_SingleLanguage_IsNonEmpty(GameType game)
+    [InlineData(GameContext.EaW)]
+    [InlineData(GameContext.FoC)]
+    public void GetMasterText_SingleLanguage_IsNonEmpty(GameContext game)
     {
         var lang = new EnglishAlamoLanguageDefinition();
         var db = Provider.GetMasterText(game, lang);
@@ -25,9 +31,9 @@ public class BaselineTranslationProviderTest : CommonBaselineTestBase
     }
 
     [Theory]
-    [InlineData(GameType.EaW)]
-    [InlineData(GameType.FoC)]
-    public void GetCreditsText_SingleLanguage_IsNonEmpty(GameType game)
+    [InlineData(GameContext.EaW)]
+    [InlineData(GameContext.FoC)]
+    public void GetCreditsText_SingleLanguage_IsNonEmpty(GameContext game)
     {
         var lang = new EnglishAlamoLanguageDefinition();
         var db = Provider.GetCreditsText(game, lang);
@@ -42,7 +48,7 @@ public class BaselineTranslationProviderTest : CommonBaselineTestBase
             new EnglishAlamoLanguageDefinition(),
             new GermanAlamoLanguageDefinition(),
         };
-        var db = Provider.GetMasterText(GameType.EaW, langs);
+        var db = Provider.GetMasterText(GameContext.EaW, langs);
         Assert.Equal(2, db.Languages.Count);
     }
 
@@ -50,22 +56,13 @@ public class BaselineTranslationProviderTest : CommonBaselineTestBase
     public void GetMasterText_EaW_English_ContainsKnownKey()
     {
         var lang = new EnglishAlamoLanguageDefinition();
-        var db = Provider.GetMasterText(GameType.EaW, lang);
-        // At minimum the database should be populated — spot-check it has entries
+        var db = Provider.GetMasterText(GameContext.EaW, lang);
         Assert.True(db.Count > 100);
     }
 
     [Fact]
-    public void GetMasterText_UnsupportedGame_Throws()
+    public void GetMasterText_NullLanguage_Throws()
     {
-        var lang = new EnglishAlamoLanguageDefinition();
-        Assert.Throws<ArgumentException>(() => Provider.GetMasterText(GameType.Mod, lang));
-    }
-
-    [Fact]
-    public void GetCreditsText_UnsupportedGame_Throws()
-    {
-        var lang = new EnglishAlamoLanguageDefinition();
-        Assert.Throws<ArgumentException>(() => Provider.GetCreditsText(GameType.Mod, lang));
+        Assert.Throws<ArgumentNullException>(() => Provider.GetMasterText(GameContext.EaW, (IAlamoLanguageDefinition)null!));
     }
 }

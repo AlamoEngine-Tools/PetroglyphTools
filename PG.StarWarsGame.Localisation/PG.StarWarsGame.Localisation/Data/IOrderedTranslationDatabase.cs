@@ -19,6 +19,6 @@ namespace PG.StarWarsGame.Localisation.Data
         void InsertAt(int index, string key, IAlamoLanguageDefinition language, string value);
 
         /// <summary>Returns all entries whose key equals <paramref name="key"/>.</summary>
-        IReadOnlyList<ITranslationEntry> GetAllEntriesForKey(string key);
+        IReadOnlyList<TranslationEntry> GetAllEntriesForKey(string key);
     }
 }

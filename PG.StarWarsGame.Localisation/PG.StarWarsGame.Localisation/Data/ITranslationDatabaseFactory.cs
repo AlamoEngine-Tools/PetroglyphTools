@@ -16,13 +16,13 @@ namespace PG.StarWarsGame.Localisation.Data
         IKeyedTranslationDatabase CreateKeyed(IReadOnlyList<IAlamoLanguageDefinition> languages);
 
         /// <summary>Creates a keyed database using the languages from <paramref name="descriptor"/>.</summary>
-        IKeyedTranslationDatabase CreateKeyed(ITranslationProjectDescriptor descriptor);
+        IKeyedTranslationDatabase CreateKeyed(TranslationProjectDescriptor descriptor);
 
         /// <summary>Creates an ordered database (duplicate keys allowed, Credits semantics).</summary>
         IOrderedTranslationDatabase CreateOrdered(IReadOnlyList<IAlamoLanguageDefinition> languages);
 
         /// <summary>Creates an ordered database using the languages from <paramref name="descriptor"/>.</summary>
-        IOrderedTranslationDatabase CreateOrdered(ITranslationProjectDescriptor descriptor);
+        IOrderedTranslationDatabase CreateOrdered(TranslationProjectDescriptor descriptor);
 
         /// <summary>Returns a fluent builder for constructing a translation database.</summary>
         ITranslationDatabaseBuilder CreateDatabase();

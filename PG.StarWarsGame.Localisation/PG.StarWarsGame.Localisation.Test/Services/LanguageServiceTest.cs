@@ -115,8 +115,8 @@ public class LanguageServiceTest
         var both = new EnglishAlamoLanguageDefinition();
         var svc = new LanguageService(new IAlamoLanguageDefinition[] { baseOnly, expOnly, both });
 
-        var baseResult = svc.OfficiallySupported(AlamoGameContext.BaseGame);
-        var expResult = svc.OfficiallySupported(AlamoGameContext.Expansion);
+        var baseResult = svc.OfficiallySupported(GameContext.EaW);
+        var expResult = svc.OfficiallySupported(GameContext.FoC);
 
         Assert.Contains(baseOnly, baseResult);
         Assert.Contains(both, baseResult);
@@ -133,15 +133,15 @@ public class LanguageServiceTest
         var baseOnly = new BaseGameOnlyTestLanguage();
         var svc = new LanguageService(new IAlamoLanguageDefinition[] { baseOnly, new EnglishAlamoLanguageDefinition() });
 
-        Assert.True(svc.IsOfficiallySupported(baseOnly, AlamoGameContext.BaseGame));
-        Assert.False(svc.IsOfficiallySupported(baseOnly, AlamoGameContext.Expansion));
+        Assert.True(svc.IsOfficiallySupported(baseOnly, GameContext.EaW));
+        Assert.False(svc.IsOfficiallySupported(baseOnly, GameContext.FoC));
     }
 
     [Fact]
     public void IsOfficiallySupported_WithContext_Throws_OnNull()
     {
         var svc = CreateService();
-        Assert.Throws<ArgumentNullException>(() => svc.IsOfficiallySupported(null!, AlamoGameContext.BaseGame));
+        Assert.Throws<ArgumentNullException>(() => svc.IsOfficiallySupported(null!, GameContext.EaW));
     }
 
     private sealed class UnsupportedTestLanguage : AlamoLanguageDefinitionBase
@@ -150,14 +150,14 @@ public class LanguageServiceTest
         protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
     }
 
-    [OfficiallySupportedLanguage(AlamoGameContext.BaseGame)]
+    [OfficiallySupportedLanguage(GameContext.EaW)]
     private sealed class BaseGameOnlyTestLanguage : AlamoLanguageDefinitionBase
     {
         protected override string ConfiguredLanguageIdentifier => "BASE_ONLY";
         protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
     }
 
-    [OfficiallySupportedLanguage(AlamoGameContext.Expansion)]
+    [OfficiallySupportedLanguage(GameContext.FoC)]
     private sealed class ExpansionOnlyTestLanguage : AlamoLanguageDefinitionBase
     {
         protected override string ConfiguredLanguageIdentifier => "EXP_ONLY";

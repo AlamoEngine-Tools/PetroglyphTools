@@ -36,8 +36,8 @@ namespace PG.StarWarsGame.Localisation.IO.Dat
 
             foreach (var entry in source)
             {
-                if (entry.TryGetTranslation(language, out var value) && value is not null)
-                    builder.AddEntry(entry.Key, value);
+                if (entry.TryGetTranslation(language, out var value) && !string.IsNullOrEmpty(value))
+                    builder.AddEntry(entry.Key, value!);
             }
 
             return builder.BuildModel();

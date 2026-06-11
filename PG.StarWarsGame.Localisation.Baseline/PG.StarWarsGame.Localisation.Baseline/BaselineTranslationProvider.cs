@@ -4,64 +4,60 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using PG.Commons.Services;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Localisation.Data;
-using PG.StarWarsGame.Localisation.Data.Config.v2;
 using PG.StarWarsGame.Localisation.IO.Dat;
 using PG.StarWarsGame.Localisation.Languages;
 
 namespace PG.StarWarsGame.Localisation.Baseline
 {
-    /// <summary>
-    /// Default implementation of <see cref="IBaselineTranslationProvider"/>.
-    /// Loads translation data from embedded EaW and FoC game DAT files.
-    /// </summary>
-    public sealed class BaselineTranslationProvider : IBaselineTranslationProvider
+    internal sealed class BaselineTranslationProvider : ServiceBase, IBaselineTranslationProvider
     {
-        // Only 5 languages have baseline data (the ones that shipped with the original games).
+        // The 5 western languages shipped with the original games have embedded baseline data.
+        // The remaining officially supported languages are mapped for future resource additions.
         private static readonly IReadOnlyDictionary<string, (string Folder, string NameSuffix)> LanguageMap =
             new Dictionary<string, (string, string)>(StringComparer.OrdinalIgnoreCase)
             {
-                ["ENGLISH"] = ("en", "english"),
-                ["GERMAN"]  = ("de", "german"),
-                ["SPANISH"] = ("es", "spanish"),
-                ["FRENCH"]  = ("fr", "french"),
-                ["ITALIAN"] = ("it", "italian"),
+                ["ENGLISH"]  = ("en", "english"),
+                ["GERMAN"]   = ("de", "german"),
+                ["SPANISH"]  = ("es", "spanish"),
+                ["FRENCH"]   = ("fr", "french"),
+                ["ITALIAN"]  = ("it", "italian"),
+                ["CHINESE"]  = ("zh", "chinese"),
+                ["POLISH"]   = ("pl", "polish"),
+                ["RUSSIAN"]  = ("ru", "russian"),
+                ["JAPANESE"] = ("ja", "japanese"),
+                ["KOREAN"]   = ("ko", "korean"),
+                ["THAI"]     = ("th", "thai"),
             };
 
-        private readonly IFileSystem _fileSystem;
         private readonly IDatFileService _datFileService;
         private readonly IDatTranslationImporter _importer;
         private readonly ITranslationDatabaseFactory _factory;
 
-        /// <summary>Initialises a new instance using services from the given provider.</summary>
-        public BaselineTranslationProvider(IServiceProvider services)
+        public BaselineTranslationProvider(IServiceProvider services) : base(services)
         {
-            if (services is null) throw new ArgumentNullException(nameof(services));
-            _fileSystem     = services.GetRequiredService<IFileSystem>();
             _datFileService = services.GetRequiredService<IDatFileService>();
             _importer       = services.GetRequiredService<IDatTranslationImporter>();
             _factory        = services.GetRequiredService<ITranslationDatabaseFactory>();
         }
 
         /// <inheritdoc/>
-        public IKeyedTranslationDatabase GetMasterText(GameType game, IAlamoLanguageDefinition language)
+        public IKeyedTranslationDatabase GetMasterText(GameContext game, IAlamoLanguageDefinition language)
         {
             if (language is null) throw new ArgumentNullException(nameof(language));
-            ValidateGame(game);
             var db = _factory.CreateKeyed(new[] { language });
             LoadInto(db, game, "mastertextfile", language);
             return db;
         }
 
         /// <inheritdoc/>
-        public IKeyedTranslationDatabase GetMasterText(GameType game, IReadOnlyList<IAlamoLanguageDefinition> languages)
+        public IKeyedTranslationDatabase GetMasterText(GameContext game, IReadOnlyList<IAlamoLanguageDefinition> languages)
         {
             if (languages is null) throw new ArgumentNullException(nameof(languages));
-            ValidateGame(game);
             var db = _factory.CreateKeyed(languages);
             foreach (var lang in languages)
                 LoadInto(db, game, "mastertextfile", lang);
@@ -69,27 +65,25 @@ namespace PG.StarWarsGame.Localisation.Baseline
         }
 
         /// <inheritdoc/>
-        public IOrderedTranslationDatabase GetCreditsText(GameType game, IAlamoLanguageDefinition language)
+        public IOrderedTranslationDatabase GetCreditsText(GameContext game, IAlamoLanguageDefinition language)
         {
             if (language is null) throw new ArgumentNullException(nameof(language));
-            ValidateGame(game);
             var db = _factory.CreateOrdered(new[] { language });
             LoadInto(db, game, "creditstext", language);
             return db;
         }
 
         /// <inheritdoc/>
-        public IOrderedTranslationDatabase GetCreditsText(GameType game, IReadOnlyList<IAlamoLanguageDefinition> languages)
+        public IOrderedTranslationDatabase GetCreditsText(GameContext game, IReadOnlyList<IAlamoLanguageDefinition> languages)
         {
             if (languages is null) throw new ArgumentNullException(nameof(languages));
-            ValidateGame(game);
             var db = _factory.CreateOrdered(languages);
             foreach (var lang in languages)
                 LoadInto(db, game, "creditstext", lang);
             return db;
         }
 
-        private void LoadInto(ITranslationDatabase db, GameType game, string filePrefix, IAlamoLanguageDefinition language)
+        private void LoadInto(ITranslationDatabase db, GameContext game, string filePrefix, IAlamoLanguageDefinition language)
         {
             if (!LanguageMap.TryGetValue(language.LanguageIdentifier, out var map))
                 return;
@@ -98,13 +92,13 @@ namespace PG.StarWarsGame.Localisation.Baseline
             using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
             if (resourceStream is null) return;
 
-            var tempPath = _fileSystem.Path.Combine(
-                _fileSystem.Path.GetTempPath(),
+            var tempPath = FileSystem.Path.Combine(
+                FileSystem.Path.GetTempPath(),
                 $"pg_baseline_{Guid.NewGuid():N}.dat");
 
             try
             {
-                using (var fs = _fileSystem.FileStream.New(tempPath, FileMode.Create, FileAccess.Write))
+                using (var fs = FileSystem.FileStream.New(tempPath, FileMode.Create, FileAccess.Write))
                     resourceStream.CopyTo(fs);
 
                 var datFile = _datFileService.Load(tempPath);
@@ -112,22 +106,21 @@ namespace PG.StarWarsGame.Localisation.Baseline
             }
             finally
             {
-                if (_fileSystem.File.Exists(tempPath))
-                    _fileSystem.File.Delete(tempPath);
+                try
+                {
+                    FileSystem.File.Delete(tempPath);
+                }
+                catch
+                {
+                    // NOP
+                }
             }
         }
 
-        private static string BuildResourceName(GameType game, string langFolder, string fileName)
+        private static string BuildResourceName(GameContext game, string langFolder, string fileName)
         {
-            var gameFolder = game == GameType.EaW ? "EaW" : "FoC";
+            var gameFolder = game == GameContext.EaW ? "EaW" : "FoC";
             return $"PG.StarWarsGame.Localisation.Baseline.Resources.{gameFolder}.{langFolder}.{fileName}";
-        }
-
-        private static void ValidateGame(GameType game)
-        {
-            if (game != GameType.EaW && game != GameType.FoC)
-                throw new ArgumentException(
-                    $"Baseline data is only available for EaW and FoC, not '{game}'.", nameof(game));
         }
     }
 }

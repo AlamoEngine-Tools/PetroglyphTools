@@ -16,7 +16,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config.v1
     [Serializable]
     [DebuggerStepThrough]
     [DesignerCategory("code")]
-    [XmlType(Namespace = "http://www.example.org/eaw-translation/")]
+    [XmlType(Namespace = "urn:alamoenginetools:localisation:v1")]
     public class LocalisationType : object, INotifyPropertyChanged
     {
         private TranslationType[]? m_translationDataField;

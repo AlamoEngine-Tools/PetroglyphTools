@@ -31,7 +31,7 @@ namespace PG.StarWarsGame.Localisation.Languages
         /// Returns <see langword="true"/> if this language is officially supported within the given
         /// <paramref name="context"/>.
         /// </summary>
-        bool IsOfficiallySupported(AlamoGameContext context);
+        bool IsOfficiallySupported(GameContext context);
 
         /// <summary>
         /// Gets a value indicating whether this is the default game language (English).

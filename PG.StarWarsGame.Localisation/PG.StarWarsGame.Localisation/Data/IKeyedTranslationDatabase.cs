@@ -1,6 +1,8 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace PG.StarWarsGame.Localisation.Data
 {
     /// <summary>
@@ -13,7 +15,7 @@ namespace PG.StarWarsGame.Localisation.Data
         bool ContainsKey(string key);
 
         /// <summary>Attempts to retrieve the entry for <paramref name="key"/>.</summary>
-        bool TryGetEntry(string key, out ITranslationEntry? entry);
+        bool TryGetEntry(string key, [NotNullWhen(true)] out TranslationEntry? entry);
 
         /// <summary>
         /// Attempts to retrieve the translation for <paramref name="key"/> using <see cref="ITranslationDatabase.ActiveLanguage"/>.
@@ -21,6 +23,6 @@ namespace PG.StarWarsGame.Localisation.Data
         /// <exception cref="System.InvalidOperationException">
         /// <see cref="ITranslationDatabase.ActiveLanguage"/> is <see langword="null"/>.
         /// </exception>
-        bool TryGetTranslation(string key, out string? value);
+        bool TryGetTranslation(string key, [MaybeNullWhen(false)] out string? value);
     }
 }

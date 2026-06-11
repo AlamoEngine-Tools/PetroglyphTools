@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using PG.StarWarsGame.Files.DAT;
-using Testably.Abstractions;
 
 namespace PG.StarWarsGame.Localisation.Baseline
 {
@@ -18,9 +16,6 @@ namespace PG.StarWarsGame.Localisation.Baseline
         /// </summary>
         public static IServiceCollection SupportLocalisationBaseline(this IServiceCollection serviceCollection)
         {
-            // Register the real file system if none has been provided (allows test overrides).
-            serviceCollection.TryAddSingleton<System.IO.Abstractions.IFileSystem>(new RealFileSystem());
-
             serviceCollection.SupportDAT();
             serviceCollection.SupportLocalisation();
 

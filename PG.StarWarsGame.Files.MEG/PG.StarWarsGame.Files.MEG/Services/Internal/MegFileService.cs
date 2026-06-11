@@ -11,6 +11,8 @@ using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
 using AnakinRaW.CommonUtilities;
 
@@ -112,6 +114,37 @@ internal sealed class MegFileService(IServiceProvider services) : ServiceBase(se
     {
         using var binaryReader = BinaryServiceFactory.GetReader(megFileInfo.FileVersion);
         return binaryReader.ReadBinary(megStream);
+    }
+
+    public IInMemoryMegArchive LoadArchive(Stream stream)
+    {
+        if (stream == null)
+            throw new ArgumentNullException(nameof(stream));
+
+        // Copy the whole MEG into memory. This makes the resulting archive self-contained (independent of
+        // the source stream) and allows reading from non-seekable source streams (e.g. network streams).
+        byte[] megData;
+        using (var copy = new MemoryStream())
+        {
+            stream.CopyTo(copy);
+            megData = copy.ToArray();
+        }
+
+        using var dataStream = new MemoryStream(megData, writable: false);
+
+        var megVersion = GetMegFileVersion(dataStream, out var encrypted);
+
+        if (encrypted)
+            throw new NotImplementedException("Encrypted archives are currently not supported");
+
+        dataStream.Seek(0, SeekOrigin.Begin);
+
+        using var binaryReader = BinaryServiceFactory.GetReader(megVersion);
+        var megMetadata = binaryReader.ReadBinary(dataStream);
+
+        var megArchive = BinaryServiceFactory.GetConverter(megVersion).BinaryToModel(megMetadata);
+
+        return new InMemoryMegArchive(new List<MegDataEntry>(megArchive), megData);
     }
 
     public MegFileVersion GetMegFileVersion(string file, out bool encrypted)

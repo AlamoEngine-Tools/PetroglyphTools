@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Abstractions;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder;
 
@@ -76,6 +77,23 @@ public interface IMegFileService
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
     IMegFile Load(FileSystemStream stream);
+
+    /// <summary>
+    /// Loads a complete .MEG archive from a stream into memory, including the data of all its entries.
+    /// </summary>
+    /// <remarks>
+    /// The <paramref name="stream"/> is fully copied into memory, so the returned archive is independent of
+    /// <paramref name="stream"/>; the caller may dispose <paramref name="stream"/> immediately afterwards.
+    /// The stream is read from its current position to the end and does not need to be seekable.
+    /// </remarks>
+    /// <param name="stream">The stream containing the MEG archive.</param>
+    /// <returns>The in-memory MEG archive whose entry data can be read via <see cref="IInMemoryMegArchive.GetData"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
+    /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
+    /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported file size.</exception>
+    /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not a MEG archive.</exception>
+    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
+    IInMemoryMegArchive LoadArchive(Stream stream);
 
     /// <summary>
     /// Retrieves the <see cref="MegFileVersion"/> from a .MEG file.

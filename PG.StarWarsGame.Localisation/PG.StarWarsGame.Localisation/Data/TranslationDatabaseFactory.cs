@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PG.StarWarsGame.Localisation.Data.Config;
 using PG.StarWarsGame.Localisation.Data.Internal;
 using PG.StarWarsGame.Localisation.Languages;
@@ -22,10 +23,10 @@ namespace PG.StarWarsGame.Localisation.Data
         }
 
         /// <inheritdoc/>
-        public IKeyedTranslationDatabase CreateKeyed(ITranslationProjectDescriptor descriptor)
+        public IKeyedTranslationDatabase CreateKeyed(TranslationProjectDescriptor descriptor)
         {
             if (descriptor is null) throw new ArgumentNullException(nameof(descriptor));
-            return CreateKeyed(descriptor.Languages);
+            return CreateKeyed(descriptor.Languages.ToList());
         }
 
         /// <inheritdoc/>
@@ -36,10 +37,10 @@ namespace PG.StarWarsGame.Localisation.Data
         }
 
         /// <inheritdoc/>
-        public IOrderedTranslationDatabase CreateOrdered(ITranslationProjectDescriptor descriptor)
+        public IOrderedTranslationDatabase CreateOrdered(TranslationProjectDescriptor descriptor)
         {
             if (descriptor is null) throw new ArgumentNullException(nameof(descriptor));
-            return CreateOrdered(descriptor.Languages);
+            return CreateOrdered(descriptor.Languages.ToList());
         }
 
         /// <inheritdoc/>

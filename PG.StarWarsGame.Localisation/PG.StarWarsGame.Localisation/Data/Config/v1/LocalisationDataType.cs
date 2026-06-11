@@ -16,8 +16,8 @@ namespace PG.StarWarsGame.Localisation.Data.Config.v1
     [Serializable]
     [DebuggerStepThrough]
     [DesignerCategory("code")]
-    [XmlType(Namespace = "http://www.example.org/eaw-translation/")]
-    [XmlRoot("LocalisationData", Namespace = "http://www.example.org/eaw-translation/", IsNullable = false)]
+    [XmlType(Namespace = "urn:alamoenginetools:localisation:v1")]
+    [XmlRoot("LocalisationData", Namespace = "urn:alamoenginetools:localisation:v1", IsNullable = false)]
     public class LocalisationDataType : object, INotifyPropertyChanged
     {
         private LocalisationType[]? m_localisationField;

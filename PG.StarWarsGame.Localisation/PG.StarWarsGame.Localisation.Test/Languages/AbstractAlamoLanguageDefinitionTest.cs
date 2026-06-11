@@ -60,28 +60,28 @@ public class AbstractAlamoLanguageDefinitionTest
     public void IsOfficiallySupported_WithContext_ReturnsTrueForBothContexts_WhenNoContextsSpecified()
     {
         var lang = new EnglishAlamoLanguageDefinition();
-        Assert.True(lang.IsOfficiallySupported(AlamoGameContext.BaseGame));
-        Assert.True(lang.IsOfficiallySupported(AlamoGameContext.Expansion));
+        Assert.True(lang.IsOfficiallySupported(GameContext.EaW));
+        Assert.True(lang.IsOfficiallySupported(GameContext.FoC));
     }
 
     [Fact]
     public void IsOfficiallySupported_WithContext_ReturnsFalse_WhenLanguageHasNoAttribute()
     {
         var lang = new UnsupportedTestLanguage();
-        Assert.False(lang.IsOfficiallySupported(AlamoGameContext.BaseGame));
-        Assert.False(lang.IsOfficiallySupported(AlamoGameContext.Expansion));
+        Assert.False(lang.IsOfficiallySupported(GameContext.EaW));
+        Assert.False(lang.IsOfficiallySupported(GameContext.FoC));
     }
 
     [Fact]
     public void IsOfficiallySupported_WithContext_ReturnsTrue_OnlyForMatchingContext()
     {
         var baseOnly = new BaseGameOnlyTestLanguage();
-        Assert.True(baseOnly.IsOfficiallySupported(AlamoGameContext.BaseGame));
-        Assert.False(baseOnly.IsOfficiallySupported(AlamoGameContext.Expansion));
+        Assert.True(baseOnly.IsOfficiallySupported(GameContext.EaW));
+        Assert.False(baseOnly.IsOfficiallySupported(GameContext.FoC));
 
         var expOnly = new ExpansionOnlyTestLanguage();
-        Assert.False(expOnly.IsOfficiallySupported(AlamoGameContext.BaseGame));
-        Assert.True(expOnly.IsOfficiallySupported(AlamoGameContext.Expansion));
+        Assert.False(expOnly.IsOfficiallySupported(GameContext.EaW));
+        Assert.True(expOnly.IsOfficiallySupported(GameContext.FoC));
     }
 
     private sealed class UnsupportedTestLanguage : AlamoLanguageDefinitionBase
@@ -90,14 +90,14 @@ public class AbstractAlamoLanguageDefinitionTest
         protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
     }
 
-    [OfficiallySupportedLanguage(AlamoGameContext.BaseGame)]
+    [OfficiallySupportedLanguage(GameContext.EaW)]
     private sealed class BaseGameOnlyTestLanguage : AlamoLanguageDefinitionBase
     {
         protected override string ConfiguredLanguageIdentifier => "BASE_ONLY";
         protected override CultureInfo ConfiguredCulture => CultureInfo.InvariantCulture;
     }
 
-    [OfficiallySupportedLanguage(AlamoGameContext.Expansion)]
+    [OfficiallySupportedLanguage(GameContext.FoC)]
     private sealed class ExpansionOnlyTestLanguage : AlamoLanguageDefinitionBase
     {
         protected override string ConfiguredLanguageIdentifier => "EXP_ONLY";

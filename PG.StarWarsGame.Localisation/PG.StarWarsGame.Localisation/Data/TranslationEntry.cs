@@ -3,16 +3,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using PG.StarWarsGame.Localisation.Languages;
 
-namespace PG.StarWarsGame.Localisation.Data.Internal
+namespace PG.StarWarsGame.Localisation.Data
 {
-    internal sealed class TranslationEntry : ITranslationEntry
+    /// <summary>
+    /// A single translation entry: a string key with zero or more language-specific values.
+    /// </summary>
+    public sealed class TranslationEntry
     {
         private readonly Dictionary<IAlamoLanguageDefinition, string> _translations;
 
+        /// <summary>Gets the translation key.</summary>
         public string Key { get; }
 
+        /// <summary>Gets all available translations, keyed by language definition.</summary>
         public IReadOnlyDictionary<IAlamoLanguageDefinition, string> Translations => _translations;
 
         internal TranslationEntry(string key)
@@ -26,7 +32,10 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
             _translations[language] = value;
         }
 
-        public bool TryGetTranslation(IAlamoLanguageDefinition language, out string? value)
+        /// <summary>
+        /// Attempts to retrieve the translation value for <paramref name="language"/>.
+        /// </summary>
+        public bool TryGetTranslation(IAlamoLanguageDefinition language, [MaybeNullWhen(false)] out string? value)
         {
             return _translations.TryGetValue(language, out value);
         }

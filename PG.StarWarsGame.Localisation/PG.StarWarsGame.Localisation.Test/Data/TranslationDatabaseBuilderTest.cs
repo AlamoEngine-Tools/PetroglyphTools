@@ -48,7 +48,7 @@ public class TranslationDatabaseBuilderTest
     [Fact]
     public void WithActiveLanguage_SetsActiveLanguageOnBuiltDatabase()
     {
-        var db = Builder().WithLanguage(En).WithActiveLanguage(En).BuildKeyed();
+        var db = Builder().WithLanguage(En).SetActiveLanguage(En).BuildKeyed();
         Assert.Equal(En, db.ActiveLanguage);
     }
 
@@ -56,7 +56,7 @@ public class TranslationDatabaseBuilderTest
     public void WithActiveLanguage_NotInLanguages_ThrowsAtBuildTime()
     {
         Assert.Throws<ArgumentException>(() =>
-            Builder().WithLanguage(En).WithActiveLanguage(De).BuildKeyed());
+            Builder().WithLanguage(En).SetActiveLanguage(De).BuildKeyed());
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class TranslationDatabaseBuilderTest
         var db = Builder()
             .WithLanguage(En)
             .WithLanguage(De)
-            .WithActiveLanguage(En)
+            .SetActiveLanguage(En)
             .BuildOrdered();
 
         Assert.Equal(2, db.Languages.Count);

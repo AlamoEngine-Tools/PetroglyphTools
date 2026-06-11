@@ -7,10 +7,10 @@ using PG.StarWarsGame.Localisation.Languages;
 namespace PG.StarWarsGame.Localisation.Data
 {
     /// <summary>
-    /// An in-memory store of <see cref="ITranslationEntry"/> objects for one or more languages.
+    /// An in-memory store of <see cref="TranslationEntry"/> objects for one or more languages.
     /// Changes are fully decoupled from any file format.
     /// </summary>
-    public interface ITranslationDatabase : IReadOnlyList<ITranslationEntry>
+    public interface ITranslationDatabase : IReadOnlyList<TranslationEntry>
     {
         /// <summary>Gets the languages tracked by this database.</summary>
         IReadOnlyList<IAlamoLanguageDefinition> Languages { get; }

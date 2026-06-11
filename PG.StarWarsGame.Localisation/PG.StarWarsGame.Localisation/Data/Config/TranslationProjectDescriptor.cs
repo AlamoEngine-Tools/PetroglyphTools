@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using PG.StarWarsGame.Localisation.Data.Config.v2;
 using PG.StarWarsGame.Localisation.Languages;
@@ -12,35 +13,37 @@ namespace PG.StarWarsGame.Localisation.Data.Config
     /// <summary>
     /// Immutable descriptor for a translation project.
     /// </summary>
-    public sealed class TranslationProjectDescriptor : ITranslationProjectDescriptor,
-        IEquatable<TranslationProjectDescriptor>
+    public sealed class TranslationProjectDescriptor : IEquatable<TranslationProjectDescriptor>
     {
-        /// <inheritdoc/>
-        public GameType Game { get; }
+        private readonly HashSet<IAlamoLanguageDefinition> _languagesSet;
 
-        /// <inheritdoc/>
+        /// <summary>Gets the game this project provides translations for.</summary>
+        public GameContext Game { get; }
+
+        /// <summary>Gets whether this project provides core, expansion, or mod text.</summary>
         public OverrideType OverrideType { get; }
 
-        /// <inheritdoc/>
+        /// <summary>Gets the file format used to store translation resources.</summary>
         public TranslationResourceType ResourceType { get; }
 
-        /// <inheritdoc/>
-        public IReadOnlyList<IAlamoLanguageDefinition> Languages { get; }
+        /// <summary>Gets the languages covered by this translation project.</summary>
+        public IReadOnlyCollection<IAlamoLanguageDefinition> Languages { get; }
 
         /// <summary>Initialises a new <see cref="TranslationProjectDescriptor"/>.</summary>
         public TranslationProjectDescriptor(
-            GameType game,
+            GameContext game,
             OverrideType overrideType,
             TranslationResourceType resourceType,
-            IReadOnlyList<IAlamoLanguageDefinition> languages)
+            IEnumerable<IAlamoLanguageDefinition> languages)
         {
             if (languages is null)
                 throw new ArgumentNullException(nameof(languages));
 
+            _languagesSet = new HashSet<IAlamoLanguageDefinition>(languages);
+            Languages = new ReadOnlyCollection<IAlamoLanguageDefinition>(_languagesSet.ToList());
             Game = game;
             OverrideType = overrideType;
             ResourceType = resourceType;
-            Languages = languages.ToList().AsReadOnly();
         }
 
         /// <inheritdoc/>
@@ -51,7 +54,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config
             return Game == other.Game
                    && OverrideType == other.OverrideType
                    && ResourceType == other.ResourceType
-                   && Languages.SequenceEqual(other.Languages);
+                   && _languagesSet.SetEquals(other._languagesSet);
         }
 
         /// <inheritdoc/>
@@ -62,7 +65,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config
         public override int GetHashCode()
         {
             var hash = HashCode.Combine((int)Game, (int)OverrideType, (int)ResourceType);
-            foreach (var lang in Languages)
+            foreach (var lang in _languagesSet.OrderBy(l => l.LanguageIdentifier, StringComparer.Ordinal))
                 hash = HashCode.Combine(hash, lang.GetHashCode());
             return hash;
         }

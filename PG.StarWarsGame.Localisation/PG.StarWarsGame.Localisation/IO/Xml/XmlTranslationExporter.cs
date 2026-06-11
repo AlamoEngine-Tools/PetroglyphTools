@@ -15,7 +15,7 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
     /// </summary>
     public sealed class XmlTranslationExporter : IXmlTranslationExporter
     {
-        internal static readonly XNamespace Ns = "http://www.example.org/eaw-translation/";
+        internal static readonly XNamespace Ns = "urn:alamoenginetools:localisation:v1";
 
         /// <inheritdoc/>
         public XDocument Export(ITranslationDatabase source)

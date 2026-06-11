@@ -57,7 +57,7 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
     public void Import_EmptyXml_LeavesDbEmpty()
     {
         var xml = new XDocument(new XElement(
-            XName.Get("LocalisationData", "http://www.example.org/eaw-translation/")));
+            XName.Get("LocalisationData", "urn:alamoenginetools:localisation:v1")));
         var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
         CreateImporter().Import(xml, db);
         Assert.Empty(db);
@@ -84,7 +84,7 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         db.SetTranslation("MONKEY", En, "m");
 
         var xml = CreateExporter().Export(db);
-        XNamespace ns = "http://www.example.org/eaw-translation/";
+        XNamespace ns = "urn:alamoenginetools:localisation:v1";
         var keys = xml.Root!
             .Elements(ns + "Localisation")
             .Select(e => e.Attribute("key")!.Value)

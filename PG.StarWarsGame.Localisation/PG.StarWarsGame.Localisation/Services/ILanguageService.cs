@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using PG.StarWarsGame.Localisation.Languages;
 
 namespace PG.StarWarsGame.Localisation.Services
@@ -18,7 +19,7 @@ namespace PG.StarWarsGame.Localisation.Services
         IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported();
 
         /// <summary>Returns the officially supported language definitions for the given <paramref name="context"/>.</summary>
-        IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported(AlamoGameContext context);
+        IReadOnlyList<IAlamoLanguageDefinition> OfficiallySupported(GameContext context);
 
         /// <summary>
         /// Gets the default game language (English).
@@ -42,12 +43,12 @@ namespace PG.StarWarsGame.Localisation.Services
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when <paramref name="language"/> is <see langword="null"/>.
         /// </exception>
-        bool IsOfficiallySupported(IAlamoLanguageDefinition language, AlamoGameContext context);
+        bool IsOfficiallySupported(IAlamoLanguageDefinition language, GameContext context);
 
         /// <summary>
         /// Attempts to find a language definition whose <see cref="IAlamoLanguageDefinition.LanguageIdentifier"/>
         /// matches <paramref name="identifier"/> (case-insensitive).
         /// </summary>
-        bool TryGetByIdentifier(string identifier, out IAlamoLanguageDefinition? language);
+        bool TryGetByIdentifier(string identifier, [NotNullWhen(true)] out IAlamoLanguageDefinition? language);
     }
 }

@@ -18,8 +18,8 @@ public class TranslationProjectDescriptorTest
     [Fact]
     public void Constructor_SetsAllProperties()
     {
-        var d = new TranslationProjectDescriptor(GameType.EaW, OverrideType.Core, TranslationResourceType.Dat, TwoLangs);
-        Assert.Equal(GameType.EaW, d.Game);
+        var d = new TranslationProjectDescriptor(GameContext.EaW, OverrideType.Core, TranslationResourceType.Dat, TwoLangs);
+        Assert.Equal(GameContext.EaW, d.Game);
         Assert.Equal(OverrideType.Core, d.OverrideType);
         Assert.Equal(TranslationResourceType.Dat, d.ResourceType);
         Assert.Equal(2, d.Languages.Count);
@@ -29,14 +29,14 @@ public class TranslationProjectDescriptorTest
     public void Constructor_Throws_WhenLanguagesIsNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new TranslationProjectDescriptor(GameType.EaW, OverrideType.Core, TranslationResourceType.Dat, null!));
+            new TranslationProjectDescriptor(GameContext.EaW, OverrideType.Core, TranslationResourceType.Dat, null!));
     }
 
     [Fact]
     public void Languages_IsImmutable()
     {
         var mutable = new List<IAlamoLanguageDefinition> { new EnglishAlamoLanguageDefinition() };
-        var d = new TranslationProjectDescriptor(GameType.EaW, OverrideType.Core, TranslationResourceType.Xml, mutable);
+        var d = new TranslationProjectDescriptor(GameContext.EaW, OverrideType.Core, TranslationResourceType.Xml, mutable);
         mutable.Add(new GermanAlamoLanguageDefinition());
         Assert.Single(d.Languages);
     }
@@ -44,8 +44,8 @@ public class TranslationProjectDescriptorTest
     [Fact]
     public void Equality_TwoDescriptorsWithSameValues_AreEqual()
     {
-        var a = new TranslationProjectDescriptor(GameType.FoC, OverrideType.Mod, TranslationResourceType.Csv, TwoLangs);
-        var b = new TranslationProjectDescriptor(GameType.FoC, OverrideType.Mod, TranslationResourceType.Csv, TwoLangs);
+        var a = new TranslationProjectDescriptor(GameContext.FoC, OverrideType.Mod, TranslationResourceType.Csv, TwoLangs);
+        var b = new TranslationProjectDescriptor(GameContext.FoC, OverrideType.Mod, TranslationResourceType.Csv, TwoLangs);
         Assert.Equal(a, b);
     }
 }

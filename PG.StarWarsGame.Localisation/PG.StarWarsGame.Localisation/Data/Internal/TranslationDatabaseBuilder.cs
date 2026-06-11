@@ -27,7 +27,7 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
             return this;
         }
 
-        public ITranslationDatabaseBuilder WithActiveLanguage(IAlamoLanguageDefinition language)
+        public ITranslationDatabaseBuilder SetActiveLanguage(IAlamoLanguageDefinition language)
         {
             _activeLanguage = language;
             return this;

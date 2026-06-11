@@ -17,12 +17,12 @@ namespace PG.StarWarsGame.Localisation.Languages.Attributes
         /// The game contexts in which this language is officially supported.
         /// An empty array means the language is supported in all game contexts.
         /// </summary>
-        public AlamoGameContext[] SupportedContexts { get; }
+        public GameContext[] SupportedContexts { get; }
 
         /// <inheritdoc cref="OfficiallySupportedLanguageAttribute"/>
-        public OfficiallySupportedLanguageAttribute(params AlamoGameContext[] contexts)
+        public OfficiallySupportedLanguageAttribute(params GameContext[] contexts)
         {
-            SupportedContexts = contexts ?? Array.Empty<AlamoGameContext>();
+            SupportedContexts = contexts ?? Array.Empty<GameContext>();
         }
     }
 }

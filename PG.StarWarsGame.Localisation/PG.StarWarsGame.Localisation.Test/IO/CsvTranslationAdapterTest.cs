@@ -72,6 +72,33 @@ public class CsvTranslationAdapterTest : CommonLocalisationTestBase
     }
 
     [Fact]
+    public void RoundTrip_ValueWithEmbeddedQuotes_IsPreserved()
+    {
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        db.SetTranslation("K", En, "The \"Resolute\" is a Venator");
+        var csv = CreateExporter().Export(db);
+        var db2 = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        CreateImporter().Import(new StringReader(csv), db2);
+        Assert.True(db2.TryGetEntry("K", out var entry));
+        Assert.True(entry!.TryGetTranslation(En, out var val));
+        Assert.Equal("The \"Resolute\" is a Venator", val);
+    }
+
+    [Fact]
+    public void Import_CrlfLineEndings_AreHandledCorrectly()
+    {
+        var csv = "key,ENGLISH\r\nHELLO,Hello\r\nWORLD,World\r\n";
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        CreateImporter().Import(new StringReader(csv), db);
+        Assert.True(db.TryGetEntry("HELLO", out var e1));
+        Assert.True(e1!.TryGetTranslation(En, out var v1));
+        Assert.Equal("Hello", v1);
+        Assert.True(db.TryGetEntry("WORLD", out var e2));
+        Assert.True(e2!.TryGetTranslation(En, out var v2));
+        Assert.Equal("World", v2);
+    }
+
+    [Fact]
     public void Export_KeyedDatabase_WritesKeysAlphabetically()
     {
         var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });

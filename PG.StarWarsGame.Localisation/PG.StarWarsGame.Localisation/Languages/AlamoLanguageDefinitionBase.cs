@@ -13,7 +13,7 @@ namespace PG.StarWarsGame.Localisation.Languages
     public abstract class AlamoLanguageDefinitionBase : IAlamoLanguageDefinition
     {
         private readonly bool _isOfficiallySupported;
-        private readonly AlamoGameContext[] _supportedContexts;
+        private readonly GameContext[] _supportedContexts;
 
         /// <inheritdoc/>
         public string LanguageIdentifier { get; }
@@ -44,7 +44,7 @@ namespace PG.StarWarsGame.Localisation.Languages
                 GetType(), typeof(OfficiallySupportedLanguageAttribute));
 
             _isOfficiallySupported = attr != null;
-            _supportedContexts = attr?.SupportedContexts ?? Array.Empty<AlamoGameContext>();
+            _supportedContexts = attr?.SupportedContexts ?? Array.Empty<GameContext>();
             IsDefault = GetType().IsDefined(typeof(DefaultLanguageAttribute), false);
         }
 
@@ -52,7 +52,7 @@ namespace PG.StarWarsGame.Localisation.Languages
         public bool IsOfficiallySupported() => _isOfficiallySupported;
 
         /// <inheritdoc/>
-        public bool IsOfficiallySupported(AlamoGameContext context)
+        public bool IsOfficiallySupported(GameContext context)
         {
             if (!_isOfficiallySupported) return false;
             return _supportedContexts.Length == 0 || Array.IndexOf(_supportedContexts, context) >= 0;

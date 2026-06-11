@@ -4,14 +4,14 @@
 namespace PG.StarWarsGame.Localisation.Languages
 {
     /// <summary>
-    /// Identifies the Petroglyph Star Wars game product for language-support context.
+    /// Identifies the Petroglyph Star Wars game product.
     /// </summary>
-    public enum AlamoGameContext
+    public enum GameContext
     {
         /// <summary>Star Wars: Empire at War (base game).</summary>
-        BaseGame,
+        EaW,
 
         /// <summary>Star Wars: Empire at War — Forces of Corruption (expansion).</summary>
-        Expansion
+        FoC
     }
 }

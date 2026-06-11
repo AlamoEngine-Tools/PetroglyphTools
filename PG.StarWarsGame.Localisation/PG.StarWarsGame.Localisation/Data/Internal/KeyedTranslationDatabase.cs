@@ -2,44 +2,25 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PG.StarWarsGame.Localisation.Languages;
 
 namespace PG.StarWarsGame.Localisation.Data.Internal
 {
-    internal sealed class KeyedTranslationDatabase : IKeyedTranslationDatabase
+    internal sealed class KeyedTranslationDatabase : TranslationDatabaseBase, IKeyedTranslationDatabase
     {
-        private readonly Dictionary<string, TranslationEntry> _entries =
-            new Dictionary<string, TranslationEntry>(StringComparer.Ordinal);
+        private readonly Dictionary<string, TranslationEntry> _entries = new(StringComparer.Ordinal);
 
-        private IAlamoLanguageDefinition? _activeLanguage;
+        public override int Count => _entries.Count;
 
-        public IReadOnlyList<IAlamoLanguageDefinition> Languages { get; }
-
-        public int Count => _entries.Count;
-
-        public ITranslationEntry this[int index] => _entries.Values.ElementAt(index);
-
-        public IAlamoLanguageDefinition? ActiveLanguage
-        {
-            get => _activeLanguage;
-            set
-            {
-                if (value is not null && !Languages.Contains(value))
-                    throw new ArgumentException(
-                        $"Language '{value.LanguageIdentifier}' is not registered in this database.", nameof(value));
-                _activeLanguage = value;
-            }
-        }
+        public override TranslationEntry this[int index] => _entries.Values.ElementAt(index);
 
         internal KeyedTranslationDatabase(IReadOnlyList<IAlamoLanguageDefinition> languages)
-        {
-            Languages = languages;
-        }
+            : base(languages) { }
 
-        public bool SetTranslation(string key, IAlamoLanguageDefinition language, string value)
+        public override bool SetTranslation(string key, IAlamoLanguageDefinition language, string value)
         {
             if (key is null) throw new ArgumentNullException(nameof(key));
             if (language is null) throw new ArgumentNullException(nameof(language));
@@ -56,26 +37,20 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
             return true;
         }
 
-        public bool RemoveEntry(string key) => _entries.Remove(key);
+        public override bool RemoveEntry(string key) => _entries.Remove(key);
 
-        public void Clear() => _entries.Clear();
+        public override void Clear() => _entries.Clear();
 
         public bool ContainsKey(string key) => _entries.ContainsKey(key);
 
-        public bool TryGetEntry(string key, out ITranslationEntry? entry)
+        public bool TryGetEntry(string key, [NotNullWhen(true)] out TranslationEntry? entry)
         {
-            if (_entries.TryGetValue(key, out var e))
-            {
-                entry = e;
-                return true;
-            }
-            entry = null;
-            return false;
+            return _entries.TryGetValue(key, out entry);
         }
 
-        public bool TryGetTranslation(string key, out string? value)
+        public bool TryGetTranslation(string key, [MaybeNullWhen(false)] out string? value)
         {
-            if (_activeLanguage is null)
+            if (ActiveLanguage is null)
                 throw new InvalidOperationException(
                     "ActiveLanguage must be set before calling TryGetTranslation(string, out string?).");
             if (!TryGetEntry(key, out var entry))
@@ -83,12 +58,10 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
                 value = null;
                 return false;
             }
-            return entry!.TryGetTranslation(_activeLanguage, out value);
+            return entry.TryGetTranslation(ActiveLanguage, out value);
         }
 
-        public IEnumerator<ITranslationEntry> GetEnumerator() =>
-            _entries.Values.Cast<ITranslationEntry>().GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public override IEnumerator<TranslationEntry> GetEnumerator() =>
+            _entries.Values.GetEnumerator();
     }
 }

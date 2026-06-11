@@ -20,10 +20,10 @@ namespace PG.StarWarsGame.Localisation.Data
         ITranslationDatabaseBuilder WithLanguages(IEnumerable<IAlamoLanguageDefinition> languages);
 
         /// <summary>
-        /// Sets the active language for the database.
-        /// Validation that the language is present in the database's language list occurs at build time.
+        /// Sets the active language for the database without adding it to the language list.
+        /// Validation that the language is present in the accumulated language list occurs at build time.
         /// </summary>
-        ITranslationDatabaseBuilder WithActiveLanguage(IAlamoLanguageDefinition language);
+        ITranslationDatabaseBuilder SetActiveLanguage(IAlamoLanguageDefinition language);
 
         /// <summary>
         /// Builds a keyed translation database (unique keys, MasterText semantics).

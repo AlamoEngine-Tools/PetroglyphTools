@@ -1,10 +1,9 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -26,18 +25,20 @@ public interface IVirtualMegArchiveBuilder
     IVirtualMegArchive BuildFrom(IEnumerable<MegDataEntryReference> fileEntries, bool replaceExisting);
 
     /// <summary>
-    /// Converts an <see cref="IMegFile"/> into a virtual, in-memory archive. The archive does not contain duplicates.
+    /// Converts an <see cref="IMegDataSource"/> into a virtual, MEG archive.
+    /// The archive does not contain duplicates.
     /// </summary>
-    /// <param name="megFile">The MEG file to convert.</param>
+    /// <param name="meg">The MEG to convert.</param>
     /// <returns>The virtual MEG archive.</returns>
-    IVirtualMegArchive BuildFrom(IMegFile megFile);
+    IVirtualMegArchive BuildFrom(IMegDataSource meg);
 
     /// <summary>
-    /// Merges a list of physical MEG files into a virtual, in-memory archive. The archive does not contain duplicates.
+    /// Merges a collection of <see cref="IMegDataSource"/> into a virtual MEG archive.
+    /// The archive does not contain duplicates.
     /// </summary>
-    /// <param name="megFiles">The physical MEG files to merge into a virtual MEG archive.</param>
-    /// <param name="replaceExisting">When <see langowrd="true"/>, entries from different files with the same CRC32 checksum get replaced.
-    /// Duplicate entries within the same MEG file are ignored, so that only the first entry is recognized.</param>
+    /// <param name="megs">The MEGs to merge into a virtual MEG archive.</param>
+    /// <param name="replaceExisting">When <see langowrd="true"/>, entries from different MEGs with the same CRC32 checksum get replaced.
+    /// Duplicate entries within the same MEG are ignored, so that only the first entry is recognized.</param>
     /// <returns>The virtual MEG archive.</returns>
-    IVirtualMegArchive BuildFrom(IList<IMegFile> megFiles, bool replaceExisting);
+    IVirtualMegArchive BuildFrom(IEnumerable<IMegDataSource> megs, bool replaceExisting);
 }

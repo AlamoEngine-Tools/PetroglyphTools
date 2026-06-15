@@ -13,10 +13,10 @@ public class MegServiceContributionTest : CommonMegTestBase
     public void SupportMEG_Registers()
     {
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegFileService>());
+        Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegService>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegFileExtractor>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegBinaryServiceFactory>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegVersionIdentifier>());
-        Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegDataStreamFactory>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IVirtualMegArchiveBuilder>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IDataEntryPathResolver>());
     }

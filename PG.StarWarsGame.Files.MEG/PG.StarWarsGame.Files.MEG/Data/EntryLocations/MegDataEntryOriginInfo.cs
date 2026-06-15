@@ -3,12 +3,13 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.IO.Abstractions;
 
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
-/// The origin of a MEG data entry which is either packed in a MEG archive, present on the file system, or backed by an in-memory byte buffer.
+/// The origin of a MEG data entry which is either packed in a MEG archive, present on the file system, or as an in-memory byte buffer.
 /// </summary>
 public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegDataEntryOriginInfo>
 {
@@ -139,5 +140,16 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
         if (IsEntryReference)
             return $"MEG Entry: '{MegFileLocation}'";
         return $"Bytes: {Bytes!.Length} bytes";
+    }
+
+    internal Stream GetDataStream()
+    {
+        if (IsBytes)
+            return new MemoryStream(Bytes, writable: false);
+
+        if (IsLocalFile)
+            return FileInfo.OpenRead();
+
+        return MegFileLocation!.Source.GetData(MegFileLocation.DataEntry);
     }
 }

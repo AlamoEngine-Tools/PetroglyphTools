@@ -10,10 +10,4 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 ///     <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG file</a>.
 ///     *.MEG or Mega files are a proprietary archive type bundling files together in a RAM friendly way.
 /// </summary>
-public interface IMegFile : IPetroglyphFileHolder<IMegArchive, MegFileInformation>
-{
-    /// <summary>
-    /// Gets the archive model of this MEG file.
-    /// </summary>
-    IMegArchive Archive { get; }
-}
+public interface IMegFile : IPetroglyphFileHolder<IMegArchive, MegFileInformation>, IMegDataSource;

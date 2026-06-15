@@ -5,13 +5,15 @@ using System;
 using System.IO;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
-using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// Service for extracting file from a .MEG archive.
+/// Service for extracting files from a .MEG archive to the file system.
 /// </summary>
+/// <remarks>
+/// To read an entry's data into a stream (without writing it to disk), use <see cref="Data.Archives.IMegDataSource.GetData"/>.
+/// </remarks>
 public interface IMegFileExtractor
 {
     /// <summary>
@@ -27,7 +29,7 @@ public interface IMegFileExtractor
     ///
     /// If <paramref name="preserveDirectoryHierarchy"/> is <see langword="false"/>,
     /// <code>
-    ///     result :=  <paramref name="rootPath"/> + filename(<paramref name="dataEntry"/>).
+    ///     result := rootPath + filename(dataEntry).
     /// </code>
     /// <br/>
     /// <br/>
@@ -37,13 +39,13 @@ public interface IMegFileExtractor
     /// a) if <paramref name="dataEntry"/> is not <em>rooted</em> <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.path.ispathrooted">(see here)</see>
     /// <br/>
     /// <code>
-    ///     result := <paramref name="rootPath"/> + path(<paramref name="dataEntry"/>).
+    ///     result := rootPath + path(dataEntry).
     /// </code>
     /// 
     /// <br/>
     /// b) if <paramref name="dataEntry"/> is rooted.
     /// <code>
-    ///     result := path(<paramref name="dataEntry"/>)
+    ///     result := path(dataEntry)
     /// </code>
     ///
     /// <br/>
@@ -65,18 +67,6 @@ public interface IMegFileExtractor
     /// <exception cref="ArgumentException"><paramref name="rootPath"/> is empty or contains only whitespace.</exception>
     /// <exception cref="InvalidOperationException">The absolute path could not be determined.</exception>
     string GetAbsolutePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy);
-
-
-    /// <summary>
-    /// Gets the data stream of the given <paramref name="dataEntryLocation"/>.
-    /// </summary>
-    /// <param name="dataEntryLocation">The data entry information.</param>
-    /// <returns>A stream containing the files contents.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>
-    /// <exception cref="EntryNotInMegException">The data entry does not exist in the .MEG file.</exception>
-    /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    MegEntryStream GetData(MegDataEntryLocationReference dataEntryLocation);
 
 
     /// <summary>

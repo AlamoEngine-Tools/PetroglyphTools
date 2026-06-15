@@ -20,11 +20,11 @@ public static class MegServiceContribution
     /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add services to.</param>
     public static void SupportMEG(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<IMegFileService>(sp => new MegFileService(sp));
+        serviceCollection.AddSingleton<IMegService>(sp => new MegService(sp));
+        serviceCollection.AddSingleton<IMegFileService>(sp => sp.GetRequiredService<IMegService>());
         serviceCollection.AddSingleton<IMegFileExtractor>(sp => new MegFileExtractor(sp));
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
-        serviceCollection.AddSingleton<IMegDataStreamFactory>(sp => new MegDataStreamFactory(sp));
         serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(_ => new VirtualMegArchiveBuilder());
 
         serviceCollection.AddSingleton<IDataEntryPathResolver>(sp => new PetroglyphRelativeDataEntryPathResolver(sp));

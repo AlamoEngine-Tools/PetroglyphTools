@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -10,7 +10,6 @@ using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -18,14 +17,14 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 internal sealed class VirtualMegArchiveBuilder : IVirtualMegArchiveBuilder
 {
     /// <inheritdoc/>
-    public IVirtualMegArchive BuildFrom(IMegFile megFile)
+    public IVirtualMegArchive BuildFrom(IMegDataSource meg)
     {
-        if (megFile == null)
-            throw new ArgumentNullException(nameof(megFile));
+        if (meg == null)
+            throw new ArgumentNullException(nameof(meg));
 
-        var entryReferences = megFile.Archive
+        var entryReferences = meg.Archive
             .Distinct(CrcBasedEqualityComparer<MegDataEntry>.Instance)
-            .Select(entry => new MegDataEntryReference(new MegDataEntryLocationReference(megFile, entry)));
+            .Select(entry => new MegDataEntryReference(new MegDataEntryLocationReference(meg, entry)));
 
         return new VirtualMegArchive(Crc32Utilities.SortByCrc32(entryReferences));
     }
@@ -33,20 +32,20 @@ internal sealed class VirtualMegArchiveBuilder : IVirtualMegArchiveBuilder
     /// <inheritdoc/>
     public IVirtualMegArchive BuildFrom(IEnumerable<MegDataEntryReference> fileEntries, bool replaceExisting)
     {
-        if (fileEntries == null) 
+        if (fileEntries == null)
             throw new ArgumentNullException(nameof(fileEntries));
 
         return BuildFrom(fileEntries, replaceExisting, true);
     }
 
     /// <inheritdoc/>
-    public IVirtualMegArchive BuildFrom(IList<IMegFile> megFiles, bool replaceExisting)
+    public IVirtualMegArchive BuildFrom(IEnumerable<IMegDataSource> megs, bool replaceExisting)
     {
-        if (megFiles == null) 
-            throw new ArgumentNullException(nameof(megFiles));
+        if (megs == null)
+            throw new ArgumentNullException(nameof(megs));
 
-        var entries = megFiles.SelectMany(f => f.Archive.Distinct(CrcBasedEqualityComparer<MegDataEntry>.Instance)
-            .Select(entry => new MegDataEntryReference(new MegDataEntryLocationReference(f, entry))));
+        var entries = megs.SelectMany(m => m.Archive.Distinct(CrcBasedEqualityComparer<MegDataEntry>.Instance)
+            .Select(entry => new MegDataEntryReference(new MegDataEntryLocationReference(m, entry))));
 
         return BuildFrom(entries, replaceExisting, false);
     }

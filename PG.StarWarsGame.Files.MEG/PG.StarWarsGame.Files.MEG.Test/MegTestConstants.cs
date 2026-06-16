@@ -525,10 +525,18 @@ internal static class MegTestConstants
         public long Length { get; set; } = length;
         public bool Exists => true;
 
+        /// <summary>
+        /// Optional content returned by <see cref="OpenRead"/>. Its length can intentionally differ from
+        /// <see cref="Length"/> to simulate a file whose reported size disagrees with its actual data.
+        /// </summary>
+        public byte[]? ReadBytes { get; set; }
+
         #region Other IFileInfo Members
         public void Delete() => throw new NotImplementedException();
         public void Refresh() { }
-        public FileSystemStream OpenRead() => throw new NotImplementedException();
+        public FileSystemStream OpenRead() => ReadBytes is null
+            ? throw new NotImplementedException()
+            : new FakeFileSystemStream(new MemoryStream(ReadBytes, writable: false), fullName);
         public FileSystemStream OpenWrite() => throw new NotImplementedException();
         public FileSystemStream Open(FileMode mode) => throw new NotImplementedException();
         public FileSystemStream Open(FileMode mode, FileAccess access) => throw new NotImplementedException();
@@ -572,4 +580,7 @@ internal static class MegTestConstants
 
         #endregion
     }
+
+    // Minimal FileSystemStream wrapper around an arbitrary stream, used by FakeFileInfo.OpenRead.
+    internal sealed class FakeFileSystemStream(Stream stream, string path) : FileSystemStream(stream, path, isAsync: false);
 }

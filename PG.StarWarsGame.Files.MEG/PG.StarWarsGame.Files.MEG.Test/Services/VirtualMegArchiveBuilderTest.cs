@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
@@ -72,10 +74,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         Assert.Equal(2, archive.Count);
 
         Assert.Equal(entry2, archive[0].Location.DataEntry);
-        Assert.Equal(meg2, archive[0].Location.MegFile);
+        Assert.Equal(meg2, archive[0].Location.Source);
 
         Assert.Equal(entry1, archive[1].Location.DataEntry);
-        Assert.Equal(meg1, archive[1].Location.MegFile);
+        Assert.Equal(meg1, archive[1].Location.Source);
     }
 
     [Fact]
@@ -106,10 +108,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         Assert.Equal(2, archive.Count);
 
         Assert.Equal(entry2, archive[0].Location.DataEntry);
-        Assert.Equal(meg2, archive[0].Location.MegFile);
+        Assert.Equal(meg2, archive[0].Location.Source);
 
         Assert.Equal(entry3, archive[1].Location.DataEntry);
-        Assert.Equal(meg2, archive[1].Location.MegFile);
+        Assert.Equal(meg2, archive[1].Location.Source);
     }
 
     [Fact]
@@ -130,10 +132,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         Assert.Equal(2, archive.Count);
 
         Assert.Equal(entry1, archive[0].Location.DataEntry);
-        Assert.Equal(megFile, archive[0].Location.MegFile);
+        Assert.Equal(megFile, archive[0].Location.Source);
 
         Assert.Equal(entry3, archive[1].Location.DataEntry);
-        Assert.Equal(megFile, archive[1].Location.MegFile);
+        Assert.Equal(megFile, archive[1].Location.Source);
     }
 
     [Fact]
@@ -160,10 +162,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         Assert.Equal(2, archive.Count);
 
         Assert.Equal(entry2_1, archive[0].Location.DataEntry);
-        Assert.Equal(meg2, archive[0].Location.MegFile);
+        Assert.Equal(meg2, archive[0].Location.Source);
 
         Assert.Equal(entry1_1, archive[1].Location.DataEntry);
-        Assert.Equal(meg1, archive[1].Location.MegFile);
+        Assert.Equal(meg1, archive[1].Location.Source);
     }
 
     [Fact]
@@ -190,9 +192,41 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         Assert.Equal(2, archive.Count);
 
         Assert.Equal(entry2_1, archive[0].Location.DataEntry);
-        Assert.Equal(meg2, archive[0].Location.MegFile);
+        Assert.Equal(meg2, archive[0].Location.Source);
         
         Assert.Equal(entry2_2, archive[1].Location.DataEntry);
-        Assert.Equal(meg2, archive[1].Location.MegFile);
+        Assert.Equal(meg2, archive[1].Location.Source);
+    }
+
+    [Fact]
+    public void BuildFrom_InMemoryMeg()
+    {
+        var service = new VirtualMegArchiveBuilder();
+
+        using var stream = new MemoryStream(MegTestConstants.ContentMegFileV1);
+        var inMemoryMeg = ServiceProvider.GetRequiredService<IMegService>().LoadArchive(stream);
+
+        var archive = service.BuildFrom(inMemoryMeg);
+
+        Assert.Equal(2, archive.Count);
+        Assert.Same(inMemoryMeg, archive[0].Location.Source);
+        Assert.False(archive[0].Location.Source is IMegFile);
+    }
+
+    [Fact]
+    public void BuildFrom_MixedFileAndInMemoryMegs()
+    {
+        var service = new VirtualMegArchiveBuilder();
+
+        FileSystem.File.Create("file.meg");
+        var fileEntry = MegDataEntryTest.CreateEntry("A", new Crc32(1));
+        var fileMeg = new MegFile(new MegArchive([fileEntry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+
+        using var stream = new MemoryStream(MegTestConstants.ContentMegFileV1);
+        var inMemoryMeg = ServiceProvider.GetRequiredService<IMegService>().LoadArchive(stream);
+
+        var archive = service.BuildFrom([fileMeg, inMemoryMeg], false);
+        
+        Assert.Equal(3, archive.Count);
     }
 }

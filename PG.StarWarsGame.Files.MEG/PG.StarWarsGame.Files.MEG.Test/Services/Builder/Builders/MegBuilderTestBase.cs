@@ -493,7 +493,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.Single(builder.DataEntries);
             Assert.Same(addedFile.AddedBuilderInfo, resultSecondAdd.OverwrittenBuilderInfo);
             Assert.True(builder.DataEntries.First().OriginInfo.IsEntryReference);
-            Assert.Same(meg, builder.DataEntries.First().OriginInfo.MegFileLocation!.MegFile);
+            Assert.Same(meg, builder.DataEntries.First().OriginInfo.MegFileLocation!.Source);
         }
     }
 
@@ -706,8 +706,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var loaded = ServiceProvider.GetRequiredService<IMegFileService>().Load("out.meg");
         Assert.Single(loaded.Archive);
 
-        var extractor = ServiceProvider.GetRequiredService<IMegFileExtractor>();
-        using var extracted = extractor.GetData(new MegDataEntryLocationReference(loaded, loaded.Archive[0]));
+        using var extracted = loaded.GetData(loaded.Archive[0]);
         var sink = new MemoryStream();
         extracted.CopyTo(sink);
         Assert.Equal(contents, sink.ToArray());

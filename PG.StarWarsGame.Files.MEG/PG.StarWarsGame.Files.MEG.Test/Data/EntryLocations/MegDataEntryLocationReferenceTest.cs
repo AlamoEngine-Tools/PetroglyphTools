@@ -31,7 +31,7 @@ public class MegDataEntryLocationReferenceTest : CommonMegTestBase
 
         var reference = new MegDataEntryLocationReference(megFile, entry);
 
-        Assert.Same(megFile, reference.MegFile);
+        Assert.Same(megFile, reference.Source);
         Assert.Same(entry, reference.DataEntry);
     }
 

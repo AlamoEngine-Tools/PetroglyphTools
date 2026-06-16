@@ -1,4 +1,3 @@
-using PG.StarWarsGame.Files.MEG.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
@@ -81,56 +80,42 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
         });
     }
 
-    private sealed class ManualStreamFactory(Stream streamToReturn) : IMegDataStreamFactory
-    {
-        public Stream GetStream(MegDataEntryOriginInfo originInfo) => streamToReturn;
-        public MegEntryStream GetStream(MegDataEntryLocationReference locationReference) => throw new NotImplementedException();
-    }
-
-    [Theory]
-    [InlineData(CreateMegArchiveInvalidOperationType.DataEntrySizeMismatch)]
-    [InlineData(CreateMegArchiveInvalidOperationType.FilePositionMismatch)]
-    public void CreateMegArchive_ThrowsInvalidOperationException(CreateMegArchiveInvalidOperationType type)
+    [Fact]
+    public void CreateMegArchive_FilePositionMismatch_ThrowsInvalidOperationException()
     {
         const string megFileName = "new.meg";
         const string entryFileName = "file.txt";
 
         FileSystem.File.WriteAllBytes(entryFileName, [1, 2, 3]);
-        var fileInfo = FileSystem.FileInfo.New(entryFileName);
-        var builderInfo = MegDataEntryBuilderInfo.FromFile(fileInfo, entryFileName);
-
-        Stream streamToReturn = type switch
-        {
-            CreateMegArchiveInvalidOperationType.DataEntrySizeMismatch => new MemoryStream([1, 2, 3, 4]),
-            _ => new MemoryStream([1, 2, 3])
-        };
-
-        var manualFactory = new ManualStreamFactory(streamToReturn);
-
-        var sc = new ServiceCollection();
-        SetupServices(sc);
-        sc.AddSingleton(FileSystem);
-        sc.AddSingleton<IMegDataStreamFactory>(manualFactory);
-        var serviceProvider = sc.BuildServiceProvider();
-
-        var megFileService = serviceProvider.GetRequiredService<IMegFileService>();
+        var builderInfo = MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New(entryFileName), entryFileName);
 
         var ex = Assert.Throws<InvalidOperationException>(() =>
         {
             using var fs = FileSystem.File.OpenWrite(megFileName);
-            if (type == CreateMegArchiveInvalidOperationType.FilePositionMismatch)
-                fs.WriteByte(0);
-            megFileService.CreateMegArchive(fs, MegFileVersion.V1, null, [builderInfo]);
+            // Advance the stream so its position no longer matches the expected entry offset.
+            fs.WriteByte(0);
+            _megFileService.CreateMegArchive(fs, MegFileVersion.V1, null, [builderInfo]);
         });
 
-        var expectedMessagePart = type switch
-        {
-            CreateMegArchiveInvalidOperationType.DataEntrySizeMismatch => "Actual data entry size",
-            CreateMegArchiveInvalidOperationType.FilePositionMismatch => "Actual file position",
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
+        Assert.Contains("Actual file position", ex.Message);
+    }
 
-        Assert.Contains(expectedMessagePart, ex.Message);
+    [Fact]
+    public void CreateMegArchive_DataEntrySizeMismatch_ThrowsInvalidOperationException()
+    {
+        const string megFileName = "new.meg";
+        
+        // A file whose reported length (4) disagrees with the data its stream actually yields (3 bytes)
+        var fileInfo = new MegTestConstants.FakeFileInfo("file.txt", length: 4) { ReadBytes = [1, 2, 3] };
+        var builderInfo = MegDataEntryBuilderInfo.FromFile(fileInfo, "file");
+
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+        {
+            using var fs = FileSystem.File.OpenWrite(megFileName);
+            _megFileService.CreateMegArchive(fs, MegFileVersion.V1, null, [builderInfo]);
+        });
+
+        Assert.Contains("Actual data entry size", ex.Message);
     }
 
     [Fact]
@@ -375,12 +360,6 @@ public class MegFileServiceIntegrationTest : CommonMegTestBase
             var expected = expectedData.EntryNames[i];
             Assert.Equal(expected, entry.Path);
         }
-    }
-
-    public enum CreateMegArchiveInvalidOperationType
-    {
-        DataEntrySizeMismatch,
-        FilePositionMismatch,
     }
 
     private record ExpectedMegTestData

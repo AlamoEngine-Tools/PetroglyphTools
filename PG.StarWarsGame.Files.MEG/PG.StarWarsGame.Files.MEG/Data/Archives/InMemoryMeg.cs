@@ -18,10 +18,6 @@ internal sealed class InMemoryMeg : IMegDataSource
     /// <inheritdoc />
     public IMegArchive Archive { get; }
 
-    /// <summary>
-    /// Gets a unique name for this in-memory MEG so that distinct instances can be told apart
-    /// in diagnostics and exception messages (in-memory MEGs are not backed by a file path).
-    /// </summary>
     internal string Name { get; } = $"<in-memory MEG {Guid.NewGuid()}>";
 
     /// <summary>

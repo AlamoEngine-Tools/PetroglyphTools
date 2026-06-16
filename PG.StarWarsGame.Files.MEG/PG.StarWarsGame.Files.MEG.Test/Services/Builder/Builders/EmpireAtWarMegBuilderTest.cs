@@ -148,11 +148,10 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
         Assert.NotNull(packedEntry3);
         Assert.NotNull(packedEntry4);
 
-        var extractor = ServiceProvider.GetRequiredService<IMegFileExtractor>();
-        var entry1Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry1));
-        var entry2Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry2));
-        var entry3Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry3));
-        var entry4Data = extractor.GetData(new MegDataEntryLocationReference(meg, packedEntry4));
+        var entry1Data = meg.GetData(packedEntry1);
+        var entry2Data = meg.GetData(packedEntry2);
+        var entry3Data = meg.GetData(packedEntry3);
+        var entry4Data = meg.GetData(packedEntry4);
 
         using var ms = new MemoryStream();
         entry1Data.CopyTo(ms);

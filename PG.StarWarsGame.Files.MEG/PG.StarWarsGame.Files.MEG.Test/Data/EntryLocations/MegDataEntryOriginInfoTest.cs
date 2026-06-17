@@ -1,10 +1,12 @@
-using System;
-using System.IO.Abstractions;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using PG.Testing;
+using System;
+using System.IO;
+using System.IO.Abstractions;
+using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.EntryLocations;
@@ -130,6 +132,62 @@ public class MegDataEntryOriginInfoTest : PGTestBase
         bytes[0] = 99;
 
         Assert.Equal([1, 2, 3], originInfo.Bytes);
+    }
+
+    #endregion
+
+    #region GetDataStream
+
+    [Fact]
+    public void GetDataStream_File_NotFound_Throws()
+    {
+        var originInfo = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.txt"));
+        Assert.Throws<FileNotFoundException>(originInfo.GetDataStream);
+    }
+
+    [Fact]
+    public void GetDataStream_File()
+    {
+        FileSystem.Initialize().WithFile("test.txt").Which(m => m.HasBytesContent([1, 2, 3]));
+
+        var originInfo = new MegDataEntryOriginInfo(FileSystem.FileInfo.New("test.txt"));
+        var stream = originInfo.GetDataStream();
+        Assert.Equal(3, stream.Length);
+
+        var resultStream = new MemoryStream(new byte[3]);
+        stream.CopyTo(resultStream);
+        Assert.Equal([1, 2, 3], resultStream.ToArray());
+    }
+
+    [Fact]
+    public void GetDataStream_LocationReference()
+    {
+        FileSystem.Initialize().WithFile("a.meg").Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
+
+        var entry = MegDataEntryTest.CreateEntry("file.txt", offset: 1, size: 2);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegFileVersion.V1), ServiceProvider);
+        var originInfo = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, entry));
+
+        var stream = originInfo.GetDataStream();
+        Assert.Equal(2, stream.Length);
+
+        var resultStream = new MemoryStream(new byte[2]);
+        stream.CopyTo(resultStream);
+        Assert.Equal([2, 3], resultStream.ToArray());
+    }
+
+    [Fact]
+    public void GetDataStream_Bytes()
+    {
+        var bytes = new byte[] { 10, 20, 30, 40, 50 };
+        var originInfo = new MegDataEntryOriginInfo(bytes);
+
+        using var resultStream = originInfo.GetDataStream();
+        Assert.Equal(5, resultStream.Length);
+
+        var sink = new MemoryStream();
+        resultStream.CopyTo(sink);
+        Assert.Equal(bytes, sink.ToArray());
     }
 
     #endregion

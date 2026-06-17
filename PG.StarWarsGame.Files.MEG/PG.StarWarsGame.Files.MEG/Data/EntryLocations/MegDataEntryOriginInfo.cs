@@ -133,6 +133,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     }
 
     /// <inheritdoc/>
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         if (IsLocalFile)

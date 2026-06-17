@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -68,6 +69,7 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
         return $"{DescribeSource(Source)}::{DataEntry.Path}";
     }
 
+    [ExcludeFromCodeCoverage]
     internal static string DescribeSource(IMegDataSource source)
     {
         return source switch

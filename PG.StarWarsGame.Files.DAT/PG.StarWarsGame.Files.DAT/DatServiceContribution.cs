@@ -19,7 +19,8 @@ public static class DatServiceContribution
     public static void SupportDAT(this IServiceCollection serviceCollection)
     {
         serviceCollection
-            .AddSingleton<IDatFileService>(sp => new DatFileService(sp))
+            .AddSingleton<IDatService>(sp => new DatService(sp))
+            .AddSingleton<IDatFileService>(sp => sp.GetRequiredService<IDatService>())
             .AddSingleton<IDatModelService>(sp => new DatModelService(sp))
             .AddTransient<IDatFileReader>(sp => new DatFileReader(sp))
             .AddTransient<IDatBinaryConverter>(sp => new DatBinaryConverter(sp));

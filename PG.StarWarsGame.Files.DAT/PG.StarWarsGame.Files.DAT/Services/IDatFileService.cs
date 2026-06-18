@@ -42,7 +42,7 @@ public interface IDatFileService
     IDatFile Load(string filePath);
 
     /// <summary>
-    ///  Loads a *.DAT file from the provided path and 
+    ///  Loads a *.DAT file from the provided path and type.
     /// </summary>
     /// <param name="filePath">The path to the DAT file.</param>
     /// <param name="requestedFileType">The requested type of the DAT model.</param>
@@ -55,7 +55,7 @@ public interface IDatFileService
     IDatFile LoadAs(string filePath, DatFileType requestedFileType);
 
     /// <summary>
-    ///     Loads a *.DAT file from the provided path into a <see cref="DatFile" />
+    ///     Loads a *.DAT file from the provided stream into a <see cref="DatFile" />
     /// </summary>
     /// <param name="fileStream">The DAT file stream.</param>
     /// <returns>The loaded DAT file.</returns>
@@ -65,7 +65,7 @@ public interface IDatFileService
     IDatFile Load(FileSystemStream fileStream);
 
     /// <summary>
-    ///  Loads a *.DAT file from the provided path and 
+    ///  Loads a *.DAT file from the provided stream and type.
     /// </summary>
     /// <param name="fileStream">The DAT file stream.</param>
     /// <param name="requestedFileType">The requested type of the DAT model.</param>
@@ -83,7 +83,7 @@ public interface IDatFileService
     /// For empty or single-entry DAT files this method returns <see cref="DatFileType.OrderedByCrc32"/>
     /// </remarks>
     /// <param name="filePath">The path to the DAT file.</param>
-    /// <returns>The loaded DAT file</returns>
+    /// <returns>The type of the DAT file.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
     DatFileType GetDatFileType(string filePath);
 }

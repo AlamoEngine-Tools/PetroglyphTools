@@ -19,7 +19,8 @@ public static class MtdServiceContribution
     /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add services to.</param>
     public static void SupportMTD(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<IMtdFileService>(sp => new MtdFileService(sp));
+        serviceCollection.AddSingleton<IMtdService>(sp => new MtdService(sp));
+        serviceCollection.AddSingleton<IMtdFileService>(sp => sp.GetRequiredService<IMtdService>());
         serviceCollection.AddSingleton<IMtdBinaryConverter>(sp => new MtdBinaryConverter(sp));
         serviceCollection.AddSingleton<IMtdFileReader>(sp => new MdtFileReader(sp));
     }

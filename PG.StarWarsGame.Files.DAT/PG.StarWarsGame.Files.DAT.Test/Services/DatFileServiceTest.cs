@@ -15,11 +15,11 @@ namespace PG.StarWarsGame.Files.DAT.Test.Services;
 
 public class DatFileServiceTest : PGTestBase
 {
-    private readonly DatFileService _service;
+    private readonly IDatService _service;
 
     public DatFileServiceTest()
     {
-        _service = new DatFileService(ServiceProvider);
+        _service = ServiceProvider.GetRequiredService<IDatService>();
     }
 
     protected override void SetupServices(IServiceCollection serviceCollection)
@@ -289,5 +289,97 @@ public class DatFileServiceTest : PGTestBase
 
         using (var fs = FileSystem.FileStream.New("newSorted.dat", FileMode.Create))
             _service.CreateDatFile(fs, sorted, DatFileType.OrderedByCrc32);
+    }
+
+    [Fact]
+    public void LoadModel()
+    {
+        var sorted = DatTestData.CreateSortedBinary().Bytes;
+        foreach (var model in new[]
+                 {
+                     _service.LoadModel(new MemoryStream(sorted)),
+                     _service.LoadModel(sorted),
+                     _service.LoadModel(sorted.AsSpan())
+                 })
+        {
+            Assert.Equal(DatFileType.OrderedByCrc32, model.KeySortOrder);
+            Assert.Equal(DatTestData.CreateSortedModel(), model.ToList());
+        }
+
+        var unsorted = DatTestData.CreateUnsortedBinary().Bytes;
+        foreach (var model in new[]
+                 {
+                     _service.LoadModel(new MemoryStream(unsorted)),
+                     _service.LoadModel(unsorted),
+                     _service.LoadModel(unsorted.AsSpan())
+                 })
+        {
+            Assert.Equal(DatFileType.NotOrdered, model.KeySortOrder);
+            Assert.Equal(DatTestData.CreateUnsortedModel(), model.ToList());
+        }
+    }
+
+    [Fact]
+    public void LoadModelAs_SortedAsUnsorted()
+    {
+        var sorted = DatTestData.CreateSortedBinary().Bytes;
+        foreach (var model in new[]
+                 {
+                     _service.LoadModelAs(new MemoryStream(sorted), DatFileType.NotOrdered),
+                     _service.LoadModelAs(sorted, DatFileType.NotOrdered),
+                     _service.LoadModelAs(sorted.AsSpan(), DatFileType.NotOrdered)
+                 })
+        {
+            // Entries are still sorted, but the key sort order was adjusted.
+            Assert.Equal(DatFileType.NotOrdered, model.KeySortOrder);
+            Assert.Equal(DatTestData.CreateSortedModel(), model.ToList());
+        }
+    }
+
+    [Fact]
+    public void LoadModelAs_UnsortedAsSorted_Throws()
+    {
+        var unsorted = DatTestData.CreateUnsortedBinary().Bytes;
+
+        Assert.Throws<InvalidOperationException>(() => _service.LoadModelAs(new MemoryStream(unsorted), DatFileType.OrderedByCrc32));
+        Assert.Throws<InvalidOperationException>(() => _service.LoadModelAs(unsorted, DatFileType.OrderedByCrc32));
+        Assert.Throws<InvalidOperationException>(() => _service.LoadModelAs(unsorted.AsSpan(), DatFileType.OrderedByCrc32));
+    }
+
+    [Fact]
+    public void GetDatFileType_FromMemory_MatchesExpected()
+    {
+        var sorted = DatTestData.CreateSortedBinary().Bytes;
+        var unsorted = DatTestData.CreateUnsortedBinary().Bytes;
+
+        Assert.Equal(DatFileType.OrderedByCrc32, _service.GetDatFileType(new MemoryStream(sorted)));
+        Assert.Equal(DatFileType.OrderedByCrc32, _service.GetDatFileType(sorted));
+        Assert.Equal(DatFileType.OrderedByCrc32, _service.GetDatFileType(sorted.AsSpan()));
+
+        Assert.Equal(DatFileType.NotOrdered, _service.GetDatFileType(new MemoryStream(unsorted)));
+        Assert.Equal(DatFileType.NotOrdered, _service.GetDatFileType(unsorted));
+        Assert.Equal(DatFileType.NotOrdered, _service.GetDatFileType(unsorted.AsSpan()));
+    }
+
+    [Fact]
+    public void LoadModel_NonSeekableStream()
+    {
+        using var nonSeekable = new NonSeekableReadStream(DatTestData.CreateUnsortedBinary().Bytes);
+
+        var model = _service.LoadModel(nonSeekable);
+
+        Assert.Equal(DatFileType.NotOrdered, model.KeySortOrder);
+        Assert.Equal(DatTestData.CreateUnsortedModel(), model.ToList());
+    }
+
+    [Fact]
+    public void LoadModel_NullArgs_Throws()
+    {
+        Assert.Throws<ArgumentNullException>(() => _service.LoadModel((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => _service.LoadModel((byte[])null!));
+        Assert.Throws<ArgumentNullException>(() => _service.LoadModelAs((Stream)null!, DatFileType.NotOrdered));
+        Assert.Throws<ArgumentNullException>(() => _service.LoadModelAs((byte[])null!, DatFileType.NotOrdered));
+        Assert.Throws<ArgumentNullException>(() => _service.GetDatFileType((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => _service.GetDatFileType((byte[])null!));
     }
 }

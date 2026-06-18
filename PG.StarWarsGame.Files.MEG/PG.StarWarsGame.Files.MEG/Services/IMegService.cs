@@ -10,7 +10,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/MegFileFormat">.MEG archives</a>.
+/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG archives.</a>
 /// </summary>
 /// <remarks>
 /// This service extends <see cref="IMegFileService"/> with operations that are not tied to a MEG file on disk,

@@ -7,6 +7,7 @@ using AnakinRaW.CommonUtilities.Testing.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
+using PG.StarWarsGame.Files.MTD.Data;
 using PG.StarWarsGame.Files.MTD.Files;
 using PG.StarWarsGame.Files.MTD.Services;
 using PG.Testing;
@@ -17,26 +18,28 @@ namespace PG.StarWarsGame.Files.MTD.Test.Services;
 
 public class MtdFileServiceTest : CommonMtdTestBase
 {
-    private readonly MtdFileService _mtdFileService;
+    private readonly IMtdService _mtdService;
 
     public MtdFileServiceTest()
     {
-        _mtdFileService = new MtdFileService(ServiceProvider);
+        _mtdService = ServiceProvider.GetRequiredService<IMtdService>();
     }
 
     [Fact]
     public void Load_ArgumentException_Throws()
     {
-        Assert.Throws<ArgumentException>(() => _mtdFileService.Load(""));
-        Assert.Throws<ArgumentNullException>(() => _mtdFileService.Load((string)null!));
-        Assert.Throws<ArgumentNullException>(() => _mtdFileService.Load((Stream)null!));
+        Assert.Throws<ArgumentException>(() => _mtdService.Load(""));
+        Assert.Throws<ArgumentNullException>(() => _mtdService.Load((string)null!));
+        Assert.Throws<ArgumentNullException>(() => _mtdService.Load((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => _mtdService.LoadModel((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => _mtdService.LoadModel((byte[])null!));
     }
 
 
     [Fact]
     public void Load_FileNotFound_Throws()
     {
-        Assert.Throws<FileNotFoundException>(() => _mtdFileService.Load("test.mtd"));
+        Assert.Throws<FileNotFoundException>(() => _mtdService.Load("test.mtd"));
     }
 
     [Theory]
@@ -45,8 +48,11 @@ public class MtdFileServiceTest : CommonMtdTestBase
     {
         FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
 
-        Assert.Throws<BinaryCorruptedException>(() => _mtdFileService.Load("test.mtd"));
-        Assert.Throws<BinaryCorruptedException>(() => _mtdFileService.Load(new TestMegDataStream("test.mtd", data)));
+        Assert.Throws<BinaryCorruptedException>(() => _mtdService.Load("test.mtd"));
+        Assert.Throws<BinaryCorruptedException>(() => _mtdService.Load(new TestMegDataStream("test.mtd", data)));
+        Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadModel(new MemoryStream(data)));
+        Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadModel(data));
+        Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadModel(data.AsSpan()));
     }
 
     [Theory]
@@ -55,8 +61,13 @@ public class MtdFileServiceTest : CommonMtdTestBase
     {
         FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
 
-        CompareFileWithExpected(files, _mtdFileService.Load("test.mtd"));
-        CompareFileWithExpected(files, _mtdFileService.Load(new TestMegDataStream("test.mtd", data)));
+        CompareFileWithExpected(files, _mtdService.Load("test.mtd"));
+        CompareFileWithExpected(files, _mtdService.Load(new TestMegDataStream("test.mtd", data)));
+
+        // The same data parses identically through the in-memory model overloads.
+        CompareDirectoryWithExpected(files, _mtdService.LoadModel(new MemoryStream(data)));
+        CompareDirectoryWithExpected(files, _mtdService.LoadModel(data));
+        CompareDirectoryWithExpected(files, _mtdService.LoadModel(data.AsSpan()));
     }
 
     [Theory]
@@ -67,7 +78,7 @@ public class MtdFileServiceTest : CommonMtdTestBase
 
         using var fs = FileSystem.File.OpenRead("test.mtd");
 
-        CompareFileWithExpected(files, _mtdFileService.Load(fs));
+        CompareFileWithExpected(files, _mtdService.Load(fs));
 
         // Resetting the position should not throw
         fs.Position = 0;
@@ -77,19 +88,24 @@ public class MtdFileServiceTest : CommonMtdTestBase
     public void Load_FocMtd()
     {
         var focFile = TestingHelpers.GetEmbeddedResource(GetType(), "Files.MT_COMMANDBAR.MTD");
-        Assert.DoesNotThrow(() => _mtdFileService.Load(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
+        Assert.DoesNotThrow(() => _mtdService.Load(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
     }
 
     private void CompareFileWithExpected(IList<MtdEntryInformationContainer> expectedFiles, IMtdFile mtdFile)
     {
+        CompareDirectoryWithExpected(expectedFiles, mtdFile.Content);
+    }
+
+    private void CompareDirectoryWithExpected(IList<MtdEntryInformationContainer> expectedFiles, IMegaTextureDirectory directory)
+    {
         var hashingService = ServiceProvider.GetRequiredService<ICrc32HashingService>();
-        for (var i = 0; i < mtdFile.Content.Count; i++)
+        for (var i = 0; i < directory.Count; i++)
         {
             var expected = expectedFiles[i];
             var crc = hashingService.GetCrc32(expected.ExpectedName, Encoding.ASCII);
 
-            Assert.True(mtdFile.Content.Contains(crc));
-            Assert.True(mtdFile.Content.TryGetEntry(crc, out var actual));
+            Assert.True(directory.Contains(crc));
+            Assert.True(directory.TryGetEntry(crc, out var actual));
             expected.AsserEquals(actual);
         }
     }
@@ -98,7 +114,7 @@ public class MtdFileServiceTest : CommonMtdTestBase
     public void MTD_FileWithCollision()
     {
         var testStream = new TestMegDataStream("MT_COMMANDBAR.MTD", MtdTestData.MtdWithKnownCollision());
-        var fileWithCollision = _mtdFileService.Load(testStream);
+        var fileWithCollision = _mtdService.Load(testStream);
 
         var expectedCrc = new Crc32(3596410486);
 

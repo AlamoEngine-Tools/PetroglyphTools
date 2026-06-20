@@ -71,7 +71,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
         }
     }
 
-    public DatLayoutKind PeekFileType(Stream byteStream)
+    public DatLayoutKind PeekLayout(Stream byteStream)
     {
         if (byteStream == null)
             throw new ArgumentNullException(nameof(byteStream));

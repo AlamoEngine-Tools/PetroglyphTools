@@ -36,28 +36,28 @@ public interface IMtdService
     IMtdFile LoadFile(Stream stream);
 
     /// <summary>
-    /// Loads an MTD stream into a <see cref="IMegaTextureDirectory"/>.
+    /// Loads MTD data from a stream into a <see cref="IMegaTextureDirectory"/>.
     /// </summary>
-    /// <param name="stream">The MTD file stream.</param>
-    /// <returns>A representation of the MTD file.</returns>
-    /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not a valid MTD file.</exception>
+    /// <param name="stream">The stream containing the MTD data.</param>
+    /// <returns>A representation of the MTD data.</returns>
+    /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not valid MTD data.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
     IMegaTextureDirectory LoadModel(Stream stream);
 
     /// <summary>
-    /// Loads an MTD byte buffer into a <see cref="IMegaTextureDirectory"/>.
+    /// Loads MTD data from an in-memory byte buffer into a <see cref="IMegaTextureDirectory"/>.
     /// </summary>
-    /// <param name="data">The MTD file bytes.</param>
-    /// <returns>A representation of the MTD file.</returns>
-    /// <exception cref="BinaryCorruptedException"><paramref name="data"/> is not a valid MTD file.</exception>
+    /// <param name="data">The MTD bytes.</param>
+    /// <returns>A representation of the MTD data.</returns>
+    /// <exception cref="BinaryCorruptedException"><paramref name="data"/> is not valid MTD data.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="data"/> is <see langword="null"/>.</exception>
     IMegaTextureDirectory LoadModel(byte[] data);
 
     /// <summary>
-    /// Loads an MTD byte buffer into a <see cref="IMegaTextureDirectory"/>.
+    /// Loads MTD data from a read-only span of bytes into a <see cref="IMegaTextureDirectory"/>.
     /// </summary>
-    /// <param name="data">The MTD file bytes.</param>
-    /// <returns>A representation of the MTD file.</returns>
-    /// <exception cref="BinaryCorruptedException"><paramref name="data"/> is not a valid MTD file.</exception>
+    /// <param name="data">The MTD bytes.</param>
+    /// <returns>A representation of the MTD data.</returns>
+    /// <exception cref="BinaryCorruptedException"><paramref name="data"/> is not valid MTD data.</exception>
     IMegaTextureDirectory LoadModel(ReadOnlySpan<byte> data);
 }

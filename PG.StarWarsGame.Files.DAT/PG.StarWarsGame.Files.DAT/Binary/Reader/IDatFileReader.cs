@@ -10,5 +10,5 @@ namespace PG.StarWarsGame.Files.DAT.Binary;
 
 internal interface IDatFileReader : IBinaryFileReader<DatBinaryFile>
 {
-    DatLayoutKind PeekFileType(Stream byteStream);
+    DatLayoutKind PeekLayout(Stream byteStream);
 }

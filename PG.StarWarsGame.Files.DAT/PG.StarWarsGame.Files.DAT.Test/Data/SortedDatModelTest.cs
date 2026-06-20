@@ -9,7 +9,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Data;
 
 public class SortedDatModelTest : DatModelTest
 {
-    protected override DatLayoutKind ExpectedFileType => DatLayoutKind.OrderedByCrc32;
+    protected override DatLayoutKind ExpectedLayout => DatLayoutKind.OrderedByCrc32;
 
     private SortedDatModel CreateSortedModel(IList<DatStringEntry> entries)
     {

@@ -8,7 +8,7 @@ namespace PG.StarWarsGame.Files.DAT.Test.Data;
 
 public class UnsortedDatModelTest : DatModelTest
 {
-    protected override DatLayoutKind ExpectedFileType => DatLayoutKind.NotOrdered;
+    protected override DatLayoutKind ExpectedLayout => DatLayoutKind.NotOrdered;
 
     private UnsortedDatModel CreateUnsortedModel(IList<DatStringEntry> entries)
     {

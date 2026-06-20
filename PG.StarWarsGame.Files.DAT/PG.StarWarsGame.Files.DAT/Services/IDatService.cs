@@ -21,14 +21,14 @@ public interface IDatService
     /// </summary>
     /// <param name="stream">The stream to write the DAT content to.</param>
     /// <param name="entries">A list of key-value-pairs to be stored in the DAT file.</param>
-    /// <param name="fileType">
-    /// Determines whether the output file's entries will be ordered (usually used for
+    /// <param name="layout">
+    /// Determines whether the output entries will be ordered (usually used for
     /// <c>mastertextfile_LANGUAGE.dat</c>) or the sort-order of the provided entries will be preserved
     /// (usually used for <c>creditstextfile_LANGUAGE.dat</c>).
     /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> or <paramref name="entries"/> is <see langword="null"/>.</exception>
-    /// <exception cref="IOException">The DAT file could not be created.</exception>
-    void CreateDatBinary(Stream stream, IEnumerable<DatStringEntry> entries, DatLayoutKind fileType);
+    /// <exception cref="IOException">The DAT data could not be written.</exception>
+    void CreateDatBinary(Stream stream, IEnumerable<DatStringEntry> entries, DatLayoutKind layout);
 
     /// <summary>
     /// Loads a DAT file into a <see cref="IDatFile"/>

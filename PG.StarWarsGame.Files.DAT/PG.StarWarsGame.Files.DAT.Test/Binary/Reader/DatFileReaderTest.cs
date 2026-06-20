@@ -22,23 +22,23 @@ public class DatFileReaderTest : TestBaseWithFileSystem
     }
 
     [Fact]
-    public void PeekFileType_ThrowsArgumentNullException()
+    public void PeekLayout_ThrowsArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => _reader.PeekFileType(null!));
+        Assert.Throws<ArgumentNullException>(() => _reader.PeekLayout(null!));
     }
 
     [Fact]
-    public void PeekFileType_ThrowsBinaryCorruptedException()
+    public void PeekLayout_ThrowsBinaryCorruptedException()
     {
-        Assert.Throws<BinaryCorruptedException>(() => _reader.PeekFileType(new MemoryStream()));
+        Assert.Throws<BinaryCorruptedException>(() => _reader.PeekLayout(new MemoryStream()));
     }
 
     [Theory]
     [MemberData(nameof(DatLayoutKindTestData))]
-    public void PeekFileType(Stream stream, DatLayoutKind expectedFileType)
+    public void PeekLayout(Stream stream, DatLayoutKind expectedLayout)
     {
-        var fileType = _reader.PeekFileType(stream);
-        Assert.Equal(expectedFileType, fileType);
+        var layout = _reader.PeekLayout(stream);
+        Assert.Equal(expectedLayout, layout);
 
         // Ensure that stream is not disposed after read operation
         stream.Position = 1;

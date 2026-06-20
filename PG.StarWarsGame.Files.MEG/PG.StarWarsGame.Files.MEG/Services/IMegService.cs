@@ -33,19 +33,19 @@ public interface IMegService
     /// </para>
     /// </remarks>
     /// <param name="stream">The destination stream to write the MEG archive to.</param>
-    /// <param name="fileVersion">The MEG file version to use.</param>
+    /// <param name="megVersion">The MEG version to use.</param>
     /// <param name="encryptionData">Optional encryption data.</param>
     /// <param name="builderInformation">A collection of file references to be packed into the MEG archive.</param>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> or <paramref name="builderInformation"/> is <see langword="null"/>.</exception>
-    /// <exception cref="IOException">The MEG file could not be created.</exception>
+    /// <exception cref="IOException">The MEG could not be created.</exception>
     /// <exception cref="FileNotFoundException">A data entry file was not found.</exception>
     /// <exception cref="NotSupportedException">This library does not support creating the MEG archive from the specified arguments.</exception>
-    /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported file size.</exception>
+    /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported size.</exception>
     /// <exception cref="InvalidOperationException">Attempted to create MEG archive which does not match the expected binary result.</exception>
-    void CreateMegArchive(Stream stream, MegVersion fileVersion, MegEncryptionData? encryptionData, IEnumerable<MegDataEntryBuilderInfo> builderInformation);
+    void CreateMegArchive(Stream stream, MegVersion megVersion, MegEncryptionData? encryptionData, IEnumerable<MegDataEntryBuilderInfo> builderInformation);
 
     /// <summary>
-    /// Loads a file into a <see cref="IMegFile"/>.
+    /// Loads a MEG file into a <see cref="IMegFile"/>.
     /// </summary>
     /// <param name="filePath">The MEG file path.</param>
     /// <returns>The loaded <see cref="IMegFile"/>.</returns>
@@ -59,9 +59,9 @@ public interface IMegService
     IMegFile LoadFile(string filePath);
 
     /// <summary>
-    /// Loads a file into a <see cref="IMegFile"/>.
+    /// Loads a MEG file from a file system stream into a <see cref="IMegFile"/>.
     /// </summary>
-    /// <param name="stream">The MEG file path.</param>
+    /// <param name="stream">The MEG file stream.</param>
     /// <returns>The loaded <see cref="IMegFile"/>.</returns>
     /// <exception cref="NotSupportedException">
     /// <para>

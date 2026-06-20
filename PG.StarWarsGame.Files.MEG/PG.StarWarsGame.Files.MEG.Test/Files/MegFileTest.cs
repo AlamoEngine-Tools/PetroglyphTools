@@ -35,7 +35,7 @@ public class MegFileTest : CommonMegTestBase
 
         Assert.Same(model, megFile.Content);
         Assert.Same(model, megFile.Archive);
-        Assert.Equal(MegVersion.V2, megFile.FileInformation.FileVersion);
+        Assert.Equal(MegVersion.V2, megFile.FileInformation.Version);
         Assert.False(megFile.FileInformation.HasEncryption);
 
         Assert.Equal(FileSystem.Path.GetFullPath(name), megFile.FileInformation.FilePath);
@@ -82,7 +82,7 @@ public class MegFileTest : CommonMegTestBase
         var megFile = new MegFile(model, param, ServiceProvider);
 
         Assert.Same(model, megFile.Content);
-        Assert.Equal(MegVersion.V3, megFile.FileInformation.FileVersion);
+        Assert.Equal(MegVersion.V3, megFile.FileInformation.Version);
         Assert.True(megFile.FileInformation.HasEncryption);
         Assert.Equal(iv, megFile.FileInformation.EncryptionData!.IV);
         Assert.Equal(key, megFile.FileInformation.EncryptionData!.Key);

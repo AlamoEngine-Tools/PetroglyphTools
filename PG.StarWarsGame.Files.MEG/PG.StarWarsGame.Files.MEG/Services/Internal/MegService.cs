@@ -24,7 +24,7 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
 
     public void CreateMegArchive(
         Stream stream,
-        MegVersion fileVersion,
+        MegVersion megVersion,
         MegEncryptionData? encryptionData,
         IEnumerable<MegDataEntryBuilderInfo> builderInformation)
     {
@@ -34,7 +34,7 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         if (builderInformation == null)
             throw new ArgumentNullException(nameof(builderInformation));
 
-        var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(fileVersion)
+        var constructionArchive = BinaryServiceFactory.GetConstructionBuilder(megVersion)
             .BuildConstructingMegArchive(builderInformation);
 
         if (constructionArchive.Encrypted)
@@ -44,7 +44,7 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         {
             if (encryptionData is null)
                 throw new NotSupportedException("Creating an encrypted MEG archive requires encryption key.");
-            if (fileVersion == MegVersion.V3)
+            if (megVersion == MegVersion.V3)
                 throw new NotSupportedException("Creating an encrypted MEG archive requires the MEG version to be V3.");
         }
 

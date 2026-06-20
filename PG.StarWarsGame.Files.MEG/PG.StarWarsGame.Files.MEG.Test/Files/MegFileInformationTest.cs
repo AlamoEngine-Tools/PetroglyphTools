@@ -24,7 +24,7 @@ public class MegFileInformationTest
     {
         var fileInfo = new MegFileInformation("path", version);
         Assert.Equal("path", fileInfo.FilePath);
-        Assert.Equal(version, fileInfo.FileVersion);
+        Assert.Equal(version, fileInfo.Version);
         Assert.Null(fileInfo.EncryptionData);
         Assert.False(fileInfo.HasEncryption);
     }
@@ -35,7 +35,7 @@ public class MegFileInformationTest
         var encData = MegEncryptionDataTest.CreateRandomData();
         var fileInfo = new MegFileInformation("path", MegVersion.V3, encData);
         Assert.Equal("path", fileInfo.FilePath);
-        Assert.Equal(MegVersion.V3, fileInfo.FileVersion);
+        Assert.Equal(MegVersion.V3, fileInfo.Version);
         Assert.Same(encData, fileInfo.EncryptionData);
         Assert.True(fileInfo.HasEncryption);
     }
@@ -59,7 +59,7 @@ public class MegFileInformationTest
 
         var other = fileInfo with { FilePath = "otherPath"};
         Assert.Equal("otherPath", other.FilePath);
-        Assert.Equal(MegVersion.V3, other.FileVersion);
+        Assert.Equal(MegVersion.V3, other.Version);
         Assert.NotSame(encData, other.EncryptionData);
         Assert.True(other.HasEncryption);
         Assert.Equal(orgKey, other.EncryptionData.Key);

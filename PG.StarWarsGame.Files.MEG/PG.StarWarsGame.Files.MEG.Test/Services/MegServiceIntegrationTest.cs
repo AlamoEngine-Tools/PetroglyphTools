@@ -81,7 +81,7 @@ public class MegServiceIntegrationTest : CommonMegTestBase
         Assert.Throws<EntryNotInMegException>(() =>
         {
             using var fs = FileSystem.File.OpenWrite(newFileName);
-            _megService.CreateMegArchive(fs, meg.FileInformation.FileVersion, null, builderInfo);
+            _megService.CreateMegArchive(fs, meg.FileInformation.Version, null, builderInfo);
         });
     }
 
@@ -157,6 +157,35 @@ public class MegServiceIntegrationTest : CommonMegTestBase
         var bytes = FileSystem.File.ReadAllBytes(megFileName);
 
         Assert.Equal(expectedBytes, bytes);
+    }
+
+    [Fact]
+    public void CreateMegArchive_MemoryStream_WritesSameBytesAsFileStream()
+    {
+        var expectedBytes = new byte[]
+        {
+            2, 0, 0, 0, 2, 0, 0, 0, // Header
+            4, 0, 102, 105, 108, 101, // "file"
+            4, 0, 102, 105, 108, 101, // "file"
+            16, 54, 159, 140, 0, 0, 0, 0, 3, 0, 0, 0, 60, 0, 0, 0, 0, 0, 0, 0,
+            16, 54, 159, 140, 1, 0, 0, 0, 3, 0, 0, 0, 63, 0, 0, 0, 1, 0, 0, 0,
+            49, 50, 51, // 123
+            52, 53, 54 // 456
+        };
+
+        FileSystem.Initialize().WithFile("1.txt").Which(m => m.HasStringContent("123"));
+        FileSystem.Initialize().WithFile("2.txt").Which(m => m.HasStringContent("456"));
+
+        var builderInfo = new List<MegDataEntryBuilderInfo>
+        {
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("1.txt"), "file"),
+            MegDataEntryBuilderInfo.FromFile(FileSystem.FileInfo.New("2.txt"), "file")
+        };
+
+        using var ms = new MemoryStream();
+        _megService.CreateMegArchive(ms, MegVersion.V1, null, builderInfo);
+
+        Assert.Equal(expectedBytes, ms.ToArray());
     }
 
     #endregion
@@ -266,7 +295,7 @@ public class MegServiceIntegrationTest : CommonMegTestBase
 
     #endregion
 
-    #region GetFileVersion
+    #region GetMegVersion
 
     [Theory]
     [InlineData("Files.v1_1_file_data.meg", MegVersion.V1)]
@@ -555,7 +584,7 @@ public class MegServiceIntegrationTest : CommonMegTestBase
     {
         Assert.NotNull(meg);
         Assert.Equal(expectedData.MegFileCount, meg.Content.Count);
-        Assert.Equal(expectedData.IsMegVersion, meg.FileInformation.FileVersion);
+        Assert.Equal(expectedData.IsMegVersion, meg.FileInformation.Version);
         Assert.Equal(expectedData.EntryNames.Count, meg.Archive.Count);
 
         if (isNewMeg)

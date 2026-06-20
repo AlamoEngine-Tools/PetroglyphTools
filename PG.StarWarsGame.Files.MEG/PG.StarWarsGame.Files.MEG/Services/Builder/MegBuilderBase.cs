@@ -167,7 +167,7 @@ public abstract class MegBuilderBase
         if (filePathFactory == null) 
             throw new ArgumentNullException(nameof(filePathFactory));
 
-        var megParts = SplitIntoMinRequiredParts(initialFileInformation.FileVersion, DataEntries);
+        var megParts = SplitIntoMinRequiredParts(initialFileInformation.Version, DataEntries);
 
         if (megParts.Count == 1)
         {
@@ -265,7 +265,7 @@ public abstract class MegBuilderBase
     protected sealed override void BuildFileCore(FileSystemStream fileStream, MegFileInformation fileInformation, IReadOnlyCollection<MegDataEntryBuilderInfo> data)
     {
         var megService = Services.GetRequiredService<IMegService>();
-        megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, data);
+        megService.CreateMegArchive(fileStream, fileInformation.Version, fileInformation.EncryptionData, data);
     }
 
     /// <inheritdoc />

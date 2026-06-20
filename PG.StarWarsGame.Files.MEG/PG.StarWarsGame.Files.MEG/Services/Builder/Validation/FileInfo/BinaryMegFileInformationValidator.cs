@@ -74,8 +74,8 @@ public class BinaryMegFileInformationValidator : IMegFileInformationValidator
         if (dataEntries == null)
             throw new ArgumentNullException(nameof(dataEntries));
 
-        if (!SupportedVersions.Contains(fileInformation.FileVersion))
-            return new MegFileInfoValidationResult(false, $"MEG version {fileInformation.FileVersion} is currently not supported.");
+        if (!SupportedVersions.Contains(fileInformation.Version))
+            return new MegFileInfoValidationResult(false, $"MEG version {fileInformation.Version} is currently not supported.");
 
         var isEncrypted = dataEntries.Any(e => e.Encrypted);
         var hasEncryptionData = fileInformation.HasEncryption;
@@ -90,11 +90,11 @@ public class BinaryMegFileInformationValidator : IMegFileInformationValidator
         try
         {
             sizeCalculator = ServiceProvider.GetRequiredService<IMegBinaryServiceFactory>()
-                .GetMegSizeCalculator(fileInformation.FileVersion);
+                .GetMegSizeCalculator(fileInformation.Version);
         }
         catch (NotImplementedException)
         {
-            return new MegFileInfoValidationResult(false, $"MEG version {fileInformation.FileVersion} is currently not supported.");
+            return new MegFileInfoValidationResult(false, $"MEG version {fileInformation.Version} is currently not supported.");
         }
 
         try

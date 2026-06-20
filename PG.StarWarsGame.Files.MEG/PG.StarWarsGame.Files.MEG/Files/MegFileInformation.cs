@@ -16,9 +16,9 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 public sealed record MegFileInformation : PetroglyphFileInformation
 {
     /// <summary>
-    /// Gets the MEG file version of the MEG file.
+    /// Gets the MEG version of the MEG file.
     /// </summary>
-    public MegVersion FileVersion { get; }
+    public MegVersion Version { get; }
 
     /// <summary>
     /// Gets a value indicating whether an <see cref="IMegFile"/> is encrypted.
@@ -35,19 +35,19 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     /// Initializes a new instance of the <see cref="MegFileInformation"/> class.
     /// </summary>
     /// <param name="path">The file path of the MEG file.</param>
-    /// <param name="fileVersion">The file version of the MEG file.</param>
-    /// <param name="encryptionData">The encryption data of MEG file or <see langweord="null"/> if the MEG file is not encrypted.</param>
+    /// <param name="version">The MEG version of the file.</param>
+    /// <param name="encryptionData">The encryption data of MEG file or <see langword="null"/> if the MEG file is not encrypted.</param>
     /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
     /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
     /// <exception cref="ArgumentException">
-    /// <paramref name="fileVersion"/> is not <see cref="MegVersion.V3"/> but <paramref name="encryptionData"/> is not <see langword="null"/>.
+    /// <paramref name="version"/> is not <see cref="MegVersion.V3"/> but <paramref name="encryptionData"/> is not <see langword="null"/>.
     /// </exception>
     [SetsRequiredMembers]
-    public MegFileInformation(string path, MegVersion fileVersion, MegEncryptionData? encryptionData = null) : base(path)
+    public MegFileInformation(string path, MegVersion version, MegEncryptionData? encryptionData = null) : base(path)
     {
-        if (encryptionData is not null && fileVersion != MegVersion.V3)
-            throw new ArgumentException("Encrypted MEG files are required to be version V3.", nameof(fileVersion));
-        FileVersion = fileVersion;
+        if (encryptionData is not null && version != MegVersion.V3)
+            throw new ArgumentException("Encrypted MEG files are required to be version V3.", nameof(version));
+        Version = version;
         EncryptionData = encryptionData;
     }
 
@@ -56,7 +56,7 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     [SetsRequiredMembers]
     private MegFileInformation(MegFileInformation original) : base(original)
     {
-        FileVersion = original.FileVersion;
+        Version = original.Version;
         EncryptionData = original.EncryptionData?.Copy();
     }
 #pragma warning restore IDE0051

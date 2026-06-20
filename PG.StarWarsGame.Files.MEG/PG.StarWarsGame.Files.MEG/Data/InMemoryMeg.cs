@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using AnakinRaW.CommonUtilities;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
@@ -13,6 +14,7 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// An <see cref="IMegDataSource"/> that holds a whole MEG in memory and serves entry data from a byte buffer.
 /// </summary>
+[DebuggerDisplay("{Name} ({Archive.Count})")]
 internal sealed class InMemoryMeg : DisposableObject, IMegDataSource
 {
     private readonly byte[] _megData;

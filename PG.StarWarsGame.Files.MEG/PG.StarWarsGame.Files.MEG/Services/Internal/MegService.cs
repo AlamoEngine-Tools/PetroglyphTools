@@ -20,6 +20,8 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 /// <inheritdoc cref="IMegService" />
 internal sealed class MegService(IServiceProvider services) : ServiceBase(services), IMegService
 {
+    private const string LoadArchiveEncryptedMessage = "Loading an encrypted MEG archive via LoadArchive is not supported.";
+
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
     public void CreateMegArchive(
@@ -198,8 +200,6 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         var archive = BinaryServiceFactory.GetConverter(megVersion).BinaryToModel(metadata);
         return (megVersion, archive, false);
     }
-
-    private const string LoadArchiveEncryptedMessage = "Loading an encrypted MEG archive via LoadArchive is not supported.";
 
     private static bool TryGetFileName(Stream stream, [NotNullWhen(true)] out string? fileName)
     {

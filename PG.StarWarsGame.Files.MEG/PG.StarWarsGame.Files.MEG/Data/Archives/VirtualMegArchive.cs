@@ -2,11 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
 /// <inheritdoc cref="IVirtualMegArchive"/>
+[DebuggerDisplay("{Count} entries")]
 internal sealed class VirtualMegArchive : MegDataEntryHolderBase<MegDataEntryReference>, IVirtualMegArchive
 {
     /// <summary>

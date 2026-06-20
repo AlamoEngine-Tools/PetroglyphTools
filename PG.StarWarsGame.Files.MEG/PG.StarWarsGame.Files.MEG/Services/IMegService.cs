@@ -13,7 +13,7 @@ using PG.StarWarsGame.Files.MEG.Services.Builder;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG archives.</a>
+/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/MegFileFormat"> MEG archives.</a>
 /// </summary>
 public interface IMegService
 {
@@ -59,7 +59,7 @@ public interface IMegService
     IMegFile LoadFile(string filePath);
 
     /// <summary>
-    /// Loads a MEG file from a file system stream into a <see cref="IMegFile"/>.
+    /// Loads a MEG file from stream into a <see cref="IMegFile"/>.
     /// </summary>
     /// <param name="stream">The MEG file stream.</param>
     /// <returns>The loaded <see cref="IMegFile"/>.</returns>
@@ -156,9 +156,9 @@ public interface IMegService
     /// <summary>
     /// Retrieves the <see cref="MegVersion"/> from a MEG file.
     /// </summary>
-    /// <param name="file">The .MEG file.</param>
-    /// <param name="encrypted">Indicates whether the .MEG archive is encrypted or not.</param>
-    /// <returns>The version of the .MEG archive.</returns>
+    /// <param name="file">The MEG file path.</param>
+    /// <param name="encrypted">Indicates whether the MEG archive is encrypted or not.</param>
+    /// <returns>The version of the MEG archive.</returns>
     /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid MEG archive.</exception>
     /// <exception cref="FileNotFoundException"><paramref name="file"/> is not found.</exception>
     MegVersion GetMegVersion(string file, out bool encrypted);
@@ -166,29 +166,29 @@ public interface IMegService
     /// <summary>
     /// Retrieves the <see cref="MegVersion"/> from a MEG archive stream.
     /// </summary>
-    /// <param name="stream">The stream containing the .MEG archive. Read from its current position.</param>
-    /// <param name="encrypted">When this method returns, contains a value indicating whether the .MEG archive is encrypted.</param>
-    /// <returns>The version of the .MEG archive.</returns>
+    /// <param name="stream">The stream containing the MEG archive. Read from its current position.</param>
+    /// <param name="encrypted">When this method returns, contains a value indicating whether the MEG archive is encrypted.</param>
+    /// <returns>The version of the MEG archive.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
     /// <exception cref="BinaryCorruptedException">The input stream was not recognized as a valid MEG archive.</exception>
     MegVersion GetMegVersion(Stream stream, out bool encrypted);
 
     /// <summary>
-    /// Retrieves the <see cref="MegVersion"/> from an in-memory .MEG archive buffer.
+    /// Retrieves the <see cref="MegVersion"/> from an in-memory MEG archive buffer.
     /// </summary>
-    /// <param name="data">The bytes of the .MEG archive.</param>
-    /// <param name="encrypted">When this method returns, contains a value indicating whether the .MEG archive is encrypted.</param>
-    /// <returns>The version of the .MEG archive.</returns>
+    /// <param name="data">The bytes of the MEG archive.</param>
+    /// <param name="encrypted">When this method returns, contains a value indicating whether the MEG archive is encrypted.</param>
+    /// <returns>The version of the MEG archive.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="data"/> is <see langword="null"/>.</exception>
     /// <exception cref="BinaryCorruptedException">The input was not recognized as a valid MEG archive.</exception>
     MegVersion GetMegVersion(byte[] data, out bool encrypted);
 
     /// <summary>
-    /// Retrieves the <see cref="MegVersion"/> from a read-only span of .MEG archive bytes.
+    /// Retrieves the <see cref="MegVersion"/> from a read-only span of MEG archive bytes.
     /// </summary>
-    /// <param name="data">The bytes of the .MEG archive.</param>
-    /// <param name="encrypted">When this method returns, contains a value indicating whether the .MEG archive is encrypted.</param>
-    /// <returns>The version of the .MEG archive.</returns>
+    /// <param name="data">The bytes of the MEG archive.</param>
+    /// <param name="encrypted">When this method returns, contains a value indicating whether the MEG archive is encrypted.</param>
+    /// <returns>The version of the MEG archive.</returns>
     /// <exception cref="BinaryCorruptedException">The input was not recognized as a valid MEG archive.</exception>
     MegVersion GetMegVersion(ReadOnlySpan<byte> data, out bool encrypted);
 }

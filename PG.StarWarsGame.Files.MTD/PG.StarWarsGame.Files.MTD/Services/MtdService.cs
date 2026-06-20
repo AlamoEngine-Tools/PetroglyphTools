@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using AnakinRaW.CommonUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
@@ -26,14 +27,14 @@ internal class MtdService(IServiceProvider serviceProvider) : ServiceBase(servic
         return LoadFile(fs);
     }
 
-    public IMtdFile LoadFile(Stream stream)
+    public IMtdFile LoadFile(FileSystemStream fileStream)
     {
-        if (stream == null)
-            throw new ArgumentNullException(nameof(stream));
+        if (fileStream == null)
+            throw new ArgumentNullException(nameof(fileStream));
 
-        var model = ReadModel(stream);
+        var model = ReadModel(fileStream);
 
-        var filePath = stream.GetFilePath(out var isInMeg);
+        var filePath = fileStream.GetFilePath(out var isInMeg);
 
         // If the .MTD file is not embedded in a MEG, we want the absolute path.
         if (!isInMeg)

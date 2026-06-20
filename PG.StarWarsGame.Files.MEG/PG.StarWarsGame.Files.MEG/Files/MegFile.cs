@@ -1,11 +1,12 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
-using System.IO;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Utilities;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace PG.StarWarsGame.Files.MEG.Files;
 
@@ -14,6 +15,7 @@ namespace PG.StarWarsGame.Files.MEG.Files;
 /// but all necessary meta-information to extract a requested file on-demand.
 /// </remarks>
 /// <inheritdoc cref="IMegFile" />
+[DebuggerDisplay("{FilePath} ({Archive.Count})")]
 internal sealed class MegFile : PetroglyphFileHolder<IMegArchive, MegFileInformation>, IMegFile
 {
     /// <inheritdoc/>

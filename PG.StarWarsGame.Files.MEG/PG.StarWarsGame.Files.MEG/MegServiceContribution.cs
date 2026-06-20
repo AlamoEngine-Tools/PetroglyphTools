@@ -21,7 +21,6 @@ public static class MegServiceContribution
     public static void SupportMEG(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IMegService>(sp => new MegService(sp));
-        serviceCollection.AddSingleton<IMegFileService>(sp => sp.GetRequiredService<IMegService>());
         serviceCollection.AddSingleton<IMegFileExtractor>(sp => new MegFileExtractor(sp));
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));

@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -35,7 +36,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         var entry1 = MegDataEntryTest.CreateEntry("A", new Crc32(1));
 
         FileSystem.File.Create("test.meg");
-        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1), ServiceProvider);
+        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegVersion.V1), ServiceProvider);
 
         var entries = new List<MegDataEntryReference>
         {
@@ -56,10 +57,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         var entry3 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
 
         FileSystem.File.Create("1.meg");
-        var meg1 = new MegFile(new MegArchive([entry1]), new MegFileInformation("1.meg", MegFileVersion.V1), ServiceProvider);
+        var meg1 = new MegFile(new MegArchive([entry1]), new MegFileInformation("1.meg", MegVersion.V1), ServiceProvider);
 
         FileSystem.File.Create("2.meg");
-        var meg2 = new MegFile(new MegArchive([entry2, entry3]), new MegFileInformation("2.meg", MegFileVersion.V1), ServiceProvider);
+        var meg2 = new MegFile(new MegArchive([entry2, entry3]), new MegFileInformation("2.meg", MegVersion.V1), ServiceProvider);
 
         var entries = new List<MegDataEntryReference>
         {
@@ -90,10 +91,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         var entry3 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
 
         FileSystem.File.Create("1.meg");
-        var meg1 = new MegFile(new MegArchive([entry1]), new MegFileInformation("1.meg", MegFileVersion.V1), ServiceProvider);
+        var meg1 = new MegFile(new MegArchive([entry1]), new MegFileInformation("1.meg", MegVersion.V1), ServiceProvider);
 
         FileSystem.File.Create("2.meg");
-        var meg2 = new MegFile(new MegArchive([entry2, entry3]), new MegFileInformation("2.meg", MegFileVersion.V1), ServiceProvider);
+        var meg2 = new MegFile(new MegArchive([entry2, entry3]), new MegFileInformation("2.meg", MegVersion.V1), ServiceProvider);
 
         var entries = new List<MegDataEntryReference>
         {
@@ -124,7 +125,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         var entry3 = MegDataEntryTest.CreateEntry("C", new Crc32(1));
 
         FileSystem.File.Create("test.meg");
-        var megFile = new MegFile(new MegArchive([entry1, entry2, entry3]), new MegFileInformation("test.meg", MegFileVersion.V1), ServiceProvider);
+        var megFile = new MegFile(new MegArchive([entry1, entry2, entry3]), new MegFileInformation("test.meg", MegVersion.V1), ServiceProvider);
 
         var archive = service.BuildFrom(megFile);
 
@@ -151,10 +152,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         var entry2_3 = MegDataEntryTest.CreateEntry("D", new Crc32(1));
 
         FileSystem.File.Create("1.meg");
-        var meg1 = new MegFile(new MegArchive([entry1_1, entry1_2]), new MegFileInformation("1.meg", MegFileVersion.V1), ServiceProvider);
+        var meg1 = new MegFile(new MegArchive([entry1_1, entry1_2]), new MegFileInformation("1.meg", MegVersion.V1), ServiceProvider);
 
         FileSystem.File.Create("2.meg");
-        var meg2 = new MegFile(new MegArchive([entry2_1, entry2_2, entry2_3]), new MegFileInformation("2.meg", MegFileVersion.V1), ServiceProvider);
+        var meg2 = new MegFile(new MegArchive([entry2_1, entry2_2, entry2_3]), new MegFileInformation("2.meg", MegVersion.V1), ServiceProvider);
 
         var archive = service.BuildFrom(new List<IMegFile>{meg1, meg2}, false);
 
@@ -181,10 +182,10 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
         var entry2_3 = MegDataEntryTest.CreateEntry("D", new Crc32(1));
 
         FileSystem.File.Create("1.meg");
-        var meg1 = new MegFile(new MegArchive([entry1_1, entry1_2]), new MegFileInformation("1.meg", MegFileVersion.V1), ServiceProvider);
+        var meg1 = new MegFile(new MegArchive([entry1_1, entry1_2]), new MegFileInformation("1.meg", MegVersion.V1), ServiceProvider);
 
         FileSystem.File.Create("2.meg");
-        var meg2 = new MegFile(new MegArchive([entry2_1, entry2_2, entry2_3]), new MegFileInformation("2.meg", MegFileVersion.V1), ServiceProvider);
+        var meg2 = new MegFile(new MegArchive([entry2_1, entry2_2, entry2_3]), new MegFileInformation("2.meg", MegVersion.V1), ServiceProvider);
 
         var archive = service.BuildFrom(new List<IMegFile> { meg1, meg2 }, true);
 
@@ -220,7 +221,7 @@ public class VirtualMegArchiveBuilderTest : CommonMegTestBase
 
         FileSystem.File.Create("file.meg");
         var fileEntry = MegDataEntryTest.CreateEntry("A", new Crc32(1));
-        var fileMeg = new MegFile(new MegArchive([fileEntry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var fileMeg = new MegFile(new MegArchive([fileEntry]), new MegFileInformation("file.meg", MegVersion.V1), ServiceProvider);
 
         using var stream = new MemoryStream(MegTestConstants.ContentMegFileV1);
         var inMemoryMeg = ServiceProvider.GetRequiredService<IMegService>().LoadArchive(stream);

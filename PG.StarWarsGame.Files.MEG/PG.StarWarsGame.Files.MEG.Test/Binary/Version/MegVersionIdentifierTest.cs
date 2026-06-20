@@ -1,7 +1,8 @@
-﻿using AnakinRaW.CommonUtilities.Testing;
+using AnakinRaW.CommonUtilities.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using System;
 using System.IO;
@@ -23,43 +24,43 @@ public class MegVersionIdentifierTest
     }
 
     [Fact]
-    public void GetMegFileVersion_ThrowsArgNull()
+    public void GetMegVersion_ThrowsArgNull()
     {
-        Assert.Throws<ArgumentNullException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(null!, out _));
+        Assert.Throws<ArgumentNullException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(null!, out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_ThrowsArg()
+    public void GetMegVersion_ThrowsArg()
     {
-        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MegTestConstants.NonSeekableStream(), out _));
+        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MegTestConstants.NonSeekableStream(), out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_EmptyStream()
+    public void GetMegVersion_EmptyStream()
     {
-        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream([]), out _));
+        Assert.Throws<ArgumentException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream([]), out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_InvalidFlags()
+    public void GetMegVersion_InvalidFlags()
     {
         var data = new byte[]
         {
             0x77, 0x77, 0x77, 0x77,
             0xa4, 0x70, 0x7d, 0x3f
         };
-        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out _));
+        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_InvalidId()
+    public void GetMegVersion_InvalidId()
     {
         var data = new byte[]
         {
             0xff, 0xff, 0xff, 0xff,
             0xaa, 0x77, 0x77, 0x33
         };
-        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out _));
+        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out _));
     }
 
     /*
@@ -67,68 +68,68 @@ public class MegVersionIdentifierTest
      */
 
     [Fact]
-    public void GetMegFileVersion_V1_EmptyFile()
+    public void GetMegVersion_V1_EmptyFile()
     {
         var data = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V1, version);
+        Assert.Equal(MegVersion.V1, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V1_SomeFileWithJunk()
+    public void GetMegVersion_V1_SomeFileWithJunk()
     {
         var data = new byte[]
         {
             1, 0, 0, 0, 1, 0, 0, 0,
             1, 2, 3, 4, 5 // Junk
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V1, version);
+        Assert.Equal(MegVersion.V1, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V1_NumFilesMatchesId()
+    public void GetMegVersion_V1_NumFilesMatchesId()
     {
         var data = new byte[]
         {
             0xa4, 0x70, 0x7d, 0x3f, 0xa4, 0x70, 0x7d, 0x3f,
             1, 2, 3, 4, 5 // Junk
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V1, version);
+        Assert.Equal(MegVersion.V1, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V1_NumFilesMatchesFlags()
+    public void GetMegVersion_V1_NumFilesMatchesFlags()
     {
         var data = new byte[]
         {
             0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
             1, 2, 3, 4, 5 // Junk
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V1, version);
+        Assert.Equal(MegVersion.V1, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V1_NumFilesMatchesEncryptedFlag()
+    public void GetMegVersion_V1_NumFilesMatchesEncryptedFlag()
     {
         var data = new byte[]
         {
             0xff, 0xff, 0xff, 0x8f, 0xff, 0xff, 0xff, 0x8f,
             1, 2, 3, 4, 5 // Junk
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V1, version);
+        Assert.Equal(MegVersion.V1, version);
         Assert.False(encrypted);
     }
 
@@ -137,18 +138,18 @@ public class MegVersionIdentifierTest
      */
 
     [Fact]
-    public void GetMegFileVersion_V2_ThrowsIncompleteData()
+    public void GetMegVersion_V2_ThrowsIncompleteData()
     {
         var data = new byte[]
         {
             0xff, 0xff, 0xff, 0xff,
             0xa4, 0x70, 0x7d, 0x3f
         };
-        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out _));
+        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_V2_Empty()
+    public void GetMegVersion_V2_Empty()
     {
         var data = new byte[]
         {
@@ -158,14 +159,14 @@ public class MegVersionIdentifierTest
             0,0,0,0,
             0,0,0,0,
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V2, version);
+        Assert.Equal(MegVersion.V2, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V2_WithJunk()
+    public void GetMegVersion_V2_WithJunk()
     {
         var data = new byte[]
         {
@@ -176,14 +177,14 @@ public class MegVersionIdentifierTest
             0,0,0,0,
             1,2,3,4 // Some junk 
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V2, version);
+        Assert.Equal(MegVersion.V2, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V2_1File_ButCorrupted()
+    public void GetMegVersion_V2_1File_ButCorrupted()
     {
         var data = new byte[]
         {
@@ -193,11 +194,11 @@ public class MegVersionIdentifierTest
             1, 0, 0, 0,
             1, 0, 0, 0
         };
-        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out _));
+        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_V2_1FileEmpty()
+    public void GetMegVersion_V2_1FileEmpty()
     {
         var data = new byte[]
         {
@@ -214,19 +215,19 @@ public class MegVersionIdentifierTest
             0x2b,0,0,0,
             0,0,0,0,
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V2, version);
+        Assert.Equal(MegVersion.V2, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V2_2Files()
+    public void GetMegVersion_V2_2Files()
     {
         var data = TestingHelpers.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v2_2_files_data.meg");
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(data, out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(data, out var encrypted);
 
-        Assert.Equal(MegFileVersion.V2, version);
+        Assert.Equal(MegVersion.V2, version);
         Assert.False(encrypted);
     }
 
@@ -236,7 +237,7 @@ public class MegVersionIdentifierTest
      */
 
     [Fact]
-    public void GetMegFileVersion_V3_EmptyFile()
+    public void GetMegVersion_V3_EmptyFile()
     {
         var data = new byte[]
         {
@@ -247,14 +248,14 @@ public class MegVersionIdentifierTest
             0,0,0,0,
             0,0,0,0,
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V3, version);
+        Assert.Equal(MegVersion.V3, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V3_EmptyFile_Junk()
+    public void GetMegVersion_V3_EmptyFile_Junk()
     {
         var data = new byte[]
         {
@@ -266,14 +267,14 @@ public class MegVersionIdentifierTest
             0,0,0,0,
             1,2,3,4
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V3, version);
+        Assert.Equal(MegVersion.V3, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V3_1FileEmpty()
+    public void GetMegVersion_V3_1FileEmpty()
     {
         var data = new byte[]
         {
@@ -292,14 +293,14 @@ public class MegVersionIdentifierTest
             0x2f,0,0,0,
             0,0,
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V3, version);
+        Assert.Equal(MegVersion.V3, version);
         Assert.False(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V3_CorruptedCauseEncryptFlagSet()
+    public void GetMegVersion_V3_CorruptedCauseEncryptFlagSet()
     {
         var data = new byte[]
         {
@@ -318,11 +319,11 @@ public class MegVersionIdentifierTest
             0x2f,0,0,0,
             0,0,
         };
-        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out _));
+        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_V3_1File_ButCorrupted()
+    public void GetMegVersion_V3_1File_ButCorrupted()
     {
         var data = new byte[]
         {
@@ -333,16 +334,16 @@ public class MegVersionIdentifierTest
             1, 0, 0, 0,
             3, 0, 0, 0
         };
-        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out _));
+        Assert.Throws<BinaryCorruptedException>(() => new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out _));
     }
 
     [Fact]
-    public void GetMegFileVersion_V3_2Files()
+    public void GetMegVersion_V3_2Files()
     {
         var data = TestingHelpers.GetEmbeddedResource(typeof(MegVersionIdentifierTest), "Files.v3n_2_files_data.meg");
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(data, out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(data, out var encrypted);
 
-        Assert.Equal(MegFileVersion.V3, version);
+        Assert.Equal(MegVersion.V3, version);
         Assert.False(encrypted);
     }
 
@@ -352,7 +353,7 @@ public class MegVersionIdentifierTest
      */
 
     [Fact]
-    public void GetMegFileVersion_V3_Enc_Empty()
+    public void GetMegVersion_V3_Enc_Empty()
     {
         var data = new byte[]
         {
@@ -363,14 +364,14 @@ public class MegVersionIdentifierTest
             0,0,0,0,
             0,0,0,0,
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V3, version);
+        Assert.Equal(MegVersion.V3, version);
         Assert.True(encrypted);
     }
 
     [Fact]
-    public void GetMegFileVersion_V3_Enc_WithJunk()
+    public void GetMegVersion_V3_Enc_WithJunk()
     {
         var data = new byte[]
         {
@@ -382,9 +383,9 @@ public class MegVersionIdentifierTest
             0xAA,0,0,0,
             1,2,3,4, // Junk
         };
-        var version = new MegVersionIdentifier(_serviceProvider).GetMegFileVersion(new MemoryStream(data), out var encrypted);
+        var version = new MegVersionIdentifier(_serviceProvider).GetMegVersion(new MemoryStream(data), out var encrypted);
 
-        Assert.Equal(MegFileVersion.V3, version);
+        Assert.Equal(MegVersion.V3, version);
         Assert.True(encrypted);
     }
 }

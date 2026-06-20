@@ -28,14 +28,14 @@ public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInform
     public const int PetroglyphMaxFilePathLength = 259;
 
     /// <summary>
-    /// Gets the collection of supported <see cref="MegFileVersion"/> values for the validator.
+    /// Gets the collection of supported <see cref="MegVersion"/> values for the validator.
     /// </summary>
     /// <value>
     /// A read-only collection containing the supported versions of the .MEG file format
     /// that are validated by this implementation.
-    /// For <see cref="EmpireAtWarMegFileInformationValidator"/>, this includes only <see cref="MegFileVersion.V1"/>.
+    /// For <see cref="EmpireAtWarMegFileInformationValidator"/>, this includes only <see cref="MegVersion.V1"/>.
     /// </value>
-    protected override IReadOnlyCollection<MegFileVersion> SupportedVersions { get; } = [MegFileVersion.V1];
+    protected override IReadOnlyCollection<MegVersion> SupportedVersions { get; } = [MegVersion.V1];
 
     private readonly IFileSystem _fileSystem;
 

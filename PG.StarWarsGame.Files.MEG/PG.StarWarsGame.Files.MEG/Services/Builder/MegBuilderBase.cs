@@ -201,7 +201,7 @@ public abstract class MegBuilderBase
     }
     
     /// <inheritdoc/>
-    public int GetMinRequiredMegFiles(MegFileVersion megVersion)
+    public int GetMinRequiredMegFiles(MegVersion megVersion)
     {
         return SplitIntoMinRequiredParts(megVersion, DataEntries).Count;
     }
@@ -225,7 +225,7 @@ public abstract class MegBuilderBase
     /// It is impossible to split into multiple MEG files because of the current state of the builder.
     /// </exception>
     protected ICollection<ICollection<MegDataEntryBuilderInfo>> SplitIntoMinRequiredParts(
-        MegFileVersion megVersion,
+        MegVersion megVersion,
         IEnumerable<MegDataEntryBuilderInfo> builderInfo)
     {
         var metadataSizeCalculator = Services.GetRequiredService<IMegBinaryServiceFactory>()
@@ -264,7 +264,7 @@ public abstract class MegBuilderBase
     /// <inheritdoc />
     protected sealed override void BuildFileCore(FileSystemStream fileStream, MegFileInformation fileInformation, IReadOnlyCollection<MegDataEntryBuilderInfo> data)
     {
-        var megService = Services.GetRequiredService<IMegFileService>();
+        var megService = Services.GetRequiredService<IMegService>();
         megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, data);
     }
 

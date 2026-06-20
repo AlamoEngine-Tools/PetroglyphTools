@@ -23,13 +23,13 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
     private IMegBinaryServiceFactory BinaryServiceFactory { get; } = services.GetRequiredService<IMegBinaryServiceFactory>();
 
     public void CreateMegArchive(
-        FileSystemStream fileStream,
-        MegFileVersion fileVersion,
+        Stream stream,
+        MegVersion fileVersion,
         MegEncryptionData? encryptionData,
         IEnumerable<MegDataEntryBuilderInfo> builderInformation)
     {
-        if (fileStream == null)
-            throw new ArgumentNullException(nameof(fileStream));
+        if (stream == null)
+            throw new ArgumentNullException(nameof(stream));
 
         if (builderInformation == null)
             throw new ArgumentNullException(nameof(builderInformation));
@@ -44,7 +44,7 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         {
             if (encryptionData is null)
                 throw new NotSupportedException("Creating an encrypted MEG archive requires encryption key.");
-            if (fileVersion == MegFileVersion.V3)
+            if (fileVersion == MegVersion.V3)
                 throw new NotSupportedException("Creating an encrypted MEG archive requires the MEG version to be V3.");
         }
 
@@ -52,7 +52,7 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         var metadata = BinaryServiceFactory.GetConverter(constructionArchive.MegVersion)
             .ModelToBinary(constructionArchive.Archive);
 
-        metadata.WriteTo(fileStream);
+        metadata.WriteTo(stream);
 
         long dataBytesWritten = metadata.Size;
 
@@ -65,11 +65,11 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
                 throw new InvalidOperationException(
                     $"Actual data entry size '{dataStream.Length}' does not match expected value: {file.DataEntry.Location.Size}");
 
-            if (fileStream.Position != file.DataEntry.Location.Offset)
+            if (stream.Position != file.DataEntry.Location.Offset)
                 throw new InvalidOperationException(
-                    $"Actual file position '{fileStream.Position}' does not match expected entry offset: {file.DataEntry.Location.Offset}");
+                    $"Actual file position '{stream.Position}' does not match expected entry offset: {file.DataEntry.Location.Offset}");
 
-            dataStream.CopyTo(fileStream);
+            dataStream.CopyTo(stream);
 
             dataBytesWritten += dataStream.Length;
         }
@@ -77,15 +77,15 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         Debug.Assert(dataBytesWritten == constructionArchive.ExpectedFileSize);
     }
 
-    public IMegFile Load(string filePath)
+    public IMegFile LoadFile(string filePath)
     {
         ThrowHelper.ThrowIfNullOrEmpty(filePath);
         var fullPath = FileSystem.Path.GetFullPath(filePath);
         using var fs = FileSystem.FileStream.New(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        return Load(fs);
+        return LoadFile(fs);
     }
 
-    public IMegFile Load(FileSystemStream stream)
+    public IMegFile LoadFile(FileSystemStream stream)
     {
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
@@ -121,34 +121,34 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         return LoadMegFromMemory(data);
     }
 
-    public MegFileVersion GetMegFileVersion(string file, out bool encrypted)
+    public MegVersion GetMegVersion(string file, out bool encrypted)
     {
         ThrowHelper.ThrowIfNullOrWhiteSpace(file);
 
         using var fs = FileSystem.FileStream.New(file, FileMode.Open, FileAccess.Read, FileShare.Read);
-        return GetMegFileVersion(fs, out encrypted);
+        return GetMegVersion(fs, out encrypted);
     }
 
-    public MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted)
+    public MegVersion GetMegVersion(Stream stream, out bool encrypted)
     {
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
 
-        return Services.GetRequiredService<IMegVersionIdentifier>().GetMegFileVersion(stream, out encrypted);
+        return Services.GetRequiredService<IMegVersionIdentifier>().GetMegVersion(stream, out encrypted);
     }
 
-    public MegFileVersion GetMegFileVersion(byte[] data, out bool encrypted)
+    public MegVersion GetMegVersion(byte[] data, out bool encrypted)
     {
         if (data == null)
             throw new ArgumentNullException(nameof(data));
 
         using var stream = new MemoryStream(data, writable: false);
-        return GetMegFileVersion(stream, out encrypted);
+        return GetMegVersion(stream, out encrypted);
     }
 
-    public MegFileVersion GetMegFileVersion(ReadOnlySpan<byte> data, out bool encrypted)
+    public MegVersion GetMegVersion(ReadOnlySpan<byte> data, out bool encrypted)
     {
-        return GetMegFileVersion(data.ToArray(), out encrypted);
+        return GetMegVersion(data.ToArray(), out encrypted);
     }
 
     private MegFile LoadMegFromFile(Stream stream, string name)
@@ -167,10 +167,10 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
     }
 
     // Reads the version and the archive model from a seekable stream positioned at the start of the MEG.
-    private (MegFileVersion Version, IMegArchive Archive) ReadArchive(Stream stream)
+    private (MegVersion Version, IMegArchive Archive) ReadArchive(Stream stream)
     {
         var startPosition = stream.Position;
-        var megVersion = GetMegFileVersion(stream, out var encrypted);
+        var megVersion = GetMegVersion(stream, out var encrypted);
 
         if (encrypted)
             throw new NotImplementedException("Encrypted archives are currently not supported");

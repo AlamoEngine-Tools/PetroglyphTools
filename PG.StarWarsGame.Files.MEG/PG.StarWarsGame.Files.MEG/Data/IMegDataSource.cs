@@ -2,10 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Utilities;
 
-namespace PG.StarWarsGame.Files.MEG.Data.Archives;
+namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <summary>
 /// Represents a MEG archive along with the necessary means to access its data.
@@ -16,6 +17,11 @@ public interface IMegDataSource
     /// Gets the archive metadata: the table of contents describing the data entries contained in this MEG.
     /// </summary>
     IMegArchive Archive { get; }
+
+    /// <summary>
+    /// Gets the encryption data of this MEG archive, or <see langword="null"/> if the archive is not encrypted.
+    /// </summary>
+    MegEncryptionData? EncryptionData { get; }
 
     /// <summary>
     /// Gets a read-only stream over the data of the specified <paramref name="entry"/>.

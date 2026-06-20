@@ -1,5 +1,6 @@
 using AnakinRaW.CommonUtilities.Testing.Attributes;
 using Microsoft.Extensions.DependencyInjection;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -93,7 +94,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         {
         }
 
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegVersion.V1),
             ServiceProvider);
 
         var location = new MegDataEntryLocationReference(meg, entry);
@@ -112,7 +113,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.Initialize().WithFile("a.meg");
 
         var entry = CreateEntry("path");
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegVersion.V1),
             ServiceProvider);
         var location = new MegDataEntryLocationReference(meg, entry);
 
@@ -126,7 +127,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.Initialize().WithFile("a.meg");
 
         var entry = CreateEntry("path");
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegVersion.V1),
             ServiceProvider);
 
         var location = new MegDataEntryLocationReference(meg, entry);
@@ -140,7 +141,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.Initialize()
             .WithFile("test.meg").Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
-        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+        var meg = ServiceProvider.GetRequiredService<IMegService>().LoadFile("test.meg");
 
         // CampaignFiles.xml
         var entry = meg.Content[0];
@@ -177,7 +178,7 @@ public class MegFileExtractorTest : CommonMegTestBase
 
         Assert.Equal(existingFileData, FileSystem.File.ReadAllBytes("file.txt"));
 
-        var meg = _megService.Load("test.meg");
+        var meg = _megService.LoadFile("test.meg");
 
         // CampaignFiles.xml
         var entry = meg.Content[0];
@@ -198,7 +199,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.Initialize()
             .WithFile("test.meg").Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
-        var meg = _megService.Load("test.meg");
+        var meg = _megService.LoadFile("test.meg");
 
         // CampaignFiles.xml
         var entry = meg.Content[0];

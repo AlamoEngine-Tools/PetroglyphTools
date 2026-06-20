@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.StarWarsGame.Files.MEG.Data;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -17,7 +18,7 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     /// <summary>
     /// Gets the MEG file version of the MEG file.
     /// </summary>
-    public MegFileVersion FileVersion { get; }
+    public MegVersion FileVersion { get; }
 
     /// <summary>
     /// Gets a value indicating whether an <see cref="IMegFile"/> is encrypted.
@@ -39,12 +40,12 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
     /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
     /// <exception cref="ArgumentException">
-    /// <paramref name="fileVersion"/> is not <see cref="MegFileVersion.V3"/> but <paramref name="encryptionData"/> is not <see langword="null"/>.
+    /// <paramref name="fileVersion"/> is not <see cref="MegVersion.V3"/> but <paramref name="encryptionData"/> is not <see langword="null"/>.
     /// </exception>
     [SetsRequiredMembers]
-    public MegFileInformation(string path, MegFileVersion fileVersion, MegEncryptionData? encryptionData = null) : base(path)
+    public MegFileInformation(string path, MegVersion fileVersion, MegEncryptionData? encryptionData = null) : base(path)
     {
-        if (encryptionData is not null && fileVersion != MegFileVersion.V3)
+        if (encryptionData is not null && fileVersion != MegVersion.V3)
             throw new ArgumentException("Encrypted MEG files are required to be version V3.", nameof(fileVersion));
         FileVersion = fileVersion;
         EncryptionData = encryptionData;

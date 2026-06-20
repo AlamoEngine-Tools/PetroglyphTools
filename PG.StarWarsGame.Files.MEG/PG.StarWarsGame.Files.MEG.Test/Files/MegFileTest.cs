@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Security.Cryptography;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
 using Testably.Abstractions.Testing;
@@ -13,7 +14,7 @@ public class MegFileTest : CommonMegTestBase
     public void Ctor_ThrowsArgumentNullException()
     {
         FileSystem.Initialize().WithFile("test.meg");
-        var param = new MegFileInformation("test.meg", MegFileVersion.V1);
+        var param = new MegFileInformation("test.meg", MegVersion.V1);
         var model = new MegArchive([]);
 
         Assert.Throws<ArgumentNullException>(() => new MegFile(null!, param, ServiceProvider));
@@ -25,7 +26,7 @@ public class MegFileTest : CommonMegTestBase
     public void Ctor_SetupProperties()
     {
         const string name = "test.meg";
-        var param = new MegFileInformation(name, MegFileVersion.V2);
+        var param = new MegFileInformation(name, MegVersion.V2);
         var model = new MegArchive([]);
 
         FileSystem.Initialize().WithFile("test.meg");
@@ -34,7 +35,7 @@ public class MegFileTest : CommonMegTestBase
 
         Assert.Same(model, megFile.Content);
         Assert.Same(model, megFile.Archive);
-        Assert.Equal(MegFileVersion.V2, megFile.FileInformation.FileVersion);
+        Assert.Equal(MegVersion.V2, megFile.FileInformation.FileVersion);
         Assert.False(megFile.FileInformation.HasEncryption);
 
         Assert.Equal(FileSystem.Path.GetFullPath(name), megFile.FileInformation.FilePath);
@@ -49,7 +50,7 @@ public class MegFileTest : CommonMegTestBase
 
         var copyKey = encData.Key;
         
-        var param = new MegFileInformation(name, MegFileVersion.V3, encData);
+        var param = new MegFileInformation(name, MegVersion.V3, encData);
 
         FileSystem.Initialize().WithFile("test.meg");
 
@@ -73,7 +74,7 @@ public class MegFileTest : CommonMegTestBase
 
         var encData = new MegEncryptionData(key, iv);
 
-        var param = new MegFileInformation("test.meg", MegFileVersion.V3, encData);
+        var param = new MegFileInformation("test.meg", MegVersion.V3, encData);
 
         FileSystem.Initialize().WithFile("test.meg");
 
@@ -81,7 +82,7 @@ public class MegFileTest : CommonMegTestBase
         var megFile = new MegFile(model, param, ServiceProvider);
 
         Assert.Same(model, megFile.Content);
-        Assert.Equal(MegFileVersion.V3, megFile.FileInformation.FileVersion);
+        Assert.Equal(MegVersion.V3, megFile.FileInformation.FileVersion);
         Assert.True(megFile.FileInformation.HasEncryption);
         Assert.Equal(iv, megFile.FileInformation.EncryptionData!.IV);
         Assert.Equal(key, megFile.FileInformation.EncryptionData!.Key);
@@ -95,7 +96,7 @@ public class MegFileTest : CommonMegTestBase
 
         var encData = new MegEncryptionData(keyIv, keyIv);
         
-        var param = new MegFileInformation("test.meg", MegFileVersion.V3, encData);
+        var param = new MegFileInformation("test.meg", MegVersion.V3, encData);
         var model = new MegArchive([]);
 
         FileSystem.Initialize().WithFile("test.meg");

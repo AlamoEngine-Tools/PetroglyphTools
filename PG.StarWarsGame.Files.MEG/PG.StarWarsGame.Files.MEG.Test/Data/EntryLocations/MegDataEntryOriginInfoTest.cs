@@ -1,3 +1,4 @@
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -40,7 +41,7 @@ public class MegDataEntryOriginInfoTest : PGTestBase
     public void Ctor_ReferenceLocation()
     {
         using var _ = FileSystem.File.Create("test.meg");
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegVersion.V1),
             ServiceProvider);
 
         var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));
@@ -165,7 +166,7 @@ public class MegDataEntryOriginInfoTest : PGTestBase
         FileSystem.Initialize().WithFile("a.meg").Which(m => m.HasBytesContent([1, 2, 3, 4, 5]));
 
         var entry = MegDataEntryTest.CreateEntry("file.txt", offset: 1, size: 2);
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegFileVersion.V1), ServiceProvider);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegVersion.V1), ServiceProvider);
         var originInfo = new MegDataEntryOriginInfo(new MegDataEntryLocationReference(meg, entry));
 
         var stream = originInfo.GetDataStream();
@@ -196,7 +197,7 @@ public class MegDataEntryOriginInfoTest : PGTestBase
     public void EqualsHashCode()
     {
         using var _ = FileSystem.File.Create("test.meg");
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("test.meg", MegVersion.V1),
             ServiceProvider);
 
         var location = new MegDataEntryLocationReference(meg, MegDataEntryTest.CreateEntry("path"));

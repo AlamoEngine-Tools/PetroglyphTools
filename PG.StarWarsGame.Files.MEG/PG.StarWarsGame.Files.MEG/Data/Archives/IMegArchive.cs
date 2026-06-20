@@ -6,6 +6,7 @@ using PG.StarWarsGame.Files.MEG.Data.Entries;
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
 /// <summary>
-/// Contains all data entries of a single, physical .MEG file.
+/// Represents the list of data entries contained in a MEG archive.
+/// The entries are sorted by their CRC32 checksum, which is calculated over the file name of the entry.
 /// </summary>
 public interface IMegArchive : IMegDataEntryHolder<MegDataEntry>;

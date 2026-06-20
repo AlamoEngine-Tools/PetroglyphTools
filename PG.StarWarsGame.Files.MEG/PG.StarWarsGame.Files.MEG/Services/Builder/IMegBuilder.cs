@@ -167,5 +167,5 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// </remarks>
     /// <returns>The minimum number of MEG files required to accommodate the provided data entries.</returns>
     /// <exception cref="InvalidOperationException">It is impossible to create MEG files because of the current state of the builder.</exception>
-    int GetMinRequiredMegFiles(MegFileVersion megVersion);
+    int GetMinRequiredMegFiles(MegVersion megVersion);
 }

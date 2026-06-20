@@ -3,21 +3,25 @@
 
 using System;
 using System.IO;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Files;
 
-/// <inheritdoc cref="IMegFile" />
 /// <remarks>
-///     This class does not hold the actual data of the files packaged in a *.MEG file,
-///     but all necessary meta-information to extract a requested file on-demand.
+/// This class does not hold the actual data of the files packaged in a *.MEG file,
+/// but all necessary meta-information to extract a requested file on-demand.
 /// </remarks>
+/// <inheritdoc cref="IMegFile" />
 internal sealed class MegFile : PetroglyphFileHolder<IMegArchive, MegFileInformation>, IMegFile
 {
     /// <inheritdoc/>
     public IMegArchive Archive => Content;
+
+    /// <inheritdoc/>
+    public MegEncryptionData? EncryptionData => FileInformation.EncryptionData;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFile"/> class.

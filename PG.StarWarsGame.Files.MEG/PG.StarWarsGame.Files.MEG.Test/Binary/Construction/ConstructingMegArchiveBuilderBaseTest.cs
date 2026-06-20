@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,7 +22,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
 
     protected abstract int GetExpectedHeaderSize();
 
-    protected abstract MegFileVersion GetExpectedFileVersion();
+    protected abstract MegVersion GetExpectedFileVersion();
 
     protected override void SetupServices(IServiceCollection serviceCollection)
     {
@@ -117,7 +117,7 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
         FileSystem.File.Create("file.meg");
 
         var entry = MegDataEntryTest.CreateEntry("A", default, 0, 5);
-        var megFile = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var megFile = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegVersion.V1), ServiceProvider);
 
         var builderEntries = new List<MegDataEntryBuilderInfo>
         {
@@ -238,6 +238,6 @@ public abstract class ConstructingMegArchiveBuilderBaseTest : CommonMegTestBase
 
         internal override uint MaxFileSize => maxFileSize;
 
-        protected abstract override MegFileVersion FileVersion { get; }
+        protected abstract override MegVersion MegVersion { get; }
     }
 }

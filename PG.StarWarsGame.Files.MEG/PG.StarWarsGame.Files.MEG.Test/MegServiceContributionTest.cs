@@ -12,7 +12,6 @@ public class MegServiceContributionTest : CommonMegTestBase
     [Fact]
     public void SupportMEG_Registers()
     {
-        Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegFileService>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegService>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegFileExtractor>());
         Assert.DoesNotThrow(() => ServiceProvider.GetRequiredService<IMegBinaryServiceFactory>());

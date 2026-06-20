@@ -1,5 +1,6 @@
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
@@ -14,7 +15,7 @@ public class FileMegDataSourceTest : MegDataSourceTestSuite
     protected override IMegDataSource CreateMegDataSource(byte[] megBytes)
     {
         FileSystem.File.WriteAllBytes("test.meg", megBytes);
-        return ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+        return ServiceProvider.GetRequiredService<IMegService>().LoadFile("test.meg");
     }
 
     [Fact]
@@ -23,7 +24,7 @@ public class FileMegDataSourceTest : MegDataSourceTestSuite
         var entry = CreateEntry("file.txt", default, 0, 12);
 
         _ = FileSystem.File.Create("test.meg"); // intentionally left open so the file is locked
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegFileVersion.V1), ServiceProvider);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegVersion.V1), ServiceProvider);
 
         Assert.Throws<IOException>(() => meg.GetData(entry));
     }
@@ -34,7 +35,7 @@ public class FileMegDataSourceTest : MegDataSourceTestSuite
         // A zero-size entry whose backing file is gone still fails.
         FileSystem.Initialize().WithFile("test.meg");
         var entry = CreateEntry("file.txt", offset: 2, size: 0);
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegFileVersion.V1), ServiceProvider);
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegVersion.V1), ServiceProvider);
 
         FileSystem.File.Delete("test.meg");
 

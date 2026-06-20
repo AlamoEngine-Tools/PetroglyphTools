@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using AnakinRaW.CommonUtilities.Testing;
-using PG.StarWarsGame.Files.MEG.Data.Archives;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using Xunit;

@@ -31,8 +31,8 @@ public class BinaryMegFileInformationValidator : IMegFileInformationValidator
     /// that are validated by this implementation.
     /// For <see cref="BinaryMegFileInformationValidator"/>, this includes all versions
     /// </value>
-    protected virtual IReadOnlyCollection<MegFileVersion> SupportedVersions { get; } 
-        = [MegFileVersion.V1, MegFileVersion.V2, MegFileVersion.V3];
+    protected virtual IReadOnlyCollection<MegVersion> SupportedVersions { get; } 
+        = [MegVersion.V1, MegVersion.V2, MegVersion.V3];
 
     /// <summary>
     /// Gets the maximum allowed size for a MEG file in bytes, as defined by the MEG specification.

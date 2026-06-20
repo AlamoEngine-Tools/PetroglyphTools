@@ -7,6 +7,7 @@ using System.Linq;
 using PG.Commons.Data;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;

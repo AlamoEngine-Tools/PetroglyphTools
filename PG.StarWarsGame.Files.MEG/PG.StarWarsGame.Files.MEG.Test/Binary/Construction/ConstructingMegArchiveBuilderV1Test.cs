@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PG.StarWarsGame.Files.MEG.Binary;
@@ -23,9 +23,9 @@ public class ConstructingMegArchiveBuilderV1Test : ConstructingMegArchiveBuilder
         return MegHeader.SizeValue;
     }
 
-    protected override MegFileVersion GetExpectedFileVersion()
+    protected override MegVersion GetExpectedFileVersion()
     {
-        return MegFileVersion.V1;
+        return MegVersion.V1;
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class ConstructingMegArchiveBuilderV1Test : ConstructingMegArchiveBuilder
     private sealed class SmallMaxFileSizeConstructingServiceV1(uint maxEntrySize, uint maxFileSize, IServiceProvider services)
         : SmallMaxFileSizeConstructingService(maxEntrySize, maxFileSize, services)
     {
-        protected override MegFileVersion FileVersion => MegFileVersion.V1;
+        protected override MegVersion MegVersion => MegVersion.V1;
     }
 
     protected override uint GetTotalMegSizeForTooLargeTest(IEnumerable<MegDataEntryBuilderInfo> entries)

@@ -12,7 +12,7 @@ namespace PG.StarWarsGame.Files.MEG.Services;
 /// Service for extracting files from a .MEG archive to the file system.
 /// </summary>
 /// <remarks>
-/// To read an entry's data into a stream (without writing it to disk), use <see cref="Data.Archives.IMegDataSource.GetData"/>.
+/// To read an entry's data into a stream (without writing it to disk), use <see cref="Data.IMegDataSource.GetData"/>.
 /// </remarks>
 public interface IMegFileExtractor
 {

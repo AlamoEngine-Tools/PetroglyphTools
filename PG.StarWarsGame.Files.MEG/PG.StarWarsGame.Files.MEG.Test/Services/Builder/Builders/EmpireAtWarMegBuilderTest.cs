@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,7 +55,7 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 
     protected override MegFileInformation CreateInvalidFileInfo(string path)
     {
-        return new MegFileInformation(path, MegFileVersion.V2);
+        return new MegFileInformation(path, MegVersion.V2);
     }
 
     protected override string GetFailingEntryPath()
@@ -125,16 +125,16 @@ public class EmpireAtWarMegBuilderTest : PetroglyphGameMegBuilderTest
 
         Assert.Equal(4, builder.DataEntries.Count);
 
-        Assert.False(builder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V2)));
-        Assert.False(builder.ValidateFileInformation(new MegFileInformation("?new.meg", MegFileVersion.V1)));
-        Assert.False(builder.ValidateFileInformation(new MegFileInformation("new.meg", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData())));
+        Assert.False(builder.ValidateFileInformation(new MegFileInformation("new.meg", MegVersion.V2)));
+        Assert.False(builder.ValidateFileInformation(new MegFileInformation("?new.meg", MegVersion.V1)));
+        Assert.False(builder.ValidateFileInformation(new MegFileInformation("new.meg", MegVersion.V3, MegEncryptionDataTest.CreateRandomData())));
 
-        builder.Build(new MegFileInformation("new.meg", MegFileVersion.V1), false);
+        builder.Build(new MegFileInformation("new.meg", MegVersion.V1), false);
 
         Assert.True(FileSystem.File.Exists("new.meg"));
 
-        var megFileService = ServiceProvider.GetRequiredService<IMegFileService>();
-        var meg = megFileService.Load("new.meg");
+        var megFileService = ServiceProvider.GetRequiredService<IMegService>();
+        var meg = megFileService.LoadFile("new.meg");
 
         Assert.Equal(4, meg.Archive.Count);
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -16,9 +16,9 @@ namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 public interface IDatBuilder : IFileBuilder<IReadOnlyList<DatStringEntry>, DatFileInformation>
 {
     /// <summary>
-    /// Gets the key sort order of the DATs created by the <see cref="IDatBuilder"/>.
+    /// Gets the layout of the DAT created by the <see cref="IDatBuilder"/>.
     /// </summary>
-    DatFileType TargetKeySortOrder { get; }
+    DatLayoutKind TargetLayout { get; }
 
     /// <summary>
     /// Gets a value indicating how the <see cref="IDatBuilder"/> treats an already existing key.

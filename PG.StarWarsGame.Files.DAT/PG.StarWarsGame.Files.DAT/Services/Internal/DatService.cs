@@ -15,54 +15,54 @@ namespace PG.StarWarsGame.Files.DAT.Services;
 
 internal class DatService(IServiceProvider services) : ServiceBase(services), IDatService
 {
-    public void CreateDatFile(FileSystemStream fileStream, IEnumerable<DatStringEntry> entries, DatFileType datFileType)
+    public void CreateDatBinary(Stream fileStream, IEnumerable<DatStringEntry> entries, DatLayoutKind datLayoutKind)
     {
         if (fileStream is null)
             throw new ArgumentNullException(nameof(fileStream));
         if (entries is null)
             throw new ArgumentNullException(nameof(entries));
 
-        var datModel = new ConstructingDatModel(entries, datFileType);
+        var datModel = new ConstructingDatModel(entries, datLayoutKind);
 
         var datBinary = Services.GetRequiredService<IDatBinaryConverter>().ModelToBinary(datModel);
 
         datBinary.WriteTo(fileStream);
     }
 
-    public IDatFile Load(string filePath)
+    public IDatFile LoadFile(string filePath)
     {
         if (filePath == null)
             throw new ArgumentNullException(nameof(filePath));
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
-        var fileType = GetDatFileType(fs);
+        var fileType = GetDatLayoutKind(fs);
         fs.Seek(0, SeekOrigin.Begin);
-        return LoadAs(fs, fileType);
+        return LoadFileAs(fs, fileType);
     }
 
-    public IDatFile Load(FileSystemStream fileStream)
+    public IDatFile LoadFile(FileSystemStream fileStream)
     {
         if (fileStream == null)
             throw new ArgumentNullException(nameof(fileStream));
         var currentPos = fileStream.Position;
-        var fileType = GetDatFileType(fileStream);
+        var fileType = GetDatLayoutKind(fileStream);
         fileStream.Seek(currentPos, SeekOrigin.Begin);
-        return LoadAs(fileStream, fileType);
+        return LoadFileAs(fileStream, fileType);
     }
 
-    public IDatFile LoadAs(string filePath, DatFileType requestedFileType)
+    public IDatFile LoadFileAs(string filePath, DatLayoutKind requestedLayout)
     {
         if (filePath == null)
             throw new ArgumentNullException(nameof(filePath));
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
-        return LoadAs(fs, requestedFileType);
+        return LoadFileAs(fs, requestedLayout);
     }
 
-    public IDatFile LoadAs(FileSystemStream fileStream, DatFileType requestedFileType)
+    public IDatFile LoadFileAs(FileSystemStream fileStream, DatLayoutKind requestedLayout)
     {
         if (fileStream == null)
             throw new ArgumentNullException(nameof(fileStream));
 
-        var datModel = ReadModel(fileStream, requestedFileType);
+        var datModel = ReadModel(fileStream, requestedLayout);
 
         var filePath = FileSystem.Path.GetFullPath(fileStream.Name);
         var fileInfo = new DatFileInformation { FilePath = filePath };
@@ -91,57 +91,57 @@ internal class DatService(IServiceProvider services) : ServiceBase(services), ID
         return LoadModel(stream);
     }
 
-    public IDatModel LoadModelAs(Stream stream, DatFileType requestedFileType)
+    public IDatModel LoadModelAs(Stream stream, DatLayoutKind requestedLayout)
     {
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
-        return LoadModelFromStream(stream, requestedFileType);
+        return LoadModelFromStream(stream, requestedLayout);
     }
 
-    public IDatModel LoadModelAs(byte[] data, DatFileType requestedFileType)
+    public IDatModel LoadModelAs(byte[] data, DatLayoutKind requestedLayout)
     {
         if (data == null)
             throw new ArgumentNullException(nameof(data));
         using var stream = new MemoryStream(data, writable: false);
-        return LoadModelAs(stream, requestedFileType);
+        return LoadModelAs(stream, requestedLayout);
     }
 
-    public IDatModel LoadModelAs(ReadOnlySpan<byte> data, DatFileType requestedFileType)
+    public IDatModel LoadModelAs(ReadOnlySpan<byte> data, DatLayoutKind requestedLayout)
     {
         using var stream = new MemoryStream(data.ToArray(), writable: false);
-        return LoadModelAs(stream, requestedFileType);
+        return LoadModelAs(stream, requestedLayout);
     }
 
-    public DatFileType GetDatFileType(string filePath)
+    public DatLayoutKind GetDatLayoutKind(string filePath)
     {
         if (filePath == null)
             throw new ArgumentNullException(nameof(filePath));
         using var fs = FileSystem.FileStream.New(filePath, FileMode.Open, FileAccess.Read);
-        return GetDatFileType(fs);
+        return GetDatLayoutKind(fs);
     }
 
-    public DatFileType GetDatFileType(Stream stream)
+    public DatLayoutKind GetDatLayoutKind(Stream stream)
     {
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
         return Services.GetRequiredService<IDatFileReader>().PeekFileType(stream);
     }
 
-    public DatFileType GetDatFileType(byte[] data)
+    public DatLayoutKind GetDatLayoutKind(byte[] data)
     {
         if (data == null)
             throw new ArgumentNullException(nameof(data));
         using var stream = new MemoryStream(data, writable: false);
-        return GetDatFileType(stream);
+        return GetDatLayoutKind(stream);
     }
 
-    public DatFileType GetDatFileType(ReadOnlySpan<byte> data)
+    public DatLayoutKind GetDatLayoutKind(ReadOnlySpan<byte> data)
     {
         using var stream = new MemoryStream(data.ToArray(), writable: false);
-        return GetDatFileType(stream);
+        return GetDatLayoutKind(stream);
     }
 
-    private IDatModel LoadModelFromStream(Stream stream, DatFileType? requestedFileType)
+    private IDatModel LoadModelFromStream(Stream stream, DatLayoutKind? requestedFileType)
     {
         // Reading the model requires seeking back to the start after peeking the file type. If the source
         // stream cannot seek, copy it into memory first so the in-memory load path can re-read it.
@@ -156,9 +156,9 @@ internal class DatService(IServiceProvider services) : ServiceBase(services), ID
         return ReadModelFromSeekableStream(stream, requestedFileType);
     }
 
-    private IDatModel ReadModelFromSeekableStream(Stream stream, DatFileType? requestedFileType)
+    private IDatModel ReadModelFromSeekableStream(Stream stream, DatLayoutKind? requestedFileType)
     {
-        DatFileType fileType;
+        DatLayoutKind fileType;
         if (requestedFileType.HasValue)
         {
             fileType = requestedFileType.Value;
@@ -166,14 +166,14 @@ internal class DatService(IServiceProvider services) : ServiceBase(services), ID
         else
         {
             var startPosition = stream.Position;
-            fileType = GetDatFileType(stream);
+            fileType = GetDatLayoutKind(stream);
             stream.Seek(startPosition, SeekOrigin.Begin);
         }
 
         return ReadModel(stream, fileType);
     }
 
-    private IDatModel ReadModel(Stream stream, DatFileType requestedFileType)
+    private IDatModel ReadModel(Stream stream, DatLayoutKind requestedFileType)
     {
         var reader = Services.GetRequiredService<IDatFileReader>();
         var datBinary = reader.ReadBinary(stream);
@@ -181,10 +181,10 @@ internal class DatService(IServiceProvider services) : ServiceBase(services), ID
         var converter = Services.GetRequiredService<IDatBinaryConverter>();
         var datModel = converter.BinaryToModel(datBinary);
 
-        if (requestedFileType == DatFileType.NotOrdered && datModel is ISortedDatModel sorted)
+        if (requestedFileType == DatLayoutKind.NotOrdered && datModel is ISortedDatModel sorted)
             datModel = sorted.ToUnsortedModel();
 
-        if (requestedFileType == DatFileType.OrderedByCrc32 && datModel is IUnsortedDatModel)
+        if (requestedFileType == DatLayoutKind.OrderedByCrc32 && datModel is IUnsortedDatModel)
             throw new InvalidOperationException("Unsorted DAT file cannot be loaded as sorted DAT file");
 
         return datModel;

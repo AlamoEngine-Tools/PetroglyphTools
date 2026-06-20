@@ -1,17 +1,16 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Data;
 
 public abstract class DatModelTest
 { 
-    protected abstract DatFileType ExpectedFileType { get; }
+    protected abstract DatLayoutKind ExpectedFileType { get; }
 
     protected abstract IDatModel CreateModel(IList<DatStringEntry> entries);
 
@@ -28,7 +27,7 @@ public abstract class DatModelTest
     {
         var model = CreateModel(CreateDataEntries());
 
-        Assert.Equal(ExpectedFileType, model.KeySortOrder);
+        Assert.Equal(ExpectedFileType, model.Layout);
         Assert.Equal(4, model.Count);
         Assert.Equivalent(new HashSet<string>{ "1", "3", "4" }.ToList(), model.Keys.ToList());
         Assert.Equivalent(new HashSet<Crc32> { new(1), new(3), new(4) }.ToList(), model.CrcKeys.ToList());

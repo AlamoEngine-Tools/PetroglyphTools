@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -6,7 +6,6 @@ using AnakinRaW.CommonUtilities.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using PG.Commons.Hashing;
-using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
@@ -32,7 +31,7 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// Game credit models <b>may</b> also be sorted by pure chance.
     /// So this property does not provide a safe way to determine the semantics of this model.
     /// </remarks>
-    public DatFileType KeySortOrder { get; }
+    public DatLayoutKind Layout { get; }
 
     /// <summary>
     /// Determines whether the <see cref="IDatModel"/> contains the specified key.

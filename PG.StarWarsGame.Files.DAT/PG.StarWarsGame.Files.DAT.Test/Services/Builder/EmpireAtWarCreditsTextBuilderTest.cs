@@ -1,7 +1,6 @@
-﻿using AnakinRaW.CommonUtilities.Testing;
+using AnakinRaW.CommonUtilities.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
@@ -51,7 +50,7 @@ public class EmpireAtWarCreditsTextBuilderTest : PetroglyphStarWarsGameDatBuilde
         Assert.NotNull(builder.SortedEntries);
         Assert.NotNull(builder.Entries);
         Assert.Equal(BuilderOverrideKind.AllowDuplicate, builder.KeyOverwriteBehavior);
-        Assert.Equal(DatFileType.NotOrdered, builder.TargetKeySortOrder);
+        Assert.Equal(DatLayoutKind.NotOrdered, builder.TargetLayout);
         Assert.IsType<EmpireAtWarKeyValidator>(builder.KeyValidator);
     }
 
@@ -60,11 +59,11 @@ public class EmpireAtWarCreditsTextBuilderTest : PetroglyphStarWarsGameDatBuilde
     {
         using (var fs = FileSystem.FileStream.New("Credits.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.creditstext_english.dat");
+            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatServiceTest), "Files.creditstext_english.dat");
             stream.CopyTo(fs);
         }
 
-        var creditsModel = ServiceProvider.GetRequiredService<IDatFileService>().LoadAs("Credits.dat", DatFileType.NotOrdered).Content;
+        var creditsModel = ServiceProvider.GetRequiredService<IDatService>().LoadFileAs("Credits.dat", DatLayoutKind.NotOrdered).Content;
 
         var builder = CreateBuilder();
 

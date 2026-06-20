@@ -1,8 +1,8 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
-using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.DAT.Data;
 
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
@@ -13,8 +13,8 @@ namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 public sealed class EmpireAtWarCreditsTextBuilder : PetroglyphStarWarsGameDatBuilder
 {
     /// <inheritdoc/>
-    /// <remarks>An instance of this class always returns <see cref="DatFileType.NotOrdered"/>.</remarks>
-    public override DatFileType TargetKeySortOrder => DatFileType.NotOrdered;
+    /// <remarks>An instance of this class always returns <see cref="DatLayoutKind.NotOrdered"/>.</remarks>
+    public override DatLayoutKind TargetLayout => DatLayoutKind.NotOrdered;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextBuilder"/> class.

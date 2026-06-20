@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -9,7 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
-using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
@@ -29,7 +28,7 @@ internal abstract class DatModel : IDatModel
 
     public ISet<Crc32> CrcKeys => new HashSet<Crc32>(_firstCrcKeyValueDictionary.Keys);
 
-    public abstract DatFileType KeySortOrder { get; }
+    public abstract DatLayoutKind Layout { get; }
 
     protected DatModel(IEnumerable<DatStringEntry> entries)
     {

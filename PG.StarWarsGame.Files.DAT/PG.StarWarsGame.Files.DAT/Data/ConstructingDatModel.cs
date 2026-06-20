@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -9,17 +9,16 @@ using System.Linq;
 using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
-using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
-internal class ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatFileType fileType) : IDatModel
+internal class ConstructingDatModel(IEnumerable<DatStringEntry> entries, DatLayoutKind fileType) : IDatModel
 {
-    private readonly IList<DatStringEntry> _entries = fileType == DatFileType.NotOrdered ? entries.ToList() : Crc32Utilities.SortByCrc32(entries);
+    private readonly IList<DatStringEntry> _entries = fileType == DatLayoutKind.NotOrdered ? entries.ToList() : Crc32Utilities.SortByCrc32(entries);
 
     public int Count => _entries.Count;
 
-    public DatFileType KeySortOrder { get; } = fileType;
+    public DatLayoutKind Layout { get; } = fileType;
 
     public DatStringEntry this[int index] => _entries[index];
 

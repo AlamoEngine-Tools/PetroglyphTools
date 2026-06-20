@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text;
 using AnakinRaW.CommonUtilities.Testing;
 using AnakinRaW.CommonUtilities.Testing.Extensions;
@@ -30,7 +31,7 @@ public class MtdServiceTest : CommonMtdTestBase
     {
         Assert.Throws<ArgumentException>(() => _mtdService.LoadFile(""));
         Assert.Throws<ArgumentNullException>(() => _mtdService.LoadFile((string)null!));
-        Assert.Throws<ArgumentNullException>(() => _mtdService.LoadFile((Stream)null!));
+        Assert.Throws<ArgumentNullException>(() => _mtdService.LoadFile((FileSystemStream)null!));
         Assert.Throws<ArgumentNullException>(() => _mtdService.LoadModel((Stream)null!));
         Assert.Throws<ArgumentNullException>(() => _mtdService.LoadModel((byte[])null!));
     }
@@ -49,7 +50,7 @@ public class MtdServiceTest : CommonMtdTestBase
         FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
 
         Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadFile("test.mtd"));
-        Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadFile(new TestMegDataStream("test.mtd", data)));
+        Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadModel(new TestMegDataStream("test.mtd", data)));
         Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadModel(new MemoryStream(data)));
         Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadModel(data));
         Assert.Throws<BinaryCorruptedException>(() => _mtdService.LoadModel(data.AsSpan()));
@@ -62,9 +63,9 @@ public class MtdServiceTest : CommonMtdTestBase
         FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
 
         CompareFileWithExpected(files, _mtdService.LoadFile("test.mtd"));
-        CompareFileWithExpected(files, _mtdService.LoadFile(new TestMegDataStream("test.mtd", data)));
 
         // The same data parses identically through the in-memory model overloads.
+        CompareDirectoryWithExpected(files, _mtdService.LoadModel(new TestMegDataStream("test.mtd", data)));
         CompareDirectoryWithExpected(files, _mtdService.LoadModel(new MemoryStream(data)));
         CompareDirectoryWithExpected(files, _mtdService.LoadModel(data));
         CompareDirectoryWithExpected(files, _mtdService.LoadModel(data.AsSpan()));
@@ -85,10 +86,19 @@ public class MtdServiceTest : CommonMtdTestBase
     }
 
     [Fact]
-    public void LoadFile_FocMtd()
+    public void LoadModel_FocMtd()
     {
         var focFile = TestingHelpers.GetEmbeddedResource(GetType(), "Files.MT_COMMANDBAR.MTD");
-        Assert.DoesNotThrow(() => _mtdService.LoadFile(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
+        Assert.DoesNotThrow(() => _mtdService.LoadModel(new TestMegDataStream("MT_COMMANDBAR.MTD", focFile)));
+    }
+
+    [Theory]
+    [MemberData(nameof(MtdTestData.ValidMtdData), MemberType = typeof(MtdTestData))]
+    public void LoadModel_NonSeekableStream(byte[] data, IList<MtdEntryInformationContainer> files)
+    {
+        using var nonSeekable = new NonSeekableReadStream(data);
+
+        CompareDirectoryWithExpected(files, _mtdService.LoadModel(nonSeekable));
     }
 
     private void CompareFileWithExpected(IList<MtdEntryInformationContainer> expectedFiles, IMtdFile mtdFile)
@@ -114,12 +124,12 @@ public class MtdServiceTest : CommonMtdTestBase
     public void MTD_FileWithCollision()
     {
         var testStream = new TestMegDataStream("MT_COMMANDBAR.MTD", MtdTestData.MtdWithKnownCollision());
-        var fileWithCollision = _mtdService.LoadFile(testStream);
+        var directory = _mtdService.LoadModel(testStream);
 
         var expectedCrc = new Crc32(3596410486);
 
-        Assert.Equal(2, fileWithCollision.Content.Count);
-        Assert.True(fileWithCollision.Content.Contains(expectedCrc));
-        Assert.Equal(2, fileWithCollision.Content.EntriesWithCrc(expectedCrc).Count);
+        Assert.Equal(2, directory.Count);
+        Assert.True(directory.Contains(expectedCrc));
+        Assert.Equal(2, directory.EntriesWithCrc(expectedCrc).Count);
     }
 }

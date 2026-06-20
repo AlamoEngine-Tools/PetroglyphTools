@@ -20,7 +20,6 @@ public static class MtdServiceContribution
     public static void SupportMTD(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IMtdService>(sp => new MtdService(sp));
-        serviceCollection.AddSingleton<IMtdFileService>(sp => sp.GetRequiredService<IMtdService>());
         serviceCollection.AddSingleton<IMtdBinaryConverter>(sp => new MtdBinaryConverter(sp));
         serviceCollection.AddSingleton<IMtdFileReader>(sp => new MdtFileReader(sp));
     }

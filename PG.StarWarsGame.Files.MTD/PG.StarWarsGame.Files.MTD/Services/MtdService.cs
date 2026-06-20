@@ -18,15 +18,15 @@ internal class MtdService(IServiceProvider serviceProvider) : ServiceBase(servic
     private readonly IMtdBinaryConverter _binaryConverter = serviceProvider.GetRequiredService<IMtdBinaryConverter>();
     private readonly IMtdFileReader _fileReader = serviceProvider.GetRequiredService<IMtdFileReader>();
 
-    public IMtdFile Load(string filePath)
+    public IMtdFile LoadFile(string filePath)
     {
         ThrowHelper.ThrowIfNullOrEmpty(filePath);
         var fullPath = FileSystem.Path.GetFullPath(filePath);
         using var fs = FileSystem.FileStream.New(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        return Load(fs);
+        return LoadFile(fs);
     }
 
-    public IMtdFile Load(Stream stream)
+    public IMtdFile LoadFile(Stream stream)
     {
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));

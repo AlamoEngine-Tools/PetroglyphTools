@@ -55,7 +55,7 @@ public interface IMegService
     /// <exception cref="FileNotFoundException"><paramref name="filePath"/> is not found.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty.</exception>
-    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
+    /// <exception cref="NotImplementedException">The archive is encrypted.</exception>
     IMegFile LoadFile(string filePath);
 
     /// <summary>
@@ -77,24 +77,33 @@ public interface IMegService
     /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported file size.</exception>
     /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not a MEG archive.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
+    /// <exception cref="NotImplementedException">The archive is encrypted.</exception>
     IMegFile LoadFile(FileSystemStream stream);
 
     /// <summary>
     /// Loads a MEG archive from a stream.
     /// </summary>
     /// <remarks>
-    /// If <paramref name="stream"/> is a file system stream, the  method returns an <see cref="IMegFile"/>.
-    /// Otherwise, the whole stream is copied into memory and making the returned MEG self-contained.
-    /// The caller may dispose <paramref name="stream"/> immediately afterwards.
+    /// If <paramref name="stream"/> is a file system stream the method returns an <see cref="IMegFile"/>; otherwise the
+    /// whole stream is copied into memory and the returned source is self-contained. The caller may dispose
+    /// <paramref name="stream"/> immediately afterwards.
     /// </remarks>
     /// <param name="stream">The stream containing the MEG archive.</param>
     /// <returns>The loaded <see cref="IMegDataSource"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
-    /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
+    /// <exception cref="NotSupportedException">
+    /// <para>
+    /// This library does not support the specified MEG archive.
+    /// </para>
+    /// <para>
+    /// OR
+    /// </para>
+    /// <para>
+    /// The archive is encrypted.
+    /// </para>
+    /// </exception>
     /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported file size.</exception>
     /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not a MEG archive.</exception>
-    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
     IMegDataSource LoadArchive(Stream stream);
 
     /// <summary>
@@ -106,10 +115,19 @@ public interface IMegService
     /// <param name="data">The bytes of the whole MEG archive.</param>
     /// <returns>The loaded <see cref="IMegDataSource"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="data"/> is <see langword="null"/>.</exception>
-    /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
+    /// <exception cref="NotSupportedException">
+    /// <para>
+    /// This library does not support the specified MEG archive.
+    /// </para>
+    /// <para>
+    /// OR
+    /// </para>
+    /// <para>
+    /// The archive is encrypted.
+    /// </para>
+    /// </exception>
     /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported size.</exception>
     /// <exception cref="BinaryCorruptedException"><paramref name="data"/> is not a MEG archive.</exception>
-    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
     IMegDataSource LoadArchive(byte[] data);
 
     /// <summary>
@@ -120,10 +138,19 @@ public interface IMegService
     /// </remarks>
     /// <param name="data">The bytes of the whole MEG archive.</param>
     /// <returns>The loaded <see cref="IMegDataSource"/>.</returns>
-    /// <exception cref="NotSupportedException">This library does not support the specified MEG archive.</exception>
+    /// <exception cref="NotSupportedException">
+    /// <para>
+    /// This library does not support the specified MEG archive.
+    /// </para>
+    /// <para>
+    /// OR
+    /// </para>
+    /// <para>
+    /// The archive is encrypted.
+    /// </para>
+    /// </exception>
     /// <exception cref="MegSizeException">The MEG archive or its entries are exceeding the supported size.</exception>
     /// <exception cref="BinaryCorruptedException"><paramref name="data"/> is not a MEG archive.</exception>
-    /// <exception cref="InvalidOperationException">Attempts to load an encrypted MEG archive.</exception>
     IMegDataSource LoadArchive(ReadOnlySpan<byte> data);
 
     /// <summary>

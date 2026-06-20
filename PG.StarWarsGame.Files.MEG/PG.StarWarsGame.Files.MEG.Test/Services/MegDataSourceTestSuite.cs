@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using AnakinRaW.CommonUtilities.Testing;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
@@ -78,6 +79,15 @@ public abstract class MegDataSourceTestSuite : CommonMegTestBase
         // Reading from one stream must not move the position of the other.
         Assert.Equal(1, s1.Position);
         Assert.Equal(0, s2.Position);
+    }
+
+    [Fact]
+    public void Dispose_IsIdempotent()
+    {
+        var source = CreateMegDataSource(MegTestConstants.ContentMegFileV1);
+
+        source.Dispose();
+        Assert.DoesNotThrow(source.Dispose);
     }
 
     private static byte[] ReadAll(Stream stream)

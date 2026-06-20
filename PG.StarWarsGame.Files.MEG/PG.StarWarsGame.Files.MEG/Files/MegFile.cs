@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Utilities;
@@ -19,9 +18,6 @@ internal sealed class MegFile : PetroglyphFileHolder<IMegArchive, MegFileInforma
 {
     /// <inheritdoc/>
     public IMegArchive Archive => Content;
-
-    /// <inheritdoc/>
-    public MegEncryptionData? EncryptionData => FileInformation.EncryptionData;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFile"/> class.

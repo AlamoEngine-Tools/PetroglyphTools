@@ -97,16 +97,24 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
     {
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
-        
+
         if (TryGetFileName(stream, out var fileName))
-            return LoadMegFromFile(stream, fileName);
+        {
+            var (version, archive, encrypted) = ReadArchive(stream);
+            if (encrypted)
+                throw new NotSupportedException(LoadArchiveEncryptedMessage);
+            using var megFileInfo = new MegFileInformation(FileSystem.Path.GetFullPath(fileName), version);
+            return new MegFile(archive!, megFileInfo, Services);
+        }
 
         using var buffer = new MemoryStream(stream.CanSeek ? (int)(stream.Length - stream.Position) : 0);
         stream.CopyTo(buffer);
         buffer.Position = 0;
 
-        var (_, archive) = ReadArchive(buffer);
-        return new InMemoryMeg(archive, buffer.ToArray());
+        var (_, memArchive, memEncrypted) = ReadArchive(buffer);
+        if (memEncrypted)
+            throw new NotSupportedException(LoadArchiveEncryptedMessage);
+        return new InMemoryMeg(memArchive!, buffer.ToArray());
     }
 
     public IMegDataSource LoadArchive(byte[] data)
@@ -153,27 +161,34 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
 
     private MegFile LoadMegFromFile(Stream stream, string name)
     {
-        var (version, archive) = ReadArchive(stream);
+        var (version, archive, encrypted) = ReadArchive(stream);
+        if (encrypted)
+            throw new NotImplementedException("Loading an encrypted MEG archive is not yet implemented.");
+
         using var megFileInfo = new MegFileInformation(FileSystem.Path.GetFullPath(name), version);
-        return new MegFile(archive, megFileInfo, Services);
+        return new MegFile(archive!, megFileInfo, Services);
     }
 
     private InMemoryMeg LoadMegFromMemory(ReadOnlySpan<byte> megData)
     {
         var copiedMegData = megData.ToArray();
         using var dataStream = new MemoryStream(copiedMegData, writable: false);
-        var (_, archive) = ReadArchive(dataStream);
-        return new InMemoryMeg(archive, copiedMegData);
+        var (_, archive, encrypted) = ReadArchive(dataStream);
+        if (encrypted)
+            throw new NotSupportedException(LoadArchiveEncryptedMessage);
+
+        return new InMemoryMeg(archive!, copiedMegData);
     }
 
     // Reads the version and the archive model from a seekable stream positioned at the start of the MEG.
-    private (MegVersion Version, IMegArchive Archive) ReadArchive(Stream stream)
+    // Does not throw on encrypted input; the caller decides which exception is appropriate.
+    private (MegVersion Version, IMegArchive? Archive, bool Encrypted) ReadArchive(Stream stream)
     {
         var startPosition = stream.Position;
         var megVersion = GetMegVersion(stream, out var encrypted);
 
         if (encrypted)
-            throw new NotImplementedException("Encrypted archives are currently not supported");
+            return (megVersion, null, true);
 
         stream.Seek(startPosition, SeekOrigin.Begin);
 
@@ -181,8 +196,10 @@ internal sealed class MegService(IServiceProvider services) : ServiceBase(servic
         var metadata = binaryReader.ReadBinary(stream);
 
         var archive = BinaryServiceFactory.GetConverter(megVersion).BinaryToModel(metadata);
-        return (megVersion, archive);
+        return (megVersion, archive, false);
     }
+
+    private const string LoadArchiveEncryptedMessage = "Loading an encrypted MEG archive via LoadArchive is not supported.";
 
     private static bool TryGetFileName(Stream stream, [NotNullWhen(true)] out string? fileName)
     {

@@ -1,9 +1,11 @@
+using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
+using PG.StarWarsGame.Files.MEG.Test.Files;
 using Testably.Abstractions.Testing;
 using Xunit;
 using static PG.StarWarsGame.Files.MEG.Test.Data.Entries.MegDataEntryTest;
@@ -40,6 +42,23 @@ public class FileMegDataSourceTest : MegDataSourceTestSuite
         FileSystem.File.Delete("test.meg");
 
         Assert.Throws<FileNotFoundException>(() => meg.GetData(entry));
+    }
+
+    [Fact]
+    public void Dispose_ViaInterface_DisposesHolder()
+    {
+        // The MegFile holder owns its FileInformation (and any encryption material on it).
+        // Disposing via the IMegDataSource interface must flow through to the holder's disposal.
+        FileSystem.Initialize().WithFile("test.meg");
+        var megFile = new MegFile(
+            new MegArchive([]),
+            new MegFileInformation("test.meg", MegVersion.V3, MegEncryptionDataTest.CreateRandomData()),
+            ServiceProvider);
+        IMegDataSource source = megFile;
+
+        source.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => megFile.FileInformation);
     }
 }
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using AnakinRaW.CommonUtilities;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Utilities;
@@ -12,15 +13,12 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// An <see cref="IMegDataSource"/> that holds a whole MEG in memory and serves entry data from a byte buffer.
 /// </summary>
-internal sealed class InMemoryMeg : IMegDataSource
+internal sealed class InMemoryMeg : DisposableObject, IMegDataSource
 {
     private readonly byte[] _megData;
 
     /// <inheritdoc />
     public IMegArchive Archive { get; }
-
-    /// <inheritdoc />
-    public MegEncryptionData? EncryptionData => null;
 
     internal string Name { get; } = $"<in-memory MEG {Guid.NewGuid()}>";
 

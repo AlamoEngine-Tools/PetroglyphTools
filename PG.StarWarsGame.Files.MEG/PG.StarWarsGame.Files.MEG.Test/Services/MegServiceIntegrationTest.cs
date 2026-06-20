@@ -216,6 +216,47 @@ public class MegServiceIntegrationTest : CommonMegTestBase
         Assert.Throws<ArgumentNullException>(() => _megService.LoadFile((FileSystemStream)null!));
     }
 
+    [Fact]
+    public void LoadFile_EncryptedArchive_ThrowsNotImplemented()
+    {
+        const string megFileName = "encrypted.meg";
+        FileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(EncryptedV3EmptyMegHeader));
+
+        Assert.Throws<NotImplementedException>(() => _megService.LoadFile(megFileName));
+
+        using var fs = FileSystem.File.OpenRead(megFileName);
+        Assert.Throws<NotImplementedException>(() => _megService.LoadFile(fs));
+    }
+
+    [Fact]
+    public void LoadArchive_EncryptedArchive_ThrowsNotSupported()
+    {
+        // File-stream branch — even though LoadArchive(Stream) with a FileSystemStream would otherwise
+        // produce a file-backed MegFile, an encrypted archive is by-design unsupported on this entry point.
+        const string megFileName = "encrypted.meg";
+        FileSystem.Initialize().WithFile(megFileName).Which(m => m.HasBytesContent(EncryptedV3EmptyMegHeader));
+        using (var fs = FileSystem.File.OpenRead(megFileName))
+        {
+            Assert.Throws<NotSupportedException>(() => _megService.LoadArchive(fs));
+        }
+
+        // Memory branches
+        using var ms = new MemoryStream(EncryptedV3EmptyMegHeader);
+        Assert.Throws<NotSupportedException>(() => _megService.LoadArchive(ms));
+        Assert.Throws<NotSupportedException>(() => _megService.LoadArchive(EncryptedV3EmptyMegHeader));
+        Assert.Throws<NotSupportedException>(() => _megService.LoadArchive(EncryptedV3EmptyMegHeader.AsSpan()));
+    }
+
+    private static readonly byte[] EncryptedV3EmptyMegHeader =
+    [
+        0xff, 0xff, 0xff, 0x8f,
+        0xa4, 0x70, 0x7d, 0x3f,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+    ];
+
     #endregion
 
     #region Read / Write V1

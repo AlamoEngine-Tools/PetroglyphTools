@@ -11,17 +11,12 @@ namespace PG.StarWarsGame.Files.MEG.Data;
 /// <summary>
 /// Represents a MEG archive along with the necessary means to access its data.
 /// </summary>
-public interface IMegDataSource
+public interface IMegDataSource : IDisposable
 {
     /// <summary>
     /// Gets the archive metadata: the table of contents describing the data entries contained in this MEG.
     /// </summary>
     IMegArchive Archive { get; }
-
-    /// <summary>
-    /// Gets the encryption data of this MEG archive, or <see langword="null"/> if the archive is not encrypted.
-    /// </summary>
-    MegEncryptionData? EncryptionData { get; }
 
     /// <summary>
     /// Gets a read-only stream over the data of the specified <paramref name="entry"/>.

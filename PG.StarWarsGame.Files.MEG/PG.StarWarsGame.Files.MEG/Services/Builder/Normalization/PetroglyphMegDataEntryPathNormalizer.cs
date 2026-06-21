@@ -27,8 +27,8 @@ public class PetroglyphMegDataEntryPathNormalizer : MegDataEntryPathNormalizerBa
     /// <summary>
     /// Normalizes the specified MEG data entry path according to Petroglyph game requirements.
     /// </summary>
-    /// <returns>The normalized entry path.</returns>
     /// <param name="entryPath">The read-only span containing the entry's file path to normalize.</param>
+    /// <returns>The normalized entry path.</returns>
     /// <remarks>
     /// This method ensures that the path is converted to uppercase and uses Windows-style directory separators (backslash).
     /// </remarks>
@@ -48,7 +48,7 @@ public class PetroglyphMegDataEntryPathNormalizer : MegDataEntryPathNormalizerBa
     /// The number of characters written to the destination buffer after normalization.
     /// </returns>
     /// <exception cref="ArgumentException">
-    /// Thrown if the destination buffer is not large enough to store the normalized path.
+    /// <paramref name="destination"/> is not large enough to store the normalized path.
     /// </exception>
     /// <remarks>
     /// This method ensures that the path is converted to uppercase and uses Windows-style directory separators (backslash).

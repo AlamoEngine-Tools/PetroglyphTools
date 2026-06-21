@@ -10,12 +10,12 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
-/// Status information whether a file or data entry was added to an <see cref="IMegBuilder"/>.
+/// Represents the result of adding a file or data entry to an <see cref="IMegBuilder"/>.
 /// </summary>
 public readonly struct MegDataEntryAddResult
 {
     /// <summary>
-    /// Gets whether the file or data entry was added or not.
+    /// Gets a value that indicates whether the file or data entry was added.
     /// </summary>
     [MemberNotNullWhen(true, nameof(AddedBuilderInfo))]
     public bool Added => Status == MegDataEntryAddStatus.Added && AddedBuilderInfo is not null;
@@ -26,23 +26,23 @@ public readonly struct MegDataEntryAddResult
     public MegDataEntryAddStatus Status { get; }
 
     /// <summary>
-    /// Indicates whether a previous data entry was overwritten.
+    /// Gets a value that indicates whether a previous data entry was overwritten.
     /// </summary>
     [MemberNotNullWhen(true, nameof(OverwrittenBuilderInfo))]
     public bool WasOverwrite => OverwrittenBuilderInfo is not null;
 
     /// <summary>
-    /// The data entry info which was added or <see langword="null"/> if no entry was added.
+    /// Gets the data entry information that was added, or <see langword="null"/> if no entry was added.
     /// </summary>
     public MegDataEntryBuilderInfo? AddedBuilderInfo { get; }
 
     /// <summary>
-    /// The data entry info which was overwritten or <see langword="null"/> if no data entry was overwritten.
+    /// Gets the data entry information that was overwritten, or <see langword="null"/> if no data entry was overwritten.
     /// </summary>
     public MegDataEntryBuilderInfo? OverwrittenBuilderInfo { get; }
 
     /// <summary>
-    /// A user readable message why the entry was not added. <see langword="null"/> if the entry was added successfully or no message was provided.
+    /// Gets a user-readable message why the entry was not added, or <see langword="null"/> if the entry was added successfully or no message was provided.
     /// </summary>
     public string? Message { get; }
 

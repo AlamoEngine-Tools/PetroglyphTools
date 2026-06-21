@@ -29,7 +29,10 @@ public static class StreamExtensions
     /// Gets the file path of the file opened in the <see cref="Stream"/>. The path may be relative.
     /// </summary>
     /// <param name="stream">The stream to get the file path from.</param>
-    /// <param name="isMegStream">Stores the status whether <paramref name="stream"/> is a MEG stream.</param>
+    /// <param name="isMegStream">
+    /// When this method returns, contains a value that indicates whether <paramref name="stream"/> is a MEG stream.
+    /// This parameter is treated as uninitialized.
+    /// </param>
     /// <returns>The file path of the opened file.</returns>
     /// <exception cref="InvalidOperationException"><paramref name="stream"/> does not have path information.</exception>
     public static string GetFilePath(this Stream stream, out bool isMegStream)
@@ -57,7 +60,7 @@ public static class StreamExtensions
     /// <param name="stream">The stream to retrieve the file path from.</param>
     /// <param name="fileName">
     /// When this method returns, contains the file path of the opened file if the operation was successful; 
-    /// otherwise, <see langword="null"/>. This parameter is passed uninitialized.
+    /// otherwise, <see langword="null"/>. This parameter is treated as uninitialized.
     /// </param>
     /// <returns>
     /// <see langword="true"/> if the file path was successfully retrieved; otherwise, <see langword="false"/>.
@@ -73,7 +76,7 @@ public static class StreamExtensions
     /// <param name="stream">The stream to retrieve the file path from.</param>
     /// <param name="fileName">
     /// When this method returns, contains the file path of the opened file if the operation was successful; 
-    /// otherwise, <see langword="null"/>. This parameter is passed uninitialized.
+    /// otherwise, <see langword="null"/>. This parameter is treated as uninitialized.
     /// </param>
     /// <param name="isMegStream">
     /// When this method returns, contains a value indicating whether the stream is a MEG file data stream.

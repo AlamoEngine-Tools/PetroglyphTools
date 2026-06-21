@@ -15,15 +15,16 @@ namespace PG.StarWarsGame.Files.MEG.Binary;
 internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(services), IMegVersionIdentifier
 {
     /// <summary>
-    /// This method is optimized in a way to retrieve the MEGs file version as efficient as possible.
-    /// If an invalid MEG archive is detected a <see cref="BinaryCorruptedException"/> is thrown.
-    /// <b>However</b>, this method does not completely verify whether the passed stream is a valid MEG archive or not.
+    /// Determines the MEG file version of the specified stream as efficiently as possible.
     /// </summary>
-    /// <param name="stream">The MEG archive stream</param>
-    /// <param name="encrypted">Indicates whether the archive is encrypted or not.</param>
+    /// <remarks>
+    /// This method does not completely verify whether the passed stream is a valid MEG archive.
+    /// </remarks>
+    /// <param name="stream">The MEG archive stream.</param>
+    /// <param name="encrypted">When this method returns, contains <see langword="true"/> if the archive is encrypted; otherwise, <see langword="false"/>. This parameter is treated as uninitialized.</param>
     /// <returns>The determined <see cref="MegVersion"/> of the MEG stream.</returns>
-    /// <exception cref="ArgumentNullException">The <paramref name="stream"/> is null.</exception>
-    /// <exception cref="ArgumentException">The <paramref name="stream"/> is not readable or seekable.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="stream"/> is not readable or seekable.</exception>
     /// <exception cref="BinaryCorruptedException">The read data is not a valid MEG archive.</exception>
     public unsafe MegVersion GetMegVersion(Stream stream, out bool encrypted)
     {

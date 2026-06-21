@@ -16,14 +16,14 @@ using AnakinRaW.CommonUtilities.FileSystem;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-///  Validates a MEG file information whether it is compliant to a Petroglyph Star Wars game. 
+/// Validates whether a MEG file information is compliant to a Petroglyph Star Wars game.
 /// </summary>
 public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInformationValidator
 {
     // The game arbitrary varies between 260 and 256, so we chose the larger value here. Mind that the value is 260 - 1,
     // because we need to reserve one byte for the zero-terminator '\0'.
     /// <summary>
-    /// The max number of characters allowed in a PG game for file paths.
+    /// Represents the maximum number of characters allowed in a Petroglyph game for file paths.
     /// </summary>
     public const int PetroglyphMaxFilePathLength = 259;
 

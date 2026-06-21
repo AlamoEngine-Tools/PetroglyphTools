@@ -9,12 +9,12 @@ using PG.StarWarsGame.Files.DAT.Data;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// Status information whether an entry was added to an <see cref="IDatBuilder"/>.
+/// Represents status information about whether an entry was added to an <see cref="IDatBuilder"/>.
 /// </summary>
 public readonly struct AddEntryResult
 {
     /// <summary>
-    /// Gets whether the entry was added or not.
+    /// Gets a value that indicates whether the entry was added.
     /// </summary>
     [MemberNotNullWhen(true, nameof(AddedEntry))]
     public bool Added => Status is AddEntryState.Added or AddEntryState.AddedDuplicate && AddedEntry is not null;
@@ -25,23 +25,23 @@ public readonly struct AddEntryResult
     public AddEntryState Status { get; }
 
     /// <summary>
-    /// Indicates whether a previous entry was overwritten.
+    /// Gets a value that indicates whether a previous entry was overwritten.
     /// </summary>
     [MemberNotNullWhen(true, nameof(OverwrittenEntry))]
     public bool WasOverwrite => OverwrittenEntry is not null;
 
     /// <summary>
-    /// The entry which was added or <see langword="null"/> if no entry was added.
+    /// Gets the entry that was added, or <see langword="null"/> if no entry was added.
     /// </summary>
     public DatStringEntry? AddedEntry { get; }
 
     /// <summary>
-    /// The entry which was overwritten or <see langword="null"/> if no entry was overwritten.
+    /// Gets the entry that was overwritten, or <see langword="null"/> if no entry was overwritten.
     /// </summary>
     public DatStringEntry? OverwrittenEntry { get; }
 
     /// <summary>
-    /// A user readable message why the entry was not added. <see langword="null"/> if the entry was added successfully or no message was provided.
+    /// Gets a user-readable message describing why the entry was not added, or <see langword="null"/> if the entry was added successfully or no message was provided.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public string? Message { get; }

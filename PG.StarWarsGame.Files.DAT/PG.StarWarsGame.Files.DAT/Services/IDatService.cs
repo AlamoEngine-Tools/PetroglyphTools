@@ -12,7 +12,7 @@ using PG.StarWarsGame.Files.DAT.Files;
 namespace PG.StarWarsGame.Files.DAT.Services;
 
 /// <summary>
-/// A service to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/DatFileFormat"> Localized String Tables (.DAT)</a>.
+/// Provides methods to load and create Petroglyph <a href="https://modtools.petrolution.net/docs/DatFileFormat"> Localized String Tables (.DAT)</a>.
 /// </summary>
 public interface IDatService
 {

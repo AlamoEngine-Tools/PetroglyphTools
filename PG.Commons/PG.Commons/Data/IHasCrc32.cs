@@ -6,7 +6,7 @@ using PG.Commons.Hashing;
 namespace PG.Commons.Data;
 
 /// <summary>
-/// An interface representing data that has a CRC32 checksum.
+/// Represents data that has a CRC32 checksum.
 /// </summary>
 /// <remarks>
 /// It is up to the implementation to decide which properties are considered for the CRC32 checksum.

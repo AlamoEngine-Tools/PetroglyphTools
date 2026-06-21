@@ -7,7 +7,7 @@ using PG.StarWarsGame.Files.DAT.Data;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// A <see cref="IDatBuilder"/> for building MasterText DAT files used by the
+/// Represents an <see cref="IDatBuilder"/> for building MasterText DAT files used by the
 /// Petroglyph game <em>Star Wars: Empire at War</em> and its extension <em>Empire at War: Forces of Corruption</em>.
 /// </summary>
 public sealed class EmpireAtWarMasterTextBuilder : PetroglyphStarWarsGameDatBuilder
@@ -17,9 +17,11 @@ public sealed class EmpireAtWarMasterTextBuilder : PetroglyphStarWarsGameDatBuil
     public override DatLayoutKind TargetLayout => DatLayoutKind.OrderedByCrc32;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EmpireAtWarCreditsTextBuilder"/> class.
+    /// Initializes a new instance of the <see cref="EmpireAtWarMasterTextBuilder"/> class.
     /// </summary>
-    /// <param name="overwriteDuplicates">Specifies how the build treats duplicates.</param>
+    /// <param name="overwriteDuplicates">
+    /// <see langword="true"/> to overwrite an existing entry when a duplicate key is added; otherwise, <see langword="false"/>.
+    /// </param>
     /// <param name="services">The service provider.</param>
     public EmpireAtWarMasterTextBuilder(bool overwriteDuplicates, IServiceProvider services) 
         : base(overwriteDuplicates ? BuilderOverrideKind.Overwrite : BuilderOverrideKind.NoOverwrite, services)

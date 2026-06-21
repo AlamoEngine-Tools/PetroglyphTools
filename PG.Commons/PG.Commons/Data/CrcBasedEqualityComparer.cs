@@ -28,7 +28,7 @@ namespace PG.Commons.Data;
 public sealed class CrcBasedEqualityComparer<T> : IEqualityComparer<T> where T : IHasCrc32
 {
     /// <summary>
-    /// Returns a default equality comparer for the type specified by the generic argument.
+    /// Gets the default equality comparer for the type specified by the generic argument.
     /// </summary>
     public static readonly CrcBasedEqualityComparer<T> Instance = new();
 
@@ -45,8 +45,8 @@ public sealed class CrcBasedEqualityComparer<T> : IEqualityComparer<T> where T :
     /// <item><description>The <see cref="IHasCrc32.Crc32"/> values of <paramref name="x"/> and <paramref name="y"/> are equal.</description></item>
     /// </list>
     /// </remarks>
-    /// <param name="x">The first object of type <typeparamref name="T"/> to compare.</param>
-    /// <param name="y">The second object of type <typeparamref name="T"/> to compare.</param>
+    /// <param name="x">The first object to compare.</param>
+    /// <param name="y">The second object to compare.</param>
     /// <returns>
     /// <see langword="true"/> if the specified objects are both <see langword="null"/>, 
     /// are the same reference, or have equal CRC32 checksums; otherwise, <see langword="false"/>.

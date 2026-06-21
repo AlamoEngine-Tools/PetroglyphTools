@@ -11,7 +11,7 @@ using PG.StarWarsGame.Files.Services.Builder;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// Service to create DAT files ensuring validation of keys.
+/// Provides methods to create DAT files while ensuring validation of keys.
 /// </summary>
 public interface IDatBuilder : IFileBuilder<IReadOnlyList<DatStringEntry>, DatFileInformation>
 {
@@ -21,7 +21,7 @@ public interface IDatBuilder : IFileBuilder<IReadOnlyList<DatStringEntry>, DatFi
     DatLayoutKind TargetLayout { get; }
 
     /// <summary>
-    /// Gets a value indicating how the <see cref="IDatBuilder"/> treats an already existing key.
+    /// Gets a value that indicates how the <see cref="IDatBuilder"/> treats an already existing key.
     /// </summary>
     BuilderOverrideKind KeyOverwriteBehavior { get; }
 
@@ -78,8 +78,8 @@ public interface IDatBuilder : IFileBuilder<IReadOnlyList<DatStringEntry>, DatFi
     /// <summary>
     /// Checks whether the specified key is valid for this <see cref="IDatBuilder"/>.
     /// </summary>
-    /// <param name="key">The key to validate</param>
-    /// <returns><see langword="true"/> if the passed file information are valid; otherwise, <see langword="false"/>.</returns>
+    /// <param name="key">The key to validate.</param>
+    /// <returns><see langword="true"/> if <paramref name="key"/> is valid for this <see cref="IDatBuilder"/>; otherwise, <see langword="false"/>.</returns>
     bool IsKeyValid(string? key);
 
     /// <summary>

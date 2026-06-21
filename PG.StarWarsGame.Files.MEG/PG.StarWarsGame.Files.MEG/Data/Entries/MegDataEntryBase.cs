@@ -27,7 +27,7 @@ public abstract class MegDataEntryBase<T> : IMegDataEntry<T>, IEquatable<MegData
     /// Initializes a new instance of the <see cref="MegDataEntryBase{T}"/> class with a given data entry location.
     /// </summary>
     /// <param name="location">The location information of this entry.</param>
-    /// <exception cref="ArgumentNullException">The <paramref name="location"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="location"/> is <see langword="null"/>.</exception>
     protected MegDataEntryBase(T location)
     {
         Location = location ?? throw new ArgumentNullException(nameof(location));

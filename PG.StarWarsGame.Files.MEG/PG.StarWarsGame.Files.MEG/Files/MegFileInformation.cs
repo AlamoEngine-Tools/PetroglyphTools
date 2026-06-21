@@ -21,7 +21,7 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     public MegVersion Version { get; }
 
     /// <summary>
-    /// Gets a value indicating whether an <see cref="IMegFile"/> is encrypted.
+    /// Gets a value that indicates whether the <see cref="IMegFile"/> is encrypted.
     /// </summary>
     [MemberNotNullWhen(true, nameof(EncryptionData))]
     public bool HasEncryption => EncryptionData is not null;
@@ -36,8 +36,8 @@ public sealed record MegFileInformation : PetroglyphFileInformation
     /// </summary>
     /// <param name="path">The file path of the MEG file.</param>
     /// <param name="version">The MEG version of the file.</param>
-    /// <param name="encryptionData">The encryption data of MEG file or <see langword="null"/> if the MEG file is not encrypted.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
+    /// <param name="encryptionData">The encryption data of the MEG file, or <see langword="null"/> if the MEG file is not encrypted.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
     /// <exception cref="ArgumentException">
     /// <paramref name="version"/> is not <see cref="MegVersion.V3"/> but <paramref name="encryptionData"/> is not <see langword="null"/>.

@@ -43,25 +43,25 @@ public abstract class MegBuilderBase
 
     /// <inheritdoc/>
     /// <value>
-    /// <see langword="true"/> by default.
+    /// The default is <see langword="true"/>.
     /// </value>
     public virtual bool OverwritesDuplicateEntries => true;
 
     /// <inheritdoc/>
     /// <value>
-    /// <seealso cref="BinaryMegFileInformationValidator"/> by default.
+    /// The file information validator. The default is a <see cref="BinaryMegFileInformationValidator"/>.
     /// </value>
     public virtual IMegFileInformationValidator MegFileInformationValidator { get; }
 
     /// <inheritdoc/>
     /// <value>
-    /// <seealso cref="BinaryMegDataEntryValidator"/> by default.
+    /// The data entry validator. The default is a <see cref="BinaryMegDataEntryValidator"/>.
     /// </value>
     public virtual IMegDataEntryValidator DataEntryValidator { get; } = new BinaryMegDataEntryValidator();
 
     /// <inheritdoc/>
     /// <value>
-    /// <see langword="null"/>, meaning no normalizer is specified.
+    /// The data entry path normalizer, or <see langword="null"/> if no normalizer is specified. The default is <see langword="null"/>.
     /// </value>
     public virtual IMegDataEntryPathNormalizer? DataEntryPathNormalizer => null;
 
@@ -69,7 +69,7 @@ public abstract class MegBuilderBase
     /// Gets the maximum allowed size, in bytes, for a MEG file created by this builder.
     /// </summary>
     /// <value>
-    /// 4GB (2^32 - 1 bytes) by default 
+    /// The maximum allowed size, in bytes, for a MEG file. The default is 4GB (2^32 - 1 bytes).
     /// </value>
     public virtual uint MaxMegFileSize { get; } = MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxFileSize;
 

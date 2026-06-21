@@ -20,9 +20,9 @@ public interface IVirtualMegArchiveBuilder
     /// The resulting archive is correctly sorted as specified.
     /// </remarks>
     /// <param name="fileEntries">The collection of data references.</param>
-    /// <param name="replaceExisting">When <see langowrd="true"/>, entries with the same CRC32 checksum get replaced.</param>
+    /// <param name="replaceExisting"><see langword="true"/> to replace entries with the same CRC32 checksum; otherwise, <see langword="false"/>.</param>
     /// <returns>The virtual MEG archive.</returns>
-    /// <exception cref="EntryNotInMegException">When a <see cref="MegDataEntryReference"/> does not point to a real location.</exception>
+    /// <exception cref="EntryNotInMegException">A <see cref="MegDataEntryReference"/> does not point to a real location.</exception>
     IVirtualMegArchive BuildFrom(IEnumerable<MegDataEntryReference> fileEntries, bool replaceExisting);
 
     /// <summary>
@@ -38,7 +38,7 @@ public interface IVirtualMegArchiveBuilder
     /// The archive does not contain duplicates.
     /// </summary>
     /// <param name="megs">The MEGs to merge into a virtual MEG archive.</param>
-    /// <param name="replaceExisting">When <see langowrd="true"/>, entries from different MEGs with the same CRC32 checksum get replaced.
+    /// <param name="replaceExisting"><see langword="true"/> to replace entries from different MEGs with the same CRC32 checksum; otherwise, <see langword="false"/>.
     /// Duplicate entries within the same MEG are ignored, so that only the first entry is recognized.</param>
     /// <returns>The virtual MEG archive.</returns>
     IVirtualMegArchive BuildFrom(IEnumerable<IMegDataSource> megs, bool replaceExisting);

@@ -8,7 +8,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
 /// <summary>
-/// Base service to handle the transformation from binary to a <see cref="IMegFile" /> and vice versa.
+/// Provides factory methods for the services that transform between binary data and an <see cref="IMegFile" />.
 /// </summary>
 internal interface IMegBinaryServiceFactory
 {

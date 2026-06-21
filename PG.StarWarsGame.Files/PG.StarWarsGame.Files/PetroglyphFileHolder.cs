@@ -51,22 +51,22 @@ public abstract class PetroglyphFileHolder<TModel, TFileInfo> : DisposableObject
     public string FilePath { get; }
 
     /// <summary>
-    /// The logger of this service.
+    /// Gets the logger of this service.
     /// </summary>
     protected internal ILogger Logger { get; }
 
     /// <summary>
-    /// The file system implementation to be used.
+    /// Gets the file system implementation to be used.
     /// </summary>
     protected internal IFileSystem FileSystem { get; }
 
     /// <summary>
-    /// Returns the service provider.
+    /// Gets the service provider.
     /// </summary>
     protected internal IServiceProvider Services { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TParam}" /> class with the specified model and file information.
+    /// Initializes a new instance of the <see cref="PetroglyphFileHolder{TModel,TFileInfo}" /> class with the specified model and file information.
     /// </summary>
     /// <remarks>
     /// <paramref name="fileInformation"/> can be safely disposed after initialization without affecting <see cref="FileInformation"/>.

@@ -28,7 +28,7 @@ public class BinaryTable<T> : BinaryBase, IBinaryTable<T> where T : IBinary
     public int Count => Items.Count;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BinaryTable{T}"/> that contains elements copied from the specified collection.
+    /// Initializes a new instance of the <see cref="BinaryTable{T}"/> class that contains elements copied from the specified collection.
     /// </summary>
     /// <param name="items">The collection whose elements are copied to the new table.</param>
     /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>

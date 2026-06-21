@@ -6,12 +6,12 @@ using System;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
 /// <summary>
-/// Validator for DAT keys using the rules of a Petroglyph Star Wars game.
+/// Validates DAT keys using the rules of a Petroglyph Star Wars game.
 /// </summary>
 public sealed class EmpireAtWarKeyValidator : IDatKeyValidator
 {
     /// <summary>
-    /// Returns a singleton instance of the <see cref="EmpireAtWarKeyValidator"/>.
+    /// Gets the singleton instance of the <see cref="EmpireAtWarKeyValidator"/> class.
     /// </summary>
     public static readonly EmpireAtWarKeyValidator Instance = new();
 

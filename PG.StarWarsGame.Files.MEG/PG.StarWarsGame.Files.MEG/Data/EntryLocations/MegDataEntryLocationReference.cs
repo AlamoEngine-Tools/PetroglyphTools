@@ -9,7 +9,7 @@ using PG.StarWarsGame.Files.MEG.Files;
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
-/// Location reference of an existing MEG data entry and its owning MEG.
+/// Represents a location reference of an existing MEG data entry and its owning MEG.
 /// </summary>
 public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatable<MegDataEntryLocationReference>
 {
@@ -24,16 +24,16 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
     public MegDataEntry DataEntry { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the data exists in the MEG referenced in this instance.
+    /// Gets a value that indicates whether the data exists in the MEG referenced in this instance.
     /// </summary>
     public bool Exists => Source.Archive.Contains(DataEntry);
     
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryLocationReference"/>.
+    /// Initializes a new instance of the <see cref="MegDataEntryLocationReference"/> class.
     /// </summary>
     /// <param name="source">The MEG that owns the entry.</param>
-    /// <param name="dataEntry">The referenced <see cref="MegDataEntry"/>.</param>
-    /// <exception cref="ArgumentNullException">The <paramref name="source"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
+    /// <param name="dataEntry">The referenced data entry.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
     public MegDataEntryLocationReference(IMegDataSource source, MegDataEntry dataEntry)
     {
         Source = source ?? throw new ArgumentNullException(nameof(source));

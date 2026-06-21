@@ -18,7 +18,7 @@ using PG.StarWarsGame.Files.Services.Builder;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// Base class for a <see cref="IDatBuilder"/> service providing the fundamental implementations.
+/// Provides a base class for a <see cref="IDatBuilder"/> service with the fundamental implementations.
 /// </summary>
 public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEntry>, DatFileInformation>, IDatBuilder
 {

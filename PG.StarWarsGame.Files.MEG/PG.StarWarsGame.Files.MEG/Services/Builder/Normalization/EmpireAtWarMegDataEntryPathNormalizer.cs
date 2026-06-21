@@ -20,8 +20,8 @@ public sealed class EmpireAtWarMegDataEntryPathNormalizer : PetroglyphMegDataEnt
     /// <summary>
     /// Normalizes the specified MEG data entry path the same way as the Empire at War Alamo engine normalizes meg entry paths.
     /// </summary>
-    /// <returns>The normalized entry path.</returns>
     /// <param name="entryPath">The read-only span containing the entry's file path to normalize.</param>
+    /// <returns>The normalized entry path.</returns>
     public override string Normalize(ReadOnlySpan<char> entryPath)
     {
         if (entryPath.Length == 0)
@@ -86,7 +86,7 @@ public sealed class EmpireAtWarMegDataEntryPathNormalizer : PetroglyphMegDataEnt
     /// The number of characters written to the destination buffer after normalization.
     /// </returns>
     /// <exception cref="ArgumentException">
-    /// Thrown if the destination buffer is not large enough to store the normalized path.
+    /// <paramref name="destination"/> is not large enough to store the normalized path.
     /// </exception>
     protected override int Normalize(ReadOnlySpan<char> entryPath, Span<char> destination)
     {

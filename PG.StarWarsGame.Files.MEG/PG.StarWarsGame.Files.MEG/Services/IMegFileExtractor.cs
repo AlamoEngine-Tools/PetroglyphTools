@@ -9,7 +9,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// Service for extracting files from a .MEG archive to the file system.
+/// Represents a service for extracting files from a .MEG archive to the file system.
 /// </summary>
 /// <remarks>
 /// To read an entry's data into a stream (without writing it to disk), use <see cref="Data.IMegDataSource.GetData"/>.
@@ -60,8 +60,8 @@ public interface IMegFileExtractor
     /// It's the consumers responsibility to prevent path traversals.
     /// </remarks>
     /// <param name="dataEntry">The file to get the path from.</param>
-    /// <param name="rootPath">Base directory of the built file path.</param>
-    /// <param name="preserveDirectoryHierarchy">option to preserve the directory hierarchy of the <paramref name="dataEntry"/> file name.</param>
+    /// <param name="rootPath">The base directory of the built file path.</param>
+    /// <param name="preserveDirectoryHierarchy"><see langword="true"/> to preserve the directory hierarchy of the <paramref name="dataEntry"/> file name; otherwise, <see langword="false"/>.</param>
     /// <returns>The absolute file path.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dataEntry"/> or <paramref name="rootPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="rootPath"/> is empty or contains only whitespace.</exception>
@@ -82,8 +82,8 @@ public interface IMegFileExtractor
     /// </remarks>
     /// <param name="dataEntryLocation">The data entry information.</param>
     /// <param name="filePath">The destination file path.</param>
-    /// <param name="overwrite">When set to <see langword="true"/> existing files will be overwritten; otherwise the extraction will be skipped.</param>
-    /// <returns><see langword="true"/> if the file was extracted. <see langword="false"/> if and only if the extraction was skipped.</returns>
+    /// <param name="overwrite"><see langword="true"/> to overwrite existing files; otherwise, <see langword="false"/> to skip the extraction.</param>
+    /// <returns><see langword="true"/> if the file was extracted; otherwise, <see langword="false"/> if the extraction was skipped.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> or <paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>
     /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>

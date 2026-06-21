@@ -68,7 +68,7 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <param name="baseDirectory">The path for this <see cref="PetroglyphGameMegBuilder"/>.</param>
     /// <param name="services">The service provider.</param>
     /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> or <paramref name="services"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="baseDirectory"/> is empty.</exception>
+    /// <exception cref="ArgumentException"><paramref name="baseDirectory"/> is empty.</exception>
     protected PetroglyphGameMegBuilder(string baseDirectory, IServiceProvider services) : base(services)
     {
         ThrowHelper.ThrowIfNullOrEmpty(baseDirectory);
@@ -78,9 +78,10 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     }
 
     /// <summary>
-    /// Returns a relative path from a path and the <see cref="BaseDirectory"/> of the <see cref="PetroglyphGameMegBuilder"/>.
-    /// Returns <see langword="null"/> if <paramref name="path"/> is invalid or not a part of <see cref="BaseDirectory"/>.
-    /// <br/>
+    /// Resolves a relative entry path from the specified path and the <see cref="BaseDirectory"/> of the <see cref="PetroglyphGameMegBuilder"/>.
+    /// </summary>
+    /// <remarks>
+    /// The returned path is neither fully normalized nor validated by the rules of the <see cref="PetroglyphGameMegBuilder"/>.
     /// <br/>
     /// For example:
     /// <br/>
@@ -89,10 +90,11 @@ public abstract class PetroglyphGameMegBuilder : MegBuilderBase
     /// <code>"/gameBasePath/xml/file.xml" --> "xml/file.xml"</code>
     /// <code>"/NOTgamePath/xml/file.xml" --> null</code>
     /// <code>"../xml/file.xml" --> null</code>
-    /// </summary>
-    /// <remarks>The returned path is neither fully normalized nor validated by the rules of the <see cref="PetroglyphGameMegBuilder"/>.</remarks>
+    /// </remarks>
     /// <param name="path">The path to get the relative path from.</param>
-    /// <returns>The resolved, relative entry path.</returns>
+    /// <returns>
+    /// The resolved, relative entry path, or <see langword="null"/> if <paramref name="path"/> is invalid or not a part of <see cref="BaseDirectory"/>.
+    /// </returns>
     public string? ResolveEntryPath(string? path)
     {
         return _pathResolver.ResolvePath(path, BaseDirectory);

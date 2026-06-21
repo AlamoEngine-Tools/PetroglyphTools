@@ -12,8 +12,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 internal sealed class VirtualMegArchive : MegDataEntryHolderBase<MegDataEntryReference>, IVirtualMegArchive
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegArchive"/> class
-    /// by coping all elements of the given <paramref name="files"/> list.
+    /// Initializes a new instance of the <see cref="VirtualMegArchive"/> class by copying all elements of the specified list.
     /// </summary>
     /// <param name="files">The list of files in this archive.</param>
     internal VirtualMegArchive(IList<MegDataEntryReference> files) : base(files)

@@ -10,10 +10,19 @@ namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal interface IMegFileDescriptor : IBinary, IHasCrc32, IComparable<IMegFileDescriptor>
 {
+    /// <summary>
+    /// Gets the offset, in bytes, where the described file's data starts within the .MEG archive.
+    /// </summary>
     public uint FileOffset { get; }
 
+    /// <summary>
+    /// Gets the size, in bytes, of the described file's data.
+    /// </summary>
     public uint FileSize { get; }
 
+    /// <summary>
+    /// Gets the index of the described file's name within the file name table.
+    /// </summary>
     /// <remarks>
     /// The .MEG specification allows <see cref="uint"/>, however in .NET we are
     /// limited to <see cref="int"/> for indexing native list-like structures.<br/>
@@ -23,11 +32,17 @@ internal interface IMegFileDescriptor : IBinary, IHasCrc32, IComparable<IMegFile
     /// </remarks>
     public int FileNameIndex { get; }
 
+    /// <summary>
+    /// Gets the index of the described file within the file table.
+    /// </summary>
     /// <remarks>
     /// The .MEG specification allows <see cref="uint"/>, however in .NET we are
     /// limited to <see cref="int"/> for indexing native list-like structures.<br/>
     /// </remarks>
     public int Index { get; }
-    
+
+    /// <summary>
+    /// Gets a value that indicates whether the described file's data is encrypted.
+    /// </summary>
     public bool Encrypted { get; }
 }

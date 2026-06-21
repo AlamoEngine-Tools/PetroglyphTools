@@ -21,7 +21,7 @@ public readonly struct MergedKeyResult
     public DatStringEntry? OldEntry { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the new entry was added or overwritten.
+    /// Gets a value that indicates whether the new entry was added or overwritten.
     /// </summary>
     public MergeOperation Status => !OldEntry.HasValue ? MergeOperation.Added : MergeOperation.Overwritten;
 

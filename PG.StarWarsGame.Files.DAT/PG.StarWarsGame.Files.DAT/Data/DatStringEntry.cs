@@ -10,7 +10,7 @@ using PG.Commons.Utilities;
 namespace PG.StarWarsGame.Files.DAT.Data;
 
 /// <summary>
-/// A key-value pair that can be stored in a DAT file.
+/// Represents a key-value pair that can be stored in a DAT file.
 /// </summary>
 /// <remarks>
 /// Equality is based on <see cref="Key"/>, <see cref="Crc32"/> and <see cref="Value"/>.
@@ -39,7 +39,7 @@ public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
     public Crc32 Crc32 { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DatStringEntry"/> structure with a specified key, checksum and value.
+    /// Initializes a new instance of the <see cref="DatStringEntry"/> struct.
     /// </summary>
     /// <param name="key"> The entry's key.</param>
     /// <param name="keyChecksum">The CRC32 checksum of the key.</param>
@@ -53,8 +53,7 @@ public readonly struct DatStringEntry : IHasCrc32, IEquatable<DatStringEntry>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DatStringEntry"/> structure with a specified key, checksum,
-    /// value and the original extended ASCII key.
+    /// Initializes a new instance of the <see cref="DatStringEntry"/> struct.
     /// </summary>
     /// <param name="key"> The entry's key.</param>
     /// <param name="keyChecksum">The CRC32 checksum of the key.</param>

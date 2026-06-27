@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Text;
 using AnakinRaW.CommonUtilities.Testing;
 using AnakinRaW.CommonUtilities.Testing.Extensions;
@@ -31,7 +30,7 @@ public class MtdServiceTest : CommonMtdTestBase
     {
         Assert.Throws<ArgumentException>(() => _mtdService.LoadFile(""));
         Assert.Throws<ArgumentNullException>(() => _mtdService.LoadFile((string)null!));
-        Assert.Throws<ArgumentNullException>(() => _mtdService.LoadFile((FileSystemStream)null!));
+        Assert.Throws<ArgumentNullException>(() => _mtdService.LoadFile((Stream)null!));
         Assert.Throws<ArgumentNullException>(() => _mtdService.LoadModel((Stream)null!));
         Assert.Throws<ArgumentNullException>(() => _mtdService.LoadModel((byte[])null!));
     }
@@ -83,6 +82,53 @@ public class MtdServiceTest : CommonMtdTestBase
 
         // Resetting the position should not throw
         fs.Position = 0;
+    }
+
+    [Theory]
+    [MemberData(nameof(MtdTestData.ValidMtdData), MemberType = typeof(MtdTestData))]
+    public void LoadFile_FileStream_SetsAbsolutePathAndNotInMeg(byte[] data, IList<MtdEntryInformationContainer> files)
+    {
+        FileSystem.Initialize().WithFile("test.mtd").Which(m => m.HasBytesContent(data));
+
+        using var fs = FileSystem.File.OpenRead("test.mtd");
+
+        var mtdFile = _mtdService.LoadFile(fs);
+
+        CompareFileWithExpected(files, mtdFile);
+
+        Assert.False(mtdFile.FileInformation.IsInsideMeg);
+        Assert.Equal(FileSystem.Path.GetFullPath("test.mtd"), mtdFile.FilePath);
+        Assert.Equal(FileSystem.Path.GetFullPath("test.mtd"), mtdFile.FileInformation.FilePath);
+    }
+
+    [Theory]
+    [MemberData(nameof(MtdTestData.ValidMtdData), MemberType = typeof(MtdTestData))]
+    public void LoadFile_MegStream_KeepsEntryPathAndMarksInMeg(byte[] data, IList<MtdEntryInformationContainer> files)
+    {
+        const string entryPath = "data/textures/test.mtd";
+
+        using var megStream = new TestMegDataStream(entryPath, data);
+
+        var mtdFile = _mtdService.LoadFile(megStream);
+
+        CompareFileWithExpected(files, mtdFile);
+
+        // The MEG entry path is kept verbatim and must not be turned into an absolute file-system path.
+        Assert.True(mtdFile.FileInformation.IsInsideMeg);
+        Assert.Equal(entryPath, mtdFile.FilePath);
+        Assert.Equal(entryPath, mtdFile.FileInformation.FilePath);
+    }
+
+    [Theory]
+    [MemberData(nameof(MtdTestData.ValidMtdData), MemberType = typeof(MtdTestData))]
+    public void LoadFile_StreamWithoutPathInformation_Throws(byte[] data, IList<MtdEntryInformationContainer> files)
+    {
+        _ = files;
+
+        // A plain stream is neither a file stream nor an IMegFileDataStream, so no path can be determined.
+        using var stream = new MemoryStream(data);
+
+        Assert.Throws<InvalidOperationException>(() => _mtdService.LoadFile(stream));
     }
 
     [Fact]

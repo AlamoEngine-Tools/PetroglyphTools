@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
-using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
@@ -14,8 +13,7 @@ internal sealed class SortedDatModel : DatModel, ISortedDatModel
 {
     private readonly IReadOnlyDictionary<Crc32, Range> _crcToIndexMap;
 
-    public override DatFileType KeySortOrder => DatFileType.OrderedByCrc32;
-
+    public override DatLayoutKind Layout => DatLayoutKind.OrderedByCrc32;
 
     public SortedDatModel(IEnumerable<DatStringEntry> entries) : base(entries)
     {

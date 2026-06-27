@@ -1,13 +1,13 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-namespace PG.StarWarsGame.Files.MEG.Files;
+namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <summary>
 /// Represents the available file versions of a PG .MEG archive as defined in the
 ///  <a href="https://modtools.petrolution.net/docs/MegFileFormat"> .MEG file specification</a>.
 /// </summary>
-public enum MegFileVersion
+public enum MegVersion
 {
     /// <summary>
     /// .MEG file version 1.

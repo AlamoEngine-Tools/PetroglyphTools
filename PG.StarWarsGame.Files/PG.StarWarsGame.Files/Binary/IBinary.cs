@@ -23,6 +23,6 @@ public interface IBinary
     /// <summary>
     /// Fills the specified span with the bytes of the binary.
     /// </summary>
-    /// <param name="bytes">The span of bites to fill.</param>
+    /// <param name="bytes">The span to fill with the bytes of the binary.</param>
     void GetBytes(Span<byte> bytes);
 }

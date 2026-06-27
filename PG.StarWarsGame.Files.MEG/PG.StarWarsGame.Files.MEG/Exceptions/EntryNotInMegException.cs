@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using PG.StarWarsGame.Files.MEG.Data;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 namespace PG.StarWarsGame.Files.MEG;
@@ -22,8 +24,18 @@ public sealed class EntryNotInMegException : Exception
     /// </summary>
     /// <param name="locationReference">The non-existing data entry location.</param>
     internal EntryNotInMegException(MegDataEntryLocationReference locationReference)
+        : this(locationReference.Source, locationReference.DataEntry)
     {
-        _entry = locationReference.DataEntry.Path;
-        _megFile = locationReference.MegFile.FilePath;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EntryNotInMegException"/> class for an entry that is not contained in the given MEG source.
+    /// </summary>
+    /// <param name="source">The MEG source that does not contain <paramref name="entry"/>.</param>
+    /// <param name="entry">The data entry that is not contained in <paramref name="source"/>.</param>
+    internal EntryNotInMegException(IMegDataSource source, MegDataEntry entry)
+    {
+        _entry = entry.Path;
+        _megFile = MegDataEntryLocationReference.DescribeSource(source);
     }
 }

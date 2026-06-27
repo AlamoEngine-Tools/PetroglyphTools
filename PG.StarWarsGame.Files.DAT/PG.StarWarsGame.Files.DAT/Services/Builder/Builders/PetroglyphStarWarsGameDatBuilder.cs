@@ -11,7 +11,7 @@ using AnakinRaW.CommonUtilities.FileSystem;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// Base class for an <see cref="IDatBuilder"/> used by the Petroglyph game <em>Star Wars: Empire at War</em> and its extension <em>Empire at War: Forces of Corruption</em>.
+/// Provides a base class for an <see cref="IDatBuilder"/> used by the Petroglyph game <em>Star Wars: Empire at War</em> and its extension <em>Empire at War: Forces of Corruption</em>.
 /// </summary>
 public abstract class PetroglyphStarWarsGameDatBuilder : DatBuilderBase
 {

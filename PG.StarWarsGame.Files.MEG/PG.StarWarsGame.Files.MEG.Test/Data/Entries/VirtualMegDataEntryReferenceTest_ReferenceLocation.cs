@@ -4,6 +4,7 @@ using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using Xunit;
+using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 
@@ -14,7 +15,7 @@ public class VirtualMegDataEntryReferenceTest_ReferenceLocation : MegDataEntryBa
     public VirtualMegDataEntryReferenceTest_ReferenceLocation()
     {
         FileSystem.File.Create("file.meg");
-        _megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1),
+        _megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegVersion.V1),
             ServiceProvider);
     }
 

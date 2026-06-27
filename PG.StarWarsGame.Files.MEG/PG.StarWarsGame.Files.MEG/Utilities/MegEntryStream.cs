@@ -9,7 +9,7 @@ using PG.Commons.Data;
 namespace PG.StarWarsGame.Files.MEG.Utilities;
 
 /// <summary>
-/// Represent a read-only, non-seekable file stream that points to a single data entry inside a MEG file.
+/// Represents a read-only stream that exposes the bytes of a single data entry inside a MEG archive.
 /// </summary>
 public sealed class MegEntryStream : Stream, IMegFileDataStream
 {

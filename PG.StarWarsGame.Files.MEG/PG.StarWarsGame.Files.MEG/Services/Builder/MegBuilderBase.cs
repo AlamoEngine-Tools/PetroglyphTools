@@ -43,25 +43,25 @@ public abstract class MegBuilderBase
 
     /// <inheritdoc/>
     /// <value>
-    /// <see langword="true"/> by default.
+    /// The default is <see langword="true"/>.
     /// </value>
     public virtual bool OverwritesDuplicateEntries => true;
 
     /// <inheritdoc/>
     /// <value>
-    /// <seealso cref="BinaryMegFileInformationValidator"/> by default.
+    /// The file information validator. The default is a <see cref="BinaryMegFileInformationValidator"/>.
     /// </value>
     public virtual IMegFileInformationValidator MegFileInformationValidator { get; }
 
     /// <inheritdoc/>
     /// <value>
-    /// <seealso cref="BinaryMegDataEntryValidator"/> by default.
+    /// The data entry validator. The default is a <see cref="BinaryMegDataEntryValidator"/>.
     /// </value>
     public virtual IMegDataEntryValidator DataEntryValidator { get; } = new BinaryMegDataEntryValidator();
 
     /// <inheritdoc/>
     /// <value>
-    /// <see langword="null"/>, meaning no normalizer is specified.
+    /// The data entry path normalizer, or <see langword="null"/> if no normalizer is specified. The default is <see langword="null"/>.
     /// </value>
     public virtual IMegDataEntryPathNormalizer? DataEntryPathNormalizer => null;
 
@@ -69,7 +69,7 @@ public abstract class MegBuilderBase
     /// Gets the maximum allowed size, in bytes, for a MEG file created by this builder.
     /// </summary>
     /// <value>
-    /// 4GB (2^32 - 1 bytes) by default 
+    /// The maximum allowed size, in bytes, for a MEG file. The default is 4GB (2^32 - 1 bytes).
     /// </value>
     public virtual uint MaxMegFileSize { get; } = MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxFileSize;
 
@@ -167,7 +167,7 @@ public abstract class MegBuilderBase
         if (filePathFactory == null) 
             throw new ArgumentNullException(nameof(filePathFactory));
 
-        var megParts = SplitIntoMinRequiredParts(initialFileInformation.FileVersion, DataEntries);
+        var megParts = SplitIntoMinRequiredParts(initialFileInformation.Version, DataEntries);
 
         if (megParts.Count == 1)
         {
@@ -201,7 +201,7 @@ public abstract class MegBuilderBase
     }
     
     /// <inheritdoc/>
-    public int GetMinRequiredMegFiles(MegFileVersion megVersion)
+    public int GetMinRequiredMegFiles(MegVersion megVersion)
     {
         return SplitIntoMinRequiredParts(megVersion, DataEntries).Count;
     }
@@ -225,7 +225,7 @@ public abstract class MegBuilderBase
     /// It is impossible to split into multiple MEG files because of the current state of the builder.
     /// </exception>
     protected ICollection<ICollection<MegDataEntryBuilderInfo>> SplitIntoMinRequiredParts(
-        MegFileVersion megVersion,
+        MegVersion megVersion,
         IEnumerable<MegDataEntryBuilderInfo> builderInfo)
     {
         var metadataSizeCalculator = Services.GetRequiredService<IMegBinaryServiceFactory>()
@@ -264,8 +264,8 @@ public abstract class MegBuilderBase
     /// <inheritdoc />
     protected sealed override void BuildFileCore(FileSystemStream fileStream, MegFileInformation fileInformation, IReadOnlyCollection<MegDataEntryBuilderInfo> data)
     {
-        var megService = Services.GetRequiredService<IMegFileService>();
-        megService.CreateMegArchive(fileStream, fileInformation.FileVersion, fileInformation.EncryptionData, data);
+        var megService = Services.GetRequiredService<IMegService>();
+        megService.CreateMegArchive(fileStream, fileInformation.Version, fileInformation.EncryptionData, data);
     }
 
     /// <inheritdoc />

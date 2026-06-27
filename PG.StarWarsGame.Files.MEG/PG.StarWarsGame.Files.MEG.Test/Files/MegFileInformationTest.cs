@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using Xunit;
 
@@ -9,21 +10,21 @@ public class MegFileInformationTest
     [Fact]
     public void Ctor_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new MegFileInformation(null!, MegFileVersion.V2));
-        Assert.Throws<ArgumentException>(() => new MegFileInformation("", MegFileVersion.V2));
-        Assert.Throws<ArgumentException>(() => new MegFileInformation("path", MegFileVersion.V1, MegEncryptionDataTest.CreateRandomData()));
-        Assert.Throws<ArgumentException>(() => new MegFileInformation("path", MegFileVersion.V2, MegEncryptionDataTest.CreateRandomData()));
+        Assert.Throws<ArgumentNullException>(() => new MegFileInformation(null!, MegVersion.V2));
+        Assert.Throws<ArgumentException>(() => new MegFileInformation("", MegVersion.V2));
+        Assert.Throws<ArgumentException>(() => new MegFileInformation("path", MegVersion.V1, MegEncryptionDataTest.CreateRandomData()));
+        Assert.Throws<ArgumentException>(() => new MegFileInformation("path", MegVersion.V2, MegEncryptionDataTest.CreateRandomData()));
     }
 
     [Theory]
-    [InlineData(MegFileVersion.V1)]
-    [InlineData(MegFileVersion.V2)]
-    [InlineData(MegFileVersion.V3)]
-    public void Ctor(MegFileVersion version)
+    [InlineData(MegVersion.V1)]
+    [InlineData(MegVersion.V2)]
+    [InlineData(MegVersion.V3)]
+    public void Ctor(MegVersion version)
     {
         var fileInfo = new MegFileInformation("path", version);
         Assert.Equal("path", fileInfo.FilePath);
-        Assert.Equal(version, fileInfo.FileVersion);
+        Assert.Equal(version, fileInfo.Version);
         Assert.Null(fileInfo.EncryptionData);
         Assert.False(fileInfo.HasEncryption);
     }
@@ -32,9 +33,9 @@ public class MegFileInformationTest
     public void Ctor_Encrypted()
     {
         var encData = MegEncryptionDataTest.CreateRandomData();
-        var fileInfo = new MegFileInformation("path", MegFileVersion.V3, encData);
+        var fileInfo = new MegFileInformation("path", MegVersion.V3, encData);
         Assert.Equal("path", fileInfo.FilePath);
-        Assert.Equal(MegFileVersion.V3, fileInfo.FileVersion);
+        Assert.Equal(MegVersion.V3, fileInfo.Version);
         Assert.Same(encData, fileInfo.EncryptionData);
         Assert.True(fileInfo.HasEncryption);
     }
@@ -43,7 +44,7 @@ public class MegFileInformationTest
     public void Dispose()
     {
         var encData = MegEncryptionDataTest.CreateRandomData();
-        var fileInfo = new MegFileInformation("path", MegFileVersion.V3, encData);
+        var fileInfo = new MegFileInformation("path", MegVersion.V3, encData);
         fileInfo.Dispose();
         Assert.True(encData.IsDisposed);
     }
@@ -54,11 +55,11 @@ public class MegFileInformationTest
         var encData = MegEncryptionDataTest.CreateRandomData();
         var orgKey = encData.Key;
         var orgIv = encData.IV;
-        var fileInfo = new MegFileInformation("path", MegFileVersion.V3, encData);
+        var fileInfo = new MegFileInformation("path", MegVersion.V3, encData);
 
         var other = fileInfo with { FilePath = "otherPath"};
         Assert.Equal("otherPath", other.FilePath);
-        Assert.Equal(MegFileVersion.V3, other.FileVersion);
+        Assert.Equal(MegVersion.V3, other.Version);
         Assert.NotSame(encData, other.EncryptionData);
         Assert.True(other.HasEncryption);
         Assert.Equal(orgKey, other.EncryptionData.Key);

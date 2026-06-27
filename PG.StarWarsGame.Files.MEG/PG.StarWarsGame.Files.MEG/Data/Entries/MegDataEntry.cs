@@ -23,12 +23,12 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     public override Crc32 Crc32 { get; }
 
     /// <summary>
-    /// The original file path value without the default MEG encoding applied.
+    /// Gets the original file path value without the default MEG encoding applied.
     /// </summary>
     public string OriginalPath { get; }
 
     /// <summary>
-    /// Indicates whether the file is encrypted
+    /// Gets a value that indicates whether the file is encrypted.
     /// </summary>
     public bool Encrypted { get; }
 
@@ -36,12 +36,12 @@ public sealed class MegDataEntry : MegDataEntryBase<MegDataEntryLocation>, IEqua
     /// Initializes a new instance of the <see cref="MegDataEntry"/> class.
     /// </summary>
     /// <param name="entryPath">The file path of the entry.</param>
-    /// <param name="crc32">The CRC32 checksum of the filePath</param>
-    /// <param name="location">The location information of the entry inside it's MEG file.</param>
-    /// <param name="encrypted">Indicates whether this entry is encrypted or not.</param>
+    /// <param name="crc32">The CRC32 checksum of the file path.</param>
+    /// <param name="location">The location information of the entry inside its MEG file.</param>
+    /// <param name="encrypted"><see langword="true"/> if this entry is encrypted; otherwise, <see langword="false"/>.</param>
     /// <param name="originalPath">The original file path value.</param>
     /// <exception cref="ArgumentNullException"><paramref name="entryPath"/> or <paramref name="originalPath"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty or only consists of while spaces.</exception>
+    /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty or only consists of white spaces.</exception>
     /// <exception cref="ArgumentException"><paramref name="originalPath"/> is empty.</exception>
     internal MegDataEntry(string entryPath, Crc32 crc32, MegDataEntryLocation location, bool encrypted, string originalPath) : base(location)
     {

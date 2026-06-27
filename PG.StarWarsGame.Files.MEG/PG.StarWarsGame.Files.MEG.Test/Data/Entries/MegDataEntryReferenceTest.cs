@@ -1,4 +1,5 @@
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
@@ -13,7 +14,7 @@ public class MegDataEntryReferenceTest : MegDataEntryBaseTest<MegDataEntryLocati
     public MegDataEntryReferenceTest()
     {
         FileSystem.File.Create("file.meg");
-        _megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1),
+        _megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegVersion.V1),
             ServiceProvider);
     }
     private MegDataEntryReference CreateEntryReference(string path, Crc32 crc, MegDataEntryLocationReference location)

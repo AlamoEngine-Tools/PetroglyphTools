@@ -37,7 +37,7 @@ public abstract class BinaryMegDataEntryValidatorTestBase : CommonMegTestBase
     {
         FileSystem.File.Create("file.meg");
         var entry = MegDataEntryTest.CreateEntry("DUMMY", default, 0, 1);
-        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var meg = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegVersion.V1), ServiceProvider);
         var location = new MegDataEntryLocationReference(meg, entry);
         var origin = new MegDataEntryOriginInfo(location);
         
@@ -91,7 +91,7 @@ public abstract class BinaryMegDataEntryValidatorTestBase : CommonMegTestBase
         {
             FileSystem.File.Create("file.meg");
             _entry = MegDataEntryTest.CreateEntry("DUMMY", default, 0, 1);
-            _meg = new MegFile(new MegArchive([_entry]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+            _meg = new MegFile(new MegArchive([_entry]), new MegFileInformation("file.meg", MegVersion.V1), ServiceProvider);
         }
 
         public MegDataEntryBuilderInfo CreateInfo(string overridePath, bool encrypted = false)

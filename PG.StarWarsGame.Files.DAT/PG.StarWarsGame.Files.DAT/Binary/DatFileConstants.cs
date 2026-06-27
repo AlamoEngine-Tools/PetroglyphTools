@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Files.DAT.Binary;
 public static class DatFileConstants
 {
     /// <summary>
-    ///     Returns the text key encoding, which is ASCII.
+    ///     Represents the text key encoding, which is ASCII.
     /// </summary>
     public static readonly Encoding TextKeyEncoding = Encoding.ASCII;
 
@@ -21,7 +21,7 @@ public static class DatFileConstants
     internal static readonly Encoding TextKeyEncoding_Latin1 = Encoding.GetEncoding(28591);
 
     /// <summary>
-    ///     Returns the text value encoding, which is 16bit UTF Little Endian.
+    ///     Represents the text value encoding, which is 16bit UTF Little Endian.
     /// </summary>
     public static readonly Encoding TextValueEncoding = Encoding.Unicode;
 }

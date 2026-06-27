@@ -6,7 +6,7 @@ using System.Text;
 namespace PG.StarWarsGame.Files.MTD.Binary;
 
 /// <summary>
-///     Simple class wrapper around global defaults used for all MTD file definitions.
+///     Provides global default values used for all MTD file definitions.
 /// </summary>
 public static class MtdFileConstants
 {

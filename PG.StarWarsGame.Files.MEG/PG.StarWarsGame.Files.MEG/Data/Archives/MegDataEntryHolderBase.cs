@@ -19,7 +19,7 @@ namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T : IMegDataEntry
 {
     /// <summary>
-    /// All data entries of this instance.
+    /// Represents all data entries of this instance.
     /// </summary>
     protected readonly ReadOnlyCollection<T> Entries;
 
@@ -34,10 +34,11 @@ public abstract class MegDataEntryHolderBase<T> : IMegDataEntryHolder<T> where T
     public int Count => Entries.Count;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegArchive"/> class
-    /// by coping all elements of the given <paramref name="entries"/> list.
+    /// Initializes a new instance of the <see cref="MegDataEntryHolderBase{T}"/> class by copying all elements of the specified list.
     /// </summary>
     /// <param name="entries">The list of entries in this archive.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="entries"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="entries"/> is not sorted by CRC32 checksum.</exception>
     protected MegDataEntryHolderBase(IList<T> entries)
     {
         if (entries == null)

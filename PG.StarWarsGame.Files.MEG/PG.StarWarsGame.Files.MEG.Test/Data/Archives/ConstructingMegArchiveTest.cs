@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PG.Commons.Hashing;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
@@ -16,16 +17,16 @@ public class ConstructingMegArchiveTest : CommonMegTestBase
     [Fact]
     public void Ctor_Throw_NullArgument()
     {
-        Assert.Throws<ArgumentNullException>(() =>new ConstructingMegArchive(null!, MegFileVersion.V1, 0, false));
+        Assert.Throws<ArgumentNullException>(() =>new ConstructingMegArchive(null!, MegVersion.V1, 0, false));
     }
 
     [Fact]
     public void Ctor_Empty()
     {
         var entries = new List<VirtualMegDataEntryReference>();
-        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, 123, true);
+        var cArchive = new ConstructingMegArchive(entries, MegVersion.V3, 123, true);
 
-        Assert.Equal(MegFileVersion.V3, cArchive.MegVersion);
+        Assert.Equal(MegVersion.V3, cArchive.MegVersion);
         Assert.Equal(new MegArchive(new List<MegDataEntry>()).ToList(), cArchive.Archive.ToList());
         Assert.Equal(123u, cArchive.ExpectedFileSize);
         Assert.True(cArchive.Encrypted);
@@ -38,7 +39,7 @@ public class ConstructingMegArchiveTest : CommonMegTestBase
         var entry2 = MegDataEntryTest.CreateEntry("pathB", new Crc32(2), 2, 2);
 
         FileSystem.File.Create("file.meg");
-        var mf = new MegFile(new MegArchive([entry1, entry2]), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+        var mf = new MegFile(new MegArchive([entry1, entry2]), new MegFileInformation("file.meg", MegVersion.V1), ServiceProvider);
 
         var locEntry = MegDataEntryTest.CreateEntry("pathC", new Crc32(3), 3, 3);
 
@@ -53,9 +54,9 @@ public class ConstructingMegArchiveTest : CommonMegTestBase
             reference1, reference2
         };
 
-        var cArchive = new ConstructingMegArchive(entries, MegFileVersion.V3, 123, false);
+        var cArchive = new ConstructingMegArchive(entries, MegVersion.V3, 123, false);
 
-        Assert.Equal(MegFileVersion.V3, cArchive.MegVersion);
+        Assert.Equal(MegVersion.V3, cArchive.MegVersion);
         Assert.False(cArchive.Encrypted);
 
         var expectedArchiveList = new List<MegDataEntry>

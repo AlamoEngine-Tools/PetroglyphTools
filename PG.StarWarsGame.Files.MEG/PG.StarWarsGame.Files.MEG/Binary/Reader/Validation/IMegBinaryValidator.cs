@@ -15,7 +15,7 @@ internal interface IMegBinaryValidator<in TMetadata> where TMetadata : IMegFileM
 {
     /// <summary>
     /// Validates the integrity and correctness of the specified MEG file metadata against the provided binary data
-    /// and throws an <see cref="BinaryCorruptedException"/> if the file is invalid.
+    /// and throws a <see cref="BinaryCorruptedException"/> if the file is invalid.
     /// </summary>
     /// <param name="metadata">The metadata of the MEG file to validate.</param>
     /// <param name="actualMetadataSize">The actual size of the metadata in bytes as read from the binary data.</param>

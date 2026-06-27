@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using Xunit;
 

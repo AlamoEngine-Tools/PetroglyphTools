@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services;
@@ -22,11 +21,11 @@ public abstract partial class DatModelServiceTest
     {
         var model = CreateModel(entries);
         var sorted = Service.SortModel(model);
-        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOrder);
+        Assert.Equal(DatLayoutKind.OrderedByCrc32, sorted.Layout);
         Assert.Equal(expectedList, sorted.ToList());
 
         var sortedMock = Service.SortModel(new UnsortedDatModel(entries));
-        Assert.Equal(DatFileType.OrderedByCrc32, sortedMock.KeySortOrder);
+        Assert.Equal(DatLayoutKind.OrderedByCrc32, sortedMock.Layout);
         Assert.Equal(expectedList, sortedMock.ToList());
     }
 

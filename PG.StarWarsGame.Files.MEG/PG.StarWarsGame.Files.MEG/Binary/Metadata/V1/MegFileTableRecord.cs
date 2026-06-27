@@ -106,7 +106,7 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
     }
 
     /// <summary>
-    /// Determines whether one record is greater than or equal to another  by its checksum.
+    /// Determines whether one record is greater than or equal to another by its checksum.
     /// </summary>
     /// <param name="a">The first record to compare.</param>
     /// <param name="b">The second record to compare.</param>
@@ -117,10 +117,10 @@ internal readonly struct MegFileTableRecord : IMegFileDescriptor, IComparable<Me
     }
 
     /// <summary>
-    /// Determines whether one record is less than or equal to another  by its checksum.
+    /// Determines whether one record is less than or equal to another by its checksum.
     /// </summary>
-    /// <param name="a">The first record checksum to compare.</param>
-    /// <param name="b">The second record to </param>
+    /// <param name="a">The first record to compare.</param>
+    /// <param name="b">The second record to compare.</param>
     /// <returns><see langword="true"/> if <paramref name="a"/> is less than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator <=(MegFileTableRecord a, MegFileTableRecord b)
     {

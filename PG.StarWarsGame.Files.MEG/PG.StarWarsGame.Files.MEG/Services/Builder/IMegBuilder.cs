@@ -14,12 +14,12 @@ using PG.StarWarsGame.Files.Services.Builder;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
-/// Service to create MEG files from local files or other MEG data entries ensuring custom validation and normalization rules.
+/// Represents a service that creates MEG files from local files or other MEG data entries, ensuring custom validation and normalization rules.
 /// </summary>
 public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuilderInfo>, MegFileInformation>
 {
     /// <summary>
-    /// Gets a value indicating whether the <see cref="IMegBuilder"/> normalizes a data entry's path before adding it.
+    /// Gets a value that indicates whether the <see cref="IMegBuilder"/> normalizes a data entry's path before adding it.
     /// </summary>
     /// <remarks>
     /// Path normalization is performed before encoding.
@@ -27,7 +27,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     bool NormalizesEntryPaths { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the <see cref="IMegBuilder"/> overwrites an already existing data entry with the new version when trying to a data entry
+    /// Gets a value that indicates whether the <see cref="IMegBuilder"/> overwrites an already existing data entry with the new version when trying to a data entry
     /// or does not add the new data entry.
     /// </summary>
     /// <remarks>
@@ -63,7 +63,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// </remarks>
     /// <param name="filePath">The local path to the file which get added as an data entry.</param>
     /// <param name="entryPath">The desired file path of the data entry inside the MEG archive.</param>
-    /// <param name="encrypt">Indicates whether the data entry shall be encrypted.</param>
+    /// <param name="encrypt"><see langword="true"/> to encrypt the data entry; otherwise, <see langword="false"/>.</param>
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="filePath"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> or <paramref name="entryPath"/> is empty.</exception>
@@ -93,7 +93,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// </remarks>
     /// <param name="bytes">The read-only span containing the entry bytes.</param>
     /// <param name="entryPath">The desired file path of the data entry inside the MEG archive.</param>
-    /// <param name="encrypt">Indicates whether the data entry shall be encrypted.</param>
+    /// <param name="encrypt"><see langword="true"/> to encrypt the data entry; otherwise, <see langword="false"/>.</param>
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
@@ -108,7 +108,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// </remarks>
     /// <param name="bytes">The buffer containing the entry bytes.</param>
     /// <param name="entryPath">The desired file path of the data entry inside the MEG archive.</param>
-    /// <param name="encrypt">Indicates whether the data entry shall be encrypted.</param>
+    /// <param name="encrypt"><see langword="true"/> to encrypt the data entry; otherwise, <see langword="false"/>.</param>
     /// <returns>The result of this operation.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="bytes"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
@@ -142,7 +142,7 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// A function that generates the file path for each part based on its index (1-based). 
     /// Not invoked if only a single file is created.
     /// </param>
-    /// <param name="overwrite">A value indicating whether to overwrite existing files.</param>
+    /// <param name="overwrite"><see langword="true"/> to overwrite existing files; otherwise, <see langword="false"/>.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="initialFileInformation"/> is <see langword="null"/>.
     /// -or-
@@ -163,9 +163,10 @@ public interface IMegBuilder : IFileBuilder<IReadOnlyCollection<MegDataEntryBuil
     /// due to the size constraints of MEG files the builder produces.
     /// </summary>
     /// <remarks>
-    /// The method will return at least value <value>1</value>.
+    /// The method will return at least value <c>1</c>.
     /// </remarks>
+    /// <param name="megVersion">The version of the MEG file, which determines the size constraints.</param>
     /// <returns>The minimum number of MEG files required to accommodate the provided data entries.</returns>
     /// <exception cref="InvalidOperationException">It is impossible to create MEG files because of the current state of the builder.</exception>
-    int GetMinRequiredMegFiles(MegFileVersion megVersion);
+    int GetMinRequiredMegFiles(MegVersion megVersion);
 }

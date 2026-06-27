@@ -16,7 +16,8 @@ namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 public interface IMegDataEntry : IHasCrc32, IComparable<IMegDataEntry>
 {
     /// <summary>
-    /// Gets the path of the entry as defined in the *.MEG file.<br />
+    /// Gets the path of the entry as defined in the *.MEG file.
+    /// <br/>
     /// Usually this file path is relative to the game or mod's DATA directory, e.g. Data/My/file.xml
     /// </summary>
     /// <remarks>
@@ -31,7 +32,7 @@ public interface IMegDataEntry : IHasCrc32, IComparable<IMegDataEntry>
 public interface IMegDataEntry<out T> : IMegDataEntry where T : IDataEntryLocation
 {
     /// <summary>
-    /// Get the location information of this data entry.
+    /// Gets the location information of this data entry.
     /// </summary>
     public T Location { get; }
 }

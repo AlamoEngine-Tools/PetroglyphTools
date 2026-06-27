@@ -8,7 +8,7 @@ using PG.StarWarsGame.Files.DAT.Data;
 namespace PG.StarWarsGame.Files.DAT.Services;
 
 /// <summary>
-/// A service to work with DAT models.
+/// Provides operations for working with DAT models.
 /// </summary>
 public interface IDatModelService
 {
@@ -76,8 +76,10 @@ public interface IDatModelService
     /// </remarks>
     /// <param name="baseDatModel">The base model.</param>
     /// <param name="datToMerge">The model to merge into <paramref name="baseDatModel"/>.</param>
-    /// <param name="mergedKeys">When this method returns, the collection contains keys that got added or overwritten.</param>
-    /// <param name="mergeOptions">Specifies how to treat existing keys.</param>
+    /// <param name="mergedKeys">
+    /// When this method returns, contains the keys that got added or overwritten. This parameter is treated as uninitialized.
+    /// </param>
+    /// <param name="mergeOptions">One of the enumeration values that specifies how to treat existing keys.</param>
     /// <returns>The merged model.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is not sorted.</exception>
@@ -89,8 +91,10 @@ public interface IDatModelService
     /// </summary>
     /// <param name="baseDatModel">The base model.</param>
     /// <param name="datToMerge">The model to merge into <paramref name="baseDatModel"/>.</param>
-    /// <param name="mergedKeys">When this method returns, the collection contains keys that got added or overwritten.</param>
-    /// <param name="mergeOptions">Specifies how to treat existing keys.</param>
+    /// <param name="mergedKeys">
+    /// When this method returns, contains the keys that got added or overwritten. This parameter is treated as uninitialized.
+    /// </param>
+    /// <param name="mergeOptions">One of the enumeration values that specifies how to treat existing keys.</param>
     /// <returns>The merged model.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="baseDatModel"/> or <paramref name="datToMerge"/> is not unsorted.</exception>

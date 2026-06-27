@@ -9,7 +9,6 @@ using PG.Commons.Services;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
@@ -52,7 +51,7 @@ internal class DatBinaryConverter(IServiceProvider services) : ServiceBase(servi
             lastCrc = keyChecksum;
         }
         
-        if (model.KeySortOrder == DatFileType.OrderedByCrc32 && !isSorted)
+        if (model.Layout == DatLayoutKind.OrderedByCrc32 && !isSorted)
             throw new ArgumentException("MasterTextModel must be sorted.", nameof(model));
 
         return new DatBinaryFile(header, new BinaryTable<IndexTableRecord>(indexRecords), new BinaryTable<ValueTableRecord>(values), new BinaryTable<KeyTableRecord>(keys));

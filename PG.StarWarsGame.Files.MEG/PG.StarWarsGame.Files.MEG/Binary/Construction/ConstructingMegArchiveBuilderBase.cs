@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -15,7 +15,6 @@ using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
-using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
@@ -26,7 +25,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
     internal virtual uint MaxEntryFileSize { get; } = MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxEntrySize;
     internal virtual uint MaxFileSize { get; } = MaxMegSizeProvider.GetMegMaxSize(MaxMegSizeMode.Binary).MaxFileSize;
 
-    protected abstract MegFileVersion FileVersion { get; }
+    protected abstract MegVersion MegVersion { get; }
 
     // TODO: Test encryption cases
     public IConstructingMegArchive BuildConstructingMegArchive(IEnumerable<MegDataEntryBuilderInfo> builderEntries)
@@ -34,7 +33,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         if (builderEntries == null) 
             throw new ArgumentNullException(nameof(builderEntries));
 
-        var calculator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetMegSizeCalculator(FileVersion);
+        var calculator = Services.GetRequiredService<IMegBinaryServiceFactory>().GetMegSizeCalculator(MegVersion);
 
         var binaryInformation = GetBinaryInformation(builderEntries, calculator);
 
@@ -54,10 +53,10 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
         Debug.Assert(calculator.CurrentSize <= uint.MaxValue);
         Debug.Assert((long)calculator.CurrentSize == currentOffset);
 
-        return new ConstructingMegArchive(entries, binaryInformation.MegFileVersion, (uint)calculator.CurrentSize, binaryInformation.Encrypted);
+        return new ConstructingMegArchive(entries, binaryInformation.MegVersion, (uint)calculator.CurrentSize, binaryInformation.Encrypted);
     }
 
-    private MegFileBinaryInformation GetBinaryInformation(
+    private MegBinaryInformation GetBinaryInformation(
         IEnumerable<MegDataEntryBuilderInfo> entries,
         IMegSizeCalculator calculator)
     {
@@ -80,7 +79,7 @@ internal abstract class ConstructingMegArchiveBuilderBase(IServiceProvider servi
 
         Debug.Assert(calculator.MetadataSize <= calculator.CurrentSize);
 
-        return new MegFileBinaryInformation((uint)calculator.MetadataSize, FileVersion, encryptMeg, entryInfoList);
+        return new MegBinaryInformation((uint)calculator.MetadataSize, MegVersion, encryptMeg, entryInfoList);
     }
 
     private MegDataEntryBinaryInformation CreateEntryBinaryInformation(

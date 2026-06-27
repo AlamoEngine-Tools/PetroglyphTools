@@ -37,9 +37,13 @@ public class MegDataEntryLocationTest
         var location3 = default(MegDataEntryLocation);
 
         Assert.Equal(location1, location2);
+        Assert.True(location1 == location2);
+        Assert.False(location1 != location2);
         Assert.Equal(location1.GetHashCode(), location2.GetHashCode());
 
         Assert.NotEqual(location1, location3);
+        Assert.False(location1 == location3);
+        Assert.True(location1 != location3);
         Assert.NotEqual(location1, new object());
         Assert.NotEqual((object?)null, location1);
         Assert.NotEqual(location1.GetHashCode(), location3.GetHashCode());

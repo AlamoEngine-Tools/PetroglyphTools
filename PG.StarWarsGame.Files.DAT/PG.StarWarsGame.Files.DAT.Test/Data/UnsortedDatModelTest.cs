@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Data;
 
 public class UnsortedDatModelTest : DatModelTest
 {
-    protected override DatFileType ExpectedFileType => DatFileType.NotOrdered;
+    protected override DatLayoutKind ExpectedLayout => DatLayoutKind.NotOrdered;
 
     private UnsortedDatModel CreateUnsortedModel(IList<DatStringEntry> entries)
     {
@@ -46,6 +45,6 @@ public class UnsortedDatModelTest : DatModelTest
         var sorted = model.ToSortedModel();
         
         Assert.True(Crc32Utilities.IsSortedByCrc32(sorted));
-        Assert.Equal(DatFileType.OrderedByCrc32, sorted.KeySortOrder);
+        Assert.Equal(DatLayoutKind.OrderedByCrc32, sorted.Layout);
     }
 }

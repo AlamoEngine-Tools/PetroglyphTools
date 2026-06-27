@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +7,7 @@ using AnakinRaW.CommonUtilities.Testing.Extensions;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
-using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.DAT.Data;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Binary.Reader;
@@ -22,36 +22,36 @@ public class DatFileReaderTest : TestBaseWithFileSystem
     }
 
     [Fact]
-    public void PeekFileType_ThrowsArgumentNullException()
+    public void PeekLayout_ThrowsArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => _reader.PeekFileType(null!));
+        Assert.Throws<ArgumentNullException>(() => _reader.PeekLayout(null!));
     }
 
     [Fact]
-    public void PeekFileType_ThrowsBinaryCorruptedException()
+    public void PeekLayout_ThrowsBinaryCorruptedException()
     {
-        Assert.Throws<BinaryCorruptedException>(() => _reader.PeekFileType(new MemoryStream()));
+        Assert.Throws<BinaryCorruptedException>(() => _reader.PeekLayout(new MemoryStream()));
     }
 
     [Theory]
-    [MemberData(nameof(DatFileTypeTestData))]
-    public void PeekFileType(Stream stream, DatFileType expectedFileType)
+    [MemberData(nameof(DatLayoutKindTestData))]
+    public void PeekLayout(Stream stream, DatLayoutKind expectedLayout)
     {
-        var fileType = _reader.PeekFileType(stream);
-        Assert.Equal(expectedFileType, fileType);
+        var layout = _reader.PeekLayout(stream);
+        Assert.Equal(expectedLayout, layout);
 
         // Ensure that stream is not disposed after read operation
         stream.Position = 1;
     }
 
-    public static IEnumerable<object[]> DatFileTypeTestData()
+    public static IEnumerable<object[]> DatLayoutKindTestData()
     {
         return
         [
             [
                 // Empty .DAT: While the file type is not specified by the interface, this test must not crash.
                 new MemoryStream([0x0, 0x0, 0x0, 0x0]),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 new MemoryStream([
@@ -66,7 +66,7 @@ public class DatFileReaderTest : TestBaseWithFileSystem
                     0x0, 0x0, 0x0, 0x0,
                     0x0, 0x0, 0x0, 0x0
                 ]),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 new MemoryStream([
@@ -81,39 +81,39 @@ public class DatFileReaderTest : TestBaseWithFileSystem
                     0x0, 0x0, 0x0, 0x0,
                     0x0, 0x0, 0x0, 0x0
                 ]),
-                DatFileType.NotOrdered
+                DatLayoutKind.NotOrdered
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.EmptyKeyWithValue.dat"),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.SingleEmptyEntry.dat"),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.SingleEntry.dat"),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntries.dat"),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Sorted_TwoEntriesDuplicate.dat"),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.mastertextfile_english.dat"),
-                DatFileType.OrderedByCrc32
+                DatLayoutKind.OrderedByCrc32
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.Index_WithDuplicates.dat"),
-                DatFileType.NotOrdered
+                DatLayoutKind.NotOrdered
             ],
             [
                 TestingHelpers.GetEmbeddedResource(typeof(DatFileReaderTest), "Files.creditstext_english.dat"),
-                DatFileType.NotOrdered
+                DatLayoutKind.NotOrdered
             ]
         ];
     }

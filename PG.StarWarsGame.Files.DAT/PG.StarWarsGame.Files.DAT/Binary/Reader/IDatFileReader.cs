@@ -4,11 +4,11 @@
 using System.IO;
 using PG.StarWarsGame.Files.Binary.File;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
-using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.DAT.Data;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
 internal interface IDatFileReader : IBinaryFileReader<DatBinaryFile>
 {
-    DatFileType PeekFileType(Stream byteStream);
+    DatLayoutKind PeekLayout(Stream byteStream);
 }

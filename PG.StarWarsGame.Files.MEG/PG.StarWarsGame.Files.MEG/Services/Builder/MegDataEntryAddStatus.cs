@@ -4,7 +4,7 @@
 namespace PG.StarWarsGame.Files.MEG.Services.Builder;
 
 /// <summary>
-/// Status of adding a file or data entry to an <see cref="IMegBuilder"/>. 
+/// Specifies the status of adding a file or data entry to an <see cref="IMegBuilder"/>.
 /// </summary>
 public enum MegDataEntryAddStatus
 {

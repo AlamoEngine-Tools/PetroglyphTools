@@ -9,7 +9,7 @@ using PG.StarWarsGame.Files.Binary.File;
 namespace PG.StarWarsGame.Files.Binary;
 
 /// <summary>
-/// Base class for a Petroglyph binary file.
+/// Provides the base class for a Petroglyph binary file.
 /// </summary>
 public abstract class BinaryFile : BinaryBase, IBinaryFile
 {

@@ -13,7 +13,7 @@ namespace PG.Commons.Utilities;
 public static class PGFileNameUtilities
 {
     /// <summary>
-    /// Checks whether a given filename is can be used for a Petroglyph Star Wars game.
+    /// Checks whether a given filename can be used for a Petroglyph Star Wars game.
     /// </summary>
     /// <remarks>
     /// A filename is considered to be invalid under the following conditions: <br/>
@@ -22,8 +22,11 @@ public static class PGFileNameUtilities
     ///     c) The filename contains a non ASCII character (char > 0xFF).<br/>
     /// </remarks>
     /// <param name="filename">The filename to check.</param>
-    /// <param name="result">Detailed information status. Can be used for error message reporting.</param>
-    /// <returns><see langword="true"/> when the filename is valid; <see langword="false"/> otherwise.</returns>
+    /// <param name="result">
+    /// When this method returns, contains the detailed validation status, which can be used for error message reporting.
+    /// This parameter is treated as uninitialized.
+    /// </param>
+    /// <returns><see langword="true"/> if the filename is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidFileName(ReadOnlySpan<char> filename, out FileNameValidationResult result)
     {
         var validator = WindowsFileNameValidator.Instance;

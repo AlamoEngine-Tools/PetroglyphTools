@@ -2,16 +2,17 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Archives;
 
 /// <inheritdoc cref="IVirtualMegArchive"/>
+[DebuggerDisplay("{Count} entries")]
 internal sealed class VirtualMegArchive : MegDataEntryHolderBase<MegDataEntryReference>, IVirtualMegArchive
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegArchive"/> class
-    /// by coping all elements of the given <paramref name="files"/> list.
+    /// Initializes a new instance of the <see cref="VirtualMegArchive"/> class by copying all elements of the specified list.
     /// </summary>
     /// <param name="files">The list of files in this archive.</param>
     internal VirtualMegArchive(IList<MegDataEntryReference> files) : base(files)

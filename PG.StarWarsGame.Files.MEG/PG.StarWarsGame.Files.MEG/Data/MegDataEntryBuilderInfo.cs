@@ -14,12 +14,12 @@ using PG.StarWarsGame.Files.MEG.Binary.Size;
 namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <summary>
-/// Represents a container with information for of an MEG entry used for building .MEG files.
+/// Represents a container with information for an MEG entry used for building .MEG files.
 /// </summary>
 public sealed class MegDataEntryBuilderInfo
 {
     /// <summary>
-    /// The actual location of a MEG data entry.
+    /// Gets the actual location of a MEG data entry.
     /// </summary>
     public MegDataEntryOriginInfo OriginInfo { get; }
 
@@ -29,7 +29,7 @@ public sealed class MegDataEntryBuilderInfo
     public string EntryPath { get; }
 
     /// <summary>
-    /// Gets whether the data entry shall be encrypted or not within the constructed MEG file.
+    /// Gets a value that indicates whether the data entry is encrypted within the constructed MEG file.
     /// </summary>
     public bool Encrypted { get; }
 
@@ -66,7 +66,7 @@ public sealed class MegDataEntryBuilderInfo
     /// -or-
     /// <paramref name="dataEntry"/> does not exist in <paramref name="megFile"/>.
     /// </exception>
-    /// <exception cref="ArgumentNullException"><paramref name="megFile"/> or <see paramref="dataEntry"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="megFile"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
     public static MegDataEntryBuilderInfo FromEntry(IMegFile megFile, MegDataEntry dataEntry, string? overrideEntryPath = null, bool? overrideEncrypted = null)
     {
         if (megFile == null) 
@@ -111,7 +111,7 @@ public sealed class MegDataEntryBuilderInfo
     /// The path of the entry within the MEG archive.
     /// When not <see langword="null"/>, the specified path will be used; otherwise the full path of <paramref name="file"/> path will be used.
     /// </param>
-    /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
+    /// <param name="encrypt"><see langword="true"/> to encrypt the data; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</param>
     /// <exception cref="ArgumentNullException"><paramref name="file"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">
     /// <paramref name="file"/> does not exist.
@@ -135,7 +135,7 @@ public sealed class MegDataEntryBuilderInfo
     /// </summary>
     /// <param name="bytes">The read-only span containing the entry bytes.</param>
     /// <param name="entryPath">The path of the entry within the MEG archive.</param>
-    /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
+    /// <param name="encrypt"><see langword="true"/> to encrypt the data; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</param>
     /// <exception cref="ArgumentNullException"><paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
     public static MegDataEntryBuilderInfo FromBytes(ReadOnlySpan<byte> bytes, string entryPath, bool encrypt = false)
@@ -150,7 +150,7 @@ public sealed class MegDataEntryBuilderInfo
     /// </summary>
     /// <param name="bytes">The buffer containing the entry bytes.</param>
     /// <param name="entryPath">The path of the entry within the MEG archive.</param>
-    /// <param name="encrypt">Sets whether the data shall be encrypted or not. Default is <see langword="false"/>.</param>
+    /// <param name="encrypt"><see langword="true"/> to encrypt the data; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</param>
     /// <exception cref="ArgumentNullException"><paramref name="bytes"/> or <paramref name="entryPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="entryPath"/> is empty.</exception>
     public static MegDataEntryBuilderInfo FromBytes(byte[] bytes, string entryPath, bool encrypt = false)

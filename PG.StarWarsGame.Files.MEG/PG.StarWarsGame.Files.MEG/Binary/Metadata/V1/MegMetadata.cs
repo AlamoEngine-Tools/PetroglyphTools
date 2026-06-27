@@ -7,7 +7,7 @@ using PG.StarWarsGame.Files.Binary;
 namespace PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 
 /// <summary>
-/// Meg archive representation WITHOUT content data.
+/// Represents a .MEG archive's metadata, without the actual content data.
 /// </summary>
 internal class MegMetadata : BinaryFile, IMegFileMetadata
 {

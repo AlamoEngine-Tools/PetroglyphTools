@@ -32,7 +32,7 @@ public readonly struct MegDataEntryValidationResult
     public MegDataEntryValidationStatus Status { get; }
 
     /// <summary>
-    /// Gets a value whether the validation was successful.
+    /// Gets a value that indicates whether the validation was successful.
     /// </summary>
     public bool IsValid => Status == MegDataEntryValidationStatus.Valid;
 

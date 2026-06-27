@@ -13,7 +13,8 @@ public class MegSizeException : Exception
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MegSizeException"/> class with a specified error message.
-    /// </summary><param name="message">The message that describes the error.</param>
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
     public MegSizeException(string? message) : base(message)
     {
     }

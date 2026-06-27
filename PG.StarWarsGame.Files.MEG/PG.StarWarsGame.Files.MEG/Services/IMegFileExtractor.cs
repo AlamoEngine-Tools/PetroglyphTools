@@ -5,13 +5,15 @@ using System;
 using System.IO;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
-using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
 /// <summary>
-/// Service for extracting file from a .MEG archive.
+/// Represents a service for extracting files from a .MEG archive to the file system.
 /// </summary>
+/// <remarks>
+/// To read an entry's data into a stream (without writing it to disk), use <see cref="Data.IMegDataSource.GetData"/>.
+/// </remarks>
 public interface IMegFileExtractor
 {
     /// <summary>
@@ -27,7 +29,7 @@ public interface IMegFileExtractor
     ///
     /// If <paramref name="preserveDirectoryHierarchy"/> is <see langword="false"/>,
     /// <code>
-    ///     result :=  <paramref name="rootPath"/> + filename(<paramref name="dataEntry"/>).
+    ///     result := rootPath + filename(dataEntry).
     /// </code>
     /// <br/>
     /// <br/>
@@ -37,13 +39,13 @@ public interface IMegFileExtractor
     /// a) if <paramref name="dataEntry"/> is not <em>rooted</em> <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.path.ispathrooted">(see here)</see>
     /// <br/>
     /// <code>
-    ///     result := <paramref name="rootPath"/> + path(<paramref name="dataEntry"/>).
+    ///     result := rootPath + path(dataEntry).
     /// </code>
     /// 
     /// <br/>
     /// b) if <paramref name="dataEntry"/> is rooted.
     /// <code>
-    ///     result := path(<paramref name="dataEntry"/>)
+    ///     result := path(dataEntry)
     /// </code>
     ///
     /// <br/>
@@ -58,25 +60,13 @@ public interface IMegFileExtractor
     /// It's the consumers responsibility to prevent path traversals.
     /// </remarks>
     /// <param name="dataEntry">The file to get the path from.</param>
-    /// <param name="rootPath">Base directory of the built file path.</param>
-    /// <param name="preserveDirectoryHierarchy">option to preserve the directory hierarchy of the <paramref name="dataEntry"/> file name.</param>
+    /// <param name="rootPath">The base directory of the built file path.</param>
+    /// <param name="preserveDirectoryHierarchy"><see langword="true"/> to preserve the directory hierarchy of the <paramref name="dataEntry"/> file name; otherwise, <see langword="false"/>.</param>
     /// <returns>The absolute file path.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dataEntry"/> or <paramref name="rootPath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="rootPath"/> is empty or contains only whitespace.</exception>
     /// <exception cref="InvalidOperationException">The absolute path could not be determined.</exception>
     string GetAbsolutePath(IMegDataEntry dataEntry, string rootPath, bool preserveDirectoryHierarchy);
-
-
-    /// <summary>
-    /// Gets the data stream of the given <paramref name="dataEntryLocation"/>.
-    /// </summary>
-    /// <param name="dataEntryLocation">The data entry information.</param>
-    /// <returns>A stream containing the files contents.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>
-    /// <exception cref="EntryNotInMegException">The data entry does not exist in the .MEG file.</exception>
-    /// <exception cref="UnauthorizedAccessException">The operation is not permitted by the operating system due to missing permissions.</exception>
-    MegEntryStream GetData(MegDataEntryLocationReference dataEntryLocation);
 
 
     /// <summary>
@@ -92,8 +82,8 @@ public interface IMegFileExtractor
     /// </remarks>
     /// <param name="dataEntryLocation">The data entry information.</param>
     /// <param name="filePath">The destination file path.</param>
-    /// <param name="overwrite">When set to <see langword="true"/> existing files will be overwritten; otherwise the extraction will be skipped.</param>
-    /// <returns><see langword="true"/> if the file was extracted. <see langword="false"/> if and only if the extraction was skipped.</returns>
+    /// <param name="overwrite"><see langword="true"/> to overwrite existing files; otherwise, <see langword="false"/> to skip the extraction.</param>
+    /// <returns><see langword="true"/> if the file was extracted; otherwise, <see langword="false"/> if the extraction was skipped.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dataEntryLocation"/> or <paramref name="filePath"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="filePath"/> is empty, contains only whitespace or is not a legal file path in general.</exception>
     /// <exception cref="ArgumentException"><paramref name="dataEntryLocation"/> has <see langword="null"/> properties.</exception>

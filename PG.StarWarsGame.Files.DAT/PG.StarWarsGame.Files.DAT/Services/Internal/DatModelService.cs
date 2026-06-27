@@ -10,7 +10,6 @@ using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Services;
 
@@ -40,7 +39,7 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         var newEntries = new LinkedHashSet<DatStringEntry>(datModel, CrcBasedEqualityComparer<DatStringEntry>.Instance)
             .ToList();
         
-        if (datModel.KeySortOrder == DatFileType.OrderedByCrc32)
+        if (datModel.Layout == DatLayoutKind.OrderedByCrc32)
         {
             newEntries = Crc32Utilities.SortByCrc32(newEntries);
             return new SortedDatModel(newEntries);
@@ -82,9 +81,9 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datToMerge == null)
             throw new ArgumentNullException(nameof(datToMerge));
 
-        if (baseDatModel.KeySortOrder != DatFileType.OrderedByCrc32)
+        if (baseDatModel.Layout != DatLayoutKind.OrderedByCrc32)
             throw new ArgumentException("DAT model not sorted.", nameof(baseDatModel));
-        if (datToMerge.KeySortOrder != DatFileType.OrderedByCrc32)
+        if (datToMerge.Layout != DatLayoutKind.OrderedByCrc32)
             throw new ArgumentException("DAT model not sorted.", nameof(datToMerge));
 
         var newEntries = baseDatModel.ToList();
@@ -130,9 +129,9 @@ internal class DatModelService(IServiceProvider serviceProvider) : ServiceBase(s
         if (datToMerge == null)
             throw new ArgumentNullException(nameof(datToMerge));
 
-        if (baseDatModel.KeySortOrder != DatFileType.NotOrdered)
+        if (baseDatModel.Layout != DatLayoutKind.NotOrdered)
             throw new ArgumentException("DAT model not unsorted.", nameof(baseDatModel));
-        if (datToMerge.KeySortOrder != DatFileType.NotOrdered)
+        if (datToMerge.Layout != DatLayoutKind.NotOrdered)
             throw new ArgumentException("DAT model not unsorted.", nameof(datToMerge));
 
         mergedKeys = new List<MergedKeyResult>();

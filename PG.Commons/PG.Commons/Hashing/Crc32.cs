@@ -57,7 +57,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     }
 
     /// <inheritdoc cref="object.ToString()"/>
-    /// <param name="asSignedInteger">When <see langword="true"/>, the checksum is represented by a signed integer; unsigned otherwise.</param>
+    /// <param name="asSignedInteger"><see langword="true"/> to represent the checksum as a signed integer; otherwise, <see langword="false"/>.</param>
     public string ToString(bool asSignedInteger)
     {
         var sb = new StringBuilder("CRC: ");
@@ -95,7 +95,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <summary>
     /// Returns the CRC32 checksum as a byte array.
     /// </summary>
-    /// <returns>The CRC32 checksum as a byte array.</returns>
+    /// <returns>The CRC32 checksum in little endian byte order.</returns>
     public unsafe byte[] GetBytes()
     {
         Span<byte> data = stackalloc byte[sizeof(Crc32)];
@@ -106,6 +106,7 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     /// <summary>
     /// Writes the CRC32 checksum into a span of bytes in little endian.
     /// </summary>
+    /// <param name="destination">The span to write the checksum into.</param>
     public void GetBytes(Span<byte> destination)
     {
         BinaryPrimitives.WriteUInt32LittleEndian(destination, _checksum);
@@ -178,15 +179,15 @@ public readonly struct Crc32 : IEquatable<Crc32>, IComparable<Crc32>
     }
 
     /// <summary>
-    /// Defines an implicit conversion of an CRC32 checksum to an <see cref="uint"/>.
+    /// Defines an explicit conversion of a CRC32 checksum to a <see cref="uint"/>.
     /// </summary>
-    /// <param name="crc">The checksum data.</param>
+    /// <param name="crc">The checksum to convert.</param>
     public static explicit operator uint(Crc32 crc) => crc._checksum;
 
     /// <summary>
-    /// Defines an implicit conversion of an CRC32 checksum to an <see cref="int"/>, which might be negative.
+    /// Defines an explicit conversion of a CRC32 checksum to an <see cref="int"/>, which might be negative.
     /// </summary>
-    /// <param name="crc">The checksum data.</param>
+    /// <param name="crc">The checksum to convert.</param>
     public static explicit operator int(Crc32 crc)
     {
         unchecked

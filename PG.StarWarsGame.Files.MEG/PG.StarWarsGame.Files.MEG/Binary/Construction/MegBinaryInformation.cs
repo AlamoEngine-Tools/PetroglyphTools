@@ -1,14 +1,14 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using PG.StarWarsGame.Files.MEG.Data;
 using System.Collections.Generic;
-using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
-internal class MegFileBinaryInformation(
+internal class MegBinaryInformation(
     uint metadataSize,
-    MegFileVersion megFileVersion,
+    MegVersion MegVersion,
     bool encrypted,
     IEnumerable<MegDataEntryBinaryInformation> entries)
 {
@@ -16,7 +16,7 @@ internal class MegFileBinaryInformation(
 
     public bool Encrypted { get; } = encrypted;
 
-    public MegFileVersion MegFileVersion { get; } = megFileVersion;
+    public MegVersion MegVersion { get; } = MegVersion;
 
     public IEnumerable<MegDataEntryBinaryInformation> Entries { get; } = entries;
 }

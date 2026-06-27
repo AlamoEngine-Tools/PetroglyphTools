@@ -32,7 +32,7 @@ public class MegFileConstants
     internal const uint MegMaxFileSize = uint.MaxValue;
     
     /// <summary>
-    /// The max number of characters allowed in Empire at War game for MEG entry paths.
+    /// Represents the maximum number of characters allowed in Empire at War for MEG entry paths.
     /// </summary>
     public const int EawMaxEntryPathLength = 259;
 
@@ -52,12 +52,12 @@ public class MegFileConstants
     //
     // Therefore, we limit the max entry size, and thus the max file size to int.MaxValue (2GB) for Eaw/Foc MEG files.
     /// <summary>
-    /// The max size of a MEG entry for Empire at War / Forces of Corruption.
+    /// Represents the maximum size of a MEG entry for Empire at War / Forces of Corruption.
     /// </summary>
     public const int EawMegMaxEntrySize = int.MaxValue;
-    
+
     /// <summary>
-    /// The max file size of a MEG file for Empire at War / Forces of Corruption.
+    /// Represents the maximum size of a MEG file for Empire at War / Forces of Corruption.
     /// </summary>
     public const int EawMegMaxFileSize = EawMegMaxEntrySize;
 
@@ -73,7 +73,7 @@ public class MegFileConstants
     //      'ß.txt' --> '?.txt'
     //      'ä.txt' --> '?.txt'
     /// <summary>
-    /// ASCII encoding is used for MEG entries.
+    /// Represents the ASCII encoding used for MEG entries.
     /// </summary>
     public static readonly Encoding MegDataEntryPathEncoding = Encoding.ASCII;
 

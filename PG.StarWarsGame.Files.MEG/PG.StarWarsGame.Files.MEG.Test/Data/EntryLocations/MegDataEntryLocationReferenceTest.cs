@@ -1,8 +1,11 @@
 using System;
+using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Services;
 using PG.StarWarsGame.Files.MEG.Test.Data.Entries;
 using Xunit;
 
@@ -85,5 +88,37 @@ public class MegDataEntryLocationReferenceTest : CommonMegTestBase
 
         Assert.True(locationExists.Exists);
         Assert.False(locationNotExists.Exists);
+    }
+
+    [Fact]
+    public void GetData_ReturnsReferencedEntryContent()
+    {
+        var source = ServiceProvider.GetRequiredService<IMegService>().LoadArchive(MegTestConstants.ContentMegFileV1);
+
+        var reference = new MegDataEntryLocationReference(source, source.Archive[0]);
+
+        using var stream = reference.GetData();
+        Assert.Equal(MegTestConstants.CampaignFilesContent, ReadAllBytes(stream));
+    }
+
+    [Fact]
+    public void GetData_EntryNotInSource_Throws()
+    {
+        var source = ServiceProvider.GetRequiredService<IMegService>().LoadArchive(MegTestConstants.ContentMegFileV1);
+
+        var reference =
+            new MegDataEntryLocationReference(source, MegDataEntryTest.CreateEntry("not/in/archive.xml"));
+
+        Assert.Throws<EntryNotInMegException>(reference.GetData);
+    }
+
+    private static byte[] ReadAllBytes(Stream stream)
+    {
+        using (stream)
+        {
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
+        }
     }
 }

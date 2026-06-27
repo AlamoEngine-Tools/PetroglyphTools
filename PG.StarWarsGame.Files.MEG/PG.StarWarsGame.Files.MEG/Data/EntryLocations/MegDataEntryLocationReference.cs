@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
 
@@ -38,6 +39,16 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
     {
         Source = source ?? throw new ArgumentNullException(nameof(source));
         DataEntry = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
+    }
+
+    /// <summary>
+    /// Gets a read-only stream over the referenced entry data.
+    /// </summary>
+    /// <returns>A read-only stream containing the entry's data.</returns>
+    /// <exception cref="EntryNotInMegException"><see cref="DataEntry"/> is not contained in <see cref="Source"/>.</exception>
+    public Stream GetData()
+    {
+        return Source.GetData(DataEntry);
     }
 
     /// <inheritdoc />

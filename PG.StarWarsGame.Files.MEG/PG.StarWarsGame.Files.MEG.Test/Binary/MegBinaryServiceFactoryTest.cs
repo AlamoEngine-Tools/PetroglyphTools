@@ -3,7 +3,6 @@ using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Binary.Size;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary;

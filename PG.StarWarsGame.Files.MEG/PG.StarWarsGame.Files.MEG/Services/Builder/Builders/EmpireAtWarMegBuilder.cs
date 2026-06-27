@@ -3,7 +3,6 @@
 
 using System;
 using PG.StarWarsGame.Files.MEG.Binary.Size;
-using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Normalization;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 

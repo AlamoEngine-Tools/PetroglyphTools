@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MEG.Binary;
 using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Files;
 using System;
 using System.IO;
 using System.IO.Abstractions;

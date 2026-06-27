@@ -519,16 +519,33 @@ internal static class MegTestConstants
         47, 71, 97, 109, 101, 95, 79, 98, 106, 101, 99, 116, 95, 70, 105, 108, 101, 115, 62
     ];
 
+    // A minimal V1 MEG holding a single zero-size entry named "file" and no data section.
+    internal static readonly byte[] EmptyEntryMegFileV1 =
+    [
+        1, 0, 0, 0, 1, 0, 0, 0, // Header: one file name, one file
+        4, 0, 102, 105, 108, 101, // "file"
+        // CRC32 of "file", record index 0, size 0, offset 34 (== metadata size), name index 0
+        16, 54, 159, 140, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0
+    ];
+
     internal class FakeFileInfo(string fullName, long length) : IFileInfo
     {
         public string FullName => fullName;
         public long Length { get; set; } = length;
         public bool Exists => true;
 
+        /// <summary>
+        /// Optional content returned by <see cref="OpenRead"/>. Its length can intentionally differ from
+        /// <see cref="Length"/> to simulate a file whose reported size disagrees with its actual data.
+        /// </summary>
+        public byte[]? ReadBytes { get; set; }
+
         #region Other IFileInfo Members
         public void Delete() => throw new NotImplementedException();
         public void Refresh() { }
-        public FileSystemStream OpenRead() => throw new NotImplementedException();
+        public FileSystemStream OpenRead() => ReadBytes is null
+            ? throw new NotImplementedException()
+            : new FakeFileSystemStream(new MemoryStream(ReadBytes, writable: false), fullName);
         public FileSystemStream OpenWrite() => throw new NotImplementedException();
         public FileSystemStream Open(FileMode mode) => throw new NotImplementedException();
         public FileSystemStream Open(FileMode mode, FileAccess access) => throw new NotImplementedException();
@@ -572,4 +589,7 @@ internal static class MegTestConstants
 
         #endregion
     }
+
+    // Minimal FileSystemStream wrapper around an arbitrary stream, used by FakeFileInfo.OpenRead.
+    internal sealed class FakeFileSystemStream(Stream stream, string path) : FileSystemStream(stream, path, isAsync: false);
 }

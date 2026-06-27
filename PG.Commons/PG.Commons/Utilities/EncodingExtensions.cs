@@ -36,7 +36,7 @@ public static class EncodingExtensions
     /// <param name="encoding">The encoding to be used.</param>
     /// <param name="numberOfChars">The number of characters to encode.</param>
     /// <returns>The number of bytes</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langowrd="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="encoding"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="numberOfChars"/> is less than zero.</exception>
     /// <exception cref="NotSupportedException"><paramref name="encoding"/> is not supported.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

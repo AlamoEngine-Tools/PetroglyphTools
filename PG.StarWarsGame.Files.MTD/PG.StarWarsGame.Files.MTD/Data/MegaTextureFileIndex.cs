@@ -27,7 +27,7 @@ public sealed class MegaTextureFileIndex : IEquatable<MegaTextureFileIndex>, IHa
     public Rectangle Area { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the entry has an alpha channel.
+    /// Gets a value that indicates whether the entry has an alpha channel.
     /// </summary>
     public bool HasAlpha { get; }
 
@@ -37,12 +37,12 @@ public sealed class MegaTextureFileIndex : IEquatable<MegaTextureFileIndex>, IHa
     public Crc32 Crc32 { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegaTextureFileIndex"/> class with the specified information.
+    /// Initializes a new instance of the <see cref="MegaTextureFileIndex"/> class.
     /// </summary>
     /// <param name="fileName">The file name of the entry.</param>
     /// <param name="nameChecksum">The <see cref="PG.Commons.Hashing.Crc32"/> checksum of the file name.</param>
     /// <param name="area">The area of the entry within the Mega Texture.</param>
-    /// <param name="hasAlpha">Information whether this entry has an alpha channel.</param>
+    /// <param name="hasAlpha"><see langword="true"/> if the entry has an alpha channel; otherwise, <see langword="false"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="fileName"/> is longer than 63 characters.</exception>
     /// <exception cref="ArgumentException"><paramref name="fileName"/> is empty.</exception>
     /// <exception cref="ArgumentException"><paramref name="fileName"/> does contain non-ASCII characters.</exception>

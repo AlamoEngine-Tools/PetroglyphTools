@@ -2,20 +2,21 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Files;
 
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
-/// Location reference of an existing MEG data entry and its owning .MEG file.
+/// Represents a location reference of an existing MEG data entry and its owning MEG.
 /// </summary>
 public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatable<MegDataEntryLocationReference>
 {
     /// <summary>
-    /// Gets the owning .MEG file of <see cref="DataEntry"/>.
+    /// Gets the MEG that owns <see cref="DataEntry"/>.
     /// </summary>
-    public IMegFile MegFile { get; }
+    public IMegDataSource Source { get; }
 
     /// <summary>
     /// Gets the referenced MEG data entry.
@@ -23,19 +24,19 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
     public MegDataEntry DataEntry { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the data exists in the meg file referenced in this instance.
+    /// Gets a value that indicates whether the data exists in the MEG referenced in this instance.
     /// </summary>
-    public bool Exists => MegFile.Archive.Contains(DataEntry);
-
+    public bool Exists => Source.Archive.Contains(DataEntry);
+    
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryLocationReference"/>.
+    /// Initializes a new instance of the <see cref="MegDataEntryLocationReference"/> class.
     /// </summary>
-    /// <param name="megFile">The owning .MEG file</param>
-    /// <param name="dataEntry">The referenced <see cref="MegDataEntry"/>.</param>
-    /// <exception cref="ArgumentNullException">The <paramref name="megFile"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
-    public MegDataEntryLocationReference(IMegFile megFile, MegDataEntry dataEntry)
+    /// <param name="source">The MEG that owns the entry.</param>
+    /// <param name="dataEntry">The referenced data entry.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="dataEntry"/> is <see langword="null"/>.</exception>
+    public MegDataEntryLocationReference(IMegDataSource source, MegDataEntry dataEntry)
     {
-        MegFile = megFile ?? throw new ArgumentNullException(nameof(megFile));
+        Source = source ?? throw new ArgumentNullException(nameof(source));
         DataEntry = dataEntry ?? throw new ArgumentNullException(nameof(dataEntry));
     }
 
@@ -46,7 +47,7 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
             return false;
         if (ReferenceEquals(this, other))
             return true;
-        return MegFile.Equals(other.MegFile) && DataEntry.Equals(other.DataEntry);
+        return Source.Equals(other.Source) && DataEntry.Equals(other.DataEntry);
     }
 
     /// <inheritdoc />
@@ -58,12 +59,23 @@ public sealed class MegDataEntryLocationReference : IDataEntryLocation, IEquatab
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        return HashCode.Combine(MegFile, DataEntry);
+        return HashCode.Combine(Source, DataEntry);
     }
 
     /// <inheritdoc/>
     public override string ToString()
     {
-        return $"{MegFile.FilePath}::{DataEntry.Path}";
+        return $"{DescribeSource(Source)}::{DataEntry.Path}";
+    }
+
+    [ExcludeFromCodeCoverage]
+    internal static string DescribeSource(IMegDataSource source)
+    {
+        return source switch
+        {
+            IMegFile megFile => megFile.FilePath,
+            InMemoryMeg inMemoryMeg => inMemoryMeg.Name,
+            _ => "<unknown MEG source>"
+        };
     }
 }

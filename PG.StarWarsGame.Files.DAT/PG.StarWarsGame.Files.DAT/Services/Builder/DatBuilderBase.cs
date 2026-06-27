@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -18,7 +18,7 @@ using PG.StarWarsGame.Files.Services.Builder;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder;
 
 /// <summary>
-/// Base class for a <see cref="IDatBuilder"/> service providing the fundamental implementations.
+/// Provides a base class for a <see cref="IDatBuilder"/> service with the fundamental implementations.
 /// </summary>
 public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEntry>, DatFileInformation>, IDatBuilder
 {
@@ -28,10 +28,10 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
 
     /// <inheritdoc />
     public sealed override IReadOnlyList<DatStringEntry> BuilderData =>
-        TargetKeySortOrder == DatFileType.OrderedByCrc32 ? SortedEntries : Entries;
+        TargetLayout == DatLayoutKind.OrderedByCrc32 ? SortedEntries : Entries;
 
     /// <inheritdoc />
-    public abstract DatFileType TargetKeySortOrder { get; }
+    public abstract DatLayoutKind TargetLayout { get; }
 
     /// <inheritdoc />
     public BuilderOverrideKind KeyOverwriteBehavior { get; }
@@ -137,7 +137,7 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     /// <inheritdoc />
     public IDatModel BuildModel()
     {
-        if (TargetKeySortOrder == DatFileType.OrderedByCrc32)
+        if (TargetLayout == DatLayoutKind.OrderedByCrc32)
             return new SortedDatModel(BuilderData);
         return new UnsortedDatModel(BuilderData);
     }
@@ -145,8 +145,8 @@ public abstract class DatBuilderBase : FileBuilderBase<IReadOnlyList<DatStringEn
     /// <inheritdoc />
     protected sealed override void BuildFileCore(FileSystemStream fileStream, DatFileInformation fileInformation, IReadOnlyList<DatStringEntry> data)
     {
-        var datService = Services.GetRequiredService<IDatFileService>();
-        datService.CreateDatFile(fileStream, data, TargetKeySortOrder);
+        var datService = Services.GetRequiredService<IDatService>();
+        datService.CreateDatBinary(fileStream, data, TargetLayout);
     }
 
     /// <inheritdoc />

@@ -8,14 +8,14 @@ using AnakinRaW.CommonUtilities;
 namespace PG.StarWarsGame.Files;
 
 /// <summary>
-/// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TParam}"/>.
+/// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TFileInfo}"/>.
 /// </summary>
 public abstract record PetroglyphFileInformation : IDisposable
 {
     private readonly string _filePath;
 
     /// <summary>
-    /// Gets or sets the path of the file e.g, "c:/my/path/myfile.txt"
+    /// Gets or sets the path of the file, e.g, "c:/my/path/myfile.txt".
     /// </summary>
     /// <remarks>
     /// The path is taken as-is and may be relative.
@@ -71,7 +71,7 @@ public abstract record PetroglyphFileInformation : IDisposable
     /// <summary>
     /// Disposes this instance and frees managed resources.
     /// </summary>
-    /// <param name="disposing">When set to <see langword="true"/> managed resources get disposed.</param>
+    /// <param name="disposing"><see langword="true"/> to release managed resources; otherwise, <see langword="false"/>.</param>
     protected virtual void Dispose(bool disposing)
     {
     }

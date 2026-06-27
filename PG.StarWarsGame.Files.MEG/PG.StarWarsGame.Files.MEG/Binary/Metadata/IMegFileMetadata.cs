@@ -8,9 +8,18 @@ namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal interface IMegFileMetadata : IBinaryFile
 {
+    /// <summary>
+    /// Gets the header of the .MEG archive.
+    /// </summary>
     IMegHeader Header { get; }
 
+    /// <summary>
+    /// Gets the table that holds the file names of the .MEG archive.
+    /// </summary>
     BinaryTable<MegFileNameTableRecord> FileNameTable { get; }
 
+    /// <summary>
+    /// Gets the table that holds the file descriptors of the .MEG archive.
+    /// </summary>
     IMegFileTable FileTable { get; }
 }

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace PG.Commons.Services;
 
 /// <summary>
-/// Base class for services.
+/// Provides a base class for services.
 /// </summary>
 public abstract class ServiceBase : DisposableObject
 {

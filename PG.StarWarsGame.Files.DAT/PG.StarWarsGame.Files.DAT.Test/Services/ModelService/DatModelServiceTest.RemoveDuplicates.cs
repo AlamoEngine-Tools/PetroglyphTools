@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using PG.Commons.Hashing;
 using PG.Commons.Utilities;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.DAT.Test.Services;
@@ -21,7 +20,7 @@ public partial class DatModelServiceTest
     public void RemoveDuplicates(IList<DatStringEntry> entries, IList<DatStringEntry> expected)
     {
         var model = CreateModel(entries);
-        if (model.KeySortOrder == DatFileType.OrderedByCrc32)
+        if (model.Layout == DatLayoutKind.OrderedByCrc32)
             expected = Crc32Utilities.SortByCrc32(expected);
 
         var newModel = Service.RemoveDuplicates(model);

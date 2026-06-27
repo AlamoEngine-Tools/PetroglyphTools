@@ -1,11 +1,10 @@
-using AnakinRaW.CommonUtilities.Testing;
 using AnakinRaW.CommonUtilities.Testing.Attributes;
 using Microsoft.Extensions.DependencyInjection;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services;
-using PG.StarWarsGame.Files.MEG.Test.Binary.Reader.V1;
 using System;
 using System.IO;
 using Testably.Abstractions.Testing;
@@ -17,10 +16,12 @@ namespace PG.StarWarsGame.Files.MEG.Test.Services;
 public class MegFileExtractorTest : CommonMegTestBase
 {
     private readonly MegFileExtractor _extractor;
+    private readonly IMegService _megService;
 
     public MegFileExtractorTest()
     {
         _extractor = new MegFileExtractor(ServiceProvider);
+        _megService = ServiceProvider.GetRequiredService<IMegService>();
     }
 
     [Fact]
@@ -83,27 +84,6 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void GetFileData_ThrowsArgumentNull()
-    {
-        Assert.Throws<ArgumentNullException>(() => _extractor.GetData(null!));
-    }
-
-    [Fact]
-    public void GetFileData_CannotReadFile_Throws()
-    { 
-        // Size 12 is not valid, as the entry does not really exist.
-        var entry = CreateEntry("file.txt", default, 0, 12);
-
-        FileSystem.File.Create("test.meg");
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegFileVersion.V1),
-            ServiceProvider);
-
-        var location = new MegDataEntryLocationReference(meg, entry);
-
-        Assert.Throws<IOException>(() => _extractor.GetData(location));
-    }
-
-    [Fact]
     public void ExtractFile_ThrowsArgumentsIncorrect()
     {
         Assert.Throws<ArgumentNullException>(() => _extractor.ExtractEntry(null!, "path", false));
@@ -114,7 +94,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         {
         }
 
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("test.meg", MegVersion.V1),
             ServiceProvider);
 
         var location = new MegDataEntryLocationReference(meg, entry);
@@ -133,7 +113,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.Initialize().WithFile("a.meg");
 
         var entry = CreateEntry("path");
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegVersion.V1),
             ServiceProvider);
         var location = new MegDataEntryLocationReference(meg, entry);
 
@@ -147,7 +127,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.Initialize().WithFile("a.meg");
 
         var entry = CreateEntry("path");
-        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegFileVersion.V1),
+        var meg = new MegFile(new MegArchive([entry]), new MegFileInformation("a.meg", MegVersion.V1),
             ServiceProvider);
 
         var location = new MegDataEntryLocationReference(meg, entry);
@@ -156,53 +136,12 @@ public class MegFileExtractorTest : CommonMegTestBase
     }
 
     [Fact]
-    public void GetFileData()
-    {
-        FileSystem.Initialize()
-            .WithFile("test.meg").Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
-
-        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
-
-        // CampaignFiles.xml
-        var entry = meg.Content[0];
-        var location = new MegDataEntryLocationReference(meg, entry);
-
-        using var stream = _extractor.GetData(location);
-
-        var ms = new MemoryStream();
-        stream.CopyTo(ms);
-
-        Assert.Equal(MegTestConstants.CampaignFilesContent, ms.ToArray());
-    }
-
-    [Fact]
-    public void GetFileData_FromUnorderedMeg()
-    {
-        var unorderedMeg = TestingHelpers.GetEmbeddedResourceAsByteArray(typeof(MegFileBinaryReaderV1IntegrationTest), "Files.v1_out_of_order.meg");
-        
-        FileSystem.Initialize()
-            .WithFile("test.meg").Which(m => m.HasBytesContent(unorderedMeg));
-
-        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
-
-        var ms = new MemoryStream();
-
-        using (var stream = _extractor.GetData(new MegDataEntryLocationReference(meg, meg.Content[0]))) 
-            stream.CopyTo(ms);
-        using (var stream = _extractor.GetData(new MegDataEntryLocationReference(meg, meg.Content[1])))
-            stream.CopyTo(ms);
-        
-        Assert.Equal("456123"u8, ms.ToArray());
-        Assert.True(meg.Content[0].Location.Offset > meg.Content[1].Location.Offset);
-    }
-
-    [Fact]
     public void ExtractData_NoOverwrite()
     {
         FileSystem.Initialize()
             .WithFile("test.meg").Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
-        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+        var meg = ServiceProvider.GetRequiredService<IMegService>().LoadFile("test.meg");
 
         // CampaignFiles.xml
         var entry = meg.Content[0];
@@ -239,7 +178,7 @@ public class MegFileExtractorTest : CommonMegTestBase
 
         Assert.Equal(existingFileData, FileSystem.File.ReadAllBytes("file.txt"));
 
-        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+        var meg = _megService.LoadFile("test.meg");
 
         // CampaignFiles.xml
         var entry = meg.Content[0];
@@ -260,7 +199,7 @@ public class MegFileExtractorTest : CommonMegTestBase
         FileSystem.Initialize()
             .WithFile("test.meg").Which(m => m.HasBytesContent(MegTestConstants.ContentMegFileV1));
 
-        var meg = ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+        var meg = _megService.LoadFile("test.meg");
 
         // CampaignFiles.xml
         var entry = meg.Content[0];
@@ -272,5 +211,50 @@ public class MegFileExtractorTest : CommonMegTestBase
 
         var actualFileData = FileSystem.File.ReadAllBytes(filePathWhereToExtract);
         Assert.Equal(MegTestConstants.CampaignFilesContent, actualFileData);
+    }
+
+    [Fact]
+    public void ExtractEntry_FromInMemoryArchive_WritesContentToFile()
+    {
+        var source = LoadTestArchive();
+        var location = new MegDataEntryLocationReference(source, source.Archive[0]);
+
+        var extracted = _extractor.ExtractEntry(location, "file.txt", false);
+
+        Assert.True(extracted);
+        Assert.True(FileSystem.File.Exists("file.txt"));
+        Assert.Equal(MegTestConstants.CampaignFilesContent, FileSystem.File.ReadAllBytes("file.txt"));
+    }
+
+    [Fact]
+    public void ExtractEntry_NoOverwrite_SkipsExistingFile()
+    {
+        var source = LoadTestArchive();
+        var location = new MegDataEntryLocationReference(source, source.Archive[0]);
+        FileSystem.File.WriteAllText("file.txt", "existing");
+
+        var extracted = _extractor.ExtractEntry(location, "file.txt", false);
+
+        Assert.False(extracted);
+        Assert.Equal("existing", FileSystem.File.ReadAllText("file.txt"));
+    }
+
+    [Fact]
+    public void ExtractEntry_Overwrite_ReplacesExistingFile()
+    {
+        var source = LoadTestArchive();
+        var location = new MegDataEntryLocationReference(source, source.Archive[0]);
+        FileSystem.File.WriteAllText("file.txt", "existing");
+
+        var extracted = _extractor.ExtractEntry(location, "file.txt", true);
+
+        Assert.True(extracted);
+        Assert.Equal(MegTestConstants.CampaignFilesContent, FileSystem.File.ReadAllBytes("file.txt"));
+    }
+
+    private IMegDataSource LoadTestArchive()
+    {
+        using var stream = new MemoryStream(MegTestConstants.ContentMegFileV1);
+        return _megService.LoadArchive(stream);
     }
 }

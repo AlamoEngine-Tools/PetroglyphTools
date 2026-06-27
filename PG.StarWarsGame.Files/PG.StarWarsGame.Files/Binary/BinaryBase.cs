@@ -42,8 +42,8 @@ public abstract class BinaryBase : IBinary
     public abstract void GetBytes(Span<byte> bytes);
 
     /// <summary>
-    /// Calculates the size in bytes of this instance
+    /// Calculates the size, in bytes, of this instance.
     /// </summary>
-    /// <returns>The size in bytes.</returns>
+    /// <returns>The size, in bytes.</returns>
     protected abstract int GetSizeCore();
 }

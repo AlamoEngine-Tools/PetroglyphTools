@@ -17,14 +17,13 @@ public static class MegServiceContribution
     /// <summary>
     /// Adds all necessary services provided by this library to the specified <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <param name="serviceCollection">The collection to add services to.</param>
     public static void SupportMEG(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<IMegFileService>(sp => new MegFileService(sp));
+        serviceCollection.AddSingleton<IMegService>(sp => new MegService(sp));
         serviceCollection.AddSingleton<IMegFileExtractor>(sp => new MegFileExtractor(sp));
         serviceCollection.AddSingleton<IMegBinaryServiceFactory>(sp => new MegBinaryServiceFactory(sp));
         serviceCollection.AddSingleton<IMegVersionIdentifier>(sp => new MegVersionIdentifier(sp));
-        serviceCollection.AddSingleton<IMegDataStreamFactory>(sp => new MegDataStreamFactory(sp));
         serviceCollection.AddSingleton<IVirtualMegArchiveBuilder>(_ => new VirtualMegArchiveBuilder());
 
         serviceCollection.AddSingleton<IDataEntryPathResolver>(sp => new PetroglyphRelativeDataEntryPathResolver(sp));

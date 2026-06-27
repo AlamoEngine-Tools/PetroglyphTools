@@ -1,4 +1,5 @@
-﻿using AnakinRaW.CommonUtilities.Testing.Extensions;
+using AnakinRaW.CommonUtilities.Testing.Extensions;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -15,7 +16,7 @@ public class EntryNotInMegExceptionTest : CommonMegTestBase
         FileSystem.File.Create("a.meg");
         FileSystem.File.Create("b.meg");
 
-        var megFileA = new MegFile(new MegArchive([]), new MegFileInformation("a.meg", MegFileVersion.V1),
+        var megFileA = new MegFile(new MegArchive([]), new MegFileInformation("a.meg", MegVersion.V1),
             ServiceProvider);
         var entry = MegDataEntryTest.CreateEntry("text.xml");
 

@@ -42,7 +42,7 @@ public abstract class MegDataEntryPathNormalizerBase : IMegDataEntryPathNormaliz
     /// </remarks>
     /// <param name="entryPath">The read-only span containing the entry's file path to normalize.</param>
     /// <param name="destination">The span to write the normalized path into.</param>
-    /// <returns><see langword="true"/>The number of chars written to <paramref name="destination"/> are stored to this variable.<see langword="false"/>.</returns>
+    /// <returns>The number of characters written to <paramref name="destination"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="destination"/> is too short.</exception>
     protected abstract int Normalize(ReadOnlySpan<char> entryPath, Span<char> destination);
 }

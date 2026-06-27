@@ -16,14 +16,14 @@ public readonly struct MegFileInfoValidationResult
     public string? FailReason { get; }
 
     /// <summary>
-    /// Gets a value whether the validation was successful.
+    /// Gets a value that indicates whether the validation was successful.
     /// </summary>
     public bool IsValid { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MegFileInfoValidationResult"/> struct.
     /// </summary>
-    /// <param name="valid">A value indicating whether the validation result is valid.</param>
+    /// <param name="valid"><see langword="true"/> if the validation result is valid; otherwise, <see langword="false"/>.</param>
     /// <param name="failReason">The reason for validation failure, or <see langword="null"/> if the validation is successful.</param>
     public MegFileInfoValidationResult(bool valid, string? failReason)
     {

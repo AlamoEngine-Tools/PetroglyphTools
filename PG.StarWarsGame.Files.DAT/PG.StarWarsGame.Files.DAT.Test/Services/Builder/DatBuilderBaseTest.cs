@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -266,7 +266,7 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
         builder.AddEntry("key3", "value");
 
         var model = builder.BuildModel();
-        Assert.Equal(builder.TargetKeySortOrder, model.KeySortOrder);
+        Assert.Equal(builder.TargetLayout, model.Layout);
         Assert.Equal(3, model.Count);
         Assert.Equal(["key1", "key2", "key3"], model.Keys);
     }
@@ -276,12 +276,12 @@ public abstract class DatBuilderBaseTest : FileBuilderTestBase<DatBuilderBase, I
     {
         using (var fs = FileSystem.FileStream.New("MasterTextFile.dat", FileMode.Create))
         {
-            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatFileServiceTest), "Files.mastertextfile_english.dat");
+            using var stream = TestingHelpers.GetEmbeddedResource(typeof(DatServiceTest), "Files.mastertextfile_english.dat");
             stream.CopyTo(fs);
         }
 
-        var masterTextModel = ServiceProvider.GetRequiredService<IDatFileService>().LoadAs("MasterTextFile.dat",
-            IsOrderedBuilder ? DatFileType.OrderedByCrc32 : DatFileType.NotOrdered).Content;
+        var masterTextModel = ServiceProvider.GetRequiredService<IDatService>().LoadFileAs("MasterTextFile.dat",
+            IsOrderedBuilder ? DatLayoutKind.OrderedByCrc32 : DatLayoutKind.NotOrdered).Content;
 
         var builder = CreateBuilder();
 

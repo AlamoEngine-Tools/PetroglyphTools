@@ -28,8 +28,8 @@ public readonly struct Vector4Int : IEquatable<Vector4Int>
     public int Fourth { get; }
 
     /// <summary>
-    /// Constructs a vector from the given <see cref="ReadOnlySpan{T}"/>. If the span does not contain enough elements,
-    /// the default integer value 0 is used to initialize the respecting component.
+    /// Initializes a new instance of the <see cref="Vector4Int"/> struct from the given <see cref="ReadOnlySpan{T}"/>.
+    /// If the span does not contain enough elements, the default integer value 0 is used to initialize the respective component.
     /// </summary>
     /// <param name="values">The span of elements to assign to the vector.</param>
     public Vector4Int(ReadOnlySpan<int> values)
@@ -46,7 +46,7 @@ public readonly struct Vector4Int : IEquatable<Vector4Int>
     }
 
     /// <summary>
-    /// Creates a vector whose elements have the specified values.
+    /// Initializes a new instance of the <see cref="Vector4Int"/> struct whose elements have the specified values.
     /// </summary>
     /// <param name="first">The value to assign to the <see cref="First"/> field.</param>
     /// <param name="second">The value to assign to the <see cref="Second"/> field.</param>
@@ -74,7 +74,7 @@ public readonly struct Vector4Int : IEquatable<Vector4Int>
     /// Returns a value that indicates whether this instance and a specified object are equal.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
-    /// <returns><see langword="true"/> if the current instance and <paramref name="obj"/> are equal; otherwise, <see langword="false"/>. If obj is <see langword="null"/>, the method returns <see langword="false"/>.</returns>
+    /// <returns><see langword="true"/> if the current instance and <paramref name="obj"/> are equal; otherwise, <see langword="false"/>. If <paramref name="obj"/> is <see langword="null"/>, the method returns <see langword="false"/>.</returns>
     public override bool Equals(object? obj)
     {
         return obj is Vector4Int other && Equals(other);

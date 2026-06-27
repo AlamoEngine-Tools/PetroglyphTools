@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using AnakinRaW.CommonUtilities;
 
-namespace PG.StarWarsGame.Files.MEG.Files;
+namespace PG.StarWarsGame.Files.MEG.Data;
 
 /// <summary>
 /// Stores an AES-CBC 128-bit encryption key and initialization vector.
@@ -24,7 +24,7 @@ public sealed class MegEncryptionData : DisposableObject
         get
         {
             if (_ivValue is null)
-                throw new ObjectDisposedException(GetType().Name);
+                throw new ObjectDisposedException(nameof(MegEncryptionData));
             return (byte[])_ivValue.Clone();
         }
     }
@@ -38,7 +38,7 @@ public sealed class MegEncryptionData : DisposableObject
         get
         {
             if (_keyValue is null)
-                throw new ObjectDisposedException(GetType().Name);
+                throw new ObjectDisposedException(nameof(MegEncryptionData));
             return (byte[])_keyValue.Clone();
         }
     }
@@ -83,7 +83,7 @@ public sealed class MegEncryptionData : DisposableObject
     internal MegEncryptionData Copy()
     {
         if (_keyValue is null || _ivValue is null)
-            throw new ObjectDisposedException(GetType().Name);
+            throw new ObjectDisposedException(nameof(MegEncryptionData));
 
         return new MegEncryptionData(_keyValue, _ivValue);
     }

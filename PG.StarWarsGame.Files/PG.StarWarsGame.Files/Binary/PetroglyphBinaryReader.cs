@@ -17,7 +17,7 @@ namespace PG.StarWarsGame.Files.Binary;
 public sealed class PetroglyphBinaryReader : BinaryReader
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphBinaryReader"/> based on the specified stream and optionally leaves the stream open.
+    /// Initializes a new instance of the <see cref="PetroglyphBinaryReader"/> class based on the specified stream and optionally leaves the stream open.
     /// </summary>
     /// <param name="input">The input stream.</param>
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the BinaryReader object is disposed; otherwise, <see langword="false"/>.</param>
@@ -43,12 +43,12 @@ public sealed class PetroglyphBinaryReader : BinaryReader
     /// <see cref="PetroglyphBinaryReader"/> does not restore the file position after an unsuccessful read.
     /// </remarks>
     /// <param name="numberOfChars">The number of characters to read.</param>
-    /// <param name="encoding">The encoding to produce the string.</param>
-    /// <param name="isZeroTerminated">When set to <see langword="true"/>, the resulting string is truncated to the first found null-terminator ('\0'). Default is <see langword="false"/>.</param>
-    /// <returns>The string being read.</returns>
-    /// <exception cref="EndOfStreamException">The number of bytes read, mismatches the expected number of bytes.</exception>
+    /// <param name="encoding">The encoding used to produce the string.</param>
+    /// <param name="isZeroTerminated"><see langword="true"/> to truncate the resulting string at the first null-terminator ('\0'); otherwise, <see langword="false"/>. The default is <see langword="false"/>.</param>
+    /// <returns>The string that was read.</returns>
+    /// <exception cref="EndOfStreamException">The number of bytes read mismatches the expected number of bytes.</exception>
     /// <exception cref="IOException">An I/O error occurred.</exception>
-    /// <exception cref="IOException"><paramref name="isZeroTerminated"/> is <see langowrd="true"/> but the string read did not contain a null-terminator.</exception>
+    /// <exception cref="IOException"><paramref name="isZeroTerminated"/> is <see langword="true"/> but the string read did not contain a null-terminator.</exception>
     /// <exception cref="NotSupportedException"><paramref name="encoding"/> is not supported.</exception>
     public string ReadString(Encoding encoding, int numberOfChars, bool isZeroTerminated = false)
     {
@@ -92,18 +92,18 @@ public sealed class PetroglyphBinaryReader : BinaryReader
     /// <see cref="PetroglyphBinaryReader"/> does not restore the file position after an unsuccessful read.
     /// </remarks>
     /// <param name="destination">The character span to write the string into.</param>
-    /// <param name="encoding">The encoding to produce the string.</param>
+    /// <param name="encoding">The encoding used to produce the string.</param>
     /// <param name="numberOfChars">The number of characters to read.</param>
-    /// <param name="isZeroTerminated">When set to <see langword="true"/>, the resulting string is truncated to the first found null-terminator ('\0'). Default is <see langword="false"/>.</param>
+    /// <param name="isZeroTerminated"><see langword="true"/> to truncate the resulting string at the first null-terminator ('\0'); otherwise, <see langword="false"/>. The default is <see langword="false"/>.</param>
     /// <returns>
     /// The total number of characters read into the buffer.
     /// This might be less than <paramref name="numberOfChars"/> if <paramref name="isZeroTerminated"/> is <see langword="true"/>
     /// and the read string contained multiple zero-terminators.
     /// </returns>
-    /// <exception cref="EndOfStreamException">The number of bytes read, mismatches the expected number of bytes.</exception>
+    /// <exception cref="EndOfStreamException">The number of bytes read mismatches the expected number of bytes.</exception>
     /// <exception cref="ArgumentException"><paramref name="destination"/> does not have enough capacity to accommodate the resulting characters.</exception>
     /// <exception cref="IOException">An I/O error occurred.</exception>
-    /// <exception cref="IOException"><paramref name="isZeroTerminated"/> is <see langowrd="true"/> but the string read did not contain a null-terminator.</exception>
+    /// <exception cref="IOException"><paramref name="isZeroTerminated"/> is <see langword="true"/> but the string read did not contain a null-terminator.</exception>
     /// <exception cref="NotSupportedException"><paramref name="encoding"/> is not supported.</exception>
     public int ReadString(Span<char> destination, Encoding encoding, int numberOfChars, bool isZeroTerminated = false)
     {

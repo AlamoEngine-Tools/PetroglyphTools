@@ -7,9 +7,12 @@ namespace PG.StarWarsGame.Files.MEG.Binary.Metadata;
 
 internal interface IMegHeader : IBinary
 {
+    /// <summary>
+    /// Gets the number of files contained in the .MEG archive.
+    /// </summary>
     /// <remarks>
     /// The .MEG specification allows <see cref="uint"/>, however in .NET we are
-    /// limited to <see cref="int"/> for indexing native list-like structures.  
+    /// limited to <see cref="int"/> for indexing native list-like structures.
     /// </remarks>
     int FileNumber { get; }
 }

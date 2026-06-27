@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -6,12 +6,11 @@ using AnakinRaW.CommonUtilities.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using PG.Commons.Hashing;
-using PG.StarWarsGame.Files.DAT.Files;
 
 namespace PG.StarWarsGame.Files.DAT.Data;
 
 /// <summary>
-/// A list of key-value string entries which are used by Petroglyph games to store in-game text.
+/// Represents a list of key-value string entries that are used by Petroglyph games to store in-game text.
 /// </summary>
 public interface IDatModel : IReadOnlyList<DatStringEntry>
 {
@@ -26,13 +25,13 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     ISet<Crc32> CrcKeys { get; }
 
     /// <summary>
-    /// Gets a value indicating how keys are organized in the <see cref="IDatModel"/>.
+    /// Gets a value that indicates how keys are organized in the <see cref="IDatModel"/>.
     /// </summary>
     /// <remarks>
     /// Game credit models <b>may</b> also be sorted by pure chance.
     /// So this property does not provide a safe way to determine the semantics of this model.
     /// </remarks>
-    public DatFileType KeySortOrder { get; }
+    public DatLayoutKind Layout { get; }
 
     /// <summary>
     /// Determines whether the <see cref="IDatModel"/> contains the specified key.
@@ -58,7 +57,7 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// <param name="value">
     /// When this method returns, contains the value associated with the specified key,
     /// if the key is found; otherwise, the default value for the type of the <paramref name="value"/> parameter.
-    /// This parameter is passed uninitialized.
+    /// This parameter is treated as uninitialized.
     /// </param>
     /// <returns><see langword="true"/> if the <see cref="IDatModel"/> contains an element with the specified key; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
@@ -75,14 +74,14 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// Gets a list of entries with the matching CRC32 checksum or an empty list, if the CRC32 checksum is not found.
     /// </summary>
     /// <param name="key">The key to match.</param>
-    /// <returns>List of matching entries.</returns>
+    /// <returns>A list of the matching entries.</returns>
     ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key);
 
     /// <summary>
     /// Gets a list of entries with the matching key or an empty list, if the key is not found.
     /// </summary>
     /// <param name="key">The key to match.</param>
-    /// <returns>List of matching entries.</returns>
+    /// <returns>A list of the matching entries.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
     ImmutableFrugalList<DatStringEntry> EntriesWithKey(string key);
 
@@ -102,7 +101,7 @@ public interface IDatModel : IReadOnlyList<DatStringEntry>
     /// <param name="value">
     /// When this method returns, contains the value associated with the specified key,
     /// if the key is found; otherwise, the default value for the type of the <paramref name="value"/> parameter.
-    /// This parameter is passed uninitialized.
+    /// This parameter is treated as uninitialized.
     /// </param>
     /// <returns><see langword="true"/> if the <see cref="IDatModel"/> contains an element with the specified key; otherwise, <see langword="false"/>.</returns>
     bool TryGetValue(Crc32 key, [NotNullWhen(true)] out string? value);

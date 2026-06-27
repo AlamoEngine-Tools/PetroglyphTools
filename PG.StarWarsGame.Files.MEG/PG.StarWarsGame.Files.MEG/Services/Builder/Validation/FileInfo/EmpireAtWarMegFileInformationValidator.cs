@@ -16,26 +16,26 @@ using AnakinRaW.CommonUtilities.FileSystem;
 namespace PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 
 /// <summary>
-///  Validates a MEG file information whether it is compliant to a Petroglyph Star Wars game. 
+/// Validates whether a MEG file information is compliant to a Petroglyph Star Wars game.
 /// </summary>
 public sealed class EmpireAtWarMegFileInformationValidator : BinaryMegFileInformationValidator
 {
     // The game arbitrary varies between 260 and 256, so we chose the larger value here. Mind that the value is 260 - 1,
     // because we need to reserve one byte for the zero-terminator '\0'.
     /// <summary>
-    /// The max number of characters allowed in a PG game for file paths.
+    /// Represents the maximum number of characters allowed in a Petroglyph game for file paths.
     /// </summary>
     public const int PetroglyphMaxFilePathLength = 259;
 
     /// <summary>
-    /// Gets the collection of supported <see cref="MegFileVersion"/> values for the validator.
+    /// Gets the collection of supported <see cref="MegVersion"/> values for the validator.
     /// </summary>
     /// <value>
     /// A read-only collection containing the supported versions of the .MEG file format
     /// that are validated by this implementation.
-    /// For <see cref="EmpireAtWarMegFileInformationValidator"/>, this includes only <see cref="MegFileVersion.V1"/>.
+    /// For <see cref="EmpireAtWarMegFileInformationValidator"/>, this includes only <see cref="MegVersion.V1"/>.
     /// </value>
-    protected override IReadOnlyCollection<MegFileVersion> SupportedVersions { get; } = [MegFileVersion.V1];
+    protected override IReadOnlyCollection<MegVersion> SupportedVersions { get; } = [MegVersion.V1];
 
     private readonly IFileSystem _fileSystem;
 

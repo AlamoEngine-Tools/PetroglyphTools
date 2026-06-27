@@ -1,4 +1,5 @@
 using System;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using PG.StarWarsGame.Files.MEG.Files;
@@ -16,7 +17,7 @@ public class MegDataEntryLocationReferenceTest : CommonMegTestBase
             new MegDataEntryLocationReference(null!, MegDataEntryTest.CreateEntry("path")));
 
         FileSystem.File.Create("file.meg");
-        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1),
+        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegVersion.V1),
             ServiceProvider);
         Assert.Throws<ArgumentNullException>(() => new MegDataEntryLocationReference(megFile, null!));
     }
@@ -25,13 +26,13 @@ public class MegDataEntryLocationReferenceTest : CommonMegTestBase
     public void Ctor()
     {
         FileSystem.File.Create("file.meg");
-        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegFileVersion.V1),
+        var megFile = new MegFile(new MegArchive([]), new MegFileInformation("file.meg", MegVersion.V1),
             ServiceProvider);
         var entry = MegDataEntryTest.CreateEntry("path");
 
         var reference = new MegDataEntryLocationReference(megFile, entry);
 
-        Assert.Same(megFile, reference.MegFile);
+        Assert.Same(megFile, reference.Source);
         Assert.Same(entry, reference.DataEntry);
     }
 
@@ -41,9 +42,9 @@ public class MegDataEntryLocationReferenceTest : CommonMegTestBase
         FileSystem.File.Create("a.meg");
         FileSystem.File.Create("b.meg");
 
-        var megFileA = new MegFile(new MegArchive([]), new MegFileInformation("a.meg", MegFileVersion.V1),
+        var megFileA = new MegFile(new MegArchive([]), new MegFileInformation("a.meg", MegVersion.V1),
             ServiceProvider);
-        var megFileB = new MegFile(new MegArchive([]), new MegFileInformation("b.meg", MegFileVersion.V1),
+        var megFileB = new MegFile(new MegArchive([]), new MegFileInformation("b.meg", MegVersion.V1),
             ServiceProvider);
 
         var entry = MegDataEntryTest.CreateEntry("path");
@@ -76,7 +77,7 @@ public class MegDataEntryLocationReferenceTest : CommonMegTestBase
         var entry = MegDataEntryTest.CreateEntry("path");
 
         FileSystem.File.Create("file.meg");
-        var megFile = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegFileVersion.V1),
+        var megFile = new MegFile(new MegArchive([entry]), new MegFileInformation("file.meg", MegVersion.V1),
             ServiceProvider);
         
         var locationExists = new MegDataEntryLocationReference(megFile, entry);

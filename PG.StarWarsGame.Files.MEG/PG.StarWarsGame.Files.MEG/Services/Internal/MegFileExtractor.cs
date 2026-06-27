@@ -3,12 +3,10 @@
 
 using System;
 using System.IO;
-using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.MEG.Data.Entries;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 using AnakinRaW.CommonUtilities;
-using PG.StarWarsGame.Files.MEG.Utilities;
 
 namespace PG.StarWarsGame.Files.MEG.Services;
 
@@ -48,15 +46,6 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
     }
 
     /// <inheritdoc/>
-    public MegEntryStream GetData(MegDataEntryLocationReference dataEntryLocation)
-    {
-        if (dataEntryLocation is null) 
-            throw new ArgumentNullException(nameof(dataEntryLocation));
-        
-        return Services.GetRequiredService<IMegDataStreamFactory>().GetStream(dataEntryLocation);
-    }
-
-    /// <inheritdoc/>
     public bool ExtractEntry(MegDataEntryLocationReference dataEntryLocation, string filePath, bool overwrite)
     {
         if (dataEntryLocation is null)
@@ -77,7 +66,7 @@ internal sealed class MegFileExtractor(IServiceProvider services) : ServiceBase(
 
         using var destinationStream = FileSystem.FileStream.New(fullFilePath, fileMode, FileAccess.Write, FileShare.None);
 
-        using var dataStream = Services.GetRequiredService<IMegDataStreamFactory>().GetStream(dataEntryLocation);
+        using var dataStream = dataEntryLocation.Source.GetData(dataEntryLocation.DataEntry);
         dataStream.CopyTo(destinationStream);
 
         return true;

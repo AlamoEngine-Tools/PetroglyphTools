@@ -7,20 +7,21 @@ using System.Diagnostics.CodeAnalysis;
 namespace PG.StarWarsGame.Files;
 
 /// <summary>
-/// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TParam}"/> that may be packed inside a MEG archive.
+/// Contains file information about a <see cref="PetroglyphFileHolder{TModel,TFileInfo}"/> that may be packed inside a MEG archive.
 /// </summary>
 public abstract record PetroglyphMegPackableFileInformation : PetroglyphFileInformation
 {
     /// <summary>
-    /// Gets a value indicating whether the file is packed inside a MEG archive.
+    /// Gets a value that indicates whether the file is packed inside a MEG archive.
     /// </summary>
+    /// <value><see langword="true"/> if the file is packed inside a MEG archive; otherwise, <see langword="false"/>.</value>
     public bool IsInsideMeg { get; init; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphFileInformation"/> class with a given path.
+    /// Initializes a new instance of the <see cref="PetroglyphMegPackableFileInformation"/> class with a given path.
     /// </summary>
     /// <param name="path">The fully qualified name of the new file, or the relative file name.</param>
-    /// <param name="isInMeg">Information whether the file is inside a MEG archive.</param>
+    /// <param name="isInMeg"><see langword="true"/> if the file is packed inside a MEG archive; otherwise, <see langword="false"/>.</param>
     /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
     [SetsRequiredMembers]
@@ -30,7 +31,7 @@ public abstract record PetroglyphMegPackableFileInformation : PetroglyphFileInfo
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PetroglyphFileInformation"/> class.
+    /// Initializes a new instance of the <see cref="PetroglyphMegPackableFileInformation"/> class.
     /// </summary>
     protected PetroglyphMegPackableFileInformation()
     {

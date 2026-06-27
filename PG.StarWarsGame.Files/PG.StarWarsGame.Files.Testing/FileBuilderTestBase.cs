@@ -8,17 +8,56 @@ using Xunit;
 
 namespace PG.StarWarsGame.Files.Testing;
 
+/// <summary>
+/// Provides a shared set of tests for verifying the behavior of an <see cref="IFileBuilder{TModel,TFileInfo}"/> implementation.
+/// </summary>
+/// <typeparam name="TBuilder">The type of the file builder under test.</typeparam>
+/// <typeparam name="TModel">The type of the model that the builder produces output from.</typeparam>
+/// <typeparam name="TFileInfo">The type of the file information that describes the builder's output.</typeparam>
 public abstract class FileBuilderTestBase<TBuilder, TModel, TFileInfo> : PGTestBase
     where TBuilder : IFileBuilder<TModel, TFileInfo>
-    where TModel : notnull 
+    where TModel : notnull
     where TFileInfo : PetroglyphFileInformation
 {
+    /// <summary>
+    /// Gets the default name of the file that the builder writes during the tests.
+    /// </summary>
+    /// <value>The default file name.</value>
     protected virtual string DefaultFileName => "file.txt";
 
+    /// <summary>
+    /// Gets a value that indicates whether the file information produced by the builder is always considered valid.
+    /// </summary>
+    /// <value>
+    /// <see langword="true"/> if the file information is always valid; otherwise, <see langword="false"/>. The default is <see langword="false"/>.
+    /// </value>
     protected virtual bool FileInfoIsAlwaysValid => false;
+
+    /// <summary>
+    /// Creates a new instance of the file builder under test.
+    /// </summary>
+    /// <returns>The newly created file builder.</returns>
     protected abstract TBuilder CreateBuilder();
+
+    /// <summary>
+    /// Creates the file information for the specified path.
+    /// </summary>
+    /// <param name="valid"><see langword="true"/> to create valid file information; otherwise, <see langword="false"/>.</param>
+    /// <param name="path">The path of the file the information describes.</param>
+    /// <returns>The created file information.</returns>
     protected abstract TFileInfo CreateFileInfo(bool valid, string path);
+
+    /// <summary>
+    /// Adds the specified data to the builder.
+    /// </summary>
+    /// <param name="data">The data to add to the builder.</param>
+    /// <param name="builder">The builder the data is added to.</param>
     protected abstract void AddDataToBuilder(TModel data, TBuilder builder);
+
+    /// <summary>
+    /// Creates a model and its expected serialized byte representation that together form valid builder input.
+    /// </summary>
+    /// <returns>A tuple containing the valid model and the bytes the builder is expected to produce from it.</returns>
     protected abstract (TModel Data, byte[] Bytes) CreateValidData();
 
     [Fact]

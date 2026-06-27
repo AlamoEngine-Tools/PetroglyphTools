@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
+// Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System;
@@ -8,24 +8,25 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.Binary;
-using PG.StarWarsGame.Files.MEG.Files;
+using PG.StarWarsGame.Files.MEG.Data;
 
 namespace PG.StarWarsGame.Files.MEG.Binary;
 
 internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(services), IMegVersionIdentifier
 {
     /// <summary>
-    /// This method is optimized in a way to retrieve the MEGs file version as efficient as possible.
-    /// If an invalid MEG archive is detected a <see cref="BinaryCorruptedException"/> is thrown.
-    /// <b>However</b>, this method does not completely verify whether the passed stream is a valid MEG archive or not.
+    /// Determines the MEG file version of the specified stream as efficiently as possible.
     /// </summary>
-    /// <param name="stream">The MEG archive stream</param>
-    /// <param name="encrypted">Indicates whether the archive is encrypted or not.</param>
-    /// <returns>The determined <see cref="MegFileVersion"/> of the MEG stream.</returns>
-    /// <exception cref="ArgumentNullException">The <paramref name="stream"/> is null.</exception>
-    /// <exception cref="ArgumentException">The <paramref name="stream"/> is not readable or seekable.</exception>
+    /// <remarks>
+    /// This method does not completely verify whether the passed stream is a valid MEG archive.
+    /// </remarks>
+    /// <param name="stream">The MEG archive stream.</param>
+    /// <param name="encrypted">When this method returns, contains <see langword="true"/> if the archive is encrypted; otherwise, <see langword="false"/>. This parameter is treated as uninitialized.</param>
+    /// <returns>The determined <see cref="MegVersion"/> of the MEG stream.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="stream"/> is not readable or seekable.</exception>
     /// <exception cref="BinaryCorruptedException">The read data is not a valid MEG archive.</exception>
-    public unsafe MegFileVersion GetMegFileVersion(Stream stream, out bool encrypted)
+    public unsafe MegVersion GetMegVersion(Stream stream, out bool encrypted)
     {
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
@@ -51,7 +52,7 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
             // Note: In V1 we *could* have the situation where we store as many files in the meg to coincidentally match the magic number.
             // Thus, we don't check for the magic number as that it would not gain us anything.
             if (flags == id)
-                return MegFileVersion.V1;
+                return MegVersion.V1;
 
             Logger.LogTrace("Checking MEG version: Must be V2 or V3.");
 
@@ -63,7 +64,7 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
             {
                 Logger.LogTrace("Checking MEG version: MEG has encrypted flag. Version is V3.");
                 encrypted = true;
-                return MegFileVersion.V3;
+                return MegVersion.V3;
             }
 
             var dataStart = reader.ReadUInt32();
@@ -125,21 +126,21 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
                 if (!TryReadUInt32(reader, out var filenamesSize))
                 {
                     if (numFiles == 0)
-                        return MegFileVersion.V2;
+                        return MegVersion.V2;
                     throw new BinaryCorruptedException("Unrecognized :MEG file version");
                 }
 
                 if (numFiles == 0)
                 {
                     if (filenamesSize == 0)
-                        return MegFileVersion.V3;
+                        return MegVersion.V3;
 
                     // An empty V2 file that has some junk attached.
-                    return MegFileVersion.V2;
+                    return MegVersion.V2;
                 }
 
                 delegate*<BinaryReader, uint, bool> recordCheckMethod;
-                MegFileVersion versionToCheck;
+                MegVersion versionToCheck;
 
                 // known start of the FileTable
                 var fileTableOffset = checked(dataStart - numFiles * 20);
@@ -150,13 +151,13 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
                 if (fileTableOffset == 24 + filenamesSize)
                 {
                     Logger.LogTrace("Checking MEG version: Checking V3 case...");
-                    versionToCheck = MegFileVersion.V3;
+                    versionToCheck = MegVersion.V3;
                     recordCheckMethod = &FileRecordIsV3;
                 }
                 else
                 {
                     Logger.LogTrace("Checking MEG version: Checking V2 case...");
-                    versionToCheck = MegFileVersion.V2;
+                    versionToCheck = MegVersion.V2;
                     recordCheckMethod = &FileRecordIsV2;
                 }
 
@@ -165,7 +166,7 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
                 if (CheckFirstAndLastRecord(reader, dataStart, numFiles, recordCheckMethod))
                     return versionToCheck;
 
-                if (versionToCheck == MegFileVersion.V2)
+                if (versionToCheck == MegVersion.V2)
                     throw new BinaryCorruptedException("Unrecognized .MEG file version.");
 
                 Logger.LogTrace("Checking MEG version: V3 case did not pass, checking for V2...");
@@ -176,7 +177,7 @@ internal class MegVersionIdentifier(IServiceProvider services) : ServiceBase(ser
                 reader.BaseStream.Position = fileTableOffset;
 
                 if (CheckFirstAndLastRecord(reader, dataStart, numFiles, &FileRecordIsV2))
-                    return MegFileVersion.V2;
+                    return MegVersion.V2;
             }
 
             throw new BinaryCorruptedException("Unrecognized .MEG file version.");

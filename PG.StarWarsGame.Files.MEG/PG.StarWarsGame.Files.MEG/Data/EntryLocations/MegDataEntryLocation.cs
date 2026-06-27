@@ -6,7 +6,7 @@ using System;
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
-/// Location of an archived MEG data entry inside a .MEG file. 
+/// Represents the location of an archived MEG data entry inside a .MEG file.
 /// </summary>
 public readonly struct MegDataEntryLocation : IDataEntryLocation, IEquatable<MegDataEntryLocation>
 {
@@ -21,9 +21,9 @@ public readonly struct MegDataEntryLocation : IDataEntryLocation, IEquatable<Meg
     public uint Size { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryLocation"/> structure to a given file offset and file size.
+    /// Initializes a new instance of the <see cref="MegDataEntryLocation"/> structure.
     /// </summary>
-    /// <param name="offset">The offset of the file in bytes from the start its .MEG file.</param>
+    /// <param name="offset">The offset of the file in bytes from the start of its .MEG file.</param>
     /// <param name="size">The size of the file in bytes.</param>
     public MegDataEntryLocation(uint offset, uint size)
     {

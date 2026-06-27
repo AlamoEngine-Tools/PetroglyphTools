@@ -1,23 +1,28 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using PG.StarWarsGame.Files.MEG.Data.Archives;
+using PG.StarWarsGame.Files.MEG.Data.Entries;
+using PG.StarWarsGame.Files.MEG.Utilities;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace PG.StarWarsGame.Files.MEG.Files;
 
-/// <inheritdoc cref="IMegFile" />
 /// <remarks>
-///     This class does not hold the actual data of the files packaged in a *.MEG file,
-///     but all necessary meta-information to extract a requested file on-demand.
+/// This class does not hold the actual data of the files packaged in a *.MEG file,
+/// but all necessary meta-information to extract a requested file on-demand.
 /// </remarks>
+/// <inheritdoc cref="IMegFile" />
+[DebuggerDisplay("{FilePath} ({Archive.Count})")]
 internal sealed class MegFile : PetroglyphFileHolder<IMegArchive, MegFileInformation>, IMegFile
 {
     /// <inheritdoc/>
     public IMegArchive Archive => Content;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegFile"/> class. 
+    /// Initializes a new instance of the <see cref="MegFile"/> class.
     /// </summary>
     /// <remarks>
     /// It is safe to dispose the <paramref name="fileInformation"/> after an instance of this class has been created.
@@ -28,5 +33,27 @@ internal sealed class MegFile : PetroglyphFileHolder<IMegArchive, MegFileInforma
     public MegFile(IMegArchive model, MegFileInformation fileInformation, IServiceProvider serviceProvider) :
         base(model, fileInformation, serviceProvider)
     {
+    }
+
+    /// <inheritdoc/>
+    public MegEntryStream GetData(MegDataEntry entry)
+    {
+        if (entry is null)
+            throw new ArgumentNullException(nameof(entry));
+        if (!Archive.Contains(entry))
+            throw new EntryNotInMegException(this, entry);
+        if (entry.Encrypted)
+            throw new NotImplementedException("Encrypted archives are currently not supported");
+
+        if (!FileSystem.File.Exists(FilePath))
+            throw new FileNotFoundException($"MEG file '{FilePath}' does not exist", FilePath);
+
+        // Cause MIKE.NL's tool uses the offset megFile[megSize + 1] for empty Entries we would cause an ArgumentOutOfRangeException
+        // when trying to access this index on a real file. Therefore, we return the Null stream.
+        if (entry.Location.Size == 0)
+            return MegEntryStream.CreateEmptyStream(entry.Path);
+
+        var megFileStream = FileSystem.FileStream.New(FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        return new MegEntryStream(entry.Path, megFileStream, entry.Location.Offset, entry.Location.Size);
     }
 }

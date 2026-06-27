@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using PG.StarWarsGame.Files.MEG.Binary.Size;
+using PG.StarWarsGame.Files.MEG.Data;
 using PG.StarWarsGame.Files.MEG.Files;
 using PG.StarWarsGame.Files.MEG.Services.Builder.Validation;
 using PG.StarWarsGame.Files.MEG.Test.Files;
@@ -36,7 +37,7 @@ public class EmpireAtWarMegFileInformationValidatorTest : BinaryMegFileInformati
         var data = new SharedDataBuilder();
         yield return
         [
-            data.CreateData(new MegFileInformation("path", MegFileVersion.V1),
+            data.CreateData(new MegFileInformation("path", MegVersion.V1),
                 [data.CreateInfo("path")])
         ];
     }
@@ -46,33 +47,33 @@ public class EmpireAtWarMegFileInformationValidatorTest : BinaryMegFileInformati
         var data = new SharedDataBuilder();
         yield return
         [
-            data.CreateData(new MegFileInformation(new string('a', 260), MegFileVersion.V1),
+            data.CreateData(new MegFileInformation(new string('a', 260), MegVersion.V1),
                         [data.CreateInfo("path")])
         ];
         yield return
         [
-            data.CreateData(new MegFileInformation("pathÄ", MegFileVersion.V1),
+            data.CreateData(new MegFileInformation("pathÄ", MegVersion.V1),
                 [data.CreateInfo("path")])
         ];
 
         yield return
         [
-            data.CreateData(new MegFileInformation("path", MegFileVersion.V2),
+            data.CreateData(new MegFileInformation("path", MegVersion.V2),
                 [data.CreateInfo("path")])
         ];
         yield return
         [
-            data.CreateData(new MegFileInformation("path", MegFileVersion.V3),
+            data.CreateData(new MegFileInformation("path", MegVersion.V3),
                 [data.CreateInfo("path")])
         ];
         yield return
         [
-            data.CreateData(new MegFileInformation("path", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData()),
+            data.CreateData(new MegFileInformation("path", MegVersion.V3, MegEncryptionDataTest.CreateRandomData()),
                 [data.CreateInfo("path", encrypted: true)])
         ];
         yield return
         [
-            data.CreateData(new MegFileInformation("path", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData()),
+            data.CreateData(new MegFileInformation("path", MegVersion.V3, MegEncryptionDataTest.CreateRandomData()),
             [
                 data.CreateInfo("path", encrypted: false),
                 data.CreateInfo("path", encrypted: true)

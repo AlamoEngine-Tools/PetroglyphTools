@@ -21,7 +21,7 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     bool Contains(Crc32 crc32);
 
     /// <summary>
-    /// Get the last data entry with the matching CRC32 checksum.
+    /// Gets the last data entry with the matching CRC32 checksum.
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
     /// <returns>The last entry in the <see cref="IMegaTextureDirectory"/> with the specified checksum.</returns>
@@ -33,9 +33,9 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     /// </summary>
     /// <param name="crc32">The checksum of the entry to get.</param>
     /// <param name="entry">
-    /// When this method returns, the entry associated with the specified key, if the key is found;
+    /// When this method returns, contains the entry associated with the specified checksum, if the checksum is found;
     /// otherwise, the default value for the type of the <paramref name="entry"/> parameter.
-    /// This parameter is passed uninitialized.</param>
+    /// This parameter is treated as uninitialized.</param>
     /// <returns><see langword="true"/> if the <see cref="IMegaTextureDirectory"/> contains an element with the specified checksum; otherwise, <see langword="false"/>.</returns>
     bool TryGetEntry(Crc32 crc32, [NotNullWhen(true)] out MegaTextureFileIndex? entry);
 
@@ -43,6 +43,6 @@ public interface IMegaTextureDirectory : IReadOnlyCollection<MegaTextureFileInde
     /// Gets a list of data entries with the matching CRC32 checksum or an empty list, if the CRC32 checksum is not found. 
     /// </summary>
     /// <param name="crc">The CRC to match.</param>
-    /// <returns>List of matching data entries.</returns>
+    /// <returns>The matching data entries, or an empty list if the checksum is not found.</returns>
     ImmutableFrugalList<MegaTextureFileIndex> EntriesWithCrc(Crc32 crc);
 }

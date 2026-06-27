@@ -5,8 +5,12 @@ using PG.Commons;
 
 namespace PG.Testing;
 
+/// <summary>
+/// Provides a base class for tests that require the Petroglyph commons services and an in-memory file system.
+/// </summary>
 public abstract class PGTestBase : TestBaseWithFileSystem
 {
+    /// <inheritdoc/>
     protected override void SetupServices(IServiceCollection serviceCollection)
     {
         base.SetupServices(serviceCollection);

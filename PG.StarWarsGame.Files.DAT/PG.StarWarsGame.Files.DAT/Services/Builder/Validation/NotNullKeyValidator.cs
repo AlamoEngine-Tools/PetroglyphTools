@@ -6,7 +6,7 @@ using System;
 namespace PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 
 /// <summary>
-/// A validator that checks the passed key is not <see langword="null"/>.
+/// Validates that the passed key is not <see langword="null"/>.
 /// </summary>
 public sealed class NotNullKeyValidator : IDatKeyValidator
 {

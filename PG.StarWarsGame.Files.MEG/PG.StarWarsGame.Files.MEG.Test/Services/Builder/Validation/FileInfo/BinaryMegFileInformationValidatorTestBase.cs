@@ -22,7 +22,7 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
     {
         var validator = CreateValidator();
         Assert.Throws<ArgumentNullException>(() => validator.Validate(null!, []));
-        Assert.Throws<ArgumentNullException>(() => validator.Validate(new MegFileInformation("p", MegFileVersion.V1), null!));
+        Assert.Throws<ArgumentNullException>(() => validator.Validate(new MegFileInformation("p", MegVersion.V1), null!));
     }
 
     [Theory]
@@ -50,7 +50,7 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
         var fileInfo = FileSystem.FileInfo.New(filePath);
         var entryInfo = MegDataEntryBuilderInfo.FromFile(fileInfo, "PATH");
 
-        var info = data.CreateData(new MegFileInformation("p", MegFileVersion.V1), [entryInfo]);
+        var info = data.CreateData(new MegFileInformation("p", MegVersion.V1), [entryInfo]);
 
         // Delete the file to trigger FileNotFoundException during RefreshSize
         FileSystem.File.Delete(filePath);
@@ -70,7 +70,7 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
         var entryInfo = MegDataEntryBuilderInfo.FromFile(bigFile, "ANY");
 
         var info = 
-            data.CreateData(new MegFileInformation("p", MegFileVersion.V1), [entryInfo]);
+            data.CreateData(new MegFileInformation("p", MegVersion.V1), [entryInfo]);
 
         // Now exceed the max size
         bigFile.Length = (long)MaxMegEntrySize + 1;
@@ -85,11 +85,11 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
         var data = new SharedDataBuilder();
         yield return
         [
-            data.CreateData(new MegFileInformation("p", MegFileVersion.V1), [])
+            data.CreateData(new MegFileInformation("p", MegVersion.V1), [])
         ];
         yield return
         [
-            data.CreateData(new MegFileInformation("p", MegFileVersion.V1), [data.CreateInfo("p1")])
+            data.CreateData(new MegFileInformation("p", MegVersion.V1), [data.CreateInfo("p1")])
         ];
     }
 
@@ -100,14 +100,14 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
         // Encryption mismatch: Encrypted entries but no encryption data in FileInfo
         yield return
         [
-            data.CreateData(new MegFileInformation("path", MegFileVersion.V3),
+            data.CreateData(new MegFileInformation("path", MegVersion.V3),
                 [data.CreateInfo("path", encrypted: true)])
         ];
 
         // Encryption mismatch: No encrypted entries but encryption data in FileInfo
         yield return
         [
-            data.CreateData(new MegFileInformation("path", MegFileVersion.V3, MegEncryptionDataTest.CreateRandomData()),
+            data.CreateData(new MegFileInformation("path", MegVersion.V3, MegEncryptionDataTest.CreateRandomData()),
                 [data.CreateInfo("path")])
         ];
     }
@@ -121,7 +121,7 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
         var entry1 = data.CreateInfo("p1"); // Size 1
         var entry2 = data.CreateInfo("p2"); // Size 1
         
-        var info = data.CreateData(new MegFileInformation("p", MegFileVersion.V1), [entry1, entry2]);
+        var info = data.CreateData(new MegFileInformation("p", MegVersion.V1), [entry1, entry2]);
         
         // Limit is 100, 62 is fine.
         Assert.True(validator.Validate(info.FileInformation, info.DataEntries).IsValid);
@@ -129,7 +129,7 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
         // Now use a very large file to exceed 100
         var bigFile = new MegTestConstants.FakeFileInfo("large_file.bin", 1000);
         var entry3 = MegDataEntryBuilderInfo.FromFile(bigFile, "p3");
-        var info2 = data.CreateData(new MegFileInformation("p", MegFileVersion.V1), [entry3]);
+        var info2 = data.CreateData(new MegFileInformation("p", MegVersion.V1), [entry3]);
 
         var result = validator.Validate(info2.FileInformation, info2.DataEntries);
         Assert.False(result.IsValid);
@@ -151,7 +151,7 @@ public abstract class BinaryMegFileInformationValidatorTestBase : CommonMegTestB
         {
             FileSystem.File.Create("file.meg").Dispose();
             _entry = MegDataEntryTest.CreateEntry("DUMMY", default, 0, 1);
-            _meg = new MegFile(new MegArchive(new List<MegDataEntry> { _entry }), new MegFileInformation("file.meg", MegFileVersion.V1), ServiceProvider);
+            _meg = new MegFile(new MegArchive(new List<MegDataEntry> { _entry }), new MegFileInformation("file.meg", MegVersion.V1), ServiceProvider);
         }
 
         public MegDataEntryBuilderInfo CreateInfo(string overridePath, bool encrypted = false)

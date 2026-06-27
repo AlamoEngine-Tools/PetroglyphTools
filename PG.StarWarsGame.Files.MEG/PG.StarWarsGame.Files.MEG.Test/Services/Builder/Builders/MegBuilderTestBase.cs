@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -42,7 +42,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     {
         if (!FileInfoIsAlwaysValid && !valid)
             return CreateInvalidFileInfo(path);
-        return new MegFileInformation(path, MegFileVersion.V1);
+        return new MegFileInformation(path, MegVersion.V1);
     }
 
     protected virtual MegFileInformation CreateInvalidFileInfo(string path)
@@ -159,7 +159,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         Assert.Throws<ObjectDisposedException>(() =>
             builder.AddEntry(new MegDataEntryLocationReference(CreateEmptyTestMeg(), MegDataEntryTest.CreateEntry("file.txt"))));
         Assert.Throws<ObjectDisposedException>(() =>
-            builder.Build(new MegFileInformation("a.meg", MegFileVersion.V1), false));
+            builder.Build(new MegFileInformation("a.meg", MegVersion.V1), false));
 
         Assert.DoesNotThrow(() => { _ = builder.DataEntries; });
         Assert.DoesNotThrow(builder.Clear);
@@ -493,7 +493,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
             Assert.Single(builder.DataEntries);
             Assert.Same(addedFile.AddedBuilderInfo, resultSecondAdd.OverwrittenBuilderInfo);
             Assert.True(builder.DataEntries.First().OriginInfo.IsEntryReference);
-            Assert.Same(meg, builder.DataEntries.First().OriginInfo.MegFileLocation!.MegFile);
+            Assert.Same(meg, builder.DataEntries.First().OriginInfo.MegFileLocation!.Source);
         }
     }
 
@@ -656,7 +656,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         var builder = new MaxFileSizeMegBuilder(uint.MaxValue, ServiceProvider, 36);
         builder.AddFile("1.txt", "1.txt");
 
-        Assert.Throws<InvalidOperationException>(() => builder.GetMinRequiredMegFiles(MegFileVersion.V1));
+        Assert.Throws<InvalidOperationException>(() => builder.GetMinRequiredMegFiles(MegVersion.V1));
     }
 
     [Fact]
@@ -669,7 +669,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         builder.AddFile("1.txt", "1.txt");
         builder.AddFile("2.txt", "2.txt");
 
-        Assert.Equal(1, builder.GetMinRequiredMegFiles(MegFileVersion.V1));
+        Assert.Equal(1, builder.GetMinRequiredMegFiles(MegVersion.V1));
     }
     
     [Fact]
@@ -682,7 +682,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
         builder.AddFile("1.txt", "1.txt");
         builder.AddFile("2.txt", "2.txt");
 
-        Assert.Equal(2, builder.GetMinRequiredMegFiles(MegFileVersion.V1));
+        Assert.Equal(2, builder.GetMinRequiredMegFiles(MegVersion.V1));
     }
 
     #endregion
@@ -703,11 +703,10 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
 
         Assert.True(FileSystem.File.Exists("out.meg"));
 
-        var loaded = ServiceProvider.GetRequiredService<IMegFileService>().Load("out.meg");
+        var loaded = ServiceProvider.GetRequiredService<IMegService>().LoadFile("out.meg");
         Assert.Single(loaded.Archive);
 
-        var extractor = ServiceProvider.GetRequiredService<IMegFileExtractor>();
-        using var extracted = extractor.GetData(new MegDataEntryLocationReference(loaded, loaded.Archive[0]));
+        using var extracted = loaded.GetData(loaded.Archive[0]);
         var sink = new MemoryStream();
         extracted.CopyTo(sink);
         Assert.Equal(contents, sink.ToArray());
@@ -780,7 +779,7 @@ public abstract class MegBuilderTestBase<TBuilder> : FileBuilderTestBase<TBuilde
     private IMegFile CreateTestMeg()
     {
         FileSystem.File.WriteAllBytes("test.meg", MegTestConstants.ContentMegFileV1);
-        return ServiceProvider.GetRequiredService<IMegFileService>().Load("test.meg");
+        return ServiceProvider.GetRequiredService<IMegService>().LoadFile("test.meg");
     }
 
     private class MaxFileSizeMegBuilder(uint maxFileSize, IServiceProvider services, uint? maxMegSize = null) : MegBuilderBase(services)

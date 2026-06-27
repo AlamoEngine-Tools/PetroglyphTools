@@ -10,7 +10,7 @@ using PG.Commons.Hashing;
 using PG.Commons.Services;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
-using PG.StarWarsGame.Files.DAT.Files;
+using PG.StarWarsGame.Files.DAT.Data;
 
 namespace PG.StarWarsGame.Files.DAT.Binary;
 
@@ -71,7 +71,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
         }
     }
 
-    public DatFileType PeekFileType(Stream byteStream)
+    public DatLayoutKind PeekLayout(Stream byteStream)
     {
         if (byteStream == null)
             throw new ArgumentNullException(nameof(byteStream));
@@ -89,7 +89,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
                 var currentCrc = new Crc32(reader.ReadUInt32());
 
                 if (currentCrc < lastCrc)
-                    return DatFileType.NotOrdered;
+                    return DatLayoutKind.NotOrdered;
 
                 reader.ReadUInt32(); // Value Length
                 reader.ReadUInt32(); // Key Length
@@ -97,7 +97,7 @@ internal class DatFileReader(IServiceProvider services) : ServiceBase(services),
                 lastCrc = currentCrc;
             }
 
-            return DatFileType.OrderedByCrc32;
+            return DatLayoutKind.OrderedByCrc32;
         }
         catch (EndOfStreamException)
         {

@@ -34,7 +34,7 @@ public interface IMegDataEntryPathNormalizer
     /// </remarks>
     /// <param name="entryPath">The read-only span containing the entry's file path to normalize.</param>
     /// <param name="destination">The span to write the normalized path into.</param>
-    /// <param name="charsWritten">The number of chars written to <paramref name="destination"/> are stored to this variable.</param>
+    /// <param name="charsWritten">When this method returns, contains the number of characters written to <paramref name="destination"/>. This parameter is treated as uninitialized.</param>
     /// <returns><see langword="true"/> if the normalization was completed and copied to <paramref name="destination"/>; otherwise, <see langword="false"/>.</returns>
     bool TryNormalize(ReadOnlySpan<char> entryPath, Span<char> destination, out int charsWritten);
 }

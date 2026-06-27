@@ -24,7 +24,7 @@ public static class Crc32Utilities
     /// <param name="items">CRC32 sorted list of elements.</param>
     /// <returns>The CRC-to-range table.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="items"/> is not sorted.</exception>
+    /// <exception cref="ArgumentException"><paramref name="items"/> is not sorted.</exception>
     /// <example>
     /// The given input list [1,2,2,2,3] returns the following dictionary: {{1, 0..1}, {2, 1..4}, {3, 4..5}}
     /// </example>
@@ -125,7 +125,7 @@ public static class Crc32Utilities
     /// </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam>
     /// <param name="items">A sequence of values to check for correct sorting.</param>
-    /// <exception cref="ArgumentException"><paramref name="items"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="items"/> is not sorted by CRC32 checksum.</exception>
     public static void EnsureSortedByCrc32<T>(IEnumerable<T> items) where T : IHasCrc32
     {
@@ -140,8 +140,8 @@ public static class Crc32Utilities
     /// </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam>
     /// <param name="items">A sequence of values to check for correct sorting.</param>
-    /// <returns><see langword="true"/> is the specified collection is sorted; otherwise, <see langword="false"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="items"/> is <see langword="null"/>.</exception>
+    /// <returns><see langword="true"/> if the specified collection is sorted; otherwise, <see langword="false"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
     public static bool IsSortedByCrc32<T>(IEnumerable<T> items) where T : IHasCrc32
     {
         if (items == null)

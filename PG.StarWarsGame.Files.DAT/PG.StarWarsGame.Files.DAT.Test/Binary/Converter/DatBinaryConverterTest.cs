@@ -1,10 +1,9 @@
-﻿using AnakinRaW.CommonUtilities.Collections;
+using AnakinRaW.CommonUtilities.Collections;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.DAT.Binary;
 using PG.StarWarsGame.Files.DAT.Binary.Metadata;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using PG.Testing;
 using System;
 using System.Collections.Generic;
@@ -75,7 +74,7 @@ public class DatBinaryConverterTest : PGTestBase
         var model = _converter.BinaryToModel(binary);
 
         Assert.Equal(binary.RecordNumber, model.Count);
-        Assert.Equal(DatFileType.OrderedByCrc32, model.KeySortOrder);
+        Assert.Equal(DatLayoutKind.OrderedByCrc32, model.Layout);
 
         Assert.Equal([
             CreateEntry(true, "a"),
@@ -112,7 +111,7 @@ public class DatBinaryConverterTest : PGTestBase
         var model = _converter.BinaryToModel(binary);
 
         Assert.Equal(binary.RecordNumber, model.Count);
-        Assert.Equal(DatFileType.NotOrdered, model.KeySortOrder);
+        Assert.Equal(DatLayoutKind.NotOrdered, model.Layout);
 
         Assert.Equal([
             CreateEntry(false, "a"),
@@ -212,7 +211,7 @@ public class DatBinaryConverterTest : PGTestBase
     // Model claims to be sorted, while it does not enforce it.
     private class InvalidDatModel(IEnumerable<DatStringEntry> entries) : DatModel(entries)
     {
-        public override DatFileType KeySortOrder => DatFileType.OrderedByCrc32;
+        public override DatLayoutKind Layout => DatLayoutKind.OrderedByCrc32;
 
         public override ImmutableFrugalList<DatStringEntry> EntriesWithCrc(Crc32 key)
         {

@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using PG.StarWarsGame.Files.DAT.Data;
-using PG.StarWarsGame.Files.DAT.Files;
 using PG.StarWarsGame.Files.DAT.Services.Builder;
 using PG.StarWarsGame.Files.DAT.Services.Builder.Validation;
 using Xunit;
@@ -41,7 +40,7 @@ public abstract class EmpireAtWarMasterTextBuilderTestBase : PetroglyphStarWarsG
         Assert.NotNull(builder.SortedEntries);
         Assert.NotNull(builder.Entries);
         Assert.Equal(OverrideKind, builder.KeyOverwriteBehavior);
-        Assert.Equal(DatFileType.OrderedByCrc32, builder.TargetKeySortOrder);
+        Assert.Equal(DatLayoutKind.OrderedByCrc32, builder.TargetLayout);
         Assert.IsType<EmpireAtWarKeyValidator>(builder.KeyValidator);
     }
 }

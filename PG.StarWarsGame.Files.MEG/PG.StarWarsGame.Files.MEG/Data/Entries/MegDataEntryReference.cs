@@ -23,7 +23,7 @@ public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryLocatio
     public override Crc32 Crc32 => Location.DataEntry.Crc32;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MegDataEntryReference"/>.
+    /// Initializes a new instance of the <see cref="MegDataEntryReference"/> class.
     /// </summary>
     /// <param name="location">The full location information of this data entry.</param>
     public MegDataEntryReference(MegDataEntryLocationReference location) : base(location)

@@ -3,17 +3,18 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.IO.Abstractions;
 
 namespace PG.StarWarsGame.Files.MEG.Data.EntryLocations;
 
 /// <summary>
-/// The origin of a MEG data entry which is either packed in a MEG archive, present on the file system, or backed by an in-memory byte buffer.
+/// Represents the origin of a MEG data entry which is either packed in a MEG archive, present on the file system, or as an in-memory byte buffer.
 /// </summary>
 public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegDataEntryOriginInfo>
 {
     /// <summary>
-    /// Gets a value indicating whether the data entry originates from a local file on the file system.
+    /// Gets a value that indicates whether the data entry originates from a local file on the file system.
     /// </summary>
     /// <remarks>
     /// If this property returns <see langword="true"/>, the <see cref="FileInfo"/> property is guaranteed to be non-<see langword="null"/>.
@@ -25,19 +26,19 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     public bool IsLocalFile => FileInfo != null;
 
     /// <summary>
-    /// Gets a value indicating whether the data entry originates from a MEG archive reference.
+    /// Gets a value that indicates whether the data entry originates from a MEG archive reference.
     /// </summary>
     /// <remarks>
     /// If this property returns <see langword="true"/>, the <see cref="MegFileLocation"/> property is guaranteed to be non-<see langword="null"/>.
     /// </remarks>
     /// <value>
-    /// <see langword="true"/> if the data entry is from a referend MEG entry; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the data entry is from a referenced MEG entry; otherwise, <see langword="false"/>.
     /// </value>
     [MemberNotNullWhen(true, nameof(MegFileLocation))]
     public bool IsEntryReference => MegFileLocation != null;
 
     /// <summary>
-    /// Gets a value indicating whether the data entry originates from an in-memory byte buffer.
+    /// Gets a value that indicates whether the data entry originates from an in-memory byte buffer.
     /// </summary>
     /// <remarks>
     /// If this property returns <see langword="true"/>, the <see cref="Bytes"/> property is guaranteed to be non-<see langword="null"/>.
@@ -46,12 +47,12 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     public bool IsBytes => Bytes != null;
 
     /// <summary>
-    /// Gets the MEG file's data entry. <see langeword="null"/> if not present.
+    /// Gets the MEG file's data entry. <see langword="null"/> if not present.
     /// </summary>
     public MegDataEntryLocationReference? MegFileLocation { get; }
 
     /// <summary>
-    /// Gets the file's path on the file system. <see langeword="null"/> if not present.
+    /// Gets the file's path on the file system. <see langword="null"/> if not present.
     /// </summary>
     public IFileInfo? FileInfo { get; }
 
@@ -78,7 +79,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     /// Initializes a new instance of the <see cref="MegDataEntryOriginInfo"/> class to the specified MEG file's data entry.
     /// </summary>
     /// <param name="locationReference">The MEG file's data entry.</param>
-    /// <exception cref="ArgumentNullException">If <paramref name="locationReference"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="locationReference"/> is <see langword="null"/>.</exception>
     public MegDataEntryOriginInfo(MegDataEntryLocationReference locationReference)
     {
         MegFileLocation = locationReference ?? throw new ArgumentNullException(nameof(locationReference));
@@ -132,6 +133,7 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
     }
 
     /// <inheritdoc/>
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         if (IsLocalFile)
@@ -139,5 +141,16 @@ public sealed class MegDataEntryOriginInfo : IDataEntryLocation, IEquatable<MegD
         if (IsEntryReference)
             return $"MEG Entry: '{MegFileLocation}'";
         return $"Bytes: {Bytes!.Length} bytes";
+    }
+
+    internal Stream GetDataStream()
+    {
+        if (IsBytes)
+            return new MemoryStream(Bytes, writable: false);
+
+        if (IsLocalFile)
+            return FileInfo.OpenRead();
+
+        return MegFileLocation!.Source.GetData(MegFileLocation.DataEntry);
     }
 }

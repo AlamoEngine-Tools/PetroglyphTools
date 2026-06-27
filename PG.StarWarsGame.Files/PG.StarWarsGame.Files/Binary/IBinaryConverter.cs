@@ -7,7 +7,7 @@ using PG.StarWarsGame.Files.Binary.File;
 namespace PG.StarWarsGame.Files.Binary;
 
 /// <summary>
-///     A builder that is capable of converting a generic file model to its binary
+///     Represents a builder that is capable of converting a generic file model to its binary
 ///     representation and vice versa.
 /// </summary>
 /// <typeparam name="TBinaryModel">The type of the binary model.</typeparam>

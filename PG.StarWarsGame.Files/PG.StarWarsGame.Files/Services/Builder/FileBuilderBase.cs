@@ -10,7 +10,7 @@ using PG.Commons.Services;
 namespace PG.StarWarsGame.Files.Services.Builder;
 
 /// <summary>
-/// Base class for a <see cref="IFileBuilder{TData,TFileInformation}"/> service providing the fundamental implementations.
+/// Provides the base class for a <see cref="IFileBuilder{TData,TFileInformation}"/> service with the fundamental implementations.
 /// </summary>
 /// <typeparam name="TFileInformation">The type of the file information data.</typeparam>
 /// <typeparam name="TData">The type of the data to build files from.</typeparam>
@@ -87,8 +87,8 @@ public abstract class FileBuilderBase<TData, TFileInformation> : ServiceBase, IF
     /// </summary>
     /// <param name="fileInformation">The file information to validate.</param>
     /// <param name="builderData">The data of this builder for additional context.</param>
-    /// <param name="failedReason">Stores an optional message into the variable to reason the validation result.</param>
-    /// <returns><see langowrd="true"/> if <paramref name="fileInformation"/> is valid; otherwise, <see langowrd="false"/>.</returns>
+    /// <param name="failedReason">When this method returns, contains an optional message that explains the validation result, or <see langword="null"/> if no reason is available. This parameter is treated as uninitialized.</param>
+    /// <returns><see langword="true"/> if <paramref name="fileInformation"/> is valid; otherwise, <see langword="false"/>.</returns>
     protected abstract bool ValidateFileInformationCore(TFileInformation fileInformation, TData builderData,
         out string? failedReason);
 }

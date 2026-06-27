@@ -6,7 +6,6 @@ using PG.StarWarsGame.Files.MEG.Binary.Metadata;
 using PG.StarWarsGame.Files.MEG.Binary.Metadata.V1;
 using PG.StarWarsGame.Files.MEG.Binary.V1;
 using PG.StarWarsGame.Files.MEG.Data;
-using PG.StarWarsGame.Files.MEG.Files;
 using Xunit;
 
 namespace PG.StarWarsGame.Files.MEG.Test.Binary.Construction;

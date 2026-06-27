@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using System.IO.Abstractions;
+using PG.Commons.Data;
 using PG.StarWarsGame.Files.Binary;
 using PG.StarWarsGame.Files.MTD.Data;
 using PG.StarWarsGame.Files.MTD.Files;
@@ -27,14 +27,15 @@ public interface IMtdService
     IMtdFile LoadFile(string filePath);
 
     /// <summary>
-    /// Loads an MTD file stream into a <see cref="IMtdFile"/>.
+    /// Loads an MTD stream into a <see cref="IMtdFile"/>.
     /// </summary>
-    /// <param name="fileStream">The MTD file stream.</param>
+    /// <param name="stream">The MTD file stream.</param>
     /// <returns>A representation of the MTD file.</returns>
-    /// <exception cref="NotSupportedException"><paramref name="fileStream"/> is not readable or seekable.</exception>
-    /// <exception cref="BinaryCorruptedException"><paramref name="fileStream"/> is not a valid MTD file.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="fileStream"/> is <see langword="null"/>.</exception>
-    IMtdFile LoadFile(FileSystemStream fileStream);
+    /// <exception cref="NotSupportedException"><paramref name="stream"/> is not readable or seekable.</exception>
+    /// <exception cref="BinaryCorruptedException"><paramref name="stream"/> is not a valid MTD file.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException"><paramref name="stream"/> is not a file stream or an <see cref="IMegFileDataStream"/>.</exception>
+    IMtdFile LoadFile(Stream stream);
 
     /// <summary>
     /// Loads MTD data from a stream into a <see cref="IMegaTextureDirectory"/>.

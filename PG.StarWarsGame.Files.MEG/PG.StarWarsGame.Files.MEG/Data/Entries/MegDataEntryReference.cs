@@ -1,9 +1,10 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using System;
 using PG.Commons.Hashing;
 using PG.StarWarsGame.Files.MEG.Data.EntryLocations;
+using System;
+using System.IO;
 
 namespace PG.StarWarsGame.Files.MEG.Data.Entries;
 
@@ -28,6 +29,16 @@ public sealed class MegDataEntryReference : MegDataEntryBase<MegDataEntryLocatio
     /// <param name="location">The full location information of this data entry.</param>
     public MegDataEntryReference(MegDataEntryLocationReference location) : base(location)
     {
+    }
+
+    /// <summary>
+    /// Gets a read-only stream over the referenced location data.
+    /// </summary>
+    /// <returns>A read-only stream containing the entry's data.</returns>
+    /// <exception cref="EntryNotInMegException"><see cref="MegDataEntryBase{T}.Location"/> does not point to a valid entry.</exception>
+    public Stream GetData()
+    {
+        return Location.GetData();
     }
 
     /// <inheritdoc />

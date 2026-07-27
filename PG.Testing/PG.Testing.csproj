@@ -8,7 +8,7 @@
 	</PropertyGroup>	
 	<ItemGroup>
 		<PackageReference Include="AnakinRaW.CommonUtilities.Testing" Version="13.1.2" />
-		<PackageReference Include="Testably.Abstractions.Testing" Version="6.6.0" />
+		<PackageReference Include="Testably.Abstractions.Testing" Version="7.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />

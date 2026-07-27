@@ -10,9 +10,9 @@
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.4" />
+		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.5" />
 		<PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
-		<PackageReference Include="Microsoft.Testing.Platform" Version="2.2.3" />
+		<PackageReference Include="Microsoft.Testing.Platform" Version="2.3.2" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>

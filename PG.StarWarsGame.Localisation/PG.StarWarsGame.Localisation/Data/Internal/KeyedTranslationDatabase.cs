@@ -23,7 +23,7 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
         public override bool SetTranslation(string key, IAlamoLanguageDefinition language, string value)
         {
             if (key is null) throw new ArgumentNullException(nameof(key));
-            if (language is null) throw new ArgumentNullException(nameof(language));
+            EnsureLanguageRegistered(language);
 
             if (_entries.TryGetValue(key, out var existing))
             {

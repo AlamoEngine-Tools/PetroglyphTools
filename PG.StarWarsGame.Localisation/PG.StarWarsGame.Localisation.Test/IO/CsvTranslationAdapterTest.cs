@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Localisation.Data;
 using PG.StarWarsGame.Localisation.IO.Csv;
@@ -96,6 +97,60 @@ public class CsvTranslationAdapterTest : CommonLocalisationTestBase
         Assert.True(db.TryGetEntry("WORLD", out var e2));
         Assert.True(e2!.TryGetTranslation(En, out var v2));
         Assert.Equal("World", v2);
+    }
+
+    [Fact]
+    public void Import_ColumnForUnregisteredLanguage_IsSkippedNotThrown()
+    {
+        // The database rejects unregistered languages, so the importer must filter them out itself
+        // rather than letting a stray column abort the whole import.
+        var csv = "key,ENGLISH,GERMAN\nHELLO,Hello,Hallo\n";
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        CreateImporter().Import(new StringReader(csv), db);
+
+        Assert.Single(db);
+        Assert.True(db.TryGetEntry("HELLO", out var entry));
+        Assert.True(entry!.TryGetTranslation(En, out var en));
+        Assert.Equal("Hello", en);
+        Assert.False(entry.TryGetTranslation(De, out _));
+    }
+
+    [Fact]
+    public void Import_IntoOrderedDatabase_MultiLanguage_CreatesOneEntryPerRow()
+    {
+        var csv = "key,ENGLISH,GERMAN\nCREDIT_A,Alpha,Alpha-DE\nCREDIT_B,Beta,Beta-DE\n";
+        var db = new TranslationDatabaseFactory().CreateOrdered(new[] { En, De });
+        CreateImporter().Import(new StringReader(csv), db);
+
+        Assert.Equal(2, db.Count);
+        Assert.Equal(new[] { "CREDIT_A", "CREDIT_B" }, db.Select(e => e.Key));
+
+        Assert.True(db[0].TryGetTranslation(En, out var en0));
+        Assert.True(db[0].TryGetTranslation(De, out var de0));
+        Assert.Equal("Alpha", en0);
+        Assert.Equal("Alpha-DE", de0);
+    }
+
+    [Fact]
+    public void RoundTrip_OrderedDatabase_MultiLanguage_PreservesRowsAndOrder()
+    {
+        var db = new TranslationDatabaseFactory().CreateOrdered(new[] { En, De });
+        db.SetTranslation("CREDIT", En, "Line 1");
+        db.SetTranslationAt(0, De, "Zeile 1");
+        db.SetTranslation("CREDIT", En, "Line 2");
+        db.SetTranslationAt(1, De, "Zeile 2");
+
+        var csv = CreateExporter().Export(db);
+        var db2 = new TranslationDatabaseFactory().CreateOrdered(new[] { En, De });
+        CreateImporter().Import(new StringReader(csv), db2);
+
+        Assert.Equal(2, db2.Count);
+        Assert.Equal(new[] { "CREDIT", "CREDIT" }, db2.Select(e => e.Key));
+
+        Assert.True(db2[0].TryGetTranslation(De, out var de0));
+        Assert.True(db2[1].TryGetTranslation(De, out var de1));
+        Assert.Equal("Zeile 1", de0);
+        Assert.Equal("Zeile 2", de1);
     }
 
     [Fact]

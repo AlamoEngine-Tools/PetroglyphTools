@@ -22,7 +22,7 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
         public override bool SetTranslation(string key, IAlamoLanguageDefinition language, string value)
         {
             if (key is null) throw new ArgumentNullException(nameof(key));
-            if (language is null) throw new ArgumentNullException(nameof(language));
+            EnsureLanguageRegistered(language);
 
             var entry = new TranslationEntry(key);
             entry.SetTranslation(language, value);
@@ -43,11 +43,20 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
         public void InsertAt(int index, string key, IAlamoLanguageDefinition language, string value)
         {
             if (key is null) throw new ArgumentNullException(nameof(key));
-            if (language is null) throw new ArgumentNullException(nameof(language));
+            EnsureLanguageRegistered(language);
 
             var entry = new TranslationEntry(key);
             entry.SetTranslation(language, value);
             _entries.Insert(index, entry);
+        }
+
+        public void SetTranslationAt(int index, IAlamoLanguageDefinition language, string value)
+        {
+            EnsureLanguageRegistered(language);
+            if (index < 0 || index >= _entries.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            _entries[index].SetTranslation(language, value);
         }
 
         public IReadOnlyList<TranslationEntry> GetAllEntriesForKey(string key) =>

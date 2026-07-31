@@ -32,6 +32,19 @@ namespace PG.StarWarsGame.Localisation.Data.Internal
             Languages = languages;
         }
 
+        /// <summary>
+        /// Guards a write against a language the database was not constructed with. Without this the write
+        /// would succeed into the entry's dictionary and then silently vanish on export, since the exporters
+        /// only emit columns for <see cref="Languages"/>.
+        /// </summary>
+        protected void EnsureLanguageRegistered(IAlamoLanguageDefinition language)
+        {
+            if (language is null) throw new ArgumentNullException(nameof(language));
+            if (!Languages.Any(l => l.Equals(language)))
+                throw new ArgumentException(
+                    $"Language '{language.LanguageIdentifier}' is not registered in this database.", nameof(language));
+        }
+
         public abstract int Count { get; }
         public abstract TranslationEntry this[int index] { get; }
         public abstract bool SetTranslation(string key, IAlamoLanguageDefinition language, string value);

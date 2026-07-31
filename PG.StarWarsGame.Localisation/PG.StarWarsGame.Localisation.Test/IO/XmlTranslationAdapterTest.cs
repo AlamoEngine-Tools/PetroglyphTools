@@ -76,6 +76,30 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
     }
 
     [Fact]
+    public void RoundTrip_OrderedDatabase_MultiLanguage_PreservesRowsAndOrder()
+    {
+        var db = new TranslationDatabaseFactory().CreateOrdered(new[] { En, De });
+        db.SetTranslation("CREDIT", En, "Line 1");
+        db.SetTranslationAt(0, De, "Zeile 1");
+        db.SetTranslation("CREDIT", En, "Line 2");
+        db.SetTranslationAt(1, De, "Zeile 2");
+
+        var xml = CreateExporter().Export(db);
+        var db2 = new TranslationDatabaseFactory().CreateOrdered(new[] { En, De });
+        CreateImporter().Import(xml, db2);
+
+        Assert.Equal(2, db2.Count);
+        Assert.Equal(new[] { "CREDIT", "CREDIT" }, db2.Select(e => e.Key));
+
+        Assert.True(db2[0].TryGetTranslation(En, out var en0));
+        Assert.True(db2[0].TryGetTranslation(De, out var de0));
+        Assert.True(db2[1].TryGetTranslation(De, out var de1));
+        Assert.Equal("Line 1", en0);
+        Assert.Equal("Zeile 1", de0);
+        Assert.Equal("Zeile 2", de1);
+    }
+
+    [Fact]
     public void Export_KeyedDatabase_WritesKeysAlphabetically()
     {
         var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });

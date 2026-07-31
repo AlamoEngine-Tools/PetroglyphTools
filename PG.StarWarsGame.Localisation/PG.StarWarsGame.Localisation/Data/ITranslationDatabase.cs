@@ -19,6 +19,10 @@ namespace PG.StarWarsGame.Localisation.Data
         /// Adds or updates the translation value for <paramref name="key"/> in <paramref name="language"/>.
         /// </summary>
         /// <returns><see langword="true"/> if a new entry was created; <see langword="false"/> if an existing entry was updated.</returns>
+        /// <exception cref="System.ArgumentException">
+        /// <paramref name="language"/> is not present in <see cref="Languages"/>. Callers that may encounter
+        /// languages this database does not track (importers reading arbitrary files) must filter first.
+        /// </exception>
         bool SetTranslation(string key, IAlamoLanguageDefinition language, string value);
 
         /// <summary>Removes the entry identified by <paramref name="key"/>.</summary>

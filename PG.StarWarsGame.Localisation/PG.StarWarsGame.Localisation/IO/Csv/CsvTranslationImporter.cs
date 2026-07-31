@@ -54,10 +54,16 @@ namespace PG.StarWarsGame.Localisation.IO.Csv
 
             var dbLanguages = target.Languages;
 
+            // An ordered database appends on every SetTranslation, so a multi-language row has to be
+            // opened once and then filled in place; otherwise one CSV row would become one entry per column.
+            var ordered = target as IOrderedTranslationDatabase;
+
             while (csv.Read())
             {
                 var key = csv.GetField(0);
                 if (key is null) continue;
+
+                var rowIndex = -1;
 
                 for (var i = 1; i < headers.Length; i++)
                 {
@@ -66,7 +72,20 @@ namespace PG.StarWarsGame.Localisation.IO.Csv
                     if (!dbLanguages.Any(l => l.Equals(lang))) continue;
                     var val = csv.GetField(i);
                     if (val is null) continue;
-                    target.SetTranslation(key, lang, val);
+
+                    if (ordered is null)
+                    {
+                        target.SetTranslation(key, lang, val);
+                    }
+                    else if (rowIndex < 0)
+                    {
+                        ordered.SetTranslation(key, lang, val);
+                        rowIndex = ordered.Count - 1;
+                    }
+                    else
+                    {
+                        ordered.SetTranslationAt(rowIndex, lang, val);
+                    }
                 }
             }
         }

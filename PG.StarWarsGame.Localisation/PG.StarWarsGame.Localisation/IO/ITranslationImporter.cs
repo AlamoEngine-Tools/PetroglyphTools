@@ -15,6 +15,13 @@ namespace PG.StarWarsGame.Localisation.IO
         /// Reads <paramref name="source"/> and adds all entries for <paramref name="language"/>
         /// into <paramref name="target"/>.
         /// </summary>
+        /// <remarks>
+        /// This imports a single language. To load several languages into one database use
+        /// <see cref="TranslationImporterExtensions.ImportAll{TSource}"/>, which merges them correctly for both
+        /// database kinds — calling this method in a loop against an
+        /// <see cref="IOrderedTranslationDatabase"/> would stack a copy of the data per language instead of
+        /// widening the rows, since ordered databases append on every write.
+        /// </remarks>
         void Import(TSource source, IAlamoLanguageDefinition language, ITranslationDatabase target);
     }
 

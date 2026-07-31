@@ -164,6 +164,21 @@ public class KeyedTranslationDatabaseTest
         Assert.Throws<ArgumentNullException>(() => db.SetTranslation("K", null!, "v"));
     }
 
+    [Fact]
+    public void SetTranslation_Throws_WhenLanguageNotRegistered()
+    {
+        var db = Create(En);
+        Assert.Throws<ArgumentException>(() => db.SetTranslation("K", De, "v"));
+    }
+
+    [Fact]
+    public void SetTranslation_UnregisteredLanguage_LeavesDbUnchanged()
+    {
+        var db = Create(En);
+        Assert.Throws<ArgumentException>(() => db.SetTranslation("K", De, "v"));
+        Assert.Empty(db);
+    }
+
     // --- ActiveLanguage ---
 
     [Fact]

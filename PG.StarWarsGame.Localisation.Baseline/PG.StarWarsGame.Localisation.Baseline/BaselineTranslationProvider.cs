@@ -7,8 +7,10 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
+using PG.StarWarsGame.Files.DAT.Data;
 using PG.StarWarsGame.Files.DAT.Services;
 using PG.StarWarsGame.Localisation.Data;
+using PG.StarWarsGame.Localisation.IO;
 using PG.StarWarsGame.Localisation.IO.Dat;
 using PG.StarWarsGame.Localisation.Languages;
 
@@ -49,9 +51,7 @@ namespace PG.StarWarsGame.Localisation.Baseline
         public IKeyedTranslationDatabase GetMasterText(GameContext game, IAlamoLanguageDefinition language)
         {
             if (language is null) throw new ArgumentNullException(nameof(language));
-            var db = _factory.CreateKeyed(new[] { language });
-            LoadInto(db, game, "mastertextfile", language);
-            return db;
+            return GetMasterText(game, new[] { language });
         }
 
         /// <inheritdoc/>
@@ -59,8 +59,7 @@ namespace PG.StarWarsGame.Localisation.Baseline
         {
             if (languages is null) throw new ArgumentNullException(nameof(languages));
             var db = _factory.CreateKeyed(languages);
-            foreach (var lang in languages)
-                LoadInto(db, game, "mastertextfile", lang);
+            _importer.ImportAll(LoadModels(game, "mastertextfile", languages), db);
             return db;
         }
 
@@ -68,9 +67,7 @@ namespace PG.StarWarsGame.Localisation.Baseline
         public IOrderedTranslationDatabase GetCreditsText(GameContext game, IAlamoLanguageDefinition language)
         {
             if (language is null) throw new ArgumentNullException(nameof(language));
-            var db = _factory.CreateOrdered(new[] { language });
-            LoadInto(db, game, "creditstext", language);
-            return db;
+            return GetCreditsText(game, new[] { language });
         }
 
         /// <inheritdoc/>
@@ -78,31 +75,57 @@ namespace PG.StarWarsGame.Localisation.Baseline
         {
             if (languages is null) throw new ArgumentNullException(nameof(languages));
             var db = _factory.CreateOrdered(languages);
-            foreach (var lang in languages)
-                LoadInto(db, game, "creditstext", lang);
+
+            // Credits are positional and an ordered database appends on every write, so the per-language
+            // models must be merged row-wise rather than imported one after another. ImportAll owns that.
+            _importer.ImportAll(LoadModels(game, "creditstext", languages), db);
             return db;
         }
 
-        private void LoadInto(ITranslationDatabase db, GameContext game, string filePrefix, IAlamoLanguageDefinition language)
+        private IReadOnlyList<KeyValuePair<IAlamoLanguageDefinition, IDatModel>> LoadModels(
+            GameContext game, string filePrefix, IReadOnlyList<IAlamoLanguageDefinition> languages)
+        {
+            var models = new List<KeyValuePair<IAlamoLanguageDefinition, IDatModel>>();
+
+            foreach (var language in languages)
+            {
+                if (language is null) throw new ArgumentNullException(nameof(languages));
+
+                // Languages without an embedded resource are skipped silently; they are mapped ahead of the
+                // data being added, so an absent file is expected rather than an error.
+                var model = LoadModel(game, filePrefix, language);
+                if (model is not null)
+                    models.Add(new KeyValuePair<IAlamoLanguageDefinition, IDatModel>(language, model));
+            }
+
+            return models;
+        }
+
+        private IDatModel? LoadModel(GameContext game, string filePrefix, IAlamoLanguageDefinition language)
         {
             if (!LanguageMap.TryGetValue(language.LanguageIdentifier, out var map))
-                return;
+                return null;
 
             var resourceName = BuildResourceName(game, map.Folder, $"{filePrefix}_{map.NameSuffix}.dat");
             using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-            if (resourceStream is null) return;
+            if (resourceStream is null) return null;
 
+            // IDatFileService only loads from a path or a FileSystemStream, never a plain Stream, so the
+            // embedded resource has to be spooled out first. Load fully materialises the model, so it stays
+            // valid once the temp file is gone.
+            var tempDirectory = FileSystem.Path.GetTempPath();
             var tempPath = FileSystem.Path.Combine(
-                FileSystem.Path.GetTempPath(),
+                tempDirectory,
                 $"pg_baseline_{Guid.NewGuid():N}.dat");
 
             try
             {
+                FileSystem.Directory.CreateDirectory(tempDirectory);
+
                 using (var fs = FileSystem.FileStream.New(tempPath, FileMode.Create, FileAccess.Write))
                     resourceStream.CopyTo(fs);
 
-                var datFile = _datFileService.Load(tempPath);
-                _importer.Import(datFile.Content, language, db);
+                return _datFileService.Load(tempPath).Content;
             }
             finally
             {

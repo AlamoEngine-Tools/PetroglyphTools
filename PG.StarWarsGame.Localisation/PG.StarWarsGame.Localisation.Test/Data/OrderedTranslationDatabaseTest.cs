@@ -103,6 +103,94 @@ public class OrderedTranslationDatabaseTest
         Assert.Equal(2, allK.Count);
     }
 
+    // --- SetTranslationAt ---
+
+    [Fact]
+    public void SetTranslationAt_AddsLanguageToExistingRow()
+    {
+        var db = Create(En, De);
+        db.SetTranslation("K", En, "English");
+        db.SetTranslationAt(0, De, "Deutsch");
+
+        Assert.Single(db);
+        Assert.True(db[0].TryGetTranslation(En, out var en));
+        Assert.True(db[0].TryGetTranslation(De, out var de));
+        Assert.Equal("English", en);
+        Assert.Equal("Deutsch", de);
+    }
+
+    [Fact]
+    public void SetTranslationAt_OverwritesValueForSameLanguage()
+    {
+        var db = Create(En);
+        db.SetTranslation("K", En, "First");
+        db.SetTranslationAt(0, En, "Second");
+
+        Assert.Single(db);
+        Assert.True(db[0].TryGetTranslation(En, out var val));
+        Assert.Equal("Second", val);
+    }
+
+    [Fact]
+    public void SetTranslationAt_TargetsOnlyTheGivenRow()
+    {
+        var db = Create(En, De);
+        db.SetTranslation("CREDITS_LINE", En, "Line 1");
+        db.SetTranslation("CREDITS_LINE", En, "Line 2");
+        db.SetTranslationAt(1, De, "Zeile 2");
+
+        Assert.Equal(2, db.Count);
+        Assert.False(db[0].TryGetTranslation(De, out _));
+        Assert.True(db[1].TryGetTranslation(De, out var de));
+        Assert.Equal("Zeile 2", de);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(1)]
+    public void SetTranslationAt_Throws_WhenIndexOutOfRange(int index)
+    {
+        var db = Create(En);
+        db.SetTranslation("K", En, "v");
+        Assert.Throws<ArgumentOutOfRangeException>(() => db.SetTranslationAt(index, En, "x"));
+    }
+
+    [Fact]
+    public void SetTranslationAt_Throws_WhenLanguageNull()
+    {
+        var db = Create(En);
+        db.SetTranslation("K", En, "v");
+        Assert.Throws<ArgumentNullException>(() => db.SetTranslationAt(0, null!, "x"));
+    }
+
+    // --- language registration ---
+
+    [Fact]
+    public void SetTranslation_Throws_WhenLanguageNotRegistered()
+    {
+        var db = Create(En);
+        Assert.Throws<ArgumentException>(() => db.SetTranslation("K", De, "v"));
+        Assert.Empty(db);
+    }
+
+    [Fact]
+    public void SetTranslationAt_Throws_WhenLanguageNotRegistered()
+    {
+        var db = Create(En);
+        db.SetTranslation("K", En, "v");
+        Assert.Throws<ArgumentException>(() => db.SetTranslationAt(0, De, "x"));
+        Assert.False(db[0].TryGetTranslation(De, out _));
+    }
+
+    [Fact]
+    public void InsertAt_Throws_WhenLanguageNotRegistered()
+    {
+        var db = Create(En);
+        db.SetTranslation("K", En, "v");
+        Assert.Throws<ArgumentException>(() => db.InsertAt(0, "X", De, "x"));
+        Assert.Single(db);
+    }
+
     // --- ActiveLanguage ---
 
     [Fact]

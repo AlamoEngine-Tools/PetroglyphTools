@@ -11,10 +11,11 @@
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.4" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+		<PackageReference Include="GitHubActionsTestLogger" Version="3.0.5" />
+		<PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.11" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
 		<PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
-		<PackageReference Include="Microsoft.Testing.Platform" Version="2.2.3" />
+		<PackageReference Include="Microsoft.Testing.Platform" Version="2.3.3" />
 		<PackageReference Include="IsExternalInit" Version="1.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

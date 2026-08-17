@@ -32,10 +32,10 @@
 	<ItemGroup>
 		<PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
 			<PrivateAssets>all</PrivateAssets>
-			<Version>3.10.85</Version>
+			<Version>3.10.91</Version>
 		</PackageReference>
 		<PackageReference Include="SauceControl.InheritDoc" Version="2.0.2" PrivateAssets="all"/>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>

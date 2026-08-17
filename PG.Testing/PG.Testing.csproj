@@ -8,7 +8,9 @@
 	</PropertyGroup>	
 	<ItemGroup>
 		<PackageReference Include="AnakinRaW.CommonUtilities.Testing" Version="13.1.2" />
-		<PackageReference Include="Testably.Abstractions.Testing" Version="6.6.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+		<PackageReference Include="System.Collections.Immutable" Version="10.0.11" />
+		<PackageReference Include="Testably.Abstractions.Testing" Version="7.0.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\PG.Commons\PG.Commons\PG.Commons.csproj" />

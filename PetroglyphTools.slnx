@@ -14,6 +14,10 @@
   <Project Path="PG.StarWarsGame.Files.Xml/PG.StarWarsGame.Files.Xml/PG.StarWarsGame.Files.Xml.csproj">
     <Build Project="false" />
   </Project>
+  <Project Path="PG.StarWarsGame.Localisation.Baseline/PG.StarWarsGame.Localisation.Baseline.Test/PG.StarWarsGame.Localisation.Baseline.Test.csproj" />
+  <Project Path="PG.StarWarsGame.Localisation.Baseline/PG.StarWarsGame.Localisation.Baseline/PG.StarWarsGame.Localisation.Baseline.csproj" />
+  <Project Path="PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.Test/PG.StarWarsGame.Localisation.Test.csproj" />
+  <Project Path="PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation/PG.StarWarsGame.Localisation.csproj" />
   <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files.Test/PG.StarWarsGame.Files.Test.csproj" />
   <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files.Testing/PG.StarWarsGame.Files.Testing.csproj"/>
   <Project Path="PG.StarWarsGame.Files/PG.StarWarsGame.Files/PG.StarWarsGame.Files.csproj" />

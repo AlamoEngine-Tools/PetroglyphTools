@@ -16,15 +16,15 @@ namespace PG.StarWarsGame.Localisation.Data.Config.v1
     [Serializable]
     [DebuggerStepThrough]
     [DesignerCategory("code")]
-    [XmlType(Namespace = "http://www.example.org/eaw-translation/")]
+    [XmlType(Namespace = "urn:alamoenginetools:localisation:v1")]
     public class TranslationType : object, INotifyPropertyChanged
     {
-        private string m_languageField;
-        private string m_valueField;
+        private string? m_languageField;
+        private string? m_valueField;
 
         /// <remarks />
         [XmlAttribute]
-        public string Language
+        public string? Language
         {
             get => m_languageField;
             set
@@ -36,7 +36,7 @@ namespace PG.StarWarsGame.Localisation.Data.Config.v1
 
         /// <remarks />
         [XmlText]
-        public string Value
+        public string? Value
         {
             get => m_valueField;
             set
@@ -46,12 +46,12 @@ namespace PG.StarWarsGame.Localisation.Data.Config.v1
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged(string propertyName)
+        private void RaisePropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

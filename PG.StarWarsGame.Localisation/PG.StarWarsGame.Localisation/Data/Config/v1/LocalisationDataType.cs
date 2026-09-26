@@ -1,37 +1,46 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-namespace PG.StarWarsGame.Localisation.Data.Config.v1
+using System;
+using System.CodeDom.Compiler;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
+namespace PG.StarWarsGame.Localisation.Data.Config.v1;
+
+/// <remarks />
+[Obsolete]
+[ExcludeFromCodeCoverage]
+[GeneratedCode("xsd", "4.8.3928.0")]
+[Serializable]
+[DebuggerStepThrough]
+[DesignerCategory("code")]
+[XmlType(Namespace = "urn:alamoenginetools:localisation:v1")]
+[XmlRoot("LocalisationData", Namespace = "urn:alamoenginetools:localisation:v1", IsNullable = false)]
+public class LocalisationDataType : object, INotifyPropertyChanged
 {
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.example.org/eaw-translation/")]
-    [System.Xml.Serialization.XmlRootAttribute("LocalisationData", Namespace = "http://www.example.org/eaw-translation/", IsNullable = false)]
-    public class LocalisationDataType : object, System.ComponentModel.INotifyPropertyChanged
+    private LocalisationType[]? m_localisationField;
+
+    /// <remarks />
+    [XmlElement("Localisation", Form = XmlSchemaForm.Unqualified)]
+    public LocalisationType[]? Localisation
     {
-        private LocalisationType[] m_localisationField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Localisation", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public LocalisationType[] Localisation
+        get => m_localisationField;
+        set
         {
-            get => m_localisationField;
-            set
-            {
-                m_localisationField = value;
-                RaisePropertyChanged("Localisation");
-            }
+            m_localisationField = value;
+            RaisePropertyChanged("Localisation");
         }
+    }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    /// <inheritdoc />
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            propertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
+    private void RaisePropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

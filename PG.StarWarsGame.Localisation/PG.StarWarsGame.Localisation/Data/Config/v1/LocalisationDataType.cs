@@ -6,40 +6,41 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace PG.StarWarsGame.Localisation.Data.Config.v1
+namespace PG.StarWarsGame.Localisation.Data.Config.v1;
+
+/// <remarks />
+[Obsolete]
+[ExcludeFromCodeCoverage]
+[GeneratedCode("xsd", "4.8.3928.0")]
+[Serializable]
+[DebuggerStepThrough]
+[DesignerCategory("code")]
+[XmlType(Namespace = "urn:alamoenginetools:localisation:v1")]
+[XmlRoot("LocalisationData", Namespace = "urn:alamoenginetools:localisation:v1", IsNullable = false)]
+public class LocalisationDataType : object, INotifyPropertyChanged
 {
-    /// <remarks/>
-    [ExcludeFromCodeCoverage]
-    [GeneratedCode("xsd", "4.8.3928.0")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
-    [XmlType(Namespace = "urn:alamoenginetools:localisation:v1")]
-    [XmlRoot("LocalisationData", Namespace = "urn:alamoenginetools:localisation:v1", IsNullable = false)]
-    public class LocalisationDataType : object, INotifyPropertyChanged
+    private LocalisationType[]? m_localisationField;
+
+    /// <remarks />
+    [XmlElement("Localisation", Form = XmlSchemaForm.Unqualified)]
+    public LocalisationType[]? Localisation
     {
-        private LocalisationType[]? m_localisationField;
-
-        /// <remarks/>
-        [XmlElement("Localisation", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public LocalisationType[]? Localisation
+        get => m_localisationField;
+        set
         {
-            get => m_localisationField;
-            set
-            {
-                m_localisationField = value;
-                RaisePropertyChanged("Localisation");
-            }
+            m_localisationField = value;
+            RaisePropertyChanged("Localisation");
         }
+    }
 
-        /// <inheritdoc/>
-        public event PropertyChangedEventHandler? PropertyChanged;
+    /// <inheritdoc />
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void RaisePropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    private void RaisePropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

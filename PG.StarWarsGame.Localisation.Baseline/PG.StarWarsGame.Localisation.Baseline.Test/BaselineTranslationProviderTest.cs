@@ -6,6 +6,8 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using PG.StarWarsGame.Localisation.Languages;
 using PG.Testing;
+using Testably.Abstractions.Testing;
+using Testably.Abstractions.Testing.FileSystem;
 using Xunit;
 
 namespace PG.StarWarsGame.Localisation.Baseline.Test;
@@ -130,6 +132,19 @@ public class BaselineTranslationProviderTest : PGTestBase
         // rather than appending empty rows onto the English ones.
         Assert.Equal(single.Count, multi.Count);
         Assert.DoesNotContain(multi, e => e.TryGetTranslation(ru, out _));
+    }
+
+    [Fact]
+    public void GetText_DoesNotWriteToFileSystem()
+    {
+        // Baseline data is embedded, so loading it must read straight from the resource stream
+        // rather than spooling anything out to disk.
+        var mockFileSystem = Assert.IsType<MockFileSystem>(FileSystem);
+        using var _ = mockFileSystem.Intercept.Creating(FileSystemTypes.File,
+            e => throw new InvalidOperationException($"Unexpected file creation: {e.Path}"));
+
+        Assert.NotEmpty(Provider.GetMasterText(GameContext.EaW, new EnglishAlamoLanguageDefinition()));
+        Assert.NotEmpty(Provider.GetCreditsText(GameContext.EaW, new EnglishAlamoLanguageDefinition()));
     }
 
     [Fact]

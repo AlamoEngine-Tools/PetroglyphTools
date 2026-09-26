@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using PG.Commons.Services;
@@ -36,13 +35,13 @@ namespace PG.StarWarsGame.Localisation.Baseline
                 ["THAI"]     = ("th", "thai"),
             };
 
-        private readonly IDatFileService _datFileService;
+        private readonly IDatService _datService;
         private readonly IDatTranslationImporter _importer;
         private readonly ITranslationDatabaseFactory _factory;
 
         public BaselineTranslationProvider(IServiceProvider services) : base(services)
         {
-            _datFileService = services.GetRequiredService<IDatFileService>();
+            _datService = services.GetRequiredService<IDatService>();
             _importer       = services.GetRequiredService<IDatTranslationImporter>();
             _factory        = services.GetRequiredService<ITranslationDatabaseFactory>();
         }
@@ -110,34 +109,8 @@ namespace PG.StarWarsGame.Localisation.Baseline
             using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
             if (resourceStream is null) return null;
 
-            // IDatFileService only loads from a path or a FileSystemStream, never a plain Stream, so the
-            // embedded resource has to be spooled out first. Load fully materialises the model, so it stays
-            // valid once the temp file is gone.
-            var tempDirectory = FileSystem.Path.GetTempPath();
-            var tempPath = FileSystem.Path.Combine(
-                tempDirectory,
-                $"pg_baseline_{Guid.NewGuid():N}.dat");
-
-            try
-            {
-                FileSystem.Directory.CreateDirectory(tempDirectory);
-
-                using (var fs = FileSystem.FileStream.New(tempPath, FileMode.Create, FileAccess.Write))
-                    resourceStream.CopyTo(fs);
-
-                return _datFileService.Load(tempPath).Content;
-            }
-            finally
-            {
-                try
-                {
-                    FileSystem.File.Delete(tempPath);
-                }
-                catch
-                {
-                    // NOP
-                }
-            }
+            // LoadModel fully materialises the model, so it stays valid once the resource stream is disposed.
+            return _datService.LoadModel(resourceStream);
         }
 
         private static string BuildResourceName(GameContext game, string langFolder, string fileName)

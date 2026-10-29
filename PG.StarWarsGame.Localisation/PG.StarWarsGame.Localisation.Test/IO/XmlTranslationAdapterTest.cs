@@ -112,15 +112,31 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         Assert.Equal(XName.Get("LocalisationData", ns), format.Root);
     }
 
+    // By default a file is written in the library's namespace, keyed by key.
+    [Fact]
+    public void Export_WritesTheNamespacedShape()
+    {
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        db.SetTranslation("HELLO", En, "Hello");
+
+        var root = CreateExporter().Export(db).Root!;
+
+        XNamespace ns = "urn:alamoenginetools:localisation:v1";
+        Assert.Equal(ns + "LocalisationData", root.Name);
+        var entry = Assert.Single(root.Elements(ns + "Localisation"));
+        Assert.Equal("HELLO", entry.Attribute("key")?.Value);
+        Assert.Equal("Hello", entry.Element(ns + "TranslationData")!.Element(ns + "Translation")!.Value);
+    }
+
     // The text editor's format: no namespace, Key, one TranslationData per key.
     [Fact]
-    public void Export_WritesTheTextEditorsFormat()
+    public void Export_OmittingTheNamespace_WritesTheTextEditorsFormat()
     {
         var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En, De });
         db.SetTranslation("HELLO", En, "Hello");
         db.SetTranslation("HELLO", De, "Hallo");
 
-        var root = CreateExporter().Export(db).Root!;
+        var root = CreateExporter().Export(db, omitNamespace: true).Root!;
 
         Assert.Equal(XName.Get("LocalisationData"), root.Name);
         var entry = Assert.Single(root.Elements("Localisation"));
@@ -183,7 +199,7 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         db.SetTranslation("APPLE", En, "a");
         db.SetTranslation("MONKEY", En, "m");
 
-        var xml = CreateExporter().Export(db);
+        var xml = CreateExporter().Export(db, omitNamespace: true);
         var keys = xml.Root!
             .Elements("Localisation")
             .Select(e => e.Attribute("Key")!.Value)

@@ -16,11 +16,14 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
     public sealed class XmlTranslationExporter : IXmlTranslationExporter
     {
         /// <inheritdoc/>
-        public XDocument Export(ITranslationDatabase source)
+        public XDocument Export(ITranslationDatabase source) => Export(source, false);
+
+        /// <inheritdoc/>
+        public XDocument Export(ITranslationDatabase source, bool omitNamespace)
         {
             if (source is null) throw new ArgumentNullException(nameof(source));
 
-            var format = XmlTranslationFormat.TextEditor;
+            var format = omitNamespace ? XmlTranslationFormat.TextEditor : XmlTranslationFormat.Namespaced;
             var root = new XElement(format.Root);
 
             var rows = source is IKeyedTranslationDatabase

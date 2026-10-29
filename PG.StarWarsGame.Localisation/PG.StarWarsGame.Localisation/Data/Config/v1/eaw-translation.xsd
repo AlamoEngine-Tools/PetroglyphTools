@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.example.org/eaw-translation/" xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:eawts="http://www.example.org/eaw-translation/">
-    <complexType name="TranslationType">
-        <simpleContent>
-            <extension base="string">
-                <attribute name="Language" type="string"
-                           use="required">
-                </attribute>
-            </extension>
-        </simpleContent>
-    </complexType>
-    <complexType name="TranslationDataType">
-        <sequence>
-            <element name="Translation" type="eawts:TranslationType" maxOccurs="unbounded" minOccurs="1" />
-        </sequence>
-    </complexType>
-    <complexType name="LocalisationType">
-        <sequence>
-            <element name="TranslationData" type="eawts:TranslationDataType" maxOccurs="1" minOccurs="1" />
-        </sequence>
-        <attribute name="Key" type="string" use="required" />
-    </complexType>
-    <complexType name="LocalisationDataType">
-        <sequence>
-            <element name="Localisation" type="eawts:LocalisationType" maxOccurs="unbounded" minOccurs="1" />
-        </sequence>
-    </complexType>
-    <element name="LocalisationData" type="eawts:LocalisationDataType" />
-</schema>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:complexType name="TranslationType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="Language" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="TranslationDataType">
+        <xs:sequence>
+            <xs:element name="Translation" type="TranslationType" maxOccurs="unbounded" minOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="LocalisationType">
+        <xs:sequence>
+            <xs:element name="TranslationData" type="TranslationDataType" maxOccurs="1" minOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="Key" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="LocalisationDataType">
+        <xs:sequence>
+            <xs:element name="Localisation" type="LocalisationType" maxOccurs="unbounded" minOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="LocalisationData" type="LocalisationDataType" />
+</xs:schema>

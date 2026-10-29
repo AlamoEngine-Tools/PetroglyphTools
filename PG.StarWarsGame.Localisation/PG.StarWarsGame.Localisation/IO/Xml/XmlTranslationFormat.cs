@@ -6,12 +6,12 @@ using System.Xml.Linq;
 namespace PG.StarWarsGame.Localisation.IO.Xml
 {
     /// <summary>
-    /// The names of an eaw-translation XML file, in one of the two shapes it is read in.
-    /// <see cref="TextEditor"/> is the format the EaW text editor writes: no namespace, <c>Key</c>, one
-    /// <see cref="TranslationData"/> per key holding a <see cref="Translation"/> per language. It is the
-    /// structure <c>Data/Config/v1/eaw-translation.xsd</c> describes, without the schema's target namespace.
-    /// <see cref="Namespaced"/> is the shape earlier builds of this library wrote: the same elements in
-    /// the <c>urn:alamoenginetools:localisation:v1</c> namespace, keyed by <c>key</c>.
+    /// The names of an eaw-translation XML file, in one of the two shapes it is read and written in.
+    /// <see cref="TextEditor"/> is the format the EaW text editor reads and writes, and the one
+    /// <c>Data/Config/v1/eaw-translation.xsd</c> describes: no namespace, <c>Key</c>, one
+    /// <see cref="TranslationData"/> per key holding a <see cref="Translation"/> per language.
+    /// <see cref="Namespaced"/> is this library's own shape: the same elements in the
+    /// <c>urn:alamoenginetools:localisation:v1</c> namespace, keyed by <c>key</c>. The text editor rejects it.
     /// </summary>
     /// <example>
     /// <code>
@@ -26,10 +26,10 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
     /// </example>
     public sealed class XmlTranslationFormat
     {
-        /// <summary>The text editor's format. Files are written in it.</summary>
+        /// <summary>The text editor's format. Written when the exporter omits the namespace.</summary>
         public static XmlTranslationFormat TextEditor { get; } = new(XNamespace.None, "Key");
 
-        /// <summary>The shape earlier builds of this library wrote. Read, and kept when a file in it is edited.</summary>
+        /// <summary>This library's own shape. Written by default.</summary>
         public static XmlTranslationFormat Namespaced { get; } =
             new(XNamespace.Get("urn:alamoenginetools:localisation:v1"), "key");
 

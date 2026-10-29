@@ -1,6 +1,7 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
+using System.Linq;
 using System.Xml.Linq;
 
 namespace PG.StarWarsGame.Localisation.IO.Xml
@@ -45,6 +46,27 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
         /// <summary>The shape <paramref name="document"/> is written in, told by its root's namespace.</summary>
         public static XmlTranslationFormat Of(XDocument document) =>
             document.Root?.Name.Namespace == Namespaced.Root.Namespace ? Namespaced : TextEditor;
+
+        /// <summary>
+        /// Rewrites <paramref name="document"/> into this shape in place: every element moves into this
+        /// shape's namespace and each key attribute is renamed. Values, order and whitespace are kept.
+        /// </summary>
+        public void Rewrite(XDocument document)
+        {
+            var from = Of(document);
+            if (ReferenceEquals(from, this) || document.Root is null) return;
+
+            var oldNs = from.Root.Namespace;
+            foreach (var element in document.Root.DescendantsAndSelf())
+            {
+                if (element.Name.Namespace == oldNs) element.Name = Root.Namespace + element.Name.LocalName;
+
+                element.ReplaceAttributes(element.Attributes()
+                    .Where(a => !(a.IsNamespaceDeclaration && a.Value == oldNs.NamespaceName))
+                    .Select(a => element.Name == Localisation && a.Name == from.Key ? new XAttribute(Key, a.Value) : a)
+                    .ToList());
+            }
+        }
 
         /// <summary>The root element.</summary>
         public XName Root { get; }

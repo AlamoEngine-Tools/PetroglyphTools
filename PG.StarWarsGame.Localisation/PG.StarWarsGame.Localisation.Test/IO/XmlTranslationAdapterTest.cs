@@ -102,6 +102,46 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         Assert.Equal("Angriff auf Hoth", de);
     }
 
+    [Fact]
+    public void Rewrite_ANamespacedFile_IsInTheTextEditorsFormat()
+    {
+        var xml = XDocument.Parse("""
+                                  <LocalisationData xmlns="urn:alamoenginetools:localisation:v1">
+                                    <Localisation key="TEXT_HOTH">
+                                      <TranslationData><Translation Language="ENGLISH">Assault on Hoth</Translation></TranslationData>
+                                    </Localisation>
+                                  </LocalisationData>
+                                  """);
+
+        XmlTranslationFormat.TextEditor.Rewrite(xml);
+
+        Assert.Same(XmlTranslationFormat.TextEditor, XmlTranslationFormat.Of(xml));
+        Assert.DoesNotContain("urn:", xml.ToString());
+        var entry = Assert.Single(xml.Root!.Elements("Localisation"));
+        Assert.Equal("TEXT_HOTH", entry.Attribute("Key")?.Value);
+        Assert.Null(entry.Attribute("key"));
+        Assert.Equal("Assault on Hoth", entry.Element("TranslationData")!.Element("Translation")!.Value);
+
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
+        CreateImporter().Import(xml, db);
+        Assert.True(db.TryGetEntry("TEXT_HOTH", out _));
+    }
+
+    [Fact]
+    public void Rewrite_AFileAlreadyInTheShape_IsUnchanged()
+    {
+        const string text = """
+                            <LocalisationData>
+                              <Localisation Key="K"><TranslationData><Translation Language="ENGLISH">v</Translation></TranslationData></Localisation>
+                            </LocalisationData>
+                            """;
+        var xml = XDocument.Parse(text, LoadOptions.PreserveWhitespace);
+
+        XmlTranslationFormat.TextEditor.Rewrite(xml);
+
+        Assert.Equal(XDocument.Parse(text, LoadOptions.PreserveWhitespace).ToString(), xml.ToString());
+    }
+
     [Theory]
     [InlineData("<LocalisationData/>", "")]
     [InlineData("<LocalisationData xmlns=\"urn:alamoenginetools:localisation:v1\"/>", "urn:alamoenginetools:localisation:v1")]

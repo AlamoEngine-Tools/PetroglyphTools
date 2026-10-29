@@ -11,7 +11,7 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
 {
     /// <summary>
     /// Default implementation of <see cref="IXmlTranslationImporter"/>.
-    /// Reads eaw-translation v1 XML documents.
+    /// Reads eaw-translation v1 XML documents in either <see cref="XmlTranslationFormat"/> shape.
     /// </summary>
     public sealed class XmlTranslationImporter : IXmlTranslationImporter
     {
@@ -32,22 +32,24 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
             var root = source.Root;
             if (root is null) return;
 
+            var format = XmlTranslationFormat.Of(source);
+
             // An ordered database appends on every SetTranslation, so a multi-language entry has to be
             // opened once and then filled in place; otherwise one key would become one entry per language.
             var ordered = target as IOrderedTranslationDatabase;
 
-            foreach (var locEl in root.Elements(XmlTranslationFormat.Localisation))
+            foreach (var locEl in root.Elements(format.Localisation))
             {
-                var key = locEl.Attribute(XmlTranslationFormat.Key)?.Value;
+                var key = locEl.Attribute(format.Key)?.Value;
                 if (key is null) continue;
 
                 var rowIndex = -1;
 
-                foreach (var dataEl in locEl.Elements(XmlTranslationFormat.TranslationData))
+                foreach (var dataEl in locEl.Elements(format.TranslationData))
                 {
-                    foreach (var transEl in dataEl.Elements(XmlTranslationFormat.Translation))
+                    foreach (var transEl in dataEl.Elements(format.Translation))
                     {
-                        var langId = transEl.Attribute(XmlTranslationFormat.Language)?.Value;
+                        var langId = transEl.Attribute(format.Language)?.Value;
                         var value = transEl.Value;
 
                         if (langId is null) continue;

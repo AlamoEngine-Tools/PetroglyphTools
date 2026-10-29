@@ -79,7 +79,40 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         Assert.Equal("Angriff auf Hoth", de);
     }
 
-    // The format eaw-translation.xsd describes: no namespace, Key, one TranslationData per key.
+    // The shape earlier builds of this library wrote: a namespace, key, one TranslationData per language.
+    [Fact]
+    public void Import_TheNamespacedFile_ReadsEveryTranslation()
+    {
+        var xml = XDocument.Parse("""
+                                  <LocalisationData xmlns="urn:alamoenginetools:localisation:v1">
+                                    <Localisation key="TEXT_HOTH">
+                                      <TranslationData><Translation Language="ENGLISH">Assault on Hoth</Translation></TranslationData>
+                                      <TranslationData><Translation Language="GERMAN">Angriff auf Hoth</Translation></TranslationData>
+                                    </Localisation>
+                                  </LocalisationData>
+                                  """);
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En, De });
+
+        CreateImporter().Import(xml, db);
+
+        Assert.True(db.TryGetEntry("TEXT_HOTH", out var hoth));
+        Assert.True(hoth!.TryGetTranslation(En, out var en));
+        Assert.True(hoth.TryGetTranslation(De, out var de));
+        Assert.Equal("Assault on Hoth", en);
+        Assert.Equal("Angriff auf Hoth", de);
+    }
+
+    [Theory]
+    [InlineData("<LocalisationData/>", "")]
+    [InlineData("<LocalisationData xmlns=\"urn:alamoenginetools:localisation:v1\"/>", "urn:alamoenginetools:localisation:v1")]
+    public void Of_ADocument_IsTheShapeItIsWrittenIn(string text, string ns)
+    {
+        var format = XmlTranslationFormat.Of(XDocument.Parse(text));
+
+        Assert.Equal(XName.Get("LocalisationData", ns), format.Root);
+    }
+
+    // The text editor's format: no namespace, Key, one TranslationData per key.
     [Fact]
     public void Export_WritesTheTextEditorsFormat()
     {

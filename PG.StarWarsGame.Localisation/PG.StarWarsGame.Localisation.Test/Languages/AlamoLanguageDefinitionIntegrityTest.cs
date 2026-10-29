@@ -1,60 +1,71 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PG.Core.Attributes;
-using PG.Core.Localisation;
-using PG.Core.Localisation.Attributes;
-using PG.Core.Test;
-using PG.StarWarsGame.Localisation.Util;
-using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using PG.StarWarsGame.Localisation.Languages;
+using PG.StarWarsGame.Localisation.Languages.Attributes;
+using Xunit;
 
-namespace PG.StarWarsGame.Localisation.Test.Languages
+namespace PG.StarWarsGame.Localisation.Test.Languages;
+
+public class AlamoLanguageDefinitionIntegrityTest
 {
-    [TestClass]
-    [TestCategory(TestConstants.TEST_TYPE_HOLY)]
-    public class AlamoLanguageDefinitionIntegrityTest
+    private static readonly Assembly LocalisationAssembly =
+        typeof(IAlamoLanguageDefinition).Assembly;
+
+    [Fact]
+    public void ExactlyElevenConcreteLanguagesAreDefined()
     {
-        [TestMethod]
-        public void Test_CorrectNumberOfLanguages()
-        {
-            IList<IAlamoLanguageDefinition> l = LocalisationUtility.GetAllAlamoLanguageDefinitions();
-            Assert.AreEqual(LocalisationTestConstants.REGISTERED_LANGUAGE_DEFINITIONS.Count, l.Count, "An official language definition has been added or removed. This should never happen - if there is a good reason for this, please update LocalisationTestConstants.REGISTERED_LANGUAGE_DEFINITIONS accordingly.");
-        }
+        var count = LocalisationAssembly.GetTypes()
+            .Count(t => t is { IsClass: true, IsAbstract: false }
+                        && typeof(IAlamoLanguageDefinition).IsAssignableFrom(t));
+        Assert.Equal(11, count);
+    }
 
-        [TestMethod]
-        public void Test_CorrectLanguagesRegistered()
-        {
-            IList<IAlamoLanguageDefinition> l = LocalisationUtility.GetAllAlamoLanguageDefinitions();
-            foreach (IAlamoLanguageDefinition alamoLanguageDefinition in l)
-            {
-                Assert.IsTrue(
-                    LocalisationTestConstants.REGISTERED_LANGUAGE_DEFINITIONS.Contains(
-                        alamoLanguageDefinition.GetType()));
-                Assert.IsTrue(alamoLanguageDefinition.GetType().GetAttributeValueOrDefault((OfficiallySupportedLanguageAttribute o) => o.IsOfficiallySupported));
-            }
-        }
+    [Fact]
+    public void ExactlyOneDefaultLanguageIsDefined()
+    {
+        var defaults = LocalisationAssembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false }
+                        && typeof(IAlamoLanguageDefinition).IsAssignableFrom(t)
+                        && t.IsDefined(typeof(DefaultLanguageAttribute), false))
+            .ToList();
+        Assert.Single(defaults);
+    }
 
-        [TestMethod]
-        public void Test_DefaultLanguageIsDefined()
-        {
-            IList<IAlamoLanguageDefinition> l = LocalisationUtility.GetAllAlamoLanguageDefinitions();
-            bool isDefaultDefined = false;
-            foreach (IAlamoLanguageDefinition alamoLanguageDefinition in l)
-            {
-                if (alamoLanguageDefinition.GetType().GetAttributeValueOrDefault((DefaultAttribute d) => d.IsDefault))
-                {
-                    isDefaultDefined = true;
-                }
-            }
-            Assert.IsTrue(isDefaultDefined, "No default language is defined. This should not happen. EnglishAlamoLanguageDefinition should have the Default attribute set.");
-        }
+    [Fact]
+    public void DefaultLanguageIsEnglish()
+    {
+        var defaultType = LocalisationAssembly.GetTypes()
+            .Single(t => t is { IsClass: true, IsAbstract: false }
+                         && typeof(IAlamoLanguageDefinition).IsAssignableFrom(t)
+                         && t.IsDefined(typeof(DefaultLanguageAttribute), false));
+        var instance = (IAlamoLanguageDefinition)System.Activator.CreateInstance(defaultType)!;
+        Assert.Equal("ENGLISH", instance.LanguageIdentifier);
+    }
 
-        [TestMethod]
-        public void Test_DefaultLanguageIsCorrect()
-        {
-            IAlamoLanguageDefinition l = LocalisationUtility.GetDefaultAlamoLanguageDefinition();
-            Assert.AreEqual(LocalisationTestConstants.DEFAULT_LANGUAGE, l.GetType(), "The default language is not EnglishAlamoLanguageDefinition. This should never happen. Please ensure EnglishAlamoLanguageDefinition has the Default attribute set.");
-        }
+    [Fact]
+    public void AllConcreteLanguagesAreOfficiallySupported()
+    {
+        var langs = LocalisationAssembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false }
+                        && typeof(IAlamoLanguageDefinition).IsAssignableFrom(t))
+            .Select(t => (IAlamoLanguageDefinition)System.Activator.CreateInstance(t)!)
+            .ToList();
+
+        Assert.All(langs, l => Assert.True(l.IsOfficiallySupported()));
+    }
+
+    [Fact]
+    public void AllConcreteLanguagesHaveUniqueIdentifiers()
+    {
+        var identifiers = LocalisationAssembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false }
+                        && typeof(IAlamoLanguageDefinition).IsAssignableFrom(t))
+            .Select(t => ((IAlamoLanguageDefinition)System.Activator.CreateInstance(t)!).LanguageIdentifier)
+            .ToList();
+
+        Assert.Equal(identifiers.Count, identifiers.Distinct().Count());
     }
 }

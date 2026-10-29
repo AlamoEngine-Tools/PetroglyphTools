@@ -1,26 +1,22 @@
 // Copyright (c) Alamo Engine Tools and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-using PG.Core.Attributes;
-using PG.Core.Localisation;
-using PG.Core.Localisation.Attributes;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using PG.StarWarsGame.Localisation.Languages.Attributes;
 
 namespace PG.StarWarsGame.Localisation.Languages
 {
-    /// <summary>
-    /// The language definition for the Korean language.
-    /// </summary>
-    /// <remarks>
-    /// Officially supported by the Alamo Engine.
-    /// </remarks>
-    [Order(5000)]
+    /// <summary>The language definition for Korean (KO).</summary>
+    /// <remarks>Officially supported by the Alamo Engine.</remarks>
+    [OfficiallySupportedLanguage(GameContext.EaW)]
     [ExcludeFromCodeCoverage]
-    [OfficiallySupportedLanguage]
-    public sealed class KoreanAlamoLanguageDefinition : AbstractAlamoLanguageDefinition
+    public sealed class KoreanAlamoLanguageDefinition : AlamoLanguageDefinitionBase
     {
+        /// <inheritdoc/>
         protected override string ConfiguredLanguageIdentifier => "KOREAN";
+
+        /// <inheritdoc/>
         protected override CultureInfo ConfiguredCulture => CultureInfo.GetCultureInfo("ko");
     }
 }

@@ -29,7 +29,6 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
             if (source is null) throw new ArgumentNullException(nameof(source));
             if (target is null) throw new ArgumentNullException(nameof(target));
 
-            var ns = XmlTranslationExporter.Ns;
             var root = source.Root;
             if (root is null) return;
 
@@ -37,18 +36,18 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
             // opened once and then filled in place; otherwise one key would become one entry per language.
             var ordered = target as IOrderedTranslationDatabase;
 
-            foreach (var locEl in root.Elements(ns + "Localisation"))
+            foreach (var locEl in root.Elements(XmlTranslationFormat.Localisation))
             {
-                var key = locEl.Attribute("key")?.Value;
+                var key = locEl.Attribute(XmlTranslationFormat.Key)?.Value;
                 if (key is null) continue;
 
                 var rowIndex = -1;
 
-                foreach (var dataEl in locEl.Elements(ns + "TranslationData"))
+                foreach (var dataEl in locEl.Elements(XmlTranslationFormat.TranslationData))
                 {
-                    foreach (var transEl in dataEl.Elements(ns + "Translation"))
+                    foreach (var transEl in dataEl.Elements(XmlTranslationFormat.Translation))
                     {
-                        var langId = transEl.Attribute("Language")?.Value;
+                        var langId = transEl.Attribute(XmlTranslationFormat.Language)?.Value;
                         var value = transEl.Value;
 
                         if (langId is null) continue;

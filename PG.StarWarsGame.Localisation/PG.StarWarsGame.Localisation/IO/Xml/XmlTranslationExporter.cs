@@ -15,14 +15,12 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
     /// </summary>
     public sealed class XmlTranslationExporter : IXmlTranslationExporter
     {
-        internal static readonly XNamespace Ns = "urn:alamoenginetools:localisation:v1";
-
         /// <inheritdoc/>
         public XDocument Export(ITranslationDatabase source)
         {
             if (source is null) throw new ArgumentNullException(nameof(source));
 
-            var root = new XElement(Ns + "LocalisationData");
+            var root = new XElement(XmlTranslationFormat.Root);
 
             var rows = source is IKeyedTranslationDatabase
                 ? source.OrderBy(e => e.Key, StringComparer.Ordinal).AsEnumerable()
@@ -30,18 +28,16 @@ namespace PG.StarWarsGame.Localisation.IO.Xml
 
             foreach (var entry in rows)
             {
-                var locEl = new XElement(Ns + "Localisation",
-                    new XAttribute("key", entry.Key));
-
+                var dataEl = new XElement(XmlTranslationFormat.TranslationData);
                 foreach (var kv in entry.Translations.OrderBy(kv => kv.Key.LanguageIdentifier))
                 {
-                    locEl.Add(new XElement(Ns + "TranslationData",
-                        new XElement(Ns + "Translation",
-                            new XAttribute("Language", kv.Key.LanguageIdentifier),
-                            kv.Value)));
+                    dataEl.Add(new XElement(XmlTranslationFormat.Translation,
+                        new XAttribute(XmlTranslationFormat.Language, kv.Key.LanguageIdentifier),
+                        kv.Value));
                 }
 
-                root.Add(locEl);
+                root.Add(new XElement(XmlTranslationFormat.Localisation,
+                    new XAttribute(XmlTranslationFormat.Key, entry.Key), dataEl));
             }
 
             return new XDocument(root);

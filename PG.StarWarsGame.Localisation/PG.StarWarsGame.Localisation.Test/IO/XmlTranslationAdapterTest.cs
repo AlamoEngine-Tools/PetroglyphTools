@@ -53,11 +53,54 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         Assert.NotNull(xml.Root);
     }
 
+    // The EaW text editor's file, as it writes it.
+    [Fact]
+    public void Import_TheTextEditorsFile_ReadsEveryTranslation()
+    {
+        var xml = XDocument.Parse("""
+                                  <?xml version="1.0"?>
+                                  <LocalisationData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                                    <Localisation Key="TEXT_HOTH">
+                                      <TranslationData>
+                                        <Translation Language="GERMAN"><![CDATA[Angriff auf Hoth]]></Translation>
+                                        <Translation Language="ENGLISH"><![CDATA[Assault on Hoth]]></Translation>
+                                      </TranslationData>
+                                    </Localisation>
+                                  </LocalisationData>
+                                  """);
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En, De });
+
+        CreateImporter().Import(xml, db);
+
+        Assert.True(db.TryGetEntry("TEXT_HOTH", out var hoth));
+        Assert.True(hoth!.TryGetTranslation(En, out var en));
+        Assert.True(hoth.TryGetTranslation(De, out var de));
+        Assert.Equal("Assault on Hoth", en);
+        Assert.Equal("Angriff auf Hoth", de);
+    }
+
+    // The format eaw-translation.xsd describes: no namespace, Key, one TranslationData per key.
+    [Fact]
+    public void Export_WritesTheTextEditorsFormat()
+    {
+        var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En, De });
+        db.SetTranslation("HELLO", En, "Hello");
+        db.SetTranslation("HELLO", De, "Hallo");
+
+        var root = CreateExporter().Export(db).Root!;
+
+        Assert.Equal(XName.Get("LocalisationData"), root.Name);
+        var entry = Assert.Single(root.Elements("Localisation"));
+        Assert.Equal("HELLO", entry.Attribute("Key")?.Value);
+        var data = Assert.Single(entry.Elements("TranslationData"));
+        Assert.Equal(new[] { "ENGLISH", "GERMAN" },
+            data.Elements("Translation").Select(t => t.Attribute("Language")!.Value));
+    }
+
     [Fact]
     public void Import_EmptyXml_LeavesDbEmpty()
     {
-        var xml = new XDocument(new XElement(
-            XName.Get("LocalisationData", "urn:alamoenginetools:localisation:v1")));
+        var xml = new XDocument(new XElement("LocalisationData"));
         var db = new TranslationDatabaseFactory().CreateKeyed(new[] { En });
         CreateImporter().Import(xml, db);
         Assert.Empty(db);
@@ -108,10 +151,9 @@ public class XmlTranslationAdapterTest : CommonLocalisationTestBase
         db.SetTranslation("MONKEY", En, "m");
 
         var xml = CreateExporter().Export(db);
-        XNamespace ns = "urn:alamoenginetools:localisation:v1";
         var keys = xml.Root!
-            .Elements(ns + "Localisation")
-            .Select(e => e.Attribute("key")!.Value)
+            .Elements("Localisation")
+            .Select(e => e.Attribute("Key")!.Value)
             .ToList();
 
         Assert.Equal(new[] { "APPLE", "MONKEY", "ZEBRA" }, keys);
